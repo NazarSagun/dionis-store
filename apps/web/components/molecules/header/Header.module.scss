@@ -1,0 +1,28 @@
+@import "../../../styles/variables.scss";
+
+.header {
+  display: flex;
+  background: $dark-content-block-color;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 20px;
+  &.light {
+    background: $light-primary-color;
+  }
+  span {
+    font-size: 20px;
+    font-weight: 600;
+    color: $dark-text-color;
+    cursor: default;
+  }
+
+  ul {
+    display: flex;
+    align-items: center;
+    a {
+      font-weight: 600;
+      font-size: 20px;
+      margin-left: 20px;
+    }
+  }
+}

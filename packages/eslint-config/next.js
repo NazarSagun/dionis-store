@@ -31,5 +31,31 @@ module.exports = {
     ".*.js",
     "node_modules/",
   ],
-  overrides: [{ files: ["*.js?(x)", "*.ts?(x)"] }],
+  overrides: [
+    { files: ["*.js?(x)", "*.ts?(x)"] },
+    {
+      files: ["*.ts", "*.tsx"],
+      rules: {
+        "simple-import-sort/imports": [
+          "error",
+          {
+            "groups": [
+              // Packages `react` and `next` related packages come first.
+              ["^react", "^next", "^@?\\w"],
+              // Internal packages.
+              ["^(@|components)(/.*|$)", "^(@|providers)(/.*|$)"],
+              // Side effect imports.
+              ["^\\u0000"],
+              // Parent imports. Put `..` last.
+              ["^\\.\\.(?!/?$)", "^\\.\\./?$"],
+              // Other relative imports. Put same-folder imports and `.` last.
+              ["^\\./(?=.*/)(?!/?$)", "^\\.(?!/?$)", "^\\./?$"],
+              // Style imports.
+              ["^.+\\.?(scss)$"]
+            ]
+          }
+        ]
+      }
+    }
+  ],
 };

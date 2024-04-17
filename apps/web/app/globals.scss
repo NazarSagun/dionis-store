@@ -1,0 +1,51 @@
+@import "../styles/variables.scss";
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  font-size: 16px;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+html,
+body {
+  display: flex;
+  flex-direction: column;
+  max-width: 100vw;
+  min-height: 100vh;
+  overflow-x: hidden;
+  background: $dark-background-color;
+  &.light {
+    background: $light-background-color;
+  }
+}
+
+main {
+  flex: 1;
+}
+
+footer {
+  flex-shrink: 0;
+}
+
+p, span {
+  font-size: 1.6rem;
+  color: $dark-text-color;
+}
+
+.content-block {
+  background-color: $dark-content-block-color;
+  color: $dark-text-color;
+}
+
+a {
+  color: $dark-text-color;
+  text-decoration: none;
+}
+
+ul li {
+  font-size: 1.5rem;
+}
