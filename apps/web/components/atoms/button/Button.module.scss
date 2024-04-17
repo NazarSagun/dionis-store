@@ -1,0 +1,28 @@
+@import '/styles/variables.scss';
+
+button {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 17px;
+  color: $dark-text-color;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  padding: 8px 16px;
+}
+
+.lightPrimaryButton {
+  background-color: $light-primary-color;
+}
+
+.lightSecondaryButton {
+  background-color: $light-secondary-color;
+}
+
+// Dark theme styles
+.darkPrimaryButton {
+  background-color: $dark-primary-color;
+}
+
+.darkSecondaryButton {
+  background-color: $dark-secondary-color;
+}

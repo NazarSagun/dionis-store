@@ -18,7 +18,7 @@ module.exports = {
     node: true,
     browser: true,
   },
-  plugins: ["only-warn"],
+  plugins: ["only-warn", "simple-import-sort"],
   settings: {
     "import/resolver": {
       typescript: {
@@ -43,7 +43,7 @@ module.exports = {
               // Packages `react` and `next` related packages come first.
               ["^react", "^next", "^@?\\w"],
               // Internal packages.
-              ["^(@|components)(/.*|$)", "^(@|providers)(/.*|$)"],
+              ["^(@|components)(/.*|$)", "^(@|providers)(/.*|$)", "^helpers"],
               // Side effect imports.
               ["^\\u0000"],
               // Parent imports. Put `..` last.
@@ -51,7 +51,7 @@ module.exports = {
               // Other relative imports. Put same-folder imports and `.` last.
               ["^\\./(?=.*/)(?!/?$)", "^\\.(?!/?$)", "^\\./?$"],
               // Style imports.
-              ["^.+\\.?(scss)$"]
+              ["^clsx", "^.+\\.?(scss)$"]
             ]
           }
         ]

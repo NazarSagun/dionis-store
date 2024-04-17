@@ -15,14 +15,28 @@
     color: $dark-text-color;
     cursor: default;
   }
-
+  nav {
+    display: flex;
+  }
   ul {
     display: flex;
     align-items: center;
+
     a {
-      font-weight: 600;
-      font-size: 20px;
+      display: flex;
+      align-items: center;
       margin-left: 20px;
+      &:last-child {
+        border-radius: 5px;
+        padding: 5px;
+        background-color: #2ecc71;
+      }
     }
+
+    li {
+      font-weight: 600;
+      font-size: 18px;
+    }
+ 
   }
 }
