@@ -1,9 +1,30 @@
+@import "../../../styles/variables.scss";
+
 .form {
   display: flex;
   flex-direction: column;
-  max-width: 50vw;
-  button {
+  max-width: 30vw;
+  background-color: $dark-background-secondary-color;
+  padding: 15px 20px;
+  border-radius: 5px;
+  &.light {
+    background-color: $light-background-secondary-color;
+  }
+  h3 {
     margin-top: 10px;
-    align-self: flex-end;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: $dark-text-color;
+  }
+  p {
+    margin-top: 15px;
+    margin-bottom: 0;
+    text-wrap: balance;
+    text-align: center;
+    font-size: 12px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #c2c2c2;
+  }
+  button {
+    margin-top: 5px;
   }
 }

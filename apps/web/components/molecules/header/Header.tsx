@@ -1,13 +1,13 @@
 'use client'
 
 import Link from 'next/link'
-import clsx from 'clsx'
+import axios from 'axios'
 
 import { ThemeIcon } from '@/components/atoms/theme-icon'
 import { useTheme } from '@/providers/theme/ThemeProvider'
 
+import clsx from 'clsx'
 import classes from './Header.module.scss'
-import axios from 'axios'
 
 const instance = axios.create({
   baseURL: 'http://localhost:3500',
@@ -64,6 +64,7 @@ export const Navigation = () => {
               <li>{item.label}</li>
             </Link>
           ))}
+          <button onClick={handleSignIn}>sdsd</button>
         </ul>
       </nav>
     </header>

@@ -12,26 +12,26 @@ const meta = {
     layout: 'centered',
   },
   tags: ['autodocs'],
-  // args: {
-  //   onClick: () => {},
-  //   label: 'Text',
-  //   variant: 'primary',
-  // },
-  // argTypes: {
-  //   variant: {
-  //     control: 'radio',
-  //     options: ['primary', 'secondary'],
-  //   },
-  //   label: {
-  //     defaultValue: 'Text',
-  //     control: 'text',
-  //   },
-  //   onClick: {
-  //     table: {
-  //       disable: true,
-  //     },
-  //   },
-  // },
+  args: {
+    onSubmitForm(userData) {
+      console.log(userData)
+    },
+    title: 'Create Dionis account',
+    privacyText: 'By creating an account, you agree to our terms and privacy policy.',
+  },
+  argTypes: {
+    title: {
+      control: 'text',
+    },
+    privacyText: {
+      control: 'text',
+    },
+    onSubmitForm: {
+      table: {
+        disable: true,
+      },
+    },
+  },
 } satisfies Meta<typeof AuthForm>
 
 export default meta
