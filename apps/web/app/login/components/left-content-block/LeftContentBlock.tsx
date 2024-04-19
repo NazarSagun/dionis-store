@@ -11,7 +11,7 @@ export const LeftContentBlock = () => {
 
   return (
     <div className={containerStyles}>
-      <h3>Wellcome back!🚀</h3>
+      <h3>Welcome back!🚀</h3>
       <LoginSvg />
     </div>
   )
