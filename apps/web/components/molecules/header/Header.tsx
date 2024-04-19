@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import Link from 'next/link'
 import axios from 'axios'
 
@@ -49,7 +50,15 @@ export const Navigation = () => {
 
   return (
     <header className={headerStyles}>
-      <span>Site</span>
+      <div>
+        <span>Dionis</span>
+        <Image
+          width={40}
+          height={40}
+          alt='logo'
+          src={`/icons/${theme}-logo.png`}
+        />
+      </div>
       <nav>
         <ThemeIcon
           theme={theme}
@@ -64,7 +73,6 @@ export const Navigation = () => {
               <li>{item.label}</li>
             </Link>
           ))}
-          <button onClick={handleSignIn}>sdsd</button>
         </ul>
       </nav>
     </header>

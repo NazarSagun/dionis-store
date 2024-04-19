@@ -24,7 +24,7 @@ importers:
   apps/api:
     dependencies:
       '@prisma/client':
-        specifier: 5.7.1
+        specifier: ^5.7.1
         version: 5.7.1(prisma@5.12.1)
       bcrypt:
         specifier: ^5.1.1

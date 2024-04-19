@@ -9,9 +9,13 @@
   border-radius: 5px;
   &.light {
     background-color: $light-background-secondary-color;
+    h3 {
+      color: $light-text-color;
+    }
   }
   h3 {
     margin-top: 10px;
+    margin-bottom: 20px;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     color: $dark-text-color;
   }

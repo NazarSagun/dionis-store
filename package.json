@@ -5,7 +5,9 @@
     "build": "turbo build",
     "dev": "turbo dev",
     "lint": "turbo lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "dev:api": "turbo dev --filter api",
+    "dev:web": "turbo dev --filter web"
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",

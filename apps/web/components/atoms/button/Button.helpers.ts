@@ -9,10 +9,10 @@ export const getButtonStyles = (variant: ButtonType, theme: Theme) => {
   let styles
   switch(variant) {
     case 'primary':
-      styles = theme === Theme.LIGHT ? clsx(classes.lightPrimaryButton) : clsx(classes.darkPrimaryButton)
+      styles = theme === Theme.LIGHT ? clsx(classes.button, classes.lightPrimaryButton) : clsx(classes.button, classes.darkPrimaryButton)
       break
     case 'secondary':
-      styles = theme === Theme.LIGHT ? clsx(classes.lightSecondaryButton) : clsx(classes.darkSecondaryButton)
+      styles = theme === Theme.LIGHT ? clsx(classes.button, classes.lightSecondaryButton) : clsx(classes.button, classes.darkSecondaryButton)
       break
   }
 

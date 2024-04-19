@@ -29,14 +29,14 @@ export class AuthService {
     const hashedPassword = bcrypt.hashSync(password, 10)
 
     const accessToken = createAccessToken(getDecodedDto(email), '30s')
-    const refreshToken = createRefreshToken(email, '1d')
+    const refreshToken = createRefreshToken(email, '1d') 
 
     await this.prisma.user.create({
       data: {
         name,
         email,
         password: hashedPassword,
-        refreshToken,
+        refreshToken
       },
     })
 
@@ -112,7 +112,7 @@ export class AuthService {
       if (err) {
         throw new CustomError('Forbidden', 403)
       }
-
+      
       const accessToken = createAccessToken(getDecodedDto(decoded.email, user.role), '30s')
 
       return accessToken

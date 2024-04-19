@@ -16,7 +16,7 @@ export class AuthController {
 
     if (!name || !email || !password) {
       return res.status(400).json({
-        message: 'Content cannot be empty!',
+        message: 'One or more credentials are missing!',
       })
     }
 

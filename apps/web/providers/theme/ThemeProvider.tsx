@@ -9,7 +9,7 @@ export interface ChildrenProps {
   mode?: Theme
 }
 
-const localStorageKey = localStorage.getItem(LOCAL_STORAGE_THEME_KEY)
+const localStorageKey = typeof window !== 'undefined' ? localStorage.getItem(LOCAL_STORAGE_THEME_KEY) : null
 
 const ThemeState = (localStorageKey as Theme) || Theme.DARK
 
@@ -38,9 +38,5 @@ export const ThemeProvider: FC<ChildrenProps> = ({ children, mode }) => {
     toggleTheme,
   }
 
-  return (
-    <ThemeContext.Provider value={themeValues}>
-      {children}
-    </ThemeContext.Provider>
-  )
+  return <ThemeContext.Provider value={themeValues}>{children}</ThemeContext.Provider>
 }
