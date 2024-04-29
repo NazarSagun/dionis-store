@@ -9,7 +9,7 @@ import { validateInput } from './AuthForm.helpers'
 import clsx from 'clsx'
 import classes from './AuthForm.module.scss'
 
-type UserData = {
+export type UserData = {
   email: string
   password: string
 }
@@ -18,9 +18,10 @@ interface AuthFormProps {
   onSubmitForm: (userData: UserData) => void
   title: string
   privacyText: string
+  variant: 'login' | 'signup'
 }
 
-export const AuthForm = ({ onSubmitForm, title, privacyText }: AuthFormProps) => {
+export const AuthForm = ({ onSubmitForm, title, privacyText, variant }: AuthFormProps) => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [emailErrorMessage, setEmailErrorMessage] = useState('')
@@ -76,7 +77,7 @@ export const AuthForm = ({ onSubmitForm, title, privacyText }: AuthFormProps) =>
       />
       <Button
         variant='primary'
-        label='Login'
+        label={variant === 'login' ? 'Login' : 'Register'}
       />
 
       {privacyText && <p>{privacyText}</p>}

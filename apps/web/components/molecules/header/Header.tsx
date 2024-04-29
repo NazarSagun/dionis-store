@@ -67,7 +67,7 @@ export const Navigation = () => {
         <ul>
           {navigation.map((item) => (
             <Link
-              href={item.label.toLowerCase()}
+              href={item.link}
               key={item.id}
             >
               <li>{item.label}</li>

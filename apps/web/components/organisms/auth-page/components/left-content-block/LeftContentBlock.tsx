@@ -1,18 +1,23 @@
 import { useTheme } from '@/providers/theme/ThemeProvider'
 
 import { LoginSvg } from '../LoginSvg'
+import { SignUpSvg } from '../SignUpSvg'
 
 import clsx from 'clsx'
 import classes from './LeftContentBlock.module.scss'
 
-export const LeftContentBlock = () => {
+interface LeftContentBlockProps {
+  variant: 'login' | 'signup'
+}
+
+export const LeftContentBlock = ({ variant }: LeftContentBlockProps) => {
   const { theme } = useTheme()
   const containerStyles = clsx(classes.container, theme === 'light' && classes.light)
 
   return (
     <div className={containerStyles}>
-      <h3>Welcome back!🚀</h3>
-      <LoginSvg />
+      <h3>{variant === 'login' ? 'Welcome back!🚀' : 'Welcome to Dionis community!🌍'}</h3>
+      {variant === 'login' ? <LoginSvg /> : <SignUpSvg />}
     </div>
   )
 }

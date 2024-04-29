@@ -2,13 +2,13 @@
 
 import { AuthPage } from '@/components'
 
-const LoginPage = () => {
+const SignUpPage = () => {
   return (
     <AuthPage
-      variant='login'
+      variant='signup'
       onSubmitForm={(formData) => console.log(formData)}
     />
   )
 }
 
-export default LoginPage
+export default SignUpPage
