@@ -2,17 +2,12 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import axios from 'axios'
 
 import { ThemeIcon } from '@/components/atoms/theme-icon'
 import { useTheme } from '@/providers/theme/ThemeProvider'
 
 import clsx from 'clsx'
 import classes from './Header.module.scss'
-
-const instance = axios.create({
-  baseURL: 'http://localhost:3500',
-})
 
 const navigation = [
   {
@@ -36,17 +31,6 @@ export const Navigation = () => {
   const { toggleTheme, theme } = useTheme()
 
   const headerStyles = clsx(classes.header, theme === 'light' && classes.light)
-
-  const handleSignIn = async () => {
-    try {
-      // Make a request to the backend endpoint for Google authentication
-      const response = await instance.get('/auth/google')
-
-      console.log(response, 'RESPONSE')
-    } catch (error) {
-      console.error('Error signing in with Google:', error)
-    }
-  }
 
   return (
     <header className={headerStyles}>
