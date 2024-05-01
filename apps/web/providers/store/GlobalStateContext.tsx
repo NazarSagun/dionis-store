@@ -1,3 +1,5 @@
+'use client'
+
 import { createContext, Dispatch, ReactNode, useContext, useReducer } from 'react'
 
 import { globalInitialState, GlobalState, rootReducer } from './reducers'
