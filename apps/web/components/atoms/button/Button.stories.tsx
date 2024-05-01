@@ -1,8 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
 
-import { Theme } from '@/providers/theme/ThemeContext'
-import { ThemeProvider } from '@/providers/theme/ThemeProvider'
-
 import { Button } from './Button'
 
 const meta = {
@@ -38,13 +35,6 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const Dark: Story = {
-  decorators: [
-    (Story) => (
-      <ThemeProvider mode={Theme.DARK}>
-        <Story />
-      </ThemeProvider>
-    ),
-  ],
   parameters: {
     backgrounds: {
       default: 'dark',
@@ -59,13 +49,6 @@ export const Dark: Story = {
 }
 
 export const Light: Story = {
-  decorators: [
-    (Story) => (
-      <ThemeProvider mode={Theme.LIGHT}>
-        <Story />
-      </ThemeProvider>
-    ),
-  ],
   parameters: {
     backgrounds: {
       default: 'light',

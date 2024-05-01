@@ -4,7 +4,8 @@ import Image from 'next/image'
 import Link from 'next/link'
 
 import { ThemeIcon } from '@/components/atoms/theme-icon'
-import { useTheme } from '@/providers/theme/ThemeProvider'
+import { ThemeActionType } from '@/providers/store/actions'
+import { useGlobalState } from '@/providers/store/GlobalStateContext'
 
 import clsx from 'clsx'
 import classes from './Header.module.scss'
@@ -28,9 +29,10 @@ const navigation = [
 ]
 
 export const Navigation = () => {
-  const { toggleTheme, theme } = useTheme()
+  const { state, dispatch } = useGlobalState()
+  const mode = state.theme.mode
 
-  const headerStyles = clsx(classes.header, theme === 'light' && classes.light)
+  const headerStyles = clsx(classes.header, mode === 'light' && classes.light)
 
   return (
     <header className={headerStyles}>
@@ -40,13 +42,13 @@ export const Navigation = () => {
           width={40}
           height={40}
           alt='logo'
-          src={`/icons/${theme}-logo.png`}
+          src={`/icons/${mode}-logo.png`}
         />
       </div>
       <nav>
         <ThemeIcon
-          theme={theme}
-          onClick={toggleTheme}
+          theme={mode}
+          onClick={() => dispatch({ type: ThemeActionType.TOGGLE_THEME })}
         />
         <ul>
           {navigation.map((item) => (

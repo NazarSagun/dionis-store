@@ -1,8 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
 
-import { Theme } from '@/providers/theme/ThemeContext'
-import { ThemeProvider } from '@/providers/theme/ThemeProvider'
-
 import { AuthForm } from './AuthForm'
 
 const meta = {
@@ -13,6 +10,7 @@ const meta = {
   },
   tags: ['autodocs'],
   args: {
+    variant: 'login',
     onSubmitForm(userData) {
       console.log(userData)
     },
@@ -26,6 +24,11 @@ const meta = {
     privacyText: {
       control: 'text',
     },
+    variant: {
+      defaultValue: 'login',
+      control: 'radio',
+      options: ['login', 'signup'],
+    },
     onSubmitForm: {
       table: {
         disable: true,
@@ -38,13 +41,6 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const Dark: Story = {
-  decorators: [
-    (Story) => (
-      <ThemeProvider mode={Theme.DARK}>
-        <Story />
-      </ThemeProvider>
-    ),
-  ],
   parameters: {
     backgrounds: {
       default: 'dark',
@@ -59,13 +55,6 @@ export const Dark: Story = {
 }
 
 export const Light: Story = {
-  decorators: [
-    (Story) => (
-      <ThemeProvider mode={Theme.LIGHT}>
-        <Story />
-      </ThemeProvider>
-    ),
-  ],
   parameters: {
     backgrounds: {
       default: 'light',

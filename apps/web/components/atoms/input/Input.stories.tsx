@@ -1,8 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
 
-import { Theme } from '@/providers/theme/ThemeContext'
-import { ThemeProvider } from '@/providers/theme/ThemeProvider'
-
 import { Input } from './Input'
 
 const meta = {
@@ -13,11 +10,13 @@ const meta = {
   },
   tags: ['autodocs'],
   args: {
-    onChange: () => {},
     name: 'Text',
+    label: 'Label',
+    errorMessage: '',
   },
   argTypes: {
     type: {
+      defaultValue: 'text',
       control: 'radio',
       options: ['text', 'email', 'password'],
     },
@@ -25,7 +24,7 @@ const meta = {
       defaultValue: 'Text',
       control: 'text',
     },
-    onChange: {
+    onInputChange: {
       table: {
         disable: true,
       },
@@ -37,13 +36,6 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const Dark: Story = {
-  decorators: [
-    (Story) => (
-      <ThemeProvider mode={Theme.DARK}>
-        <Story />
-      </ThemeProvider>
-    ),
-  ],
   parameters: {
     backgrounds: {
       default: 'dark',
@@ -58,22 +50,15 @@ export const Dark: Story = {
 }
 
 export const Light: Story = {
-  decorators: [
-    (Story) => (
-      <ThemeProvider mode={Theme.LIGHT}>
-        <Story />
-      </ThemeProvider>
-    ),
-  ],
   parameters: {
     backgrounds: {
       default: 'light',
+      values: [
+        {
+          name: 'light',
+          value: '#f8f8f8',
+        },
+      ],
     },
-    values: [
-      {
-        name: 'light',
-        value: '#f8f8f8',
-      },
-    ],
   },
 }

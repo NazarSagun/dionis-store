@@ -1,7 +1,8 @@
 import React from 'react'
 import Image from 'next/image'
 
-import { Theme } from '@/providers/theme/ThemeContext'
+import { useGlobalState } from '@/providers/store/GlobalStateContext'
+import { Theme } from '@/providers/store/reducers/themeReducer'
 
 import classes from './ThemeIcon.module.scss'
 
@@ -11,8 +12,9 @@ interface ThemeIconProps {
 }
 
 export const ThemeIcon = ({ theme, onClick }: ThemeIconProps) => {
+  const { state } = useGlobalState()
   const imagePath = '/icons'
-  const isDarkMode = theme === 'dark' ? 'light-theme.png' : 'dark-theme.png'
+  const isDarkMode = state.theme.mode === 'dark' ? 'light-theme.png' : 'dark-theme.png'
 
   const changeBodyStyles = () => {
     const body = document.getElementById('body')
@@ -37,7 +39,6 @@ export const ThemeIcon = ({ theme, onClick }: ThemeIconProps) => {
         width={32}
         height={32}
       />
-      Theme
     </button>
   )
 }

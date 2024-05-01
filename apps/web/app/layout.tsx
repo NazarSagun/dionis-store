@@ -3,7 +3,7 @@ import { Inter } from 'next/font/google'
 
 import { Footer } from '@/components/molecules/footer'
 import { Navigation } from '@/components/molecules/header'
-import { ThemeProvider } from '@/providers/theme/ThemeProvider'
+import { GlobalStateProvider } from '@/providers/store/GlobalStateContext'
 
 import './globals.scss'
 
@@ -20,13 +20,16 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
-      <body id="body" className={inter.className}>
-        <ThemeProvider>
+    <html lang='en'>
+      <body
+        id='body'
+        className={inter.className}
+      >
+        <GlobalStateProvider>
           <Navigation />
           <main>{children}</main>
           <Footer />
-        </ThemeProvider>
+        </GlobalStateProvider>
       </body>
     </html>
   )
