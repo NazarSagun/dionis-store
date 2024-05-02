@@ -3,7 +3,7 @@
 .form {
   display: flex;
   flex-direction: column;
-  max-width: 30vw;
+  width: 350px;
   background-color: $dark-background-secondary-color;
   padding: 15px 20px;
   border-radius: 5px;
@@ -11,6 +11,9 @@
     background-color: $light-background-secondary-color;
     h3 {
       color: $light-text-color;
+    }
+    p {
+      color: #525252;
     }
   }
   h3 {

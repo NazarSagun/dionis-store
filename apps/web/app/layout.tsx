@@ -4,6 +4,7 @@ import { Inter } from 'next/font/google'
 import { Footer } from '@/components/molecules/footer'
 import { Navigation } from '@/components/molecules/header'
 import { GlobalStateProvider } from '@/providers/store/GlobalStateContext'
+import { ThemeStateProvider } from '@/providers/theme/ThemeContext'
 
 import './globals.scss'
 
@@ -26,9 +27,11 @@ export default function RootLayout({
         className={inter.className}
       >
         <GlobalStateProvider>
-          <Navigation />
-          <main>{children}</main>
-          <Footer />
+          <ThemeStateProvider>
+            <Navigation />
+            <main>{children}</main>
+            <Footer />
+          </ThemeStateProvider>
         </GlobalStateProvider>
       </body>
     </html>

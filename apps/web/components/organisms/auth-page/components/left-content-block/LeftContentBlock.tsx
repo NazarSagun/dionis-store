@@ -1,4 +1,4 @@
-import { useGlobalState } from '@/providers/store/GlobalStateContext'
+import { useThemeState } from '@/providers/theme/ThemeContext'
 
 import { LoginSvg } from '../LoginSvg'
 import { SignUpSvg } from '../SignUpSvg'
@@ -11,8 +11,8 @@ interface LeftContentBlockProps {
 }
 
 export const LeftContentBlock = ({ variant }: LeftContentBlockProps) => {
-  const { state } = useGlobalState()
-  const containerStyles = clsx(classes.container, state.theme.mode === 'light' && classes.light)
+  const { state } = useThemeState()
+  const containerStyles = clsx(classes.container, state.mode === 'light' && classes.light)
 
   return (
     <div className={containerStyles}>

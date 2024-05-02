@@ -1,9 +1,5 @@
 import type { Preview } from '@storybook/react'
-
-import { GlobalStateProvider } from '../providers/store/GlobalStateContext'
-
-import React from 'react'
-import { ThemeButton } from './ThemeButton'
+import '../app/globals.scss'
 
 const preview: Preview = {
   parameters: {
@@ -27,14 +23,6 @@ const preview: Preview = {
       },
     },
   },
-  decorators: [
-    (Story) => (
-      <GlobalStateProvider>
-        <ThemeButton />
-        <Story />
-      </GlobalStateProvider>
-    ),
-  ],
 }
 
 export default preview

@@ -1,4 +1,4 @@
-import { Theme } from '@/providers/store/reducers/themeReducer'
+import { Theme } from '@/providers/theme'
 
 import { ButtonType } from './Button'
 

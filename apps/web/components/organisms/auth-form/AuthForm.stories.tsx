@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react'
 
 import { AuthForm } from './AuthForm'
+import { Theme, ThemeStateProvider } from '@/providers/theme'
 
 const meta = {
   title: 'Organisms/AuthForm',
@@ -52,6 +53,7 @@ export const Dark: Story = {
       ],
     },
   },
+  decorators: (Story) => <ThemeStateProvider mode={Theme.DARK}>{Story()}</ThemeStateProvider>,
 }
 
 export const Light: Story = {
@@ -66,4 +68,5 @@ export const Light: Story = {
       },
     ],
   },
+  decorators: (Story) => <ThemeStateProvider mode={Theme.LIGHT}>{Story()}</ThemeStateProvider>,
 }

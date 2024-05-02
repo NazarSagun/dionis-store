@@ -1,6 +1,6 @@
 import { ChangeEvent, InputHTMLAttributes, useState } from 'react'
 
-import { useGlobalState } from '@/providers/store/GlobalStateContext'
+import { useThemeState } from '@/providers/theme/ThemeContext'
 
 import clsx from 'clsx'
 import classes from './Input.module.scss'
@@ -13,7 +13,7 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 
 export const Input = ({ type, name, onInputChange, label, errorMessage, ...props }: InputProps) => {
   const [value, setValue] = useState('')
-  const { state } = useGlobalState()
+  const { state } = useThemeState()
 
   const inputChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.currentTarget.value
@@ -23,7 +23,7 @@ export const Input = ({ type, name, onInputChange, label, errorMessage, ...props
 
   const inputStyles = clsx(
     classes.inputContainer,
-    state.theme.mode === 'light' && classes.light,
+    state.mode === 'light' && classes.light,
     errorMessage && classes.error
   )
 

@@ -1,14 +1,14 @@
 'use client'
 
-import { useGlobalState } from '@/providers/store/GlobalStateContext'
+import { useThemeState } from '@/providers/theme/ThemeContext'
 
 import clsx from 'clsx'
 import classes from './Footer.module.scss'
 
 export const Footer = () => {
-  const { state } = useGlobalState()
+  const { state } = useThemeState()
 
-  const footerStyles = clsx(classes.footer, state.theme.mode === 'light' && classes.light)
+  const footerStyles = clsx(classes.footer, state.mode === 'light' && classes.light)
 
   return (
     <footer className={footerStyles}>

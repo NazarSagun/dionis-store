@@ -2,7 +2,7 @@ import { FormEvent, useState } from 'react'
 
 import { Button } from '@/components/atoms'
 import { Input } from '@/components/atoms'
-import { useGlobalState } from '@/providers/store/GlobalStateContext'
+import { useThemeState } from '@/providers/theme'
 
 import { validateInput } from './AuthForm.helpers'
 
@@ -27,8 +27,8 @@ export const AuthForm = ({ onSubmitForm, title, privacyText, variant }: AuthForm
   const [emailErrorMessage, setEmailErrorMessage] = useState('')
   const [passwordErrorMessage, setPasswordErrorMessage] = useState('')
 
-  const { state } = useGlobalState()
-  const formStyles = clsx(classes.form, state.theme.mode === 'light' && classes.light)
+  const { state } = useThemeState()
+  const formStyles = clsx(classes.form, state.mode === 'light' && classes.light)
 
   const submitHandler = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()

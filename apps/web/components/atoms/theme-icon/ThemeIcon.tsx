@@ -1,24 +1,24 @@
 import React from 'react'
 import Image from 'next/image'
 
-import { useGlobalState } from '@/providers/store/GlobalStateContext'
-import { Theme } from '@/providers/store/reducers/themeReducer'
+import { Theme, ThemeActionType } from '@/providers/theme'
+import { useThemeState } from '@/providers/theme/ThemeContext'
 
 import classes from './ThemeIcon.module.scss'
 
 interface ThemeIconProps {
-  theme?: Theme
   onClick?: () => void
 }
 
-export const ThemeIcon = ({ theme, onClick }: ThemeIconProps) => {
-  const { state } = useGlobalState()
+export const ThemeIcon = ({ onClick }: ThemeIconProps) => {
+  const { state, dispatch } = useThemeState()
   const imagePath = '/icons'
-  const isDarkMode = state.theme.mode === 'dark' ? 'light-theme.png' : 'dark-theme.png'
+  const mode = state.mode
+  const isDarkMode = mode === Theme.DARK ? 'dark-theme.png' : 'light-theme.png'
 
   const changeBodyStyles = () => {
     const body = document.getElementById('body')
-    if (theme === 'light' && body) {
+    if (mode === Theme.LIGHT && body) {
       body.classList.add('light')
     } else {
       body && body.classList.remove('light')
@@ -31,11 +31,12 @@ export const ThemeIcon = ({ theme, onClick }: ThemeIconProps) => {
       onClick={() => {
         onClick && onClick()
         changeBodyStyles()
+        dispatch({ type: ThemeActionType.TOGGLE_THEME })
       }}
     >
       <Image
         src={`${imagePath}/${isDarkMode}`}
-        alt={`${theme}-mode-icon`}
+        alt={`${mode}-mode-icon`}
         width={32}
         height={32}
       />

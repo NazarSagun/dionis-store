@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { ThemeAction, ThemeActionType } from '../actions'
+import { ThemeAction, ThemeActionType } from './themeActions'
 
 export enum Theme {
   LIGHT = 'light',

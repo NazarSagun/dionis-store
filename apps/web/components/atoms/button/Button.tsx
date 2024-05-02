@@ -1,6 +1,6 @@
 import { ButtonHTMLAttributes } from 'react'
 
-import { useGlobalState } from '@/providers/store/GlobalStateContext'
+import { useThemeState } from '@/providers/theme'
 
 import { getButtonStyles } from './Button.helpers'
 
@@ -13,7 +13,7 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 export const Button = ({ variant, label }: ButtonProps) => {
-  const { state } = useGlobalState()
-  const buttonStyles = getButtonStyles(variant, state.theme.mode)
+  const { state } = useThemeState()
+  const buttonStyles = getButtonStyles(variant, state.mode)
   return <button className={buttonStyles}>{label}</button>
 }

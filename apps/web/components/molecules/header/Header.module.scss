@@ -2,12 +2,12 @@
 
 .header {
   display: flex;
-  background: $dark-content-block-color;
+  background: $light-primary-color;
   align-items: center;
   justify-content: space-between;
   padding: 20px 35px;
   &.light {
-    background: $light-primary-color;
+    background: $dark-content-block-color;
   }
   div {
     display: flex;

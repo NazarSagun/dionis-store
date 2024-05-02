@@ -1,5 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react'
 
+import { Theme, ThemeStateProvider } from '@/providers/theme'
+
 import { Button } from './Button'
 
 const meta = {
@@ -46,6 +48,7 @@ export const Dark: Story = {
       ],
     },
   },
+  decorators: (Story) => <ThemeStateProvider mode={Theme.DARK}>{Story()}</ThemeStateProvider>,
 }
 
 export const Light: Story = {
@@ -60,4 +63,5 @@ export const Light: Story = {
       },
     ],
   },
+  decorators: (Story) => <ThemeStateProvider mode={Theme.LIGHT}>{Story()}</ThemeStateProvider>,
 }
