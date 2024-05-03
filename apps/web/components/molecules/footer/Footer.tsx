@@ -8,7 +8,7 @@ import classes from './Footer.module.scss'
 export const Footer = () => {
   const { state } = useThemeState()
 
-  const footerStyles = clsx(classes.footer, state.mode === 'light' && classes.light)
+  const footerStyles = clsx(classes.footer, state.mode === 'light' ? classes.light : null)
 
   return (
     <footer className={footerStyles}>

@@ -12,7 +12,7 @@ interface LeftContentBlockProps {
 
 export const LeftContentBlock = ({ variant }: LeftContentBlockProps) => {
   const { state } = useThemeState()
-  const containerStyles = clsx(classes.container, state.mode === 'light' && classes.light)
+  const containerStyles = clsx(classes.container, state.mode === 'light' ? classes.light : null)
 
   return (
     <div className={containerStyles}>

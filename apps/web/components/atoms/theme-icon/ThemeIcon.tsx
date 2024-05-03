@@ -14,7 +14,7 @@ export const ThemeIcon = ({ onClick }: ThemeIconProps) => {
   const { state, dispatch } = useThemeState()
   const imagePath = '/icons'
   const mode = state.mode
-  const isDarkMode = mode === Theme.DARK ? 'dark-theme.png' : 'light-theme.png'
+  const isDarkMode = mode === Theme.DARK ? 'light-theme.png' : 'dark-theme.png'
 
   const changeBodyStyles = () => {
     const body = document.getElementById('body')

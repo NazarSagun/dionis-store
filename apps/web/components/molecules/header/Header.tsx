@@ -30,7 +30,6 @@ const navigation = [
 export const Navigation = () => {
   const { state } = useThemeState()
   const mode = state.mode
-  console.log(mode)
   const headerStyles = clsx(classes.header, mode === 'light' ? classes.light : null)
 
   return (
@@ -41,7 +40,7 @@ export const Navigation = () => {
           width={40}
           height={40}
           alt='logo'
-          src={`/icons/${mode}-logo.png`}
+          src={`/icons/logo.png`}
         />
       </div>
       <nav>

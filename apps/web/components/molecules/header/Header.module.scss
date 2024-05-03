@@ -2,12 +2,13 @@
 
 .header {
   display: flex;
-  background: $light-primary-color;
+  background: $dark-content-block-color;
   align-items: center;
   justify-content: space-between;
-  padding: 20px 35px;
+  padding: 0 35px;
+  height: 10vh;
   &.light {
-    background: $dark-content-block-color;
+    background: $light-primary-color;
   }
   div {
     display: flex;

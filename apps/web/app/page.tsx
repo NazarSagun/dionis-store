@@ -1,9 +1,13 @@
-import styles from "./page.module.scss";
+'use client'
+
+import { useThemeState } from '@/providers/theme'
+
+import clsx from 'clsx'
+import classes from './page.module.scss'
 
 export default function Home() {
-  return (
-    <main className={styles.main}>
-      hello
-    </main>
-  );
+  const { state } = useThemeState()
+  const containerStyles = clsx(classes.container, state.mode === 'light' ? classes.light : null)
+
+  return <div className={containerStyles}></div>
 }

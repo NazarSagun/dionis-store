@@ -4,11 +4,17 @@
   h3 {
     font-family: monospace;
     font-size: 25px;
-    color: $light-text-color;
+    color: $dark-text-color;
   }
   &.light {
     h3 {
-      color: $dark-text-color;
+      color: $light-text-color;
     }
+  }
+}
+
+@media (min-width: 768px) {
+  .container {
+    padding-top: 50px;
   }
 }
