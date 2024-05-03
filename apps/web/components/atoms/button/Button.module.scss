@@ -9,6 +9,10 @@
   cursor: pointer;
   padding: 6px 15px;
   outline: none;
+  &:disabled {
+    opacity: 0.5;
+    cursor: initial;
+  }
 }
 
 .lightPrimaryButton {

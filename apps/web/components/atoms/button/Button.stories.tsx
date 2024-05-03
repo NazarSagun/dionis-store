@@ -15,6 +15,7 @@ const meta = {
     onClick: () => {},
     label: 'Text',
     variant: ButtonType.PRIMARY,
+    disabled: false,
   },
   argTypes: {
     variant: {
