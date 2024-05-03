@@ -11,7 +11,7 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   errorMessage: string
 }
 
-export const Input = ({ type, name, onInputChange, label, errorMessage, ...props }: InputProps) => {
+export const Input = ({ type, name, onInputChange, label, errorMessage, disabled, ...props }: InputProps) => {
   const [value, setValue] = useState('')
   const { state } = useThemeState()
 
@@ -36,6 +36,8 @@ export const Input = ({ type, name, onInputChange, label, errorMessage, ...props
         type={type}
         name={name}
         value={value}
+        data-testid='input'
+        disabled={disabled}
         {...props}
       />
       {errorMessage && <span>{errorMessage}</span>}

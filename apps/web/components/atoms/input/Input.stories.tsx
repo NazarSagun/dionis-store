@@ -14,18 +14,19 @@ const meta = {
     name: 'Text',
     label: 'Label',
     errorMessage: '',
+    type: 'text',
   },
   argTypes: {
     type: {
-      defaultValue: 'text',
       control: 'radio',
       options: ['text', 'email', 'password'],
     },
-    name: {
-      defaultValue: 'Text',
-      control: 'text',
-    },
     onInputChange: {
+      table: {
+        disable: true,
+      },
+    },
+    name: {
       table: {
         disable: true,
       },

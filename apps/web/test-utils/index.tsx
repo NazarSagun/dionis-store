@@ -2,12 +2,12 @@ import React, { ReactElement } from 'react'
 import { render, RenderOptions } from '@testing-library/react'
 
 import { GlobalStateProvider } from '@/providers/store/GlobalStateContext'
-import { ThemeStateProvider } from '@/providers/theme'
+import { Theme, ThemeStateProvider } from '@/providers/theme'
 
 const AllTheProviders = ({ children }: { children: React.ReactNode }) => {
   return (
     <GlobalStateProvider>
-      <ThemeStateProvider>{children}</ThemeStateProvider>
+      <ThemeStateProvider mode={Theme.LIGHT}>{children}</ThemeStateProvider>
     </GlobalStateProvider>
   )
 }
