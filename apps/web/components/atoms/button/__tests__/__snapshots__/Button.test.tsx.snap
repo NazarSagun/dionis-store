@@ -1,0 +1,23 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<Button /> should render correct variant 1`] = `
+<DocumentFragment>
+  <button
+    class="button darkPrimaryButton"
+    data-testid="button"
+  >
+    click
+  </button>
+</DocumentFragment>
+`;
+
+exports[`<Button /> should render correct variant 2`] = `
+<DocumentFragment>
+  <button
+    class="button darkSecondaryButton"
+    data-testid="button"
+  >
+    click
+  </button>
+</DocumentFragment>
+`;

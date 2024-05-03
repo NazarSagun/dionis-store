@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react'
 
 import { Theme, ThemeStateProvider } from '@/providers/theme'
 
-import { Button } from './Button'
+import { Button, ButtonType } from './Button'
 
 const meta = {
   title: 'Atoms/Button',
@@ -14,12 +14,12 @@ const meta = {
   args: {
     onClick: () => {},
     label: 'Text',
-    variant: 'primary',
+    variant: ButtonType.PRIMARY,
   },
   argTypes: {
     variant: {
       control: 'radio',
-      options: ['primary', 'secondary'],
+      options: [ButtonType.PRIMARY, ButtonType.SECONDARY],
     },
     label: {
       defaultValue: 'Text',

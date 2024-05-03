@@ -4,16 +4,28 @@ import { useThemeState } from '@/providers/theme'
 
 import { getButtonStyles } from './Button.helpers'
 
-export type ButtonType = 'primary' | 'secondary'
+export enum ButtonType {
+  PRIMARY = 'primary',
+  SECONDARY = 'secondary',
+}
 
-interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant: ButtonType
+export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+  variant: ButtonType.PRIMARY | ButtonType.SECONDARY
   onClick?: () => void
   label: string
 }
 
-export const Button = ({ variant, label }: ButtonProps) => {
+export const Button = ({ variant, label, onClick, disabled = false }: ButtonProps) => {
   const { state } = useThemeState()
   const buttonStyles = getButtonStyles(variant, state.mode)
-  return <button className={buttonStyles}>{label}</button>
+  return (
+    <button
+      data-testid='button'
+      className={buttonStyles}
+      onClick={onClick && onClick}
+      disabled={disabled}
+    >
+      {label}
+    </button>
+  )
 }
