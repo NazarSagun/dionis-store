@@ -1,7 +1,7 @@
 import React from 'react'
 import Image from 'next/image'
 
-import { Theme, ThemeActionType } from '@/providers/theme'
+import { Theme } from '@/providers/theme'
 import { useThemeState } from '@/providers/theme/ThemeContext'
 
 import classes from './ThemeIcon.module.scss'
@@ -11,34 +11,24 @@ interface ThemeIconProps {
 }
 
 export const ThemeIcon = ({ onClick }: ThemeIconProps) => {
-  const { state, dispatch } = useThemeState()
+  const { state } = useThemeState()
   const imagePath = '/icons'
   const mode = state.mode
-  const isDarkMode = mode === Theme.DARK ? 'light-theme.png' : 'dark-theme.png'
-
-  const changeBodyStyles = () => {
-    const body = document.getElementById('body')
-    if (mode === Theme.LIGHT && body) {
-      body.classList.add('light')
-    } else {
-      body && body.classList.remove('light')
-    }
-  }
+  const isDarkModeIcon = mode === Theme.DARK ? 'light-theme.png' : 'dark-theme.png'
+  const isDarkMode = mode === Theme.DARK ? Theme.LIGHT : Theme.DARK
 
   return (
     <button
       className={classes.theme_icon}
-      onClick={() => {
-        onClick && onClick()
-        changeBodyStyles()
-        dispatch({ type: ThemeActionType.TOGGLE_THEME })
-      }}
+      onClick={() => onClick && onClick()}
+      data-testid='theme-button'
     >
       <Image
-        src={`${imagePath}/${isDarkMode}`}
-        alt={`${mode}-mode-icon`}
+        src={`${imagePath}/${isDarkModeIcon}`}
+        alt={`switch-to-${mode}-mode-icon`}
         width={32}
         height={32}
+        data-testid='theme-icon'
       />
     </button>
   )

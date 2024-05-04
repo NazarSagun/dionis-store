@@ -8,14 +8,23 @@ export enum Theme {
 
 export const LOCAL_STORAGE_THEME_KEY = 'theme'
 
-const localStorageKey = typeof window !== 'undefined' ? localStorage.getItem(LOCAL_STORAGE_THEME_KEY) : null
-
 export type ThemeState = {
   mode: Theme
 }
 
+const localStorageKeyHandler = () => {
+  if (typeof window !== 'undefined') {
+    if (!localStorage.getItem(LOCAL_STORAGE_THEME_KEY)) {
+      localStorage.setItem(LOCAL_STORAGE_THEME_KEY, Theme.DARK)
+    } else {
+      localStorage.getItem(LOCAL_STORAGE_THEME_KEY)
+    }
+  }
+  return null
+}
+
 export const themeInitialState: ThemeState = {
-  mode: (localStorageKey as Theme) || Theme.DARK,
+  mode: (localStorageKeyHandler() as Theme | null) || Theme.DARK,
 }
 
 export const themeReducer = (state: ThemeState, action: ThemeAction) => {

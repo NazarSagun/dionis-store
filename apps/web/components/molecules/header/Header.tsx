@@ -8,6 +8,8 @@ import { useThemeState } from '@/providers/theme/ThemeContext'
 
 import clsx from 'clsx'
 import classes from './Header.module.scss'
+import { Theme, ThemeActionType } from '@/providers/theme'
+import { useEffect, useState } from 'react'
 
 const navigation = [
   {
@@ -28,9 +30,19 @@ const navigation = [
 ]
 
 export const Navigation = () => {
-  const { state } = useThemeState()
+  const { state, dispatch } = useThemeState()
   const mode = state.mode
   const headerStyles = clsx(classes.header, mode === 'light' ? classes.light : null)
+  const localStorageTheme = mode === Theme.DARK ? Theme.LIGHT : Theme.DARK
+
+  const changeBodyStyles = () => {
+    const body = document.getElementById('body')
+    if (mode === Theme.LIGHT && body) {
+      body.classList.add('light')
+    } else {
+      body && body.classList.remove('light')
+    }
+  }
 
   return (
     <header className={headerStyles}>
@@ -44,7 +56,13 @@ export const Navigation = () => {
         />
       </div>
       <nav>
-        <ThemeIcon onClick={() => localStorage.setItem('theme', mode)} />
+        <ThemeIcon
+          onClick={() => {
+            localStorage.setItem('theme', localStorageTheme)
+            changeBodyStyles()
+            dispatch({ type: ThemeActionType.TOGGLE_THEME })
+          }}
+        />
         <ul>
           {navigation.map((item) => (
             <Link
