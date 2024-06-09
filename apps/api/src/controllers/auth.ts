@@ -11,7 +11,7 @@ export class AuthController {
   }
 
   register = async (req: Request, res: Response) => {
-    const { name, email, password } = req.body
+    const { name, email, password, role } = req.body
     const isEmailValid = /\S+@\S+\.\S+/.test(email)
 
     if (!name || !email || !password) {
@@ -26,11 +26,14 @@ export class AuthController {
       })
     }
 
+    const userRole = !role ? 101 : role
+
     try {
       const user = await this.authService.register({
         name,
         email,
         password,
+        role: userRole,
       })
 
       setHtttpOnlyCookie(res, user.refreshToken)
