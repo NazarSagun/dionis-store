@@ -5,7 +5,8 @@
   "prettier": "@repo/prettier-config",
   "scripts": {
     "dev": "nodemon --exec ts-node src/server.ts",
-    "build": "tsc"
+    "build": "tsc",
+    "migrate": "npx prisma migrate dev"
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
