@@ -5,6 +5,7 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export type PostLogin400 = {
-  message?: string;
-};
+export interface UserCredentials {
+  email: string;
+  password: string;
+}

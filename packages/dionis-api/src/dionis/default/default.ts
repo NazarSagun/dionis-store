@@ -5,23 +5,32 @@
  * OpenAPI spec version: 1.0.0
  */
 import {
-  useMutation
+  useInfiniteQuery,
+  useMutation,
+  useQuery
 } from '@tanstack/react-query'
 import type {
+  InfiniteData,
   MutationFunction,
+  QueryFunction,
+  QueryKey,
+  UseInfiniteQueryOptions,
+  UseInfiniteQueryResult,
   UseMutationOptions,
-  UseMutationResult
+  UseMutationResult,
+  UseQueryOptions,
+  UseQueryResult
 } from '@tanstack/react-query'
 import type {
-  PostLogin200,
-  PostLogin400,
-  PostLoginBody,
-  PostLogout200,
-  PostLogout401,
+  ErrorMessage,
   PostRegister201,
   PostRegister400,
   PostRegister500,
-  PostRegisterBody
+  PostRegisterBody,
+  SuccessMessage,
+  UserCredentials,
+  UserObject,
+  UsersArray
 } from '../../model'
 import { customInstance } from '../../../instance';
 import type { ErrorType, BodyType } from '../../../instance';
@@ -32,6 +41,107 @@ type AwaitedInput<T> = PromiseLike<T> | T;
 
 
 type SecondParameter<T extends (...args: any) => any> = Parameters<T>[1];
+
+
+/**
+ * @summary List all users
+ */
+export const getUsers = (
+    
+ options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<UsersArray>(
+      {url: `/users`, method: 'GET', signal
+    },
+      options);
+    }
+  
+
+export const getGetUsersQueryKey = () => {
+    return [`/users`] as const;
+    }
+
+    
+export const getGetUsersInfiniteQueryOptions = <TData = InfiniteData<Awaited<ReturnType<typeof getUsers>>>, TError = ErrorType<ErrorMessage>>( options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getUsers>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetUsersQueryKey();
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getUsers>>> = ({ signal }) => getUsers(requestOptions, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, ...queryOptions} as UseInfiniteQueryOptions<Awaited<ReturnType<typeof getUsers>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetUsersInfiniteQueryResult = NonNullable<Awaited<ReturnType<typeof getUsers>>>
+export type GetUsersInfiniteQueryError = ErrorType<ErrorMessage>
+
+/**
+ * @summary List all users
+ */
+export const useGetUsersInfinite = <TData = InfiniteData<Awaited<ReturnType<typeof getUsers>>>, TError = ErrorType<ErrorMessage>>(
+  options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getUsers>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+
+  ):  UseInfiniteQueryResult<TData, TError> & { queryKey: QueryKey } => {
+
+  const queryOptions = getGetUsersInfiniteQueryOptions(options)
+
+  const query = useInfiniteQuery(queryOptions) as  UseInfiniteQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+export const getGetUsersQueryOptions = <TData = Awaited<ReturnType<typeof getUsers>>, TError = ErrorType<ErrorMessage>>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsers>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetUsersQueryKey();
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getUsers>>> = ({ signal }) => getUsers(requestOptions, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getUsers>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetUsersQueryResult = NonNullable<Awaited<ReturnType<typeof getUsers>>>
+export type GetUsersQueryError = ErrorType<ErrorMessage>
+
+/**
+ * @summary List all users
+ */
+export const useGetUsers = <TData = Awaited<ReturnType<typeof getUsers>>, TError = ErrorType<ErrorMessage>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsers>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+
+  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } => {
+
+  const queryOptions = getGetUsersQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
 
 
 /**
@@ -95,29 +205,29 @@ export const usePostRegister = <TError = ErrorType<PostRegister400 | PostRegiste
  * @summary Login an existing user
  */
 export const postLogin = (
-    postLoginBody: BodyType<PostLoginBody>,
+    userCredentials: BodyType<UserCredentials>,
  options?: SecondParameter<typeof customInstance>,) => {
       
       
-      return customInstance<PostLogin200>(
+      return customInstance<UserObject>(
       {url: `/login`, method: 'POST',
       headers: {'Content-Type': 'application/json', },
-      data: postLoginBody
+      data: userCredentials
     },
       options);
     }
   
 
 
-export const getPostLoginMutationOptions = <TError = ErrorType<PostLogin400>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postLogin>>, TError,{data: BodyType<PostLoginBody>}, TContext>, request?: SecondParameter<typeof customInstance>}
-): UseMutationOptions<Awaited<ReturnType<typeof postLogin>>, TError,{data: BodyType<PostLoginBody>}, TContext> => {
+export const getPostLoginMutationOptions = <TError = ErrorType<ErrorMessage>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postLogin>>, TError,{data: BodyType<UserCredentials>}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof postLogin>>, TError,{data: BodyType<UserCredentials>}, TContext> => {
 const {mutation: mutationOptions, request: requestOptions} = options ?? {};
 
       
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postLogin>>, {data: BodyType<PostLoginBody>}> = (props) => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postLogin>>, {data: BodyType<UserCredentials>}> = (props) => {
           const {data} = props ?? {};
 
           return  postLogin(data,requestOptions)
@@ -129,18 +239,18 @@ const {mutation: mutationOptions, request: requestOptions} = options ?? {};
   return  { mutationFn, ...mutationOptions }}
 
     export type PostLoginMutationResult = NonNullable<Awaited<ReturnType<typeof postLogin>>>
-    export type PostLoginMutationBody = BodyType<PostLoginBody>
-    export type PostLoginMutationError = ErrorType<PostLogin400>
+    export type PostLoginMutationBody = BodyType<UserCredentials>
+    export type PostLoginMutationError = ErrorType<ErrorMessage>
 
     /**
  * @summary Login an existing user
  */
-export const usePostLogin = <TError = ErrorType<PostLogin400>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postLogin>>, TError,{data: BodyType<PostLoginBody>}, TContext>, request?: SecondParameter<typeof customInstance>}
+export const usePostLogin = <TError = ErrorType<ErrorMessage>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postLogin>>, TError,{data: BodyType<UserCredentials>}, TContext>, request?: SecondParameter<typeof customInstance>}
 ): UseMutationResult<
         Awaited<ReturnType<typeof postLogin>>,
         TError,
-        {data: BodyType<PostLoginBody>},
+        {data: BodyType<UserCredentials>},
         TContext
       > => {
 
@@ -156,7 +266,7 @@ export const postLogout = (
  options?: SecondParameter<typeof customInstance>,) => {
       
       
-      return customInstance<PostLogout200>(
+      return customInstance<SuccessMessage>(
       {url: `/logout`, method: 'POST'
     },
       options);
@@ -164,7 +274,7 @@ export const postLogout = (
   
 
 
-export const getPostLogoutMutationOptions = <TError = ErrorType<PostLogout401>,
+export const getPostLogoutMutationOptions = <TError = ErrorType<ErrorMessage>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postLogout>>, TError,void, TContext>, request?: SecondParameter<typeof customInstance>}
 ): UseMutationOptions<Awaited<ReturnType<typeof postLogout>>, TError,void, TContext> => {
 const {mutation: mutationOptions, request: requestOptions} = options ?? {};
@@ -185,12 +295,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?? {};
 
     export type PostLogoutMutationResult = NonNullable<Awaited<ReturnType<typeof postLogout>>>
     
-    export type PostLogoutMutationError = ErrorType<PostLogout401>
+    export type PostLogoutMutationError = ErrorType<ErrorMessage>
 
     /**
  * @summary Logout the current user
  */
-export const usePostLogout = <TError = ErrorType<PostLogout401>,
+export const usePostLogout = <TError = ErrorType<ErrorMessage>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postLogout>>, TError,void, TContext>, request?: SecondParameter<typeof customInstance>}
 ): UseMutationResult<
         Awaited<ReturnType<typeof postLogout>>,

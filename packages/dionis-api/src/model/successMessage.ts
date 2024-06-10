@@ -4,9 +4,7 @@
  * Swagger Dionis
  * OpenAPI spec version: 1.0.0
  */
-import type { PostLogin200User } from './postLogin200User';
 
-export type PostLogin200 = {
+export interface SuccessMessage {
   message?: string;
-  user?: PostLogin200User;
-};
+}

@@ -5,15 +5,15 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export * from './listUsersParams';
-export * from './postLogin200';
-export * from './postLogin200User';
-export * from './postLogin400';
-export * from './postLoginBody';
-export * from './postLogout200';
-export * from './postLogout401';
+export * from './errorMessage';
 export * from './postRegister201';
 export * from './postRegister201User';
 export * from './postRegister400';
 export * from './postRegister500';
 export * from './postRegisterBody';
+export * from './successMessage';
+export * from './userCredentials';
+export * from './userObject';
+export * from './usersArray';
+export * from './usersArrayItem';
+export * from './usersArrayItemRole';

@@ -10,37 +10,30 @@ paths:
   /users:
     get:
       summary: List all users
-      operationId: listUsers
-      tags:
-        - users
       responses:
         '200':
           description: A paged array of users
-          headers:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UsersArray'
+                $ref: '#/components/schemas/usersArray'
         '401':
-          description: A paged array of users
-          headers:
+          description: Unauthorized
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/errorMessage'
       security:
-        bearerHttpAuthentication: []
+        - bearerHttpAuthentication: []
   /user/delete:
     post:
       summary: Delete user
       operationId: deleteUser
       tags:
         - deleteUser
-      parameters:
       responses:
         '200':
           description: An object with success message
-          headers:
           content:
             application/json:
               schema:
@@ -50,15 +43,15 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/errorMessage'
         '401':
-          description: Bad request error
+          description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/errorMessage'
       security:
-        bearerHttpAuthentication: []
+        - bearerHttpAuthentication: []
   /register:
     post:
       summary: Register a new user
@@ -75,7 +68,7 @@ paths:
                 password:
                   type: string
                 role:
-                  type: int
+                  type: integer
               required:
                 - email
                 - password
@@ -118,7 +111,6 @@ paths:
                   message:
                     type: string
                     example: Something went wrong!
-
   /login:
     post:
       summary: Login an existing user
@@ -139,8 +131,8 @@ paths:
           description: User does not exist
           content:
             application/json:
-              $ref: '#/components/schemas/errorMessage'
-
+              schema:
+                $ref: '#/components/schemas/errorMessage'
   /logout:
     post:
       summary: Logout the current user
@@ -152,20 +144,19 @@ paths:
               schema:
                 $ref: '#/components/schemas/successMessage'
         '401':
-          description: No token provided
+          description: Unauthorized
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/errorMessage'
-          security:
-            bearerHttpAuthentication: []
-
+      security:
+        - bearerHttpAuthentication: []
 components:
   securitySchemes:
     bearerHttpAuthentication:
       description: Bearer token using a JWT
       type: http
-      scheme: Bearer
+      scheme: bearer
       bearerFormat: JWT
   schemas:
     errorMessage:
@@ -191,27 +182,27 @@ components:
           example: User logged out successfully!
     usersArray:
       type: array
-      properties:
-        user:
-          type: object
-          properies:
-            id:
-              type: int
-            email:
-              type: string
-              format: email
-            name:
-              type: string
-            password:
-              type: string
-            refreshToken:
-              type: string | null
-            role:
-              type: int
-              enum: [101, 500, 233]
-            createdAt:
-              type: string
-              format: date
+      items:
+        type: object
+        properties:
+          id:
+            type: integer
+          email:
+            type: string
+            format: email
+          name:
+            type: string
+          password:
+            type: string
+          refreshToken:
+            type: string
+            nullable: true
+          role:
+            type: integer
+            enum: [101, 500, 233]
+          createdAt:
+            type: string
+            format: date
     userCredentials:
       type: object
       properties:
@@ -220,6 +211,6 @@ components:
           format: email
         password:
           type: string
-        required:
-          - email
-          - password
+      required:
+        - email
+        - password

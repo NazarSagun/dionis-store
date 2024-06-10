@@ -4,8 +4,6 @@
  * Swagger Dionis
  * OpenAPI spec version: 1.0.0
  */
+import type { UsersArrayItem } from './usersArrayItem';
 
-export type PostLogin200User = {
-  accessToken?: string;
-  refreshToken?: string;
-};
+export type UsersArray = UsersArrayItem[];

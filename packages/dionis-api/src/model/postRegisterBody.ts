@@ -8,5 +8,5 @@
 export type PostRegisterBody = {
   email: string;
   password: string;
-  role?: unknown;
+  role?: number;
 };

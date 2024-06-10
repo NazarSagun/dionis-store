@@ -13,17 +13,35 @@ import {
   http
 } from 'msw'
 import type {
-  PostLogin200,
-  PostLogout200,
-  PostRegister201
+  PostRegister201,
+  SuccessMessage,
+  UserObject,
+  UsersArray
 } from '../../model'
+
+export const getGetUsersResponseMock = (): UsersArray => (Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({createdAt: faker.helpers.arrayElement([faker.date.past().toISOString().split('T')[0], undefined]), email: faker.helpers.arrayElement([faker.internet.email(), undefined]), id: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), name: faker.helpers.arrayElement([faker.word.sample(), undefined]), password: faker.helpers.arrayElement([faker.word.sample(), undefined]), refreshToken: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.word.sample(), null]), undefined]), role: faker.helpers.arrayElement([faker.helpers.arrayElement([101,500,233] as const), undefined])})))
 
 export const getPostRegisterResponseMock = (overrideResponse: Partial< PostRegister201 > = {}): PostRegister201 => ({message: faker.helpers.arrayElement([faker.word.sample(), undefined]), user: faker.helpers.arrayElement([{accessToken: faker.helpers.arrayElement([faker.word.sample(), undefined]), refreshToken: faker.helpers.arrayElement([faker.word.sample(), undefined])}, undefined]), ...overrideResponse})
 
-export const getPostLoginResponseMock = (overrideResponse: Partial< PostLogin200 > = {}): PostLogin200 => ({message: faker.helpers.arrayElement([faker.word.sample(), undefined]), user: faker.helpers.arrayElement([{accessToken: faker.helpers.arrayElement([faker.word.sample(), undefined]), refreshToken: faker.helpers.arrayElement([faker.word.sample(), undefined])}, undefined]), ...overrideResponse})
+export const getPostLoginResponseMock = (overrideResponse: Partial< UserObject > = {}): UserObject => ({accessToken: faker.helpers.arrayElement([faker.word.sample(), undefined]), message: faker.helpers.arrayElement([faker.word.sample(), undefined]), ...overrideResponse})
 
-export const getPostLogoutResponseMock = (overrideResponse: Partial< PostLogout200 > = {}): PostLogout200 => ({message: faker.helpers.arrayElement([faker.word.sample(), undefined]), ...overrideResponse})
+export const getPostLogoutResponseMock = (overrideResponse: Partial< SuccessMessage > = {}): SuccessMessage => ({message: faker.helpers.arrayElement([faker.word.sample(), undefined]), ...overrideResponse})
 
+
+export const getGetUsersMockHandler = (overrideResponse?: UsersArray | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<UsersArray> | UsersArray)) => {
+  return http.get('*/users', async (info) => {await delay(1000);
+    return new HttpResponse(JSON.stringify(overrideResponse !== undefined 
+            ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse) 
+            : getGetUsersResponseMock()),
+      {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      }
+    )
+  })
+}
 
 export const getPostRegisterMockHandler = (overrideResponse?: PostRegister201 | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<PostRegister201> | PostRegister201)) => {
   return http.post('*/register', async (info) => {await delay(1000);
@@ -40,7 +58,7 @@ export const getPostRegisterMockHandler = (overrideResponse?: PostRegister201 | 
   })
 }
 
-export const getPostLoginMockHandler = (overrideResponse?: PostLogin200 | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<PostLogin200> | PostLogin200)) => {
+export const getPostLoginMockHandler = (overrideResponse?: UserObject | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<UserObject> | UserObject)) => {
   return http.post('*/login', async (info) => {await delay(1000);
     return new HttpResponse(JSON.stringify(overrideResponse !== undefined 
             ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse) 
@@ -55,7 +73,7 @@ export const getPostLoginMockHandler = (overrideResponse?: PostLogin200 | ((info
   })
 }
 
-export const getPostLogoutMockHandler = (overrideResponse?: PostLogout200 | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<PostLogout200> | PostLogout200)) => {
+export const getPostLogoutMockHandler = (overrideResponse?: SuccessMessage | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<SuccessMessage> | SuccessMessage)) => {
   return http.post('*/logout', async (info) => {await delay(1000);
     return new HttpResponse(JSON.stringify(overrideResponse !== undefined 
             ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse) 
@@ -70,6 +88,7 @@ export const getPostLogoutMockHandler = (overrideResponse?: PostLogout200 | ((in
   })
 }
 export const getDefaultMock = () => [
+  getGetUsersMockHandler(),
   getPostRegisterMockHandler(),
   getPostLoginMockHandler(),
   getPostLogoutMockHandler()

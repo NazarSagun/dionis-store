@@ -5,6 +5,7 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export type PostLogout200 = {
+export interface UserObject {
+  accessToken?: string;
   message?: string;
-};
+}

@@ -5,9 +5,9 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export type ListUsersParams = {
 /**
- * How many items to return at one time (max 100)
+ * A text message describing an error
  */
-limit?: string;
-};
+export interface ErrorMessage {
+  message?: string;
+}
