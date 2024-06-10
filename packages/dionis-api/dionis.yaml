@@ -31,6 +31,16 @@ paths:
       operationId: deleteUser
       tags:
         - deleteUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: User deleted!
       responses:
         '200':
           description: An object with success message
@@ -60,57 +70,27 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                email:
-                  type: string
-                  format: email
-                password:
-                  type: string
-                role:
-                  type: integer
-              required:
-                - email
-                - password
+              $ref: '#/components/schemas/userCredentials'
       responses:
         '201':
           description: User registered successfully
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: User registered successfully!
-                  user:
-                    type: object
-                    properties:
-                      accessToken:
-                        type: string
-                      refreshToken:
-                        type: string
+                $ref: '#/components/schemas/userObject'
 
         '400':
           description: User already exists
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: User already exists!
+                $ref: '#/components/schemas/errorMessage'
         '500':
           description: Internal server error
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: Something went wrong!
+                $ref: '#/components/schemas/errorMessage'
   /login:
     post:
       summary: Login an existing user

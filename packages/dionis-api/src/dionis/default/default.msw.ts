@@ -13,7 +13,6 @@ import {
   http
 } from 'msw'
 import type {
-  PostRegister201,
   SuccessMessage,
   UserObject,
   UsersArray
@@ -21,7 +20,7 @@ import type {
 
 export const getGetUsersResponseMock = (): UsersArray => (Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({createdAt: faker.helpers.arrayElement([faker.date.past().toISOString().split('T')[0], undefined]), email: faker.helpers.arrayElement([faker.internet.email(), undefined]), id: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), name: faker.helpers.arrayElement([faker.word.sample(), undefined]), password: faker.helpers.arrayElement([faker.word.sample(), undefined]), refreshToken: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.word.sample(), null]), undefined]), role: faker.helpers.arrayElement([faker.helpers.arrayElement([101,500,233] as const), undefined])})))
 
-export const getPostRegisterResponseMock = (overrideResponse: Partial< PostRegister201 > = {}): PostRegister201 => ({message: faker.helpers.arrayElement([faker.word.sample(), undefined]), user: faker.helpers.arrayElement([{accessToken: faker.helpers.arrayElement([faker.word.sample(), undefined]), refreshToken: faker.helpers.arrayElement([faker.word.sample(), undefined])}, undefined]), ...overrideResponse})
+export const getPostRegisterResponseMock = (overrideResponse: Partial< UserObject > = {}): UserObject => ({accessToken: faker.helpers.arrayElement([faker.word.sample(), undefined]), message: faker.helpers.arrayElement([faker.word.sample(), undefined]), ...overrideResponse})
 
 export const getPostLoginResponseMock = (overrideResponse: Partial< UserObject > = {}): UserObject => ({accessToken: faker.helpers.arrayElement([faker.word.sample(), undefined]), message: faker.helpers.arrayElement([faker.word.sample(), undefined]), ...overrideResponse})
 
@@ -43,7 +42,7 @@ export const getGetUsersMockHandler = (overrideResponse?: UsersArray | ((info: P
   })
 }
 
-export const getPostRegisterMockHandler = (overrideResponse?: PostRegister201 | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<PostRegister201> | PostRegister201)) => {
+export const getPostRegisterMockHandler = (overrideResponse?: UserObject | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<UserObject> | UserObject)) => {
   return http.post('*/register', async (info) => {await delay(1000);
     return new HttpResponse(JSON.stringify(overrideResponse !== undefined 
             ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse) 

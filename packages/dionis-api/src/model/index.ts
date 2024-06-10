@@ -5,12 +5,8 @@
  * OpenAPI spec version: 1.0.0
  */
 
+export * from './deleteUserBody';
 export * from './errorMessage';
-export * from './postRegister201';
-export * from './postRegister201User';
-export * from './postRegister400';
-export * from './postRegister500';
-export * from './postRegisterBody';
 export * from './successMessage';
 export * from './userCredentials';
 export * from './userObject';

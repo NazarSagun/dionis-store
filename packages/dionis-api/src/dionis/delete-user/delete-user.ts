@@ -13,11 +13,12 @@ import type {
   UseMutationResult
 } from '@tanstack/react-query'
 import type {
+  DeleteUserBody,
   ErrorMessage,
   SuccessMessage
 } from '../../model'
 import { customInstance } from '../../../instance';
-import type { ErrorType } from '../../../instance';
+import type { ErrorType, BodyType } from '../../../instance';
 
 type AwaitedInput<T> = PromiseLike<T> | T;
 
@@ -31,12 +32,14 @@ type SecondParameter<T extends (...args: any) => any> = Parameters<T>[1];
  * @summary Delete user
  */
 export const deleteUser = (
-    
+    deleteUserBody: BodyType<DeleteUserBody>,
  options?: SecondParameter<typeof customInstance>,) => {
       
       
       return customInstance<SuccessMessage>(
-      {url: `/user/delete`, method: 'POST'
+      {url: `/user/delete`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: deleteUserBody
     },
       options);
     }
@@ -44,17 +47,17 @@ export const deleteUser = (
 
 
 export const getDeleteUserMutationOptions = <TError = ErrorType<ErrorMessage>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteUser>>, TError,void, TContext>, request?: SecondParameter<typeof customInstance>}
-): UseMutationOptions<Awaited<ReturnType<typeof deleteUser>>, TError,void, TContext> => {
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteUser>>, TError,{data: BodyType<DeleteUserBody>}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof deleteUser>>, TError,{data: BodyType<DeleteUserBody>}, TContext> => {
 const {mutation: mutationOptions, request: requestOptions} = options ?? {};
 
       
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteUser>>, void> = () => {
-          
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteUser>>, {data: BodyType<DeleteUserBody>}> = (props) => {
+          const {data} = props ?? {};
 
-          return  deleteUser(requestOptions)
+          return  deleteUser(data,requestOptions)
         }
 
         
@@ -63,18 +66,18 @@ const {mutation: mutationOptions, request: requestOptions} = options ?? {};
   return  { mutationFn, ...mutationOptions }}
 
     export type DeleteUserMutationResult = NonNullable<Awaited<ReturnType<typeof deleteUser>>>
-    
+    export type DeleteUserMutationBody = BodyType<DeleteUserBody>
     export type DeleteUserMutationError = ErrorType<ErrorMessage>
 
     /**
  * @summary Delete user
  */
 export const useDeleteUser = <TError = ErrorType<ErrorMessage>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteUser>>, TError,void, TContext>, request?: SecondParameter<typeof customInstance>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteUser>>, TError,{data: BodyType<DeleteUserBody>}, TContext>, request?: SecondParameter<typeof customInstance>}
 ): UseMutationResult<
         Awaited<ReturnType<typeof deleteUser>>,
         TError,
-        void,
+        {data: BodyType<DeleteUserBody>},
         TContext
       > => {
 

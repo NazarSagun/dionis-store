@@ -23,10 +23,6 @@ import type {
 } from '@tanstack/react-query'
 import type {
   ErrorMessage,
-  PostRegister201,
-  PostRegister400,
-  PostRegister500,
-  PostRegisterBody,
   SuccessMessage,
   UserCredentials,
   UserObject,
@@ -148,29 +144,29 @@ export const useGetUsers = <TData = Awaited<ReturnType<typeof getUsers>>, TError
  * @summary Register a new user
  */
 export const postRegister = (
-    postRegisterBody: BodyType<PostRegisterBody>,
+    userCredentials: BodyType<UserCredentials>,
  options?: SecondParameter<typeof customInstance>,) => {
       
       
-      return customInstance<PostRegister201>(
+      return customInstance<UserObject>(
       {url: `/register`, method: 'POST',
       headers: {'Content-Type': 'application/json', },
-      data: postRegisterBody
+      data: userCredentials
     },
       options);
     }
   
 
 
-export const getPostRegisterMutationOptions = <TError = ErrorType<PostRegister400 | PostRegister500>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postRegister>>, TError,{data: BodyType<PostRegisterBody>}, TContext>, request?: SecondParameter<typeof customInstance>}
-): UseMutationOptions<Awaited<ReturnType<typeof postRegister>>, TError,{data: BodyType<PostRegisterBody>}, TContext> => {
+export const getPostRegisterMutationOptions = <TError = ErrorType<ErrorMessage>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postRegister>>, TError,{data: BodyType<UserCredentials>}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof postRegister>>, TError,{data: BodyType<UserCredentials>}, TContext> => {
 const {mutation: mutationOptions, request: requestOptions} = options ?? {};
 
       
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postRegister>>, {data: BodyType<PostRegisterBody>}> = (props) => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postRegister>>, {data: BodyType<UserCredentials>}> = (props) => {
           const {data} = props ?? {};
 
           return  postRegister(data,requestOptions)
@@ -182,18 +178,18 @@ const {mutation: mutationOptions, request: requestOptions} = options ?? {};
   return  { mutationFn, ...mutationOptions }}
 
     export type PostRegisterMutationResult = NonNullable<Awaited<ReturnType<typeof postRegister>>>
-    export type PostRegisterMutationBody = BodyType<PostRegisterBody>
-    export type PostRegisterMutationError = ErrorType<PostRegister400 | PostRegister500>
+    export type PostRegisterMutationBody = BodyType<UserCredentials>
+    export type PostRegisterMutationError = ErrorType<ErrorMessage>
 
     /**
  * @summary Register a new user
  */
-export const usePostRegister = <TError = ErrorType<PostRegister400 | PostRegister500>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postRegister>>, TError,{data: BodyType<PostRegisterBody>}, TContext>, request?: SecondParameter<typeof customInstance>}
+export const usePostRegister = <TError = ErrorType<ErrorMessage>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postRegister>>, TError,{data: BodyType<UserCredentials>}, TContext>, request?: SecondParameter<typeof customInstance>}
 ): UseMutationResult<
         Awaited<ReturnType<typeof postRegister>>,
         TError,
-        {data: BodyType<PostRegisterBody>},
+        {data: BodyType<UserCredentials>},
         TContext
       > => {
 
