@@ -120,7 +120,7 @@ export class AuthController {
 
     if (!refreshToken) {
       return res.status(401).json({
-        message: 'No token provided',
+        message: 'Refresh token expired, please login to the system',
       })
     }
 

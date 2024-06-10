@@ -9,7 +9,7 @@ export function verifyJWT(req: AuthInfoRequest, res: Response, next: NextFunctio
   const authHeader = req.headers.authorization
 
   if (!authHeader) {
-    return res.status(401).json({ message: 'No token provided' })
+    return res.status(403).json({ message: 'No token provided' })
   }
 
   const parts = authHeader.split(' ')
@@ -26,7 +26,7 @@ export function verifyJWT(req: AuthInfoRequest, res: Response, next: NextFunctio
 
   jwt.verify(token, process.env.ACCESS_TOKEN, (err, decoded) => {
     if (err || !decoded.email || !decoded.role) {
-      return res.status(401).json({ message: 'Forbidden' })
+      return res.status(403).json({ message: 'Forbidden' })
     }
 
     req.email = decoded.email

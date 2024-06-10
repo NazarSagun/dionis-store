@@ -2,11 +2,11 @@ import { AuthAction, AuthActionType } from '../actions/authActions'
 
 export interface AuthState {
   isAuthenticated: boolean
-  user: { email: string; password: string } | null
+  accessToken: string | null
 }
 
 export const authInitialState: AuthState = {
-  user: null,
+  accessToken: null,
   isAuthenticated: false,
 }
 
@@ -15,17 +15,17 @@ export const authReducer = (state: AuthState, action: AuthAction) => {
     case AuthActionType.LOGIN:
       return {
         ...state,
-        auth: { isAuthenticated: true, user: action.payload },
+        auth: { isAuthenticated: true, accessToken: action.payload },
       }
     case AuthActionType.LOGOUT:
       return {
         ...state,
-        auth: { isAuthenticated: false, user: null },
+        auth: { isAuthenticated: false, accessToken: null },
       }
     case AuthActionType.SIGNUP:
       return {
         ...state,
-        auth: { isAuthenticated: true, user: action.payload },
+        auth: { isAuthenticated: true, accessToken: action.payload },
       }
     default:
       return state

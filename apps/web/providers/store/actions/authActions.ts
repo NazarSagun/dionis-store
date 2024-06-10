@@ -6,11 +6,6 @@ export enum AuthActionType {
 }
 
 export type AuthAction =
-  | { type: AuthActionType.LOGIN; payload: AuthPayload }
+  | { type: AuthActionType.LOGIN; payload: string | null | Promise<string | null> }
   | { type: AuthActionType.LOGOUT }
-  | { type: AuthActionType.SIGNUP; payload: AuthPayload }
-
-export interface AuthPayload {
-  email: string
-  password: string
-}
+  | { type: AuthActionType.SIGNUP; payload: string | null }

@@ -27,13 +27,13 @@ export const verifyRole = (role: Role) => {
 
     jwt.verify(token, process.env.ACCESS_TOKEN, function (err, decoded) {
       if (err || !decoded.email) {
-        return res.status(401).json({ message: 'Forbidden a' })
+        return res.status(401).json({ message: 'Forbidden' })
       }
 
       req.role = decoded.role
 
       if (req.role !== role) {
-        return res.status(401).json({ message: 'Forbidden b' })
+        return res.status(401).json({ message: 'Forbidden' })
       }
 
       next()

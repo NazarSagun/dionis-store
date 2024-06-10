@@ -1,9 +1,11 @@
 'use client'
 
-import { createContext, Dispatch, ReactNode, useContext, useReducer } from 'react'
+import { createContext, Dispatch, ReactNode, useContext, useEffect, useReducer } from 'react'
 
 import { globalInitialState, GlobalState, rootReducer } from './reducers'
 import { ActionType } from './types'
+import { AuthActionType } from './actions'
+import { useRefreshToken } from './useRefreshToken'
 
 interface GlobalInitialState {
   state: GlobalState
@@ -17,8 +19,13 @@ type GlobalStateProviderProps = {
 export const GlobalStateContext = createContext<GlobalInitialState | undefined>(undefined)
 GlobalStateContext.displayName = 'GlobalStateContext'
 
-export const GlobalStateProvider = ({ children }: GlobalStateProviderProps) => {
+export const GlobalStateProvider = async ({ children }: GlobalStateProviderProps) => {
   const [state, dispatch] = useReducer(rootReducer, globalInitialState)
+  const token = useRefreshToken(state.auth.accessToken)
+
+  useEffect(() => {
+    dispatch({ type: AuthActionType.LOGIN, payload: token })
+  }, [token])
 
   return <GlobalStateContext.Provider value={{ state, dispatch }}>{children}</GlobalStateContext.Provider>
 }
