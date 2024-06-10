@@ -13,13 +13,6 @@ paths:
       operationId: listUsers
       tags:
         - users
-      parameters:
-        - name: limit
-          in: query
-          description: How many items to return at one time (max 100)
-          required: false
-          schema:
-            type: string
       responses:
         '200':
           description: A paged array of users
@@ -28,18 +21,21 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UsersArray'
-        default:
-          description: unexpected error
+        '401':
+          description: A paged array of users
+          headers:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
-  /users/deleteAll:
-    get:
-      summary: Delete all users
-      operationId: deleteUsers
+                $ref: '#/components/schemas/errorMessage'
+      security:
+        bearerHttpAuthentication: []
+  /user/delete:
+    post:
+      summary: Delete user
+      operationId: deleteUser
       tags:
-        - deleteUsers
+        - deleteUser
       parameters:
       responses:
         '200':
@@ -48,13 +44,21 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UsersArray'
-        default:
-          description: unexpected error
+                $ref: '#/components/schemas/successMessage'
+        '400':
+          description: Bad request error
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+        '401':
+          description: Bad request error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        bearerHttpAuthentication: []
   /register:
     post:
       summary: Register a new user
@@ -123,44 +127,19 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                email:
-                  type: string
-                  format: email
-                password:
-                  type: string
-              required:
-                - email
-                - password
+              $ref: '#/components/schemas/userCredentials'
       responses:
         '200':
           description: User logged in successfully
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: User logged in successfully!
-                  user:
-                    type: object
-                    properties:
-                      accessToken:
-                        type: string
-                      refreshToken:
-                        type: string
+                $ref: '#/components/schemas/userObject'
         '400':
           description: User does not exist
           content:
             application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: User does not exist!
+              $ref: '#/components/schemas/errorMessage'
 
   /logout:
     post:
@@ -171,27 +150,76 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: User logged out successfully!
+                $ref: '#/components/schemas/successMessage'
         '401':
           description: No token provided
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: No token provided
-      security:
-        - cookieAuth: []
+                $ref: '#/components/schemas/errorMessage'
+          security:
+            bearerHttpAuthentication: []
 
 components:
   securitySchemes:
-    cookieAuth:
-      type: apiKey
-      in: cookie
-      name: refreshToken
+    bearerHttpAuthentication:
+      description: Bearer token using a JWT
+      type: http
+      scheme: Bearer
+      bearerFormat: JWT
+  schemas:
+    errorMessage:
+      type: object
+      properties:
+        message:
+          type: string
+          example: No token provided
+      description: A text message describing an error
+    userObject:
+      type: object
+      properties:
+        message:
+          type: string
+          example: User logged in successfully!
+        accessToken:
+          type: string
+    successMessage:
+      type: object
+      properties:
+        message:
+          type: string
+          example: User logged out successfully!
+    usersArray:
+      type: array
+      properties:
+        user:
+          type: object
+          properies:
+            id:
+              type: int
+            email:
+              type: string
+              format: email
+            name:
+              type: string
+            password:
+              type: string
+            refreshToken:
+              type: string | null
+            role:
+              type: int
+              enum: [101, 500, 233]
+            createdAt:
+              type: string
+              format: date
+    userCredentials:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+        required:
+          - email
+          - password

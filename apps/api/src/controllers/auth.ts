@@ -29,18 +29,18 @@ export class AuthController {
     const userRole = !role ? 101 : role
 
     try {
-      const user = await this.authService.register({
+      const userToken = await this.authService.register({
         name,
         email,
         password,
         role: userRole,
       })
 
-      setHtttpOnlyCookie(res, user.refreshToken)
+      setHtttpOnlyCookie(res, userToken.refreshToken)
 
       return res.status(201).json({
         message: 'User registered successfully!',
-        user,
+        accessToken: userToken.accessToken,
       })
     } catch (error) {
       if (error instanceof CustomError) {
@@ -64,16 +64,16 @@ export class AuthController {
     }
 
     try {
-      const user = await this.authService.login({
+      const userToken = await this.authService.login({
         email,
         password,
       })
 
-      setHtttpOnlyCookie(res, user.refreshToken)
+      setHtttpOnlyCookie(res, userToken.refreshToken)
 
       return res.status(201).json({
         message: 'User logged in successfully!',
-        user,
+        accessToken: userToken.accessToken,
       })
     } catch (error) {
       if (error instanceof CustomError) {
@@ -125,11 +125,11 @@ export class AuthController {
     }
 
     try {
-      const user = await this.authService.refreshToken(refreshToken)
+      const userToken = await this.authService.refreshToken(refreshToken)
 
       return res.status(200).json({
         message: 'Token refreshed successfully!',
-        accessToken: user.accessToken,
+        accessToken: userToken,
       })
     } catch (error) {
       if (error instanceof CustomError) {

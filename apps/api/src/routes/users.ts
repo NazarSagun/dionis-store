@@ -7,4 +7,4 @@ export const usersRouter = Router()
 const usersController = new UsersController()
 
 usersRouter.get('/users', verifyJWT, verifyRole(500), usersController.getAllUsers)
-usersRouter.post('/users', usersController.removeAllUsers)
+usersRouter.post('/user/delete', verifyJWT, verifyRole(500), usersController.removeUser)

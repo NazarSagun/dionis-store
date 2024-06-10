@@ -119,6 +119,6 @@ export class AuthService {
       return accessToken
     })
 
-    return { accessToken: verifiedToken }
+    return verifiedToken
   }
 }

@@ -17,10 +17,26 @@ export class UsersController {
     }
   }
 
-  removeAllUsers = async (req: Request, res: Response) => {
+  removeUser = async (req: Request, res: Response) => {
+    const id = req.body.id
+    if (!req.body.id) {
+      return res.status(400).json({ message: 'Provide user id' })
+    }
+    const userExists = await this.prisma.user.findUnique({
+      where: {
+        id,
+      },
+    })
+    if (!userExists) {
+      return res.status(400).json({ message: 'There is no such user' })
+    }
     try {
-      await this.prisma.user.deleteMany()
-      res.status(200).json({ message: 'All users deleted!' })
+      await this.prisma.user.delete({
+        where: {
+          id,
+        },
+      })
+      res.status(200).json({ message: 'User deleted!' })
     } catch (error) {
       res.status(500).json(error)
     }
