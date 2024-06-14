@@ -1,6 +1,6 @@
 'use client'
 
-import { AuthPage } from '@/components'
+import { AuthPage } from '@/components/organisms'
 import { useThemeState } from '@/providers/theme'
 
 import clsx from 'clsx'
@@ -28,7 +28,7 @@ const LoginPage = () => {
     <div className={containerStyles}>
       <AuthPage
         variant='login'
-        isFormLoading={isPending}
+        isFormLoading={false}
         onSubmitForm={(formData) => {
           mutate({ data: { email: formData.email, password: formData.password } })
         }}

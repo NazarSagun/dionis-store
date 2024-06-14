@@ -4,7 +4,7 @@ import { LoginSvg } from '../LoginSvg'
 import { SignUpSvg } from '../SignUpSvg'
 
 import clsx from 'clsx'
-import classes from './LeftContentBlock.module.scss'
+import classes from './LeftContentBlock.module.css'
 
 interface LeftContentBlockProps {
   variant: 'login' | 'signup'

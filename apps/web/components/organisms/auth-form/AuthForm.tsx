@@ -2,14 +2,14 @@
 
 import { FormEvent, useState } from 'react'
 
-import { Button } from '@/components/atoms'
+import { Button } from '@/components/atoms/button/Button'
 import { Input } from '@/components/atoms'
 import { useThemeState } from '@/providers/theme'
 
 import { validateInput } from './AuthForm.helpers'
 
 import clsx from 'clsx'
-import classes from './AuthForm.module.scss'
+import classes from './AuthForm.module.css'
 
 export type UserData = {
   email: string
@@ -76,12 +76,7 @@ export const AuthForm = ({ onSubmitForm, title, privacyText, variant, isLoading 
         type='password'
         name='password'
       />
-      <Button
-        variant='default'
-        disabled={isLoading}
-      >
-        {variant === 'login' ? 'Login' : 'Register'}
-      </Button>
+      <Button disabled={isLoading}>{variant === 'login' ? 'Login' : 'Register'}</Button>
 
       {privacyText && <p>{privacyText}</p>}
     </form>

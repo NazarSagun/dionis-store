@@ -66,6 +66,15 @@
   }
 }
 
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
 :root {
   --light-primary-color: #3498db;
   --light-secondary-color: #2ecc7 --light-text-color: #333;
@@ -83,15 +92,6 @@
   --dark-link-color: #3498db;
 
   --header-link-color: var(--light-background-color);
-}
-
-@layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
 }
 
 * {

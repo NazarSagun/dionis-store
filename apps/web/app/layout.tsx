@@ -1,6 +1,6 @@
 'use client'
 
-import { Inter as FontSans, Roboto_Mono } from 'next/font/google'
+import { Inter as FontSans } from 'next/font/google'
 
 import { Footer } from '@/components/molecules/footer'
 import { Navigation } from '@/components/molecules/header'
@@ -15,12 +15,6 @@ const queryClient = new QueryClient()
 
 const fontSans = FontSans({ subsets: ['latin'], variable: '--font-sans', weight: ['400', '500', '600'] })
 
-const roboto_mono = Roboto_Mono({
-  subsets: ['latin'],
-  display: 'swap',
-  variable: '--font-roboto-mono',
-})
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -33,7 +27,7 @@ export default function RootLayout({
     >
       <body
         id='body'
-        className={`${fontSans.variable} ${roboto_mono.variable}`}
+        className={cn('min-h-screen bg-background font-sans antialiased', fontSans.variable)}
       >
         <GlobalStateProvider>
           <QueryClientProvider client={queryClient}>
