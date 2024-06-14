@@ -19,7 +19,7 @@ type GlobalStateProviderProps = {
 export const GlobalStateContext = createContext<GlobalInitialState | undefined>(undefined)
 GlobalStateContext.displayName = 'GlobalStateContext'
 
-export const GlobalStateProvider = async ({ children }: GlobalStateProviderProps) => {
+export const GlobalStateProvider = ({ children }: GlobalStateProviderProps) => {
   const [state, dispatch] = useReducer(rootReducer, globalInitialState)
   const token = useRefreshToken(state.auth.accessToken)
 

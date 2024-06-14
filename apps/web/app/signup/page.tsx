@@ -4,7 +4,7 @@ import { AuthPage } from '@/components'
 import { useThemeState } from '@/providers/theme'
 
 import clsx from 'clsx'
-import classes from './page.module.scss'
+import classes from './page.module.css'
 
 const SignUpPage = () => {
   const { state } = useThemeState()
@@ -12,6 +12,7 @@ const SignUpPage = () => {
   return (
     <div className={containerStyles}>
       <AuthPage
+        isFormLoading={false}
         variant='signup'
         onSubmitForm={(formData) => console.log(formData)}
       />

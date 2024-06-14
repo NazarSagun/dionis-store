@@ -1,0 +1,7 @@
+.container {
+  background: var(--dark-background-color);
+}
+
+.container.light {
+  background: var(--light-background-color);
+}

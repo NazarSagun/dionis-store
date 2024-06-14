@@ -1,9 +1,6 @@
 import { InputHTMLAttributes } from 'react'
 
-export const validateInput = (
-  type: InputHTMLAttributes<HTMLInputElement>['type'],
-  value: string
-) => {
+export const validateInput = (type: InputHTMLAttributes<HTMLInputElement>['type'], value: string) => {
   let isValid
   const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g
   const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/gm
@@ -16,7 +13,8 @@ export const validateInput = (
       isValid = emailRegex.test(value)
       break
     case 'password':
-      isValid = passwordRegex.test(value)
+      // isValid = passwordRegex.test(value)
+      isValid = value.length > 3
       break
     default:
       return false

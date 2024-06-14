@@ -10,6 +10,7 @@ paths:
   /users:
     get:
       summary: List all users
+      operationId: getUsers
       responses:
         '200':
           description: A paged array of users
@@ -65,6 +66,7 @@ paths:
   /register:
     post:
       summary: Register a new user
+      operationId: register
       requestBody:
         required: true
         content:
@@ -94,6 +96,7 @@ paths:
   /login:
     post:
       summary: Login an existing user
+      operationId: login
       requestBody:
         required: true
         content:
@@ -116,6 +119,7 @@ paths:
   /logout:
     post:
       summary: Logout the current user
+      operationId: logout
       responses:
         '200':
           description: User logged out successfully

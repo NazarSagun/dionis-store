@@ -1,0 +1,41 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  width: 350px;
+  background-color: var(--dark-background-secondary-color);
+  padding: 15px 20px;
+  border-radius: 5px;
+}
+
+.form h3 {
+  margin-top: 10px;
+  margin-bottom: 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: var(--dark-text-color);
+}
+
+.form p {
+  margin-top: 15px;
+  margin-bottom: 0;
+  text-wrap: balance;
+  text-align: center;
+  font-size: 12px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #c2c2c2;
+}
+
+.form.light {
+  background-color: var(--light-background-secondary-color);
+}
+
+.form.light h3 {
+  color: var(--light-text-color);
+}
+
+.form.light p {
+  color: #525252;
+}
+
+.form button {
+  margin-top: 5px;
+}

@@ -12,8 +12,6 @@ const meta = {
   tags: ['autodocs'],
   args: {
     name: 'Text',
-    label: 'Label',
-    errorMessage: '',
     type: 'text',
   },
   argTypes: {

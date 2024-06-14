@@ -1,3 +1,5 @@
+'use client'
+
 import { FormEvent, useState } from 'react'
 
 import { Button } from '@/components/atoms'
@@ -16,12 +18,13 @@ export type UserData = {
 
 interface AuthFormProps {
   onSubmitForm: (userData: UserData) => void
+  isLoading: boolean
   title: string
   privacyText: string
   variant: 'login' | 'signup'
 }
 
-export const AuthForm = ({ onSubmitForm, title, privacyText, variant }: AuthFormProps) => {
+export const AuthForm = ({ onSubmitForm, title, privacyText, variant, isLoading }: AuthFormProps) => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [emailErrorMessage, setEmailErrorMessage] = useState('')
@@ -44,9 +47,9 @@ export const AuthForm = ({ onSubmitForm, title, privacyText, variant }: AuthForm
       return
     }
 
-    onSubmitForm({ email, password })
     setEmail('')
     setPassword('')
+    onSubmitForm({ email, password })
   }
 
   return (
@@ -60,25 +63,25 @@ export const AuthForm = ({ onSubmitForm, title, privacyText, variant }: AuthForm
           setEmail(e)
           setEmailErrorMessage('')
         }}
+        value={email}
         type='email'
         name='email'
-        label='Email'
-        errorMessage={emailErrorMessage}
       />
       <Input
         onInputChange={(e) => {
           setPassword(e)
           setPasswordErrorMessage('')
         }}
+        value={password}
         type='password'
         name='password'
-        label='Password'
-        errorMessage={passwordErrorMessage}
       />
       <Button
-        variant='primary'
-        label={variant === 'login' ? 'Login' : 'Register'}
-      />
+        variant='default'
+        disabled={isLoading}
+      >
+        {variant === 'login' ? 'Login' : 'Register'}
+      </Button>
 
       {privacyText && <p>{privacyText}</p>}
     </form>

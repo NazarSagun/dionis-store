@@ -7,9 +7,8 @@ import { ThemeIcon } from '@/components/atoms/theme-icon'
 import { useThemeState } from '@/providers/theme/ThemeContext'
 
 import clsx from 'clsx'
-import classes from './Header.module.scss'
+import classes from './Header.module.css'
 import { Theme, ThemeActionType } from '@/providers/theme'
-import { useEffect, useState } from 'react'
 
 const navigation = [
   {

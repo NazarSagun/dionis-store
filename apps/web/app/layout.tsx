@@ -1,19 +1,25 @@
-import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+'use client'
+
+import { Inter as FontSans, Roboto_Mono } from 'next/font/google'
 
 import { Footer } from '@/components/molecules/footer'
 import { Navigation } from '@/components/molecules/header'
 import { GlobalStateProvider } from '@/providers/store/GlobalStateContext'
 import { ThemeStateProvider } from '@/providers/theme/ThemeContext'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
-import './globals.scss'
+import './globals.css'
+import { cn } from '@/lib/utils'
 
-const inter = Inter({ subsets: ['latin'] })
+const queryClient = new QueryClient()
 
-export const metadata: Metadata = {
-  title: 'Dionis App',
-  description: 'Secret application',
-}
+const fontSans = FontSans({ subsets: ['latin'], variable: '--font-sans', weight: ['400', '500', '600'] })
+
+const roboto_mono = Roboto_Mono({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-roboto-mono',
+})
 
 export default function RootLayout({
   children,
@@ -21,17 +27,22 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang='en'>
+    <html
+      lang='en'
+      suppressHydrationWarning
+    >
       <body
         id='body'
-        className={inter.className}
+        className={`${fontSans.variable} ${roboto_mono.variable}`}
       >
         <GlobalStateProvider>
-          <ThemeStateProvider>
-            <Navigation />
-            <main>{children}</main>
-            <Footer />
-          </ThemeStateProvider>
+          <QueryClientProvider client={queryClient}>
+            <ThemeStateProvider>
+              <Navigation />
+              <main>{children}</main>
+              <Footer />
+            </ThemeStateProvider>
+          </QueryClientProvider>
         </GlobalStateProvider>
       </body>
     </html>

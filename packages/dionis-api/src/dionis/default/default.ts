@@ -143,7 +143,7 @@ export const useGetUsers = <TData = Awaited<ReturnType<typeof getUsers>>, TError
 /**
  * @summary Register a new user
  */
-export const postRegister = (
+export const register = (
     userCredentials: BodyType<UserCredentials>,
  options?: SecondParameter<typeof customInstance>,) => {
       
@@ -158,18 +158,18 @@ export const postRegister = (
   
 
 
-export const getPostRegisterMutationOptions = <TError = ErrorType<ErrorMessage>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postRegister>>, TError,{data: BodyType<UserCredentials>}, TContext>, request?: SecondParameter<typeof customInstance>}
-): UseMutationOptions<Awaited<ReturnType<typeof postRegister>>, TError,{data: BodyType<UserCredentials>}, TContext> => {
+export const getRegisterMutationOptions = <TError = ErrorType<ErrorMessage>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof register>>, TError,{data: BodyType<UserCredentials>}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof register>>, TError,{data: BodyType<UserCredentials>}, TContext> => {
 const {mutation: mutationOptions, request: requestOptions} = options ?? {};
 
       
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postRegister>>, {data: BodyType<UserCredentials>}> = (props) => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof register>>, {data: BodyType<UserCredentials>}> = (props) => {
           const {data} = props ?? {};
 
-          return  postRegister(data,requestOptions)
+          return  register(data,requestOptions)
         }
 
         
@@ -177,30 +177,30 @@ const {mutation: mutationOptions, request: requestOptions} = options ?? {};
 
   return  { mutationFn, ...mutationOptions }}
 
-    export type PostRegisterMutationResult = NonNullable<Awaited<ReturnType<typeof postRegister>>>
-    export type PostRegisterMutationBody = BodyType<UserCredentials>
-    export type PostRegisterMutationError = ErrorType<ErrorMessage>
+    export type RegisterMutationResult = NonNullable<Awaited<ReturnType<typeof register>>>
+    export type RegisterMutationBody = BodyType<UserCredentials>
+    export type RegisterMutationError = ErrorType<ErrorMessage>
 
     /**
  * @summary Register a new user
  */
-export const usePostRegister = <TError = ErrorType<ErrorMessage>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postRegister>>, TError,{data: BodyType<UserCredentials>}, TContext>, request?: SecondParameter<typeof customInstance>}
+export const useRegister = <TError = ErrorType<ErrorMessage>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof register>>, TError,{data: BodyType<UserCredentials>}, TContext>, request?: SecondParameter<typeof customInstance>}
 ): UseMutationResult<
-        Awaited<ReturnType<typeof postRegister>>,
+        Awaited<ReturnType<typeof register>>,
         TError,
         {data: BodyType<UserCredentials>},
         TContext
       > => {
 
-      const mutationOptions = getPostRegisterMutationOptions(options);
+      const mutationOptions = getRegisterMutationOptions(options);
 
       return useMutation(mutationOptions);
     }
     /**
  * @summary Login an existing user
  */
-export const postLogin = (
+export const login = (
     userCredentials: BodyType<UserCredentials>,
  options?: SecondParameter<typeof customInstance>,) => {
       
@@ -215,18 +215,18 @@ export const postLogin = (
   
 
 
-export const getPostLoginMutationOptions = <TError = ErrorType<ErrorMessage>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postLogin>>, TError,{data: BodyType<UserCredentials>}, TContext>, request?: SecondParameter<typeof customInstance>}
-): UseMutationOptions<Awaited<ReturnType<typeof postLogin>>, TError,{data: BodyType<UserCredentials>}, TContext> => {
+export const getLoginMutationOptions = <TError = ErrorType<ErrorMessage>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof login>>, TError,{data: BodyType<UserCredentials>}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof login>>, TError,{data: BodyType<UserCredentials>}, TContext> => {
 const {mutation: mutationOptions, request: requestOptions} = options ?? {};
 
       
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postLogin>>, {data: BodyType<UserCredentials>}> = (props) => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof login>>, {data: BodyType<UserCredentials>}> = (props) => {
           const {data} = props ?? {};
 
-          return  postLogin(data,requestOptions)
+          return  login(data,requestOptions)
         }
 
         
@@ -234,30 +234,30 @@ const {mutation: mutationOptions, request: requestOptions} = options ?? {};
 
   return  { mutationFn, ...mutationOptions }}
 
-    export type PostLoginMutationResult = NonNullable<Awaited<ReturnType<typeof postLogin>>>
-    export type PostLoginMutationBody = BodyType<UserCredentials>
-    export type PostLoginMutationError = ErrorType<ErrorMessage>
+    export type LoginMutationResult = NonNullable<Awaited<ReturnType<typeof login>>>
+    export type LoginMutationBody = BodyType<UserCredentials>
+    export type LoginMutationError = ErrorType<ErrorMessage>
 
     /**
  * @summary Login an existing user
  */
-export const usePostLogin = <TError = ErrorType<ErrorMessage>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postLogin>>, TError,{data: BodyType<UserCredentials>}, TContext>, request?: SecondParameter<typeof customInstance>}
+export const useLogin = <TError = ErrorType<ErrorMessage>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof login>>, TError,{data: BodyType<UserCredentials>}, TContext>, request?: SecondParameter<typeof customInstance>}
 ): UseMutationResult<
-        Awaited<ReturnType<typeof postLogin>>,
+        Awaited<ReturnType<typeof login>>,
         TError,
         {data: BodyType<UserCredentials>},
         TContext
       > => {
 
-      const mutationOptions = getPostLoginMutationOptions(options);
+      const mutationOptions = getLoginMutationOptions(options);
 
       return useMutation(mutationOptions);
     }
     /**
  * @summary Logout the current user
  */
-export const postLogout = (
+export const logout = (
     
  options?: SecondParameter<typeof customInstance>,) => {
       
@@ -270,18 +270,18 @@ export const postLogout = (
   
 
 
-export const getPostLogoutMutationOptions = <TError = ErrorType<ErrorMessage>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postLogout>>, TError,void, TContext>, request?: SecondParameter<typeof customInstance>}
-): UseMutationOptions<Awaited<ReturnType<typeof postLogout>>, TError,void, TContext> => {
+export const getLogoutMutationOptions = <TError = ErrorType<ErrorMessage>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof logout>>, TError,void, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof logout>>, TError,void, TContext> => {
 const {mutation: mutationOptions, request: requestOptions} = options ?? {};
 
       
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postLogout>>, void> = () => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof logout>>, void> = () => {
           
 
-          return  postLogout(requestOptions)
+          return  logout(requestOptions)
         }
 
         
@@ -289,23 +289,23 @@ const {mutation: mutationOptions, request: requestOptions} = options ?? {};
 
   return  { mutationFn, ...mutationOptions }}
 
-    export type PostLogoutMutationResult = NonNullable<Awaited<ReturnType<typeof postLogout>>>
+    export type LogoutMutationResult = NonNullable<Awaited<ReturnType<typeof logout>>>
     
-    export type PostLogoutMutationError = ErrorType<ErrorMessage>
+    export type LogoutMutationError = ErrorType<ErrorMessage>
 
     /**
  * @summary Logout the current user
  */
-export const usePostLogout = <TError = ErrorType<ErrorMessage>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postLogout>>, TError,void, TContext>, request?: SecondParameter<typeof customInstance>}
+export const useLogout = <TError = ErrorType<ErrorMessage>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof logout>>, TError,void, TContext>, request?: SecondParameter<typeof customInstance>}
 ): UseMutationResult<
-        Awaited<ReturnType<typeof postLogout>>,
+        Awaited<ReturnType<typeof logout>>,
         TError,
         void,
         TContext
       > => {
 
-      const mutationOptions = getPostLogoutMutationOptions(options);
+      const mutationOptions = getLogoutMutationOptions(options);
 
       return useMutation(mutationOptions);
     }

@@ -4,7 +4,7 @@ import Image from 'next/image'
 import { Theme } from '@/providers/theme'
 import { useThemeState } from '@/providers/theme/ThemeContext'
 
-import classes from './ThemeIcon.module.scss'
+import classes from './ThemeIcon.module.css'
 
 interface ThemeIconProps {
   onClick?: () => void
@@ -14,7 +14,7 @@ export const ThemeIcon = ({ onClick }: ThemeIconProps) => {
   const { state } = useThemeState()
   const imagePath = '/icons'
   const mode = state.mode
-  const isDarkModeIcon = mode === Theme.DARK ? 'light-theme.png' : 'dark-theme.png'
+  const isDarkModeIcon = mode === Theme.DARK ? 'dark-theme.png' : 'light-theme.png'
   const isDarkMode = mode === Theme.DARK ? Theme.LIGHT : Theme.DARK
 
   return (

@@ -3,7 +3,7 @@
 import { useThemeState } from '@/providers/theme/ThemeContext'
 
 import clsx from 'clsx'
-import classes from './Footer.module.scss'
+import classes from './Footer.module.css'
 
 export const Footer = () => {
   const { state } = useThemeState()

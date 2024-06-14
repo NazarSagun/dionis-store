@@ -1,46 +1,38 @@
-import { ChangeEvent, InputHTMLAttributes, useState } from 'react'
+import * as React from 'react'
 
-import { useThemeState } from '@/providers/theme/ThemeContext'
+import { cn } from '@/lib/utils'
+import { ChangeEvent, useState } from 'react'
 
-import clsx from 'clsx'
-import classes from './Input.module.scss'
-
-interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
-  onInputChange?: (e: string) => void
-  label: string
-  errorMessage: string
+export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+  onInputChange(e: string): void
 }
 
-export const Input = ({ type, name, onInputChange, label, errorMessage, disabled, ...props }: InputProps) => {
-  const [value, setValue] = useState('')
-  const { state } = useThemeState()
+const Input = React.forwardRef<HTMLInputElement, InputProps>(
+  ({ className, type, name, onInputChange, ...props }, ref) => {
+    const [value, setValue] = useState('')
 
-  const inputChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
-    const value = e.currentTarget.value
-    onInputChange && onInputChange(value)
-    setValue(value)
-  }
-
-  const inputStyles = clsx(
-    classes.inputContainer,
-    state.mode === 'light' && classes.light,
-    errorMessage && classes.error
-  )
-
-  return (
-    <div className={inputStyles}>
-      <label htmlFor={name}>{label}</label>
+    const inputChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
+      const value = e.currentTarget.value
+      onInputChange && onInputChange(value)
+      setValue(value)
+    }
+    return (
       <input
         onChange={inputChangeHandler}
         id={name}
         type={type}
-        name={name}
         value={value}
         data-testid='input'
-        disabled={disabled}
+        className={cn(
+          'flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
+          className
+        )}
+        ref={ref}
         {...props}
       />
-      {errorMessage && <span>{errorMessage}</span>}
-    </div>
-  )
-}
+    )
+  }
+)
+Input.displayName = 'Input'
+
+export { Input }

@@ -1,3 +1,5 @@
+'use client'
+
 import axios from 'axios'
 import { useEffect, useState } from 'react'
 
@@ -10,7 +12,7 @@ const apiClient = axios.create({
   withCredentials: true,
 })
 
-export const useRefreshToken = async (accessToken: string | null) => {
+export const useRefreshToken = (accessToken: string | null) => {
   const [token, setToken] = useState(accessToken)
   const refreshToken = async () => {
     try {
@@ -26,6 +28,7 @@ export const useRefreshToken = async (accessToken: string | null) => {
       (config) => {
         if (!config.headers['Authorization']) {
           config.headers['Authorization'] = `Bearer ${token}`
+          console.log(token)
         }
         return config
       },
