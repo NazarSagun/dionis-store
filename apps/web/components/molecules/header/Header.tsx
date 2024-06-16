@@ -9,30 +9,32 @@ import { useThemeState } from '@/providers/theme/ThemeContext'
 import clsx from 'clsx'
 import classes from './Header.module.css'
 import { Theme, ThemeActionType } from '@/providers/theme'
+import { useGlobalState } from '@/providers/store/GlobalStateContext'
+import { AuthActionType } from '@/providers/store/actions'
+import { useLogout } from '@repo/dionis-api/src/dionis/default/default'
 
 const navigation = [
   {
     id: 1,
-    label: 'Main',
-    link: '/',
-  },
-  {
-    id: 2,
     label: 'Login',
     link: '/login',
   },
   {
-    id: 3,
+    id: 2,
     label: 'Sign Up',
     link: '/signup',
   },
 ]
 
 export const Navigation = () => {
+  const { state: authState, dispatch: authDispatch } = useGlobalState()
+  const isUserAuth = authState.auth.isAuthenticated
+
   const { state, dispatch } = useThemeState()
+  const { refetch: logout } = useLogout({ query: { enabled: false } })
+
   const mode = state.mode
   const headerStyles = clsx(classes.header, mode === 'light' ? classes.light : null)
-  const localStorageTheme = mode === Theme.DARK ? Theme.LIGHT : Theme.DARK
 
   const changeBodyStyles = () => {
     const body = document.getElementById('body')
@@ -57,20 +59,35 @@ export const Navigation = () => {
       <nav>
         <ThemeIcon
           onClick={() => {
-            localStorage.setItem('theme', localStorageTheme)
+            localStorage.setItem('theme', mode)
             changeBodyStyles()
             dispatch({ type: ThemeActionType.TOGGLE_THEME })
           }}
         />
         <ul>
-          {navigation.map((item) => (
+          <Link href={'/'}>
+            <li>Home</li>
+          </Link>
+          {!isUserAuth ? (
+            navigation.map((item) => (
+              <Link
+                href={item.link}
+                key={item.id}
+              >
+                <li>{item.label}</li>
+              </Link>
+            ))
+          ) : (
             <Link
-              href={item.link}
-              key={item.id}
+              href={'/'}
+              onClick={() => {
+                logout()
+                authDispatch({ type: AuthActionType.LOGOUT })
+              }}
             >
-              <li>{item.label}</li>
+              <li>Logout</li>
             </Link>
-          ))}
+          )}
         </ul>
       </nav>
     </header>

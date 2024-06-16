@@ -1,8 +1,10 @@
+'use client'
+
 import { AuthAction, AuthActionType } from '../actions/authActions'
 
 export interface AuthState {
   isAuthenticated: boolean
-  accessToken: string | null
+  accessToken: string | null | Promise<string | null>
 }
 
 export const authInitialState: AuthState = {
@@ -12,20 +14,19 @@ export const authInitialState: AuthState = {
 
 export const authReducer = (state: AuthState, action: AuthAction) => {
   switch (action.type) {
-    case AuthActionType.LOGIN:
+    case AuthActionType.AUTHENTICATE:
+      localStorage.setItem('token', action.payload as string)
       return {
         ...state,
-        auth: { isAuthenticated: true, accessToken: action.payload },
+        isAuthenticated: true,
+        accessToken: action.payload,
       }
     case AuthActionType.LOGOUT:
+      localStorage.removeItem('token')
       return {
         ...state,
-        auth: { isAuthenticated: false, accessToken: null },
-      }
-    case AuthActionType.SIGNUP:
-      return {
-        ...state,
-        auth: { isAuthenticated: true, accessToken: action.payload },
+        isAuthenticated: false,
+        accessToken: null,
       }
     default:
       return state

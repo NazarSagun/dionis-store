@@ -8,27 +8,29 @@ import classes from './page.module.css'
 
 import { useLogin } from '@repo/dionis-api/src/dionis/default/default'
 import { useGlobalState } from '@/providers/store/GlobalStateContext'
-import { useEffect } from 'react'
+import { AuthActionType } from '@/providers/store/actions'
 
 const LoginPage = () => {
   const { state } = useThemeState()
-  const { state: global } = useGlobalState()
+  const { state: global, dispatch } = useGlobalState()
   const containerStyles = clsx(classes.container, state.mode === 'light' ? classes.light : null)
 
-  const { mutate, error, isPending } = useLogin()
+  const { mutate, error, isPending, data, isSuccess } = useLogin({
+    mutation: {
+      onSuccess: (data) => {
+        dispatch({ type: AuthActionType.AUTHENTICATE, payload: data.accessToken as string })
+      },
+      onError: (error) => {
+        console.error('Error:', error)
+      },
+    },
+  })
 
-  if (error) {
-    console.log(error.response?.data.message)
-  }
-
-  useEffect(() => {
-    console.log(global)
-  }, [global])
   return (
     <div className={containerStyles}>
       <AuthPage
         variant='login'
-        isFormLoading={false}
+        isFormLoading={isPending}
         onSubmitForm={(formData) => {
           mutate({ data: { email: formData.email, password: formData.password } })
         }}

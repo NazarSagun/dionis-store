@@ -117,7 +117,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/errorMessage'
   /logout:
-    post:
+    get:
       summary: Logout the current user
       operationId: logout
       responses:
@@ -135,6 +135,29 @@ paths:
                 $ref: '#/components/schemas/errorMessage'
       security:
         - bearerHttpAuthentication: []
+  /refresh:
+    get:
+      summary: Refresh token
+      operationId: refresh
+      responses:
+        '200':
+          description: Refreshed token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/userObject'
+        '401':
+          description: Unautenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+        '400':
+          description: Unautenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
 components:
   securitySchemes:
     bearerHttpAuthentication:

@@ -28,8 +28,8 @@ export class AuthService {
 
     const hashedPassword = bcrypt.hashSync(password, 10)
 
-    const accessToken = createAccessToken(getDecodedDto(email), '30s')
-    const refreshToken = createRefreshToken(email, '1d')
+    const accessToken = createAccessToken(getDecodedDto(email, role), '30s')
+    const refreshToken = createRefreshToken(getDecodedDto(email, role), '1d')
 
     await this.prisma.user.create({
       data: {
@@ -62,8 +62,8 @@ export class AuthService {
     if (!isPasswordValid) {
       throw new CustomError('Invalid password!', 400)
     }
-    const accessToken = createAccessToken(getDecodedDto(email, user.role), '30m')
-    const refreshToken = createRefreshToken(email, '1d')
+    const accessToken = createAccessToken(getDecodedDto(email, user.role), '30s')
+    const refreshToken = createRefreshToken(getDecodedDto(email, user.role), '1d')
 
     await this.prisma.user.update({
       where: {
@@ -111,7 +111,7 @@ export class AuthService {
 
     const verifiedToken = jwt.verify(refreshToken, process.env.REFRESH_TOKEN, (err, decoded) => {
       if (err) {
-        throw new CustomError('Forbidden', 403)
+        throw new CustomError('Authentication error. Refresh token expired, please login to have access.', 401)
       }
 
       const accessToken = createAccessToken(getDecodedDto(decoded.email, user.role), '30s')

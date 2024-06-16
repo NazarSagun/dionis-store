@@ -6,16 +6,21 @@ import clsx from 'clsx'
 import classes from './page.module.css'
 
 import { useGetUsers } from '@repo/dionis-api/src/dionis/default/default'
-import { useEffect } from 'react'
+import { Button } from '@/components/atoms'
 
 export default function Home() {
   const { state } = useThemeState()
-  const { data, isLoading, error } = useGetUsers()
+
+  const { refetch, data, isLoading, error } = useGetUsers({
+    query: {
+      enabled: false,
+    },
+  })
 
   const containerStyles = clsx(classes.container, state.mode === 'light' ? classes.light : null)
 
   if (isLoading) {
-    return <div>Loading!</div>
+    return <div className={containerStyles}>Loading!</div>
   }
 
   if (error) {
@@ -24,8 +29,9 @@ export default function Home() {
 
   return (
     <div className={containerStyles}>
+      <Button onClick={() => refetch()}>Click</Button>
       {data?.map((item) => {
-        return <div>{item}</div>
+        return <div key={item.id}>{item.name}</div>
       })}
     </div>
   )

@@ -1,11 +1,11 @@
 'use client'
 
-import { createContext, Dispatch, ReactNode, useContext, useEffect, useReducer } from 'react'
+import { createContext, Dispatch, ReactNode, useContext, useEffect, useReducer, useState } from 'react'
 
 import { globalInitialState, GlobalState, rootReducer } from './reducers'
 import { ActionType } from './types'
-import { AuthActionType } from './actions'
 import { useRefreshToken } from './useRefreshToken'
+import { AuthActionType } from './actions'
 
 interface GlobalInitialState {
   state: GlobalState
@@ -21,13 +21,22 @@ GlobalStateContext.displayName = 'GlobalStateContext'
 
 export const GlobalStateProvider = ({ children }: GlobalStateProviderProps) => {
   const [state, dispatch] = useReducer(rootReducer, globalInitialState)
-  const token = useRefreshToken(state.auth.accessToken)
+  const [isLoading, setIsLoading] = useState(true)
+  useRefreshToken()
 
   useEffect(() => {
-    dispatch({ type: AuthActionType.LOGIN, payload: token })
-  }, [token])
+    const token = localStorage.getItem('token')
+    if (token) {
+      dispatch({ type: AuthActionType.AUTHENTICATE, payload: token })
+    }
+    setIsLoading(false)
+  }, [])
 
-  return <GlobalStateContext.Provider value={{ state, dispatch }}>{children}</GlobalStateContext.Provider>
+  return (
+    <GlobalStateContext.Provider value={{ state, dispatch }}>
+      {isLoading ? <main>Loading</main> : children}
+    </GlobalStateContext.Provider>
+  )
 }
 
 export const useGlobalState = () => {

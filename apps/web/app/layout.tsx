@@ -2,14 +2,13 @@
 
 import { Inter as FontSans } from 'next/font/google'
 
-import { Footer } from '@/components/molecules/footer'
-import { Navigation } from '@/components/molecules/header'
 import { GlobalStateProvider } from '@/providers/store/GlobalStateContext'
 import { ThemeStateProvider } from '@/providers/theme/ThemeContext'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 import './globals.css'
 import { cn } from '@/lib/utils'
+import { Footer, Navigation } from '@/components/molecules'
 
 const queryClient = new QueryClient()
 
@@ -29,15 +28,15 @@ export default function RootLayout({
         id='body'
         className={cn('min-h-screen bg-background font-sans antialiased', fontSans.variable)}
       >
-        <GlobalStateProvider>
-          <QueryClientProvider client={queryClient}>
+        <QueryClientProvider client={queryClient}>
+          <GlobalStateProvider>
             <ThemeStateProvider>
               <Navigation />
               <main>{children}</main>
               <Footer />
             </ThemeStateProvider>
-          </QueryClientProvider>
-        </GlobalStateProvider>
+          </GlobalStateProvider>
+        </QueryClientProvider>
       </body>
     </html>
   )

@@ -259,54 +259,200 @@ export const useLogin = <TError = ErrorType<ErrorMessage>,
  */
 export const logout = (
     
- options?: SecondParameter<typeof customInstance>,) => {
+ options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+) => {
       
       
       return customInstance<SuccessMessage>(
-      {url: `/logout`, method: 'POST'
+      {url: `/logout`, method: 'GET', signal
     },
       options);
     }
   
 
+export const getLogoutQueryKey = () => {
+    return [`/logout`] as const;
+    }
 
-export const getLogoutMutationOptions = <TError = ErrorType<ErrorMessage>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof logout>>, TError,void, TContext>, request?: SecondParameter<typeof customInstance>}
-): UseMutationOptions<Awaited<ReturnType<typeof logout>>, TError,void, TContext> => {
-const {mutation: mutationOptions, request: requestOptions} = options ?? {};
+    
+export const getLogoutInfiniteQueryOptions = <TData = InfiniteData<Awaited<ReturnType<typeof logout>>>, TError = ErrorType<ErrorMessage>>( options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof logout>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getLogoutQueryKey();
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof logout>>> = ({ signal }) => logout(requestOptions, signal);
 
       
 
+      
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof logout>>, void> = () => {
-          
+   return  { queryKey, queryFn, ...queryOptions} as UseInfiniteQueryOptions<Awaited<ReturnType<typeof logout>>, TError, TData> & { queryKey: QueryKey }
+}
 
-          return  logout(requestOptions)
-        }
+export type LogoutInfiniteQueryResult = NonNullable<Awaited<ReturnType<typeof logout>>>
+export type LogoutInfiniteQueryError = ErrorType<ErrorMessage>
 
-        
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type LogoutMutationResult = NonNullable<Awaited<ReturnType<typeof logout>>>
-    
-    export type LogoutMutationError = ErrorType<ErrorMessage>
-
-    /**
+/**
  * @summary Logout the current user
  */
-export const useLogout = <TError = ErrorType<ErrorMessage>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof logout>>, TError,void, TContext>, request?: SecondParameter<typeof customInstance>}
-): UseMutationResult<
-        Awaited<ReturnType<typeof logout>>,
-        TError,
-        void,
-        TContext
-      > => {
+export const useLogoutInfinite = <TData = InfiniteData<Awaited<ReturnType<typeof logout>>>, TError = ErrorType<ErrorMessage>>(
+  options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof logout>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
 
-      const mutationOptions = getLogoutMutationOptions(options);
+  ):  UseInfiniteQueryResult<TData, TError> & { queryKey: QueryKey } => {
 
-      return useMutation(mutationOptions);
-    }
+  const queryOptions = getLogoutInfiniteQueryOptions(options)
+
+  const query = useInfiniteQuery(queryOptions) as  UseInfiniteQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+export const getLogoutQueryOptions = <TData = Awaited<ReturnType<typeof logout>>, TError = ErrorType<ErrorMessage>>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof logout>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getLogoutQueryKey();
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof logout>>> = ({ signal }) => logout(requestOptions, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof logout>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type LogoutQueryResult = NonNullable<Awaited<ReturnType<typeof logout>>>
+export type LogoutQueryError = ErrorType<ErrorMessage>
+
+/**
+ * @summary Logout the current user
+ */
+export const useLogout = <TData = Awaited<ReturnType<typeof logout>>, TError = ErrorType<ErrorMessage>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof logout>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+
+  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } => {
+
+  const queryOptions = getLogoutQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+/**
+ * @summary Refresh token
+ */
+export const refresh = (
     
+ options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<UserObject>(
+      {url: `/refresh`, method: 'GET', signal
+    },
+      options);
+    }
+  
+
+export const getRefreshQueryKey = () => {
+    return [`/refresh`] as const;
+    }
+
+    
+export const getRefreshInfiniteQueryOptions = <TData = InfiniteData<Awaited<ReturnType<typeof refresh>>>, TError = ErrorType<ErrorMessage>>( options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof refresh>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getRefreshQueryKey();
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof refresh>>> = ({ signal }) => refresh(requestOptions, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, ...queryOptions} as UseInfiniteQueryOptions<Awaited<ReturnType<typeof refresh>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type RefreshInfiniteQueryResult = NonNullable<Awaited<ReturnType<typeof refresh>>>
+export type RefreshInfiniteQueryError = ErrorType<ErrorMessage>
+
+/**
+ * @summary Refresh token
+ */
+export const useRefreshInfinite = <TData = InfiniteData<Awaited<ReturnType<typeof refresh>>>, TError = ErrorType<ErrorMessage>>(
+  options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof refresh>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+
+  ):  UseInfiniteQueryResult<TData, TError> & { queryKey: QueryKey } => {
+
+  const queryOptions = getRefreshInfiniteQueryOptions(options)
+
+  const query = useInfiniteQuery(queryOptions) as  UseInfiniteQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+export const getRefreshQueryOptions = <TData = Awaited<ReturnType<typeof refresh>>, TError = ErrorType<ErrorMessage>>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof refresh>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getRefreshQueryKey();
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof refresh>>> = ({ signal }) => refresh(requestOptions, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof refresh>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type RefreshQueryResult = NonNullable<Awaited<ReturnType<typeof refresh>>>
+export type RefreshQueryError = ErrorType<ErrorMessage>
+
+/**
+ * @summary Refresh token
+ */
+export const useRefresh = <TData = Awaited<ReturnType<typeof refresh>>, TError = ErrorType<ErrorMessage>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof refresh>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+
+  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } => {
+
+  const queryOptions = getRefreshQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+

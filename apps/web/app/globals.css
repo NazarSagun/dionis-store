@@ -5,64 +5,64 @@
 @layer base {
   :root {
     --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
+    --foreground: 0 0% 3.9%;
 
     --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
+    --card-foreground: 0 0% 3.9%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
+    --popover-foreground: 0 0% 3.9%;
 
-    --primary: 240 5.9% 10%;
+    --primary: 0 0% 9%;
     --primary-foreground: 0 0% 98%;
 
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
+    --secondary: 0 0% 96.1%;
+    --secondary-foreground: 0 0% 9%;
 
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
+    --muted: 0 0% 96.1%;
+    --muted-foreground: 0 0% 45.1%;
 
-    --accent: 240 4.8% 95.9%;
-    --accent-foreground: 240 5.9% 10%;
+    --accent: 0 0% 96.1%;
+    --accent-foreground: 0 0% 9%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 240 10% 3.9%;
+    --border: 0 0% 89.8%;
+    --input: 0 0% 89.8%;
+    --ring: 0 0% 3.9%;
 
     --radius: 0.5rem;
   }
 
   .dark {
-    --background: 240 10% 3.9%;
+    --background: 0 0% 3.9%;
     --foreground: 0 0% 98%;
 
-    --card: 240 10% 3.9%;
+    --card: 0 0% 3.9%;
     --card-foreground: 0 0% 98%;
 
-    --popover: 240 10% 3.9%;
+    --popover: 0 0% 3.9%;
     --popover-foreground: 0 0% 98%;
 
     --primary: 0 0% 98%;
-    --primary-foreground: 240 5.9% 10%;
+    --primary-foreground: 0 0% 9%;
 
-    --secondary: 240 3.7% 15.9%;
+    --secondary: 0 0% 14.9%;
     --secondary-foreground: 0 0% 98%;
 
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
+    --muted: 0 0% 14.9%;
+    --muted-foreground: 0 0% 63.9%;
 
-    --accent: 240 3.7% 15.9%;
+    --accent: 0 0% 14.9%;
     --accent-foreground: 0 0% 98%;
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 240 4.9% 83.9%;
+    --border: 0 0% 14.9%;
+    --input: 0 0% 14.9%;
+    --ring: 0 0% 83.1%;
   }
 }
 
@@ -76,19 +76,20 @@
 }
 
 :root {
-  --light-primary-color: #3498db;
-  --light-secondary-color: #2ecc7 --light-text-color: #333;
-  --light-background-color: #f8f8f8;
-  --light-background-secondary-color: #d6eefd;
-  --light-content-block-color: #fff;
+  --light-primary-color: #898989;
+  --light-secondary-color: #b7b3a1;
+  --light-text-color: #333;
+  --light-background-color: #fcfafa;
+  --light-background-secondary-color: #343434;
+  --light-content-block-color: #565254;
   --light-link-color: #2980b9;
 
-  --dark-primary-color: #2980b9;
-  --dark-secondary-color: #27ae60;
-  --dark-text-color: #eee;
-  --dark-background-color: #2c3e50;
-  --dark-background-secondary-color: #3a4f64d3;
-  --dark-content-block-color: #34495e;
+  --dark-primary-color: #2f3061;
+  --dark-secondary-color: #ffe66d;
+  --dark-text-color: #f7fff7;
+  --dark-background-color: #343434;
+  --dark-background-secondary-color: #1b2021;
+  --dark-content-block-color: #1b2021;
   --dark-link-color: #3498db;
 
   --header-link-color: var(--light-background-color);
@@ -113,6 +114,10 @@ body {
   overflow-x: hidden;
 }
 
+body.light {
+  background-color: var(--dark-background-color);
+}
+
 main {
   flex: 1;
 }
@@ -128,16 +133,16 @@ footer {
 p,
 span {
   font-size: 1.6rem;
-  color: --var(dark-text-color);
+  color: var(--dark-text-color);
 }
 
 .content-block {
-  background-color: --var(dark-content-block-color);
-  color: --var(dark-text-color);
+  background-color: var(--dark-content-block-color);
+  color: var(--dark-text-color);
 }
 
 a {
-  color: --var(dark-text-color);
+  color: var(--dark-text-color);
   text-decoration: none;
 }
 

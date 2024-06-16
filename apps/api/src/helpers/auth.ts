@@ -18,8 +18,8 @@ export const createAccessToken = (payload: DecodedProperty, expiresIn: string) =
   return jwt.sign(payload, process.env.ACCESS_TOKEN, { expiresIn })
 }
 
-export const createRefreshToken = (payload: string, expiresIn: string) => {
-  return jwt.sign({ payload }, process.env.REFRESH_TOKEN, { expiresIn })
+export const createRefreshToken = (payload: DecodedProperty, expiresIn: string) => {
+  return jwt.sign(payload, process.env.REFRESH_TOKEN, { expiresIn })
 }
 
 export const getDecodedDto = (email: string, role: Role = 101) => {

@@ -1,4 +1,4 @@
-export const allowedOrigins = ['http://localhost:3000', 'http://localhost:3500']
+export const allowedOrigins = ['http://localhost:3000']
 export const corsOptions = {
   // eslint-disable-next-line
   origin: (origin: string, callback: any) => {
@@ -8,4 +8,5 @@ export const corsOptions = {
       callback(new Error('Not allowed by CORS'))
     }
   },
+  credentials: true,
 }

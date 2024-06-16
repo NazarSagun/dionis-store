@@ -26,6 +26,8 @@ export const getLoginResponseMock = (overrideResponse: Partial< UserObject > = {
 
 export const getLogoutResponseMock = (overrideResponse: Partial< SuccessMessage > = {}): SuccessMessage => ({message: faker.helpers.arrayElement([faker.word.sample(), undefined]), ...overrideResponse})
 
+export const getRefreshResponseMock = (overrideResponse: Partial< UserObject > = {}): UserObject => ({accessToken: faker.helpers.arrayElement([faker.word.sample(), undefined]), message: faker.helpers.arrayElement([faker.word.sample(), undefined]), ...overrideResponse})
+
 
 export const getGetUsersMockHandler = (overrideResponse?: UsersArray | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<UsersArray> | UsersArray)) => {
   return http.get('*/users', async (info) => {await delay(1000);
@@ -72,11 +74,26 @@ export const getLoginMockHandler = (overrideResponse?: UserObject | ((info: Para
   })
 }
 
-export const getLogoutMockHandler = (overrideResponse?: SuccessMessage | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<SuccessMessage> | SuccessMessage)) => {
-  return http.post('*/logout', async (info) => {await delay(1000);
+export const getLogoutMockHandler = (overrideResponse?: SuccessMessage | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<SuccessMessage> | SuccessMessage)) => {
+  return http.get('*/logout', async (info) => {await delay(1000);
     return new HttpResponse(JSON.stringify(overrideResponse !== undefined 
             ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse) 
             : getLogoutResponseMock()),
+      {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      }
+    )
+  })
+}
+
+export const getRefreshMockHandler = (overrideResponse?: UserObject | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<UserObject> | UserObject)) => {
+  return http.get('*/refresh', async (info) => {await delay(1000);
+    return new HttpResponse(JSON.stringify(overrideResponse !== undefined 
+            ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse) 
+            : getRefreshResponseMock()),
       {
         status: 200,
         headers: {
@@ -90,5 +107,6 @@ export const getDefaultMock = () => [
   getGetUsersMockHandler(),
   getRegisterMockHandler(),
   getLoginMockHandler(),
-  getLogoutMockHandler()
+  getLogoutMockHandler(),
+  getRefreshMockHandler()
 ]

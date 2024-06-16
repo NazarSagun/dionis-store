@@ -35,9 +35,7 @@
 }
 
 .header ul a:last-child {
-  border-radius: 5px;
-  padding: 6px;
-  background-color: #2ecc71;
+  margin-left: 2rem;
 }
 
 .header ul a {

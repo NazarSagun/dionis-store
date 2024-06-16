@@ -1,61 +1,49 @@
 'use client'
 
-import axios from 'axios'
 import { useEffect, useState } from 'react'
+import { AXIOS_INSTANCE } from '@repo/dionis-api/instance'
+import { useRefresh } from '@repo/dionis-api/src/dionis/default/default'
 
-// Create an Axios instance
-const apiClient = axios.create({
-  baseURL: 'http://localhost:3500/api',
-  headers: {
-    'Content-Type': 'application/json',
-  },
-  withCredentials: true,
-})
-
-export const useRefreshToken = (accessToken: string | null) => {
-  const [token, setToken] = useState(accessToken)
-  const refreshToken = async () => {
-    try {
-      const response = await apiClient.get('/refreshToken')
-      return response.data.accessToken
-    } catch (error) {
-      throw new Error('Unable to refresh token')
-    }
-  }
+export const useRefreshToken = () => {
+  const [token, setToken] = useState('')
+  const { data, refetch } = useRefresh()
 
   useEffect(() => {
-    const requestInterceptor = apiClient.interceptors.request.use(
+    refetch()
+    const requestInterceptor = AXIOS_INSTANCE.interceptors.request.use(
       (config) => {
         if (!config.headers['Authorization']) {
-          config.headers['Authorization'] = `Bearer ${token}`
-          console.log(token)
+          config.headers['Authorization'] = `Bearer ${data?.accessToken}`
         }
         return config
       },
       (error) => Promise.reject(error)
     )
-    const responseInterceptor = apiClient.interceptors.response.use(
+    const responseInterceptor = AXIOS_INSTANCE.interceptors.response.use(
       (response) => response,
       async (error) => {
         const originalRequest = error.config
         if (error.response.status === 403 && !originalRequest._retry) {
           originalRequest._retry = true
 
-          const newAccessToken = await refreshToken()
-          setToken(newAccessToken)
-          apiClient.defaults.headers.common['Authorization'] = `Bearer ${newAccessToken}`
-          originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`
-          return apiClient(originalRequest)
+          if (data?.accessToken) {
+            const newAccessToken = data.accessToken
+            setToken(newAccessToken)
+            localStorage.setItem('token', newAccessToken)
+            AXIOS_INSTANCE.defaults.headers.common['Authorization'] = `Bearer ${newAccessToken}`
+            originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`
+            return AXIOS_INSTANCE(originalRequest)
+          }
         }
         return Promise.reject(error)
       }
     )
 
     return () => {
-      apiClient.interceptors.response.eject(responseInterceptor)
-      apiClient.interceptors.request.eject(requestInterceptor)
+      AXIOS_INSTANCE.interceptors.response.eject(responseInterceptor)
+      AXIOS_INSTANCE.interceptors.request.eject(requestInterceptor)
     }
-  }, [token, refreshToken])
+  }, [token, data?.accessToken])
 
-  return token
+  return AXIOS_INSTANCE
 }

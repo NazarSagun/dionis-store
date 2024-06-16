@@ -9,11 +9,12 @@ import { verifyCredentials } from './middleware'
 const app = express()
 const PORT = process.env.PORT || 3500
 
-app.use(verifyCredentials)
 app.use(cors(corsOptions))
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 app.use(cookieParser())
+
+app.use(verifyCredentials)
 
 app.use('/api', authRouter)
 app.use('/api', usersRouter)
