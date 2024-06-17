@@ -218,6 +218,8 @@ components:
           format: email
         password:
           type: string
+        name:
+          type: string
       required:
         - email
         - password

@@ -19,3 +19,17 @@ model User {
   role         Int      @default(101)
   createdAt    DateTime @default(now())
 }
+
+model Game_pc {
+  id                     Int    @id
+  title                  String @unique
+  thumbnail              String
+  short_description      String
+  game_url               String
+  genre                  String
+  platform               String
+  publisher              String
+  developer              String
+  release_date           String
+  freetogame_profile_url String
+}

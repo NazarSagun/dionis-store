@@ -13,7 +13,7 @@ export const useRefreshToken = () => {
     const requestInterceptor = AXIOS_INSTANCE.interceptors.request.use(
       (config) => {
         if (!config.headers['Authorization']) {
-          config.headers['Authorization'] = `Bearer ${data?.accessToken}`
+          config.headers['Authorization'] = `Bearer ${localStorage.getItem('token')}`
         }
         return config
       },

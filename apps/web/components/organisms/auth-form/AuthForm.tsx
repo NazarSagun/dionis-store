@@ -5,8 +5,6 @@ import { FormEvent, useState } from 'react'
 import { Input, Button } from '@/components/atoms'
 import { useThemeState } from '@/providers/theme'
 
-import { validateInput } from './AuthForm.helpers'
-
 import clsx from 'clsx'
 import classes from './AuthForm.module.css'
 import { Label } from '@/components/atoms/label/Label'
@@ -14,6 +12,7 @@ import { Label } from '@/components/atoms/label/Label'
 export type UserData = {
   email: string
   password: string
+  name?: string
 }
 
 interface AuthFormProps {
@@ -27,8 +26,7 @@ interface AuthFormProps {
 export const AuthForm = ({ onSubmitForm, title, privacyText, variant, isLoading }: AuthFormProps) => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [emailErrorMessage, setEmailErrorMessage] = useState('')
-  const [passwordErrorMessage, setPasswordErrorMessage] = useState('')
+  const [name, setName] = useState('')
 
   const { state } = useThemeState()
   const formStyles = clsx(classes.form, state.mode === 'light' && classes.light)
@@ -36,20 +34,9 @@ export const AuthForm = ({ onSubmitForm, title, privacyText, variant, isLoading 
   const submitHandler = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
-    const isEmailValid = validateInput('email', email)
-    const isPasswordValid = validateInput('password', password)
-
-    if (!isEmailValid) {
-      setEmailErrorMessage('Invalid email')
-    }
-    if (!isPasswordValid) {
-      setPasswordErrorMessage('Invalid password')
-      return
-    }
-
-    setEmail('')
+    setName('')
     setPassword('')
-    onSubmitForm({ email, password })
+    variant === 'signup' ? onSubmitForm({ email, password, name }) : onSubmitForm({ email, password })
   }
 
   return (
@@ -58,11 +45,23 @@ export const AuthForm = ({ onSubmitForm, title, privacyText, variant, isLoading 
       className={formStyles}
     >
       {title && <h3>{title}</h3>}
+      {variant === 'signup' ? (
+        <>
+          <Label>Name</Label>
+          <Input
+            onInputChange={(e) => {
+              setName(e)
+            }}
+            value={name}
+            type='string'
+            name='name'
+          />
+        </>
+      ) : null}
       <Label>Email</Label>
       <Input
         onInputChange={(e) => {
           setEmail(e)
-          setEmailErrorMessage('')
         }}
         value={email}
         type='email'
@@ -72,7 +71,6 @@ export const AuthForm = ({ onSubmitForm, title, privacyText, variant, isLoading 
       <Input
         onInputChange={(e) => {
           setPassword(e)
-          setPasswordErrorMessage('')
         }}
         value={password}
         type='password'

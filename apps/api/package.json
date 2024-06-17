@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "nodemon --exec ts-node src/server.ts",
     "build": "tsc",
-    "migrate": "npx prisma migrate dev"
+    "migrate": "npx prisma migrate dev",
+    "build:mock": "tsc ./src/mock/insertAllData.ts",
+    "insert:mock": "node ./src/mock/insertAllData.js"
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",

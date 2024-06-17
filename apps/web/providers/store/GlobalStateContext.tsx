@@ -6,6 +6,7 @@ import { globalInitialState, GlobalState, rootReducer } from './reducers'
 import { ActionType } from './types'
 import { useRefreshToken } from './useRefreshToken'
 import { AuthActionType } from './actions'
+import { Progress } from '@/components/atoms/progress/Progress'
 
 interface GlobalInitialState {
   state: GlobalState
@@ -21,7 +22,7 @@ GlobalStateContext.displayName = 'GlobalStateContext'
 
 export const GlobalStateProvider = ({ children }: GlobalStateProviderProps) => {
   const [state, dispatch] = useReducer(rootReducer, globalInitialState)
-  const [isLoading, setIsLoading] = useState(true)
+  const [loading, setLoading] = useState(true)
   useRefreshToken()
 
   useEffect(() => {
@@ -29,12 +30,17 @@ export const GlobalStateProvider = ({ children }: GlobalStateProviderProps) => {
     if (token) {
       dispatch({ type: AuthActionType.AUTHENTICATE, payload: token })
     }
-    setIsLoading(false)
+
+    const timeout = setTimeout(() => {
+      setLoading(false)
+    }, 1500)
+
+    return () => clearTimeout(timeout)
   }, [])
 
   return (
     <GlobalStateContext.Provider value={{ state, dispatch }}>
-      {isLoading ? <main>Loading</main> : children}
+      {loading ? <Progress duration={1500} /> : children}
     </GlobalStateContext.Provider>
   )
 }

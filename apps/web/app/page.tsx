@@ -23,10 +23,6 @@ export default function Home() {
     return <div className={containerStyles}>Loading!</div>
   }
 
-  if (error) {
-    return <div>error!</div>
-  }
-
   return (
     <div className={containerStyles}>
       <Button onClick={() => refetch()}>Click</Button>

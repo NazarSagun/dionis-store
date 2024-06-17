@@ -9,6 +9,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import './globals.css'
 import { cn } from '@/lib/utils'
 import { Footer, Navigation } from '@/components/molecules'
+import { Toaster } from '@/components/molecules/toast/toaster'
 
 const queryClient = new QueryClient()
 
@@ -34,6 +35,7 @@ export default function RootLayout({
               <Navigation />
               <main>{children}</main>
               <Footer />
+              <Toaster />
             </ThemeStateProvider>
           </GlobalStateProvider>
         </QueryClientProvider>
