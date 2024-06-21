@@ -38,7 +38,7 @@ export class AuthController {
 
       setHtttpOnlyCookie(res, userToken.refreshToken)
 
-      return res.status(201).json({
+      res.status(201).json({
         message: 'User registered successfully!',
         accessToken: userToken.accessToken,
       })
@@ -48,7 +48,7 @@ export class AuthController {
           message: error.message,
         })
       }
-      return res.status(500).json({
+      res.status(500).json({
         message: 'Something went wrong!',
       })
     }
@@ -71,7 +71,7 @@ export class AuthController {
 
       setHtttpOnlyCookie(res, userToken.refreshToken)
 
-      return res.status(201).json({
+      res.status(201).json({
         message: 'User logged in successfully!',
         accessToken: userToken.accessToken,
       })
@@ -81,7 +81,7 @@ export class AuthController {
           message: error.message,
         })
       }
-      return res.status(500).json({
+      res.status(500).json({
         message: 'Something went wrong!',
       })
     }
@@ -99,7 +99,7 @@ export class AuthController {
     try {
       await this.authService.logout(refreshToken)
 
-      return res.status(200).json({
+      res.status(200).json({
         message: 'User logged out successfully!',
       })
     } catch (error) {
@@ -109,7 +109,7 @@ export class AuthController {
         })
       }
 
-      return res.status(500).json({
+      res.status(500).json({
         message: 'Something went wrong!',
       })
     }
@@ -127,7 +127,7 @@ export class AuthController {
     try {
       const userToken = await this.authService.refreshToken(refreshToken)
 
-      return res.status(200).json({
+      res.status(200).json({
         message: 'Token refreshed successfully!',
         accessToken: userToken,
       })
@@ -138,7 +138,7 @@ export class AuthController {
         })
       }
 
-      return res.status(500).json({
+      res.status(500).json({
         message: 'Something went wrong!',
       })
     }

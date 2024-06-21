@@ -2,7 +2,7 @@ import express from 'express'
 import cors from 'cors'
 import { authRouter } from './routes/auth'
 import cookieParser from 'cookie-parser'
-import { usersRouter } from './routes'
+import { gamesRouter, usersRouter } from './routes'
 import { corsOptions } from './config'
 import { verifyCredentials } from './middleware'
 
@@ -18,9 +18,10 @@ app.use(verifyCredentials)
 
 app.use('/api', authRouter)
 app.use('/api', usersRouter)
+app.use('/api', gamesRouter)
 
 app.get('/', (req, res) => {
-  res.send('Hello, world!')
+  res.send('API is alive!')
 })
 
 app.listen(PORT, () => {
