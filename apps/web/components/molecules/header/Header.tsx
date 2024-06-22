@@ -3,15 +3,14 @@
 import Image from 'next/image'
 import Link from 'next/link'
 
-import { ThemeIcon } from '@/components/atoms/theme-icon'
 import { useThemeState } from '@/providers/theme/ThemeContext'
 
 import clsx from 'clsx'
 import classes from './Header.module.css'
-import { Theme, ThemeActionType } from '@/providers/theme'
 import { useGlobalState } from '@/providers/store/GlobalStateContext'
 import { AuthActionType } from '@/providers/store/actions'
 import { useLogout } from '@repo/dionis-api/src/dionis/default/default'
+import { DropdownAppearence } from '../dropdown/DropdownAppearence'
 
 const navigation = [
   {
@@ -30,20 +29,11 @@ export const Navigation = () => {
   const { state: authState, dispatch: authDispatch } = useGlobalState()
   const isUserAuth = authState.auth.isAuthenticated
 
-  const { state, dispatch } = useThemeState()
+  const { state } = useThemeState()
+
   const { refetch: logout } = useLogout({ query: { enabled: false } })
 
-  const mode = state.mode
-  const headerStyles = clsx(classes.header, mode === 'light' ? classes.light : null)
-
-  const changeBodyStyles = () => {
-    const body = document.getElementById('body')
-    if (mode === Theme.LIGHT && body) {
-      body.classList.add('light')
-    } else {
-      body && body.classList.remove('light')
-    }
-  }
+  const headerStyles = clsx(classes.header, state.mode === 'light' ? classes.light : null)
 
   return (
     <header className={headerStyles}>
@@ -57,13 +47,7 @@ export const Navigation = () => {
         />
       </div>
       <nav>
-        <ThemeIcon
-          onClick={() => {
-            localStorage.setItem('theme', mode)
-            changeBodyStyles()
-            dispatch({ type: ThemeActionType.TOGGLE_THEME })
-          }}
-        />
+        <DropdownAppearence />
         <ul>
           <Link href={'/'}>
             <li>Home</li>

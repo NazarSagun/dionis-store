@@ -23,9 +23,38 @@ paths:
           content:
             application/json:
               schema:
+                $ref: '#/components/schemas/authErrorMessage'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
                 $ref: '#/components/schemas/errorMessage'
       security:
         - bearerHttpAuthentication: []
+  /games:
+    get:
+      summary: List first 20 games in db
+      operationId: getGames
+      responses:
+        '200':
+          description: Array of games
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/gamesArray'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
   /user/delete:
     post:
       summary: Delete user
@@ -61,6 +90,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/errorMessage'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
       security:
         - bearerHttpAuthentication: []
   /register:
@@ -80,7 +115,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/userObject'
-
         '400':
           description: User already exists
           content:
@@ -116,6 +150,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/errorMessage'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
   /logout:
     get:
       summary: Logout the current user
@@ -129,6 +169,12 @@ paths:
                 $ref: '#/components/schemas/successMessage'
         '401':
           description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+        '500':
+          description: Server error
           content:
             application/json:
               schema:
@@ -147,13 +193,19 @@ paths:
               schema:
                 $ref: '#/components/schemas/userObject'
         '401':
-          description: Unautenticated
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/authErrorMessage'
+        '400':
+          description: Bad request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/errorMessage'
-        '400':
-          description: Unautenticated
+        '500':
+          description: Server error
           content:
             application/json:
               schema:
@@ -173,14 +225,33 @@ components:
           type: string
           example: No token provided
       description: A text message describing an error
+    authErrorMessage:
+      type: object
+      properties:
+        message:
+          type: string
+          example: No token provided
+        user:
+          type: object
+          nullable: true
+      description: An object with text message describing an error and nullable user
     userObject:
       type: object
       properties:
         message:
           type: string
           example: User logged in successfully!
-        accessToken:
-          type: string
+        user:
+          type: object
+          properties:
+            name:
+              type: string
+            email:
+              type: string
+            accessToken:
+              type: string
+            role:
+              type: integer
     successMessage:
       type: object
       properties:
@@ -210,6 +281,33 @@ components:
           createdAt:
             type: string
             format: date
+    gamesArray:
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            type: integer
+          title:
+            type: string
+          thumbnail:
+            type: string
+          short_description:
+            type: string
+          game_url:
+            type: string
+          genre:
+            type: string
+          platform:
+            type: string
+          publisher:
+            type: string
+          developer:
+            type: string
+          release_date:
+            type: string
+          freetogame_profile_url:
+            type: string
     userCredentials:
       type: object
       properties:

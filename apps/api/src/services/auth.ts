@@ -41,7 +41,7 @@ export class AuthService {
       },
     })
 
-    return { accessToken, refreshToken }
+    return { accessToken, refreshToken, name, email, role }
   }
 
   async login(credentials: User) {
@@ -74,7 +74,7 @@ export class AuthService {
       },
     })
 
-    return { accessToken, refreshToken }
+    return { accessToken, refreshToken, name: user.name, email: user.email, role: user.role }
   }
 
   async logout(refreshToken: string) {
@@ -119,6 +119,11 @@ export class AuthService {
       return accessToken
     })
 
-    return verifiedToken
+    return {
+      email: user.email,
+      name: user.name,
+      accessToken: verifiedToken,
+      role: user.role,
+    }
   }
 }

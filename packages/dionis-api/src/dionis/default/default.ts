@@ -22,7 +22,9 @@ import type {
   UseQueryResult
 } from '@tanstack/react-query'
 import type {
+  AuthErrorMessage,
   ErrorMessage,
+  GamesArray,
   SuccessMessage,
   UserCredentials,
   UserObject,
@@ -60,7 +62,7 @@ export const getGetUsersQueryKey = () => {
     }
 
     
-export const getGetUsersInfiniteQueryOptions = <TData = InfiniteData<Awaited<ReturnType<typeof getUsers>>>, TError = ErrorType<ErrorMessage>>( options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getUsers>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+export const getGetUsersInfiniteQueryOptions = <TData = InfiniteData<Awaited<ReturnType<typeof getUsers>>>, TError = ErrorType<AuthErrorMessage | ErrorMessage>>( options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getUsers>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -79,12 +81,12 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type GetUsersInfiniteQueryResult = NonNullable<Awaited<ReturnType<typeof getUsers>>>
-export type GetUsersInfiniteQueryError = ErrorType<ErrorMessage>
+export type GetUsersInfiniteQueryError = ErrorType<AuthErrorMessage | ErrorMessage>
 
 /**
  * @summary List all users
  */
-export const useGetUsersInfinite = <TData = InfiniteData<Awaited<ReturnType<typeof getUsers>>>, TError = ErrorType<ErrorMessage>>(
+export const useGetUsersInfinite = <TData = InfiniteData<Awaited<ReturnType<typeof getUsers>>>, TError = ErrorType<AuthErrorMessage | ErrorMessage>>(
   options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getUsers>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
 
   ):  UseInfiniteQueryResult<TData, TError> & { queryKey: QueryKey } => {
@@ -100,7 +102,7 @@ export const useGetUsersInfinite = <TData = InfiniteData<Awaited<ReturnType<type
 
 
 
-export const getGetUsersQueryOptions = <TData = Awaited<ReturnType<typeof getUsers>>, TError = ErrorType<ErrorMessage>>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsers>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+export const getGetUsersQueryOptions = <TData = Awaited<ReturnType<typeof getUsers>>, TError = ErrorType<AuthErrorMessage | ErrorMessage>>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsers>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -119,17 +121,118 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type GetUsersQueryResult = NonNullable<Awaited<ReturnType<typeof getUsers>>>
-export type GetUsersQueryError = ErrorType<ErrorMessage>
+export type GetUsersQueryError = ErrorType<AuthErrorMessage | ErrorMessage>
 
 /**
  * @summary List all users
  */
-export const useGetUsers = <TData = Awaited<ReturnType<typeof getUsers>>, TError = ErrorType<ErrorMessage>>(
+export const useGetUsers = <TData = Awaited<ReturnType<typeof getUsers>>, TError = ErrorType<AuthErrorMessage | ErrorMessage>>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUsers>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
 
   ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } => {
 
   const queryOptions = getGetUsersQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+/**
+ * @summary List first 20 games in db
+ */
+export const getGames = (
+    
+ options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<GamesArray>(
+      {url: `/games`, method: 'GET', signal
+    },
+      options);
+    }
+  
+
+export const getGetGamesQueryKey = () => {
+    return [`/games`] as const;
+    }
+
+    
+export const getGetGamesInfiniteQueryOptions = <TData = InfiniteData<Awaited<ReturnType<typeof getGames>>>, TError = ErrorType<ErrorMessage>>( options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getGames>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetGamesQueryKey();
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getGames>>> = ({ signal }) => getGames(requestOptions, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, ...queryOptions} as UseInfiniteQueryOptions<Awaited<ReturnType<typeof getGames>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetGamesInfiniteQueryResult = NonNullable<Awaited<ReturnType<typeof getGames>>>
+export type GetGamesInfiniteQueryError = ErrorType<ErrorMessage>
+
+/**
+ * @summary List first 20 games in db
+ */
+export const useGetGamesInfinite = <TData = InfiniteData<Awaited<ReturnType<typeof getGames>>>, TError = ErrorType<ErrorMessage>>(
+  options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getGames>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+
+  ):  UseInfiniteQueryResult<TData, TError> & { queryKey: QueryKey } => {
+
+  const queryOptions = getGetGamesInfiniteQueryOptions(options)
+
+  const query = useInfiniteQuery(queryOptions) as  UseInfiniteQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+export const getGetGamesQueryOptions = <TData = Awaited<ReturnType<typeof getGames>>, TError = ErrorType<ErrorMessage>>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getGames>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetGamesQueryKey();
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getGames>>> = ({ signal }) => getGames(requestOptions, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getGames>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetGamesQueryResult = NonNullable<Awaited<ReturnType<typeof getGames>>>
+export type GetGamesQueryError = ErrorType<ErrorMessage>
+
+/**
+ * @summary List first 20 games in db
+ */
+export const useGetGames = <TData = Awaited<ReturnType<typeof getGames>>, TError = ErrorType<ErrorMessage>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getGames>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+
+  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } => {
+
+  const queryOptions = getGetGamesQueryOptions(options)
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
@@ -376,7 +479,7 @@ export const getRefreshQueryKey = () => {
     }
 
     
-export const getRefreshInfiniteQueryOptions = <TData = InfiniteData<Awaited<ReturnType<typeof refresh>>>, TError = ErrorType<ErrorMessage>>( options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof refresh>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+export const getRefreshInfiniteQueryOptions = <TData = InfiniteData<Awaited<ReturnType<typeof refresh>>>, TError = ErrorType<ErrorMessage | AuthErrorMessage>>( options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof refresh>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -395,12 +498,12 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type RefreshInfiniteQueryResult = NonNullable<Awaited<ReturnType<typeof refresh>>>
-export type RefreshInfiniteQueryError = ErrorType<ErrorMessage>
+export type RefreshInfiniteQueryError = ErrorType<ErrorMessage | AuthErrorMessage>
 
 /**
  * @summary Refresh token
  */
-export const useRefreshInfinite = <TData = InfiniteData<Awaited<ReturnType<typeof refresh>>>, TError = ErrorType<ErrorMessage>>(
+export const useRefreshInfinite = <TData = InfiniteData<Awaited<ReturnType<typeof refresh>>>, TError = ErrorType<ErrorMessage | AuthErrorMessage>>(
   options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof refresh>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
 
   ):  UseInfiniteQueryResult<TData, TError> & { queryKey: QueryKey } => {
@@ -416,7 +519,7 @@ export const useRefreshInfinite = <TData = InfiniteData<Awaited<ReturnType<typeo
 
 
 
-export const getRefreshQueryOptions = <TData = Awaited<ReturnType<typeof refresh>>, TError = ErrorType<ErrorMessage>>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof refresh>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+export const getRefreshQueryOptions = <TData = Awaited<ReturnType<typeof refresh>>, TError = ErrorType<ErrorMessage | AuthErrorMessage>>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof refresh>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -435,12 +538,12 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type RefreshQueryResult = NonNullable<Awaited<ReturnType<typeof refresh>>>
-export type RefreshQueryError = ErrorType<ErrorMessage>
+export type RefreshQueryError = ErrorType<ErrorMessage | AuthErrorMessage>
 
 /**
  * @summary Refresh token
  */
-export const useRefresh = <TData = Awaited<ReturnType<typeof refresh>>, TError = ErrorType<ErrorMessage>>(
+export const useRefresh = <TData = Awaited<ReturnType<typeof refresh>>, TError = ErrorType<ErrorMessage | AuthErrorMessage>>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof refresh>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
 
   ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } => {

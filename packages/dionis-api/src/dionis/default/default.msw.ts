@@ -13,6 +13,7 @@ import {
   http
 } from 'msw'
 import type {
+  GamesArray,
   SuccessMessage,
   UserObject,
   UsersArray
@@ -20,13 +21,15 @@ import type {
 
 export const getGetUsersResponseMock = (): UsersArray => (Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({createdAt: faker.helpers.arrayElement([faker.date.past().toISOString().split('T')[0], undefined]), email: faker.helpers.arrayElement([faker.internet.email(), undefined]), id: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), name: faker.helpers.arrayElement([faker.word.sample(), undefined]), password: faker.helpers.arrayElement([faker.word.sample(), undefined]), refreshToken: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.word.sample(), null]), undefined]), role: faker.helpers.arrayElement([faker.helpers.arrayElement([101,500,233] as const), undefined])})))
 
-export const getRegisterResponseMock = (overrideResponse: Partial< UserObject > = {}): UserObject => ({accessToken: faker.helpers.arrayElement([faker.word.sample(), undefined]), message: faker.helpers.arrayElement([faker.word.sample(), undefined]), ...overrideResponse})
+export const getGetGamesResponseMock = (): GamesArray => (Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({developer: faker.helpers.arrayElement([faker.word.sample(), undefined]), freetogame_profile_url: faker.helpers.arrayElement([faker.word.sample(), undefined]), game_url: faker.helpers.arrayElement([faker.word.sample(), undefined]), genre: faker.helpers.arrayElement([faker.word.sample(), undefined]), id: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), platform: faker.helpers.arrayElement([faker.word.sample(), undefined]), publisher: faker.helpers.arrayElement([faker.word.sample(), undefined]), release_date: faker.helpers.arrayElement([faker.word.sample(), undefined]), short_description: faker.helpers.arrayElement([faker.word.sample(), undefined]), thumbnail: faker.helpers.arrayElement([faker.word.sample(), undefined]), title: faker.helpers.arrayElement([faker.word.sample(), undefined])})))
 
-export const getLoginResponseMock = (overrideResponse: Partial< UserObject > = {}): UserObject => ({accessToken: faker.helpers.arrayElement([faker.word.sample(), undefined]), message: faker.helpers.arrayElement([faker.word.sample(), undefined]), ...overrideResponse})
+export const getRegisterResponseMock = (overrideResponse: Partial< UserObject > = {}): UserObject => ({message: faker.helpers.arrayElement([faker.word.sample(), undefined]), user: faker.helpers.arrayElement([{accessToken: faker.helpers.arrayElement([faker.word.sample(), undefined]), email: faker.helpers.arrayElement([faker.word.sample(), undefined]), name: faker.helpers.arrayElement([faker.word.sample(), undefined]), role: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined])}, undefined]), ...overrideResponse})
+
+export const getLoginResponseMock = (overrideResponse: Partial< UserObject > = {}): UserObject => ({message: faker.helpers.arrayElement([faker.word.sample(), undefined]), user: faker.helpers.arrayElement([{accessToken: faker.helpers.arrayElement([faker.word.sample(), undefined]), email: faker.helpers.arrayElement([faker.word.sample(), undefined]), name: faker.helpers.arrayElement([faker.word.sample(), undefined]), role: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined])}, undefined]), ...overrideResponse})
 
 export const getLogoutResponseMock = (overrideResponse: Partial< SuccessMessage > = {}): SuccessMessage => ({message: faker.helpers.arrayElement([faker.word.sample(), undefined]), ...overrideResponse})
 
-export const getRefreshResponseMock = (overrideResponse: Partial< UserObject > = {}): UserObject => ({accessToken: faker.helpers.arrayElement([faker.word.sample(), undefined]), message: faker.helpers.arrayElement([faker.word.sample(), undefined]), ...overrideResponse})
+export const getRefreshResponseMock = (overrideResponse: Partial< UserObject > = {}): UserObject => ({message: faker.helpers.arrayElement([faker.word.sample(), undefined]), user: faker.helpers.arrayElement([{accessToken: faker.helpers.arrayElement([faker.word.sample(), undefined]), email: faker.helpers.arrayElement([faker.word.sample(), undefined]), name: faker.helpers.arrayElement([faker.word.sample(), undefined]), role: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined])}, undefined]), ...overrideResponse})
 
 
 export const getGetUsersMockHandler = (overrideResponse?: UsersArray | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<UsersArray> | UsersArray)) => {
@@ -34,6 +37,21 @@ export const getGetUsersMockHandler = (overrideResponse?: UsersArray | ((info: P
     return new HttpResponse(JSON.stringify(overrideResponse !== undefined 
             ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse) 
             : getGetUsersResponseMock()),
+      {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      }
+    )
+  })
+}
+
+export const getGetGamesMockHandler = (overrideResponse?: GamesArray | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<GamesArray> | GamesArray)) => {
+  return http.get('*/games', async (info) => {await delay(1000);
+    return new HttpResponse(JSON.stringify(overrideResponse !== undefined 
+            ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse) 
+            : getGetGamesResponseMock()),
       {
         status: 200,
         headers: {
@@ -105,6 +123,7 @@ export const getRefreshMockHandler = (overrideResponse?: UserObject | ((info: Pa
 }
 export const getDefaultMock = () => [
   getGetUsersMockHandler(),
+  getGetGamesMockHandler(),
   getRegisterMockHandler(),
   getLoginMockHandler(),
   getLogoutMockHandler(),

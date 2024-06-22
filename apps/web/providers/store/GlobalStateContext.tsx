@@ -6,7 +6,9 @@ import { globalInitialState, GlobalState, rootReducer } from './reducers'
 import { ActionType } from './types'
 import { useRefreshToken } from './useRefreshToken'
 import { AuthActionType } from './actions'
-import { Progress } from '@/components/atoms/progress/Progress'
+import { jwtDecode, JwtPayload } from 'jwt-decode'
+import { Loader } from '@/components/atoms'
+import { useRouter } from 'next/navigation'
 
 interface GlobalInitialState {
   state: GlobalState
@@ -23,24 +25,39 @@ GlobalStateContext.displayName = 'GlobalStateContext'
 export const GlobalStateProvider = ({ children }: GlobalStateProviderProps) => {
   const [state, dispatch] = useReducer(rootReducer, globalInitialState)
   const [loading, setLoading] = useState(true)
-  useRefreshToken()
+  const router = useRouter()
+  const accessToken = useRefreshToken()
 
   useEffect(() => {
     const token = localStorage.getItem('token')
-    if (token) {
+    console.log(accessToken, '----------------asdasdasd')
+
+    if (!token) {
+      console.log(accessToken, '----------------aaaaaaaaaaa')
+      router.push('/login')
+      dispatch({ type: AuthActionType.LOGOUT })
+
+      // const decodedToken: JwtPayload = jwtDecode(token)
+      // if (decodedToken.exp) {
+      //   console.log(accessToken, '----------------')
+      //   const currentTime = Date.now() / 1000 // Current time in seconds since epoch
+      //   if (decodedToken.exp < currentTime && !accessToken) {
+      //     router.push('/login')
+      //     dispatch({ type: AuthActionType.LOGOUT })
+      //     setLoading(false)
+      //     return
+      //   }
+      // }
+    } else {
       dispatch({ type: AuthActionType.AUTHENTICATE, payload: token })
     }
 
-    const timeout = setTimeout(() => {
-      setLoading(false)
-    }, 1500)
-
-    return () => clearTimeout(timeout)
+    setLoading(false)
   }, [])
 
   return (
     <GlobalStateContext.Provider value={{ state, dispatch }}>
-      {loading ? <Progress duration={1500} /> : children}
+      {loading ? <Loader /> : children}
     </GlobalStateContext.Provider>
   )
 }

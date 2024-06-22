@@ -1,3 +1,5 @@
 export * from './button'
 export * from './input'
 export * from './theme-icon'
+export * from './loader'
+export * from './label/Label'

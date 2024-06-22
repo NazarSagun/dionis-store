@@ -29,27 +29,34 @@ export class AuthController {
     const userRole = !role ? 101 : role
 
     try {
-      const userToken = await this.authService.register({
+      const user = await this.authService.register({
         name,
         email,
         password,
         role: userRole,
       })
 
-      setHtttpOnlyCookie(res, userToken.refreshToken)
+      setHtttpOnlyCookie(res, user.refreshToken)
 
       res.status(201).json({
         message: 'User registered successfully!',
-        accessToken: userToken.accessToken,
+        user: {
+          name: user.name,
+          email: user.email,
+          accessToken: user.accessToken,
+          role: user.role,
+        },
       })
     } catch (error) {
       if (error instanceof CustomError) {
         return res.status(error.statusCode).json({
           message: error.message,
+          user: null,
         })
       }
       res.status(500).json({
         message: 'Something went wrong!',
+        user: null,
       })
     }
   }
@@ -64,25 +71,32 @@ export class AuthController {
     }
 
     try {
-      const userToken = await this.authService.login({
+      const user = await this.authService.login({
         email,
         password,
       })
 
-      setHtttpOnlyCookie(res, userToken.refreshToken)
+      setHtttpOnlyCookie(res, user.refreshToken)
 
       res.status(201).json({
         message: 'User logged in successfully!',
-        accessToken: userToken.accessToken,
+        user: {
+          name: user.name,
+          email: user.email,
+          accessToken: user.accessToken,
+          role: user.role,
+        },
       })
     } catch (error) {
       if (error instanceof CustomError) {
         return res.status(error.statusCode).json({
           message: error.message,
+          user: null,
         })
       }
       res.status(500).json({
-        message: 'Something went wrong!',
+        message: 'Something went wrong!' + error,
+        user: null,
       })
     }
   }
@@ -121,25 +135,28 @@ export class AuthController {
     if (!refreshToken) {
       return res.status(401).json({
         message: 'Refresh token expired, please login to the system',
+        user: null,
       })
     }
 
     try {
-      const userToken = await this.authService.refreshToken(refreshToken)
+      const user = await this.authService.refreshToken(refreshToken)
 
       res.status(200).json({
-        message: 'Token refreshed successfully!',
-        accessToken: userToken,
+        message: 'Token varified and refreshed successfully!',
+        user,
       })
     } catch (error) {
       if (error instanceof CustomError) {
         return res.status(error.statusCode).json({
           message: error.message,
+          user: null,
         })
       }
 
       res.status(500).json({
         message: 'Something went wrong!',
+        user: null,
       })
     }
   }

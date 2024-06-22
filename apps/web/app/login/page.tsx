@@ -14,7 +14,7 @@ import { useToast } from '@/components/molecules/toast/use-toast'
 
 const LoginPage = () => {
   const { state } = useThemeState()
-  const { dispatch } = useGlobalState()
+  const { state: data, dispatch } = useGlobalState()
   const router = useRouter()
   const { toast } = useToast()
   const containerStyles = clsx(classes.container, state.mode === 'light' ? classes.light : null)
@@ -22,7 +22,7 @@ const LoginPage = () => {
   const { mutate, isPending } = useLogin({
     mutation: {
       onSuccess: (data) => {
-        dispatch({ type: AuthActionType.AUTHENTICATE, payload: data.accessToken as string })
+        dispatch({ type: AuthActionType.AUTHENTICATE, payload: data.user?.accessToken as string })
         router.push('/')
       },
       onError: (error) => {

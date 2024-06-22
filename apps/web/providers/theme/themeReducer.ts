@@ -30,7 +30,7 @@ export const themeInitialState: ThemeState = {
 export const themeReducer = (state: ThemeState, action: ThemeAction) => {
   switch (action.type) {
     case ThemeActionType.TOGGLE_THEME:
-      return state.mode === Theme.LIGHT ? { ...state, mode: Theme.DARK } : { ...state, mode: Theme.LIGHT }
+      return { mode: action.payload }
     default:
       return state
   }

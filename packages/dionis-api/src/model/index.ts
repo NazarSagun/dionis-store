@@ -5,11 +5,16 @@
  * OpenAPI spec version: 1.0.0
  */
 
+export * from './authErrorMessage';
+export * from './authErrorMessageUser';
 export * from './deleteUserBody';
 export * from './errorMessage';
+export * from './gamesArray';
+export * from './gamesArrayItem';
 export * from './successMessage';
 export * from './userCredentials';
 export * from './userObject';
+export * from './userObjectUser';
 export * from './usersArray';
 export * from './usersArrayItem';
 export * from './usersArrayItemRole';

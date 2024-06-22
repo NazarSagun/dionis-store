@@ -9,7 +9,7 @@ export function verifyJWT(req: AuthInfoRequest, res: Response, next: NextFunctio
   const authHeader = req.headers.authorization
 
   if (!authHeader) {
-    return res.status(403).json({ message: 'No token provided' })
+    return res.status(401).json({ message: 'No token provided' })
   }
 
   const parts = authHeader.split(' ')

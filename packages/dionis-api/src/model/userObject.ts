@@ -4,8 +4,9 @@
  * Swagger Dionis
  * OpenAPI spec version: 1.0.0
  */
+import type { UserObjectUser } from './userObjectUser';
 
 export interface UserObject {
-  accessToken?: string;
   message?: string;
+  user?: UserObjectUser;
 }
