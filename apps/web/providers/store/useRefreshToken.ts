@@ -15,7 +15,6 @@ export const useRefreshToken = () => {
   useEffect(() => {
     const requestInterceptor = AXIOS_INSTANCE.interceptors.request.use(
       (config) => {
-        console.log(token, 'interceptors.request')
         if (!config.headers['Authorization']) {
           config.headers['Authorization'] = `Bearer ${localStorage.getItem('token')}`
         }
@@ -27,12 +26,10 @@ export const useRefreshToken = () => {
       (response) => response,
       async (error) => {
         const originalRequest = error.config
-        if (error.response.status === 403 && !originalRequest._retry) {
+        if (error.response.status === 401 && !originalRequest._retry) {
           originalRequest._retry = true
 
           if (data?.user?.accessToken) {
-            console.log(token, 'interceptors.response')
-
             const newAccessToken = data.user?.accessToken
             setToken(newAccessToken)
             localStorage.setItem('token', newAccessToken)
@@ -41,7 +38,7 @@ export const useRefreshToken = () => {
             return AXIOS_INSTANCE(originalRequest)
           }
         }
-        if (error.response.status === 401 && !originalRequest._retry) {
+        if (error.response.status === 401 && originalRequest._retry) {
           localStorage.removeItem('token')
         }
         return Promise.reject(error)

@@ -30,25 +30,13 @@ export const GlobalStateProvider = ({ children }: GlobalStateProviderProps) => {
 
   useEffect(() => {
     const token = localStorage.getItem('token')
-    console.log(accessToken, '----------------asdasdasd')
 
     if (!token) {
-      console.log(accessToken, '----------------aaaaaaaaaaa')
+      console.log('Remove token')
       router.push('/login')
       dispatch({ type: AuthActionType.LOGOUT })
-
-      // const decodedToken: JwtPayload = jwtDecode(token)
-      // if (decodedToken.exp) {
-      //   console.log(accessToken, '----------------')
-      //   const currentTime = Date.now() / 1000 // Current time in seconds since epoch
-      //   if (decodedToken.exp < currentTime && !accessToken) {
-      //     router.push('/login')
-      //     dispatch({ type: AuthActionType.LOGOUT })
-      //     setLoading(false)
-      //     return
-      //   }
-      // }
     } else {
+      console.log('Add token')
       dispatch({ type: AuthActionType.AUTHENTICATE, payload: token })
     }
 

@@ -22,7 +22,7 @@ const SignUpPage = () => {
   const { mutate, isPending } = useRegister({
     mutation: {
       onSuccess: (data) => {
-        dispatch({ type: AuthActionType.AUTHENTICATE, payload: data.accessToken as string })
+        dispatch({ type: AuthActionType.AUTHENTICATE, payload: data.user?.accessToken as string })
         router.push('/')
       },
       onError: (error) => {
@@ -34,6 +34,12 @@ const SignUpPage = () => {
       },
     },
   })
+
+  useEffect(() => {
+    if (globalState.auth.isAuthenticated) {
+      router.push('/')
+    }
+  }, [])
 
   return (
     <div className={containerStyles}>

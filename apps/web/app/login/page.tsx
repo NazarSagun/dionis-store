@@ -11,10 +11,11 @@ import { useGlobalState } from '@/providers/store/GlobalStateContext'
 import { AuthActionType } from '@/providers/store/actions'
 import { useRouter } from 'next/navigation'
 import { useToast } from '@/components/molecules/toast/use-toast'
+import { useEffect } from 'react'
 
 const LoginPage = () => {
   const { state } = useThemeState()
-  const { state: data, dispatch } = useGlobalState()
+  const { state: globalState, dispatch } = useGlobalState()
   const router = useRouter()
   const { toast } = useToast()
   const containerStyles = clsx(classes.container, state.mode === 'light' ? classes.light : null)
@@ -34,6 +35,12 @@ const LoginPage = () => {
       },
     },
   })
+
+  useEffect(() => {
+    if (globalState.auth.isAuthenticated) {
+      router.push('/')
+    }
+  }, [])
 
   return (
     <div className={containerStyles}>

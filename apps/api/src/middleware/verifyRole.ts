@@ -10,7 +10,7 @@ export const verifyRole = (role: Role) => {
   return (req: AuthInfoRequest, res: Response, next: NextFunction) => {
     const authHeader = req.headers.authorization || req.headers.Authorization
     if (!authHeader) {
-      return res.status(403).send({ auth: false, message: 'No token provided.' })
+      return res.status(401).send({ auth: false, message: 'No token provided.' })
     }
 
     if (typeof authHeader !== 'string') {
@@ -27,13 +27,13 @@ export const verifyRole = (role: Role) => {
 
     jwt.verify(token, process.env.ACCESS_TOKEN, function (err, decoded) {
       if (err || !decoded.email) {
-        return res.status(401).json({ message: 'Forbidden' })
+        return res.status(401).json({ message: 'Authentication error. ' + err })
       }
 
       req.role = decoded.role
 
       if (req.role !== role) {
-        return res.status(401).json({ message: 'Forbidden' })
+        return res.status(403).json({ message: 'Forbidden' })
       }
 
       next()
