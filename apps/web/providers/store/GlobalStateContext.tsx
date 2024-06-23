@@ -6,9 +6,9 @@ import { globalInitialState, GlobalState, rootReducer } from './reducers'
 import { ActionType } from './types'
 import { useRefreshToken } from './useRefreshToken'
 import { AuthActionType } from './actions'
-import { jwtDecode, JwtPayload } from 'jwt-decode'
 import { Loader } from '@/components/atoms'
 import { useRouter } from 'next/navigation'
+import { TOKEN_REMOVED_EVENT } from './authEvent'
 
 interface GlobalInitialState {
   state: GlobalState
@@ -26,22 +26,32 @@ export const GlobalStateProvider = ({ children }: GlobalStateProviderProps) => {
   const [state, dispatch] = useReducer(rootReducer, globalInitialState)
   const [loading, setLoading] = useState(true)
   const router = useRouter()
-  const accessToken = useRefreshToken()
+  useRefreshToken()
 
   useEffect(() => {
     const token = localStorage.getItem('token')
 
     if (!token) {
-      console.log('Remove token')
       router.push('/login')
       dispatch({ type: AuthActionType.LOGOUT })
     } else {
-      console.log('Add token')
+      console.log('login')
+
       dispatch({ type: AuthActionType.AUTHENTICATE, payload: token })
     }
 
+    const handleTokenRemoved = () => {
+      dispatch({ type: AuthActionType.LOGOUT })
+    }
+
+    window.addEventListener(TOKEN_REMOVED_EVENT, handleTokenRemoved)
+
     setLoading(false)
-  }, [])
+
+    return () => {
+      window.removeEventListener(TOKEN_REMOVED_EVENT, handleTokenRemoved)
+    }
+  }, [dispatch])
 
   return (
     <GlobalStateContext.Provider value={{ state, dispatch }}>

@@ -24,7 +24,7 @@ export default function Home() {
   }
 
   if (error) {
-    return <div className={containerStyles}>{error.response?.data.message}</div>
+    return <div className={containerStyles}>{error.response?.data.message} Please login to access this area</div>
   }
 
   return (

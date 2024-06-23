@@ -11,10 +11,11 @@ import { useRouter } from 'next/navigation'
 import { useToast } from '@/components/molecules/toast/use-toast'
 import { useRegister } from '@repo/dionis-api/src/dionis/default/default'
 import { AuthActionType } from '@/providers/store/actions'
+import { useEffect } from 'react'
 
 const SignUpPage = () => {
   const { state } = useThemeState()
-  const { dispatch } = useGlobalState()
+  const { state: globalState, dispatch } = useGlobalState()
   const router = useRouter()
   const { toast } = useToast()
   const containerStyles = clsx(classes.container, state.mode === 'light' ? classes.light : null)

@@ -3,16 +3,18 @@
 import { useEffect, useState } from 'react'
 import { AXIOS_INSTANCE } from '@repo/dionis-api/instance'
 import { useRefresh } from '@repo/dionis-api/src/dionis/default/default'
+import { dispatchTokenRemovedEvent } from './authEvent'
 
 export const useRefreshToken = () => {
   const [token, setToken] = useState('')
-  const { data } = useRefresh({
+  const { data, refetch } = useRefresh({
     query: {
       retry: false,
     },
   })
 
   useEffect(() => {
+    refetch()
     const requestInterceptor = AXIOS_INSTANCE.interceptors.request.use(
       (config) => {
         if (!config.headers['Authorization']) {
@@ -40,6 +42,7 @@ export const useRefreshToken = () => {
         }
         if (error.response.status === 401 && originalRequest._retry) {
           localStorage.removeItem('token')
+          dispatchTokenRemovedEvent()
         }
         return Promise.reject(error)
       }
