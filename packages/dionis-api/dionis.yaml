@@ -32,10 +32,18 @@ paths:
                 $ref: '#/components/schemas/errorMessage'
       security:
         - bearerHttpAuthentication: []
-  /games:
+  /games/{page}:
     get:
-      summary: List first 20 games in db
+      summary: List games in paged format from db
       operationId: getGames
+      parameters:
+        - name: page
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 1
+          description: The page number to retrieve
       responses:
         '200':
           description: Array of games

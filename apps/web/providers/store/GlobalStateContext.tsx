@@ -6,7 +6,7 @@ import { globalInitialState, GlobalState, rootReducer } from './reducers'
 import { ActionType } from './types'
 import { useRefreshToken } from './useRefreshToken'
 import { AuthActionType } from './actions'
-import { Loader } from '@/components/atoms'
+import { Loader } from '@/ui'
 import { useRouter } from 'next/navigation'
 import { TOKEN_REMOVED_EVENT } from './authEvent'
 
@@ -24,11 +24,13 @@ GlobalStateContext.displayName = 'GlobalStateContext'
 
 export const GlobalStateProvider = ({ children }: GlobalStateProviderProps) => {
   const [state, dispatch] = useReducer(rootReducer, globalInitialState)
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState<boolean>(false)
   const router = useRouter()
   useRefreshToken()
 
   useEffect(() => {
+    setLoading(true)
+
     const token = localStorage.getItem('token')
 
     if (!token) {

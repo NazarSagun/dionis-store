@@ -26,7 +26,7 @@ export function verifyJWT(req: AuthInfoRequest, res: Response, next: NextFunctio
 
   jwt.verify(token, process.env.ACCESS_TOKEN, (err, decoded) => {
     if (err || !decoded.email || !decoded.role) {
-      return res.status(401).json({ message: 'Authentication error. ' + err })
+      return res.status(401).json({ message: 'Authentication error' })
     }
 
     req.email = decoded.email

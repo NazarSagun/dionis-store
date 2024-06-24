@@ -36,7 +36,7 @@ export class UsersController {
           id,
         },
       })
-      res.status(200).json({ message: 'User deleted!' })
+      res.status(200).json({ message: 'User deleted' })
     } catch (error) {
       res.status(500).json(error)
     }

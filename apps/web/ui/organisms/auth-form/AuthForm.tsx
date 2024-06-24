@@ -2,12 +2,11 @@
 
 import { FormEvent, useState } from 'react'
 
-import { Input, Button } from '@/components/atoms'
+import { Input, Button, Label } from '@/ui'
 import { useThemeState } from '@/providers/theme'
 
 import clsx from 'clsx'
 import classes from './AuthForm.module.css'
-import { Label } from '@/components/atoms/label/Label'
 
 export type UserData = {
   email: string

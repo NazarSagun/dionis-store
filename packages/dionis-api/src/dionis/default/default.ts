@@ -143,56 +143,56 @@ export const useGetUsers = <TData = Awaited<ReturnType<typeof getUsers>>, TError
 
 
 /**
- * @summary List first 20 games in db
+ * @summary List games in paged format from db
  */
 export const getGames = (
-    
+    page: number,
  options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
 ) => {
       
       
       return customInstance<GamesArray>(
-      {url: `/games`, method: 'GET', signal
+      {url: `/games/${page}`, method: 'GET', signal
     },
       options);
     }
   
 
-export const getGetGamesQueryKey = () => {
-    return [`/games`] as const;
+export const getGetGamesQueryKey = (page: number,) => {
+    return [`/games/${page}`] as const;
     }
 
     
-export const getGetGamesInfiniteQueryOptions = <TData = InfiniteData<Awaited<ReturnType<typeof getGames>>>, TError = ErrorType<ErrorMessage>>( options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getGames>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+export const getGetGamesInfiniteQueryOptions = <TData = InfiniteData<Awaited<ReturnType<typeof getGames>>>, TError = ErrorType<ErrorMessage>>(page: number, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getGames>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getGetGamesQueryKey();
+  const queryKey =  queryOptions?.queryKey ?? getGetGamesQueryKey(page);
 
   
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getGames>>> = ({ signal }) => getGames(requestOptions, signal);
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getGames>>> = ({ signal }) => getGames(page, requestOptions, signal);
 
       
 
       
 
-   return  { queryKey, queryFn, ...queryOptions} as UseInfiniteQueryOptions<Awaited<ReturnType<typeof getGames>>, TError, TData> & { queryKey: QueryKey }
+   return  { queryKey, queryFn, enabled: !!(page), ...queryOptions} as UseInfiniteQueryOptions<Awaited<ReturnType<typeof getGames>>, TError, TData> & { queryKey: QueryKey }
 }
 
 export type GetGamesInfiniteQueryResult = NonNullable<Awaited<ReturnType<typeof getGames>>>
 export type GetGamesInfiniteQueryError = ErrorType<ErrorMessage>
 
 /**
- * @summary List first 20 games in db
+ * @summary List games in paged format from db
  */
 export const useGetGamesInfinite = <TData = InfiniteData<Awaited<ReturnType<typeof getGames>>>, TError = ErrorType<ErrorMessage>>(
-  options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getGames>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+ page: number, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getGames>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
 
   ):  UseInfiniteQueryResult<TData, TError> & { queryKey: QueryKey } => {
 
-  const queryOptions = getGetGamesInfiniteQueryOptions(options)
+  const queryOptions = getGetGamesInfiniteQueryOptions(page,options)
 
   const query = useInfiniteQuery(queryOptions) as  UseInfiniteQueryResult<TData, TError> & { queryKey: QueryKey };
 
@@ -203,36 +203,36 @@ export const useGetGamesInfinite = <TData = InfiniteData<Awaited<ReturnType<type
 
 
 
-export const getGetGamesQueryOptions = <TData = Awaited<ReturnType<typeof getGames>>, TError = ErrorType<ErrorMessage>>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getGames>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+export const getGetGamesQueryOptions = <TData = Awaited<ReturnType<typeof getGames>>, TError = ErrorType<ErrorMessage>>(page: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getGames>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getGetGamesQueryKey();
+  const queryKey =  queryOptions?.queryKey ?? getGetGamesQueryKey(page);
 
   
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getGames>>> = ({ signal }) => getGames(requestOptions, signal);
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getGames>>> = ({ signal }) => getGames(page, requestOptions, signal);
 
       
 
       
 
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getGames>>, TError, TData> & { queryKey: QueryKey }
+   return  { queryKey, queryFn, enabled: !!(page), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getGames>>, TError, TData> & { queryKey: QueryKey }
 }
 
 export type GetGamesQueryResult = NonNullable<Awaited<ReturnType<typeof getGames>>>
 export type GetGamesQueryError = ErrorType<ErrorMessage>
 
 /**
- * @summary List first 20 games in db
+ * @summary List games in paged format from db
  */
 export const useGetGames = <TData = Awaited<ReturnType<typeof getGames>>, TError = ErrorType<ErrorMessage>>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getGames>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+ page: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getGames>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
 
   ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } => {
 
-  const queryOptions = getGetGamesQueryOptions(options)
+  const queryOptions = getGetGamesQueryOptions(page,options)
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 

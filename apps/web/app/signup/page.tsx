@@ -1,6 +1,6 @@
 'use client'
 
-import { AuthPage } from '@/components/organisms'
+import { AuthPage, useToast } from '@/ui'
 import { useThemeState } from '@/providers/theme'
 
 import clsx from 'clsx'
@@ -8,7 +8,6 @@ import classes from './page.module.css'
 
 import { useGlobalState } from '@/providers/store/GlobalStateContext'
 import { useRouter } from 'next/navigation'
-import { useToast } from '@/components/molecules/toast/use-toast'
 import { useRegister } from '@repo/dionis-api/src/dionis/default/default'
 import { AuthActionType } from '@/providers/store/actions'
 import { useEffect } from 'react'

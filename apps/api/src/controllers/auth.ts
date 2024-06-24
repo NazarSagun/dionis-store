@@ -16,13 +16,13 @@ export class AuthController {
 
     if (!name || !email || !password) {
       return res.status(400).json({
-        message: 'One or more credentials are missing!',
+        message: 'One or more credentials are missing',
       })
     }
 
     if (!isEmailValid) {
       return res.status(400).json({
-        message: 'Invalid email!',
+        message: 'Invalid email',
       })
     }
 
@@ -39,7 +39,7 @@ export class AuthController {
       setHtttpOnlyCookie(res, user.refreshToken)
 
       res.status(201).json({
-        message: 'User registered successfully!',
+        message: 'User registered successfully',
         user: {
           name: user.name,
           email: user.email,
@@ -55,7 +55,7 @@ export class AuthController {
         })
       }
       res.status(500).json({
-        message: 'Something went wrong!',
+        message: 'Something went wrong',
         user: null,
       })
     }
@@ -66,7 +66,7 @@ export class AuthController {
 
     if (!email || !password) {
       return res.status(400).json({
-        message: 'Content cannot be empty!',
+        message: 'Content cannot be empty',
       })
     }
 
@@ -79,7 +79,7 @@ export class AuthController {
       setHtttpOnlyCookie(res, user.refreshToken)
 
       res.status(201).json({
-        message: 'User logged in successfully!',
+        message: 'User logged in successfully',
         user: {
           name: user.name,
           email: user.email,
@@ -95,7 +95,7 @@ export class AuthController {
         })
       }
       res.status(500).json({
-        message: 'Something went wrong!' + error,
+        message: 'Something went wrong' + error,
         user: null,
       })
     }
@@ -114,7 +114,7 @@ export class AuthController {
       await this.authService.logout(refreshToken)
 
       res.status(200).json({
-        message: 'User logged out successfully!',
+        message: 'User logged out successfully',
       })
     } catch (error) {
       if (error instanceof CustomError) {
@@ -124,7 +124,7 @@ export class AuthController {
       }
 
       res.status(500).json({
-        message: 'Something went wrong!',
+        message: 'Something went wrong',
       })
     }
   }
@@ -143,7 +143,7 @@ export class AuthController {
       const user = await this.authService.refreshToken(refreshToken)
 
       res.status(200).json({
-        message: 'Token varified and refreshed successfully!',
+        message: 'Token varified and refreshed successfully',
         user,
       })
     } catch (error) {
@@ -155,7 +155,7 @@ export class AuthController {
       }
 
       res.status(500).json({
-        message: 'Something went wrong!',
+        message: 'Something went wrong',
         user: null,
       })
     }

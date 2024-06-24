@@ -1,6 +1,6 @@
 'use client'
 
-import { AuthForm, UserData } from '../auth-form'
+import { AuthForm, UserData } from '@/ui'
 
 import { LeftContentBlock } from './components'
 

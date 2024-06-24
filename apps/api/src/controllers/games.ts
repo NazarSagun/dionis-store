@@ -10,11 +10,14 @@ export class GamesController {
   }
 
   getGames = async (req: Request, res: Response) => {
-    if (req.body.page <= 0) {
-      return res.status(400).send({ message: 'Invalid page value!' })
+    const page = parseInt(req.params.page, 10)
+
+    // Validate the page parameter
+    if (isNaN(page) || page <= 0) {
+      return res.status(400).json({ message: 'Invalid page number supplied' })
     }
     try {
-      const games = await this.gamesService.fetchGames({ page: req.body.page })
+      const games = await this.gamesService.fetchGames({ page })
 
       res.status(200).send(games)
     } catch (error) {

@@ -10,7 +10,7 @@ import classes from './Header.module.css'
 import { useGlobalState } from '@/providers/store/GlobalStateContext'
 import { AuthActionType } from '@/providers/store/actions'
 import { useLogout } from '@repo/dionis-api/src/dionis/default/default'
-import { DropdownAppearence } from '../dropdown/DropdownAppearence'
+import { DropdownAppearence } from '@/ui/molecules/dropdown/DropdownAppearence'
 
 const navigation = [
   {

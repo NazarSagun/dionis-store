@@ -54,13 +54,13 @@ export class AuthService {
     })
 
     if (!user) {
-      throw new CustomError('User does not exist!', 400)
+      throw new CustomError('User does not exist', 400)
     }
 
     const isPasswordValid = bcrypt.compareSync(password, user.password)
 
     if (!isPasswordValid) {
-      throw new CustomError('Invalid password!', 400)
+      throw new CustomError('Invalid password', 400)
     }
     const accessToken = createAccessToken(getDecodedDto(email, user.role), '30s')
     const refreshToken = createRefreshToken(getDecodedDto(email, user.role), '1d')
@@ -106,12 +106,12 @@ export class AuthService {
     })
 
     if (!user) {
-      throw new CustomError('Bad request!', 400)
+      throw new CustomError('Bad request', 400)
     }
 
     const verifiedToken = jwt.verify(refreshToken, process.env.REFRESH_TOKEN, (err, decoded) => {
       if (err) {
-        throw new CustomError('Authentication error. Refresh token expired, please login to have access.', 401)
+        throw new CustomError('Authentication error. Refresh token expired, please login to have access', 401)
       }
 
       const accessToken = createAccessToken(getDecodedDto(decoded.email, user.role), '30s')

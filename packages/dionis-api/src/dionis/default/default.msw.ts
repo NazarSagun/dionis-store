@@ -48,7 +48,7 @@ export const getGetUsersMockHandler = (overrideResponse?: UsersArray | ((info: P
 }
 
 export const getGetGamesMockHandler = (overrideResponse?: GamesArray | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<GamesArray> | GamesArray)) => {
-  return http.get('*/games', async (info) => {await delay(1000);
+  return http.get('*/games/:page', async (info) => {await delay(1000);
     return new HttpResponse(JSON.stringify(overrideResponse !== undefined 
             ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse) 
             : getGetGamesResponseMock()),
