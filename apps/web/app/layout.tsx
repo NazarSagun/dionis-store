@@ -1,6 +1,6 @@
 'use client'
 
-import { Inter as FontSans } from 'next/font/google'
+import { Inter } from 'next/font/google'
 
 import { GlobalStateProvider } from '@/providers/store/GlobalStateContext'
 import { ThemeStateProvider } from '@/providers/theme/ThemeContext'
@@ -13,7 +13,7 @@ import { Toaster } from '@/ui/molecules/toast/toaster'
 
 const queryClient = new QueryClient()
 
-const fontSans = FontSans({ subsets: ['latin'], variable: '--font-sans', weight: ['400', '500', '600'] })
+const fontSans = Inter({ subsets: ['latin'], variable: '--font-sans', weight: ['400', '500', '600'] })
 
 export default function RootLayout({
   children,

@@ -1,10 +1,23 @@
 .container {
-  border-radius: 5px;
+  border-radius: 15px;
   background-color: var(--light-background-color);
   width: 270px;
-  height: 300px;
 }
 
-.container img {
+.container h3 {
+  padding: 5px 0;
+  font-size: 22px;
+  font-weight: 600;
+  font-family: 'Inter';
+}
+
+.container span {
+  font-family: 'Inter';
+  font-weight: 500;
+  font-size: medium;
+  color: #333;
+}
+
+.content {
   padding: 10px;
 }
