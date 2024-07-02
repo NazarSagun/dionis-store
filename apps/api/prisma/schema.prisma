@@ -32,4 +32,6 @@ model Game_pc {
   developer              String
   release_date           String
   freetogame_profile_url String
+  price                  Int
+  rating                 String
 }

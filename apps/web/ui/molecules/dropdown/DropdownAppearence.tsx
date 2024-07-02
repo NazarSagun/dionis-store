@@ -20,7 +20,7 @@ export function DropdownAppearence() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <button className='flex items-center bg-transparent hover:bg-gray-700 font-semibold text-white py-1 px-2 rounded outline-none'>
+        <button className='flex items-center bg-transparent hover:bg-gray-700 font-semibold text-white py-1 px-2 rounded outline-none select-none'>
           <Image
             priority
             alt='light-theme'

@@ -114,16 +114,8 @@ body {
   overflow-x: hidden;
 }
 
-body.light {
-  background-color: var(--dark-background-color);
-}
-
 main {
   flex: 1;
-}
-
-main div:first-child {
-  min-height: 75vh;
 }
 
 footer {

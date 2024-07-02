@@ -12,7 +12,9 @@ export type GamesArrayItem = {
   genre?: string;
   id?: number;
   platform?: string;
+  price?: number;
   publisher?: string;
+  rating?: string;
   release_date?: string;
   short_description?: string;
   thumbnail?: string;

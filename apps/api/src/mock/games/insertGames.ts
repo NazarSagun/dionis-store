@@ -18,6 +18,8 @@ export const insertGamesData = async (prismaClient) => {
         developer,
         release_date,
         freetogame_profile_url,
+        price,
+        rating,
       } = item
 
       await prismaClient.game_pc.create({
@@ -33,6 +35,8 @@ export const insertGamesData = async (prismaClient) => {
           developer,
           release_date,
           freetogame_profile_url,
+          price,
+          rating,
         },
       })
 

@@ -2,32 +2,18 @@ import type { Meta, StoryObj } from '@storybook/react'
 
 import { Theme, ThemeStateProvider } from '@/providers/theme'
 
-import { Button, ButtonType } from './Button'
+import { Card } from './Card'
 
 const meta = {
-  title: 'Atoms/Button',
-  component: Button,
+  title: 'Molecules/Card',
+  component: Card,
   parameters: {
     layout: 'centered',
   },
   tags: ['autodocs'],
-  args: {
-    onClick: () => {},
-    variant: ButtonType.PRIMARY,
-    disabled: false,
-  },
-  argTypes: {
-    variant: {
-      control: 'radio',
-      options: [ButtonType.PRIMARY, ButtonType.SECONDARY],
-    },
-    onClick: {
-      table: {
-        disable: true,
-      },
-    },
-  },
-} satisfies Meta<typeof Button>
+  args: {},
+  argTypes: {},
+} satisfies Meta<typeof Card>
 
 export default meta
 type Story = StoryObj<typeof meta>
@@ -39,7 +25,7 @@ export const Dark: Story = {
       values: [
         {
           name: 'dark',
-          value: '#2c3e50',
+          value: '#343434',
         },
       ],
     },
@@ -55,7 +41,7 @@ export const Light: Story = {
     values: [
       {
         name: 'light',
-        value: '#f8f8f8',
+        value: '#fcfafa',
       },
     ],
   },

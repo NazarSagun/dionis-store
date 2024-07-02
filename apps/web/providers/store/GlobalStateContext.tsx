@@ -34,11 +34,8 @@ export const GlobalStateProvider = ({ children }: GlobalStateProviderProps) => {
     const token = localStorage.getItem('token')
 
     if (!token) {
-      router.push('/login')
       dispatch({ type: AuthActionType.LOGOUT })
     } else {
-      console.log('login')
-
       dispatch({ type: AuthActionType.AUTHENTICATE, payload: token })
     }
 

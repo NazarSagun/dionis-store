@@ -40,7 +40,7 @@ exports.insertGamesData = void 0;
 var fs = require("fs");
 var path = require("path");
 var insertGamesData = function (prismaClient) { return __awaiter(void 0, void 0, void 0, function () {
-    var data, _i, data_1, item, id, title, thumbnail, short_description, game_url, genre, platform, publisher, developer, release_date, freetogame_profile_url, error_1;
+    var data, _i, data_1, item, id, title, thumbnail, short_description, game_url, genre, platform, publisher, developer, release_date, freetogame_profile_url, price, rating, error_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -51,7 +51,7 @@ var insertGamesData = function (prismaClient) { return __awaiter(void 0, void 0,
             case 1:
                 if (!(_i < data_1.length)) return [3 /*break*/, 4];
                 item = data_1[_i];
-                id = item.id, title = item.title, thumbnail = item.thumbnail, short_description = item.short_description, game_url = item.game_url, genre = item.genre, platform = item.platform, publisher = item.publisher, developer = item.developer, release_date = item.release_date, freetogame_profile_url = item.freetogame_profile_url;
+                id = item.id, title = item.title, thumbnail = item.thumbnail, short_description = item.short_description, game_url = item.game_url, genre = item.genre, platform = item.platform, publisher = item.publisher, developer = item.developer, release_date = item.release_date, freetogame_profile_url = item.freetogame_profile_url, price = item.price, rating = item.rating;
                 return [4 /*yield*/, prismaClient.game_pc.create({
                         data: {
                             id: id,
@@ -65,6 +65,8 @@ var insertGamesData = function (prismaClient) { return __awaiter(void 0, void 0,
                             developer: developer,
                             release_date: release_date,
                             freetogame_profile_url: freetogame_profile_url,
+                            price: price,
+                            rating: rating,
                         },
                     })];
             case 2:

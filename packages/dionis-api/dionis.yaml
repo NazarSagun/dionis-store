@@ -316,6 +316,10 @@ components:
             type: string
           freetogame_profile_url:
             type: string
+          rating:
+            type: string
+          price:
+            type: number
     userCredentials:
       type: object
       properties:

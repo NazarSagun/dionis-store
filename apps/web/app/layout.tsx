@@ -27,6 +27,7 @@ export default function RootLayout({
     >
       <body
         id='body'
+        style={{ margin: '0 !important' }}
         className={cn('min-h-screen bg-background font-sans antialiased', fontSans.variable)}
       >
         <QueryClientProvider client={queryClient}>
