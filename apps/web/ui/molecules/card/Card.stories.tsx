@@ -30,6 +30,13 @@ export const Dark: Story = {
       ],
     },
   },
+  args: {
+    title: 'Overwatch',
+    rating: '4.4',
+    price: 55,
+    platform: 'Windows',
+    imageSrc: 'https://www.freetogame.com/g/1/thumbnail.jpg',
+  },
   decorators: (Story) => <ThemeStateProvider mode={Theme.DARK}>{Story()}</ThemeStateProvider>,
 }
 
@@ -44,6 +51,13 @@ export const Light: Story = {
         value: '#fcfafa',
       },
     ],
+  },
+  args: {
+    title: 'Overwatch',
+    rating: '4.4',
+    price: 55,
+    platform: 'Windows',
+    imageSrc: 'https://www.freetogame.com/g/1/thumbnail.jpg',
   },
   decorators: (Story) => <ThemeStateProvider mode={Theme.LIGHT}>{Story()}</ThemeStateProvider>,
 }

@@ -1,6 +1,6 @@
 'use client'
 
-import { Inter } from 'next/font/google'
+import { Poppins } from 'next/font/google'
 
 import { GlobalStateProvider } from '@/providers/store/GlobalStateContext'
 import { ThemeStateProvider } from '@/providers/theme/ThemeContext'
@@ -13,7 +13,12 @@ import { Toaster } from '@/ui/molecules/toast/toaster'
 
 const queryClient = new QueryClient()
 
-const fontSans = Inter({ subsets: ['latin'], variable: '--font-sans', weight: ['400', '500', '600'] })
+const fontSans = Poppins({
+  subsets: ['latin'],
+  variable: '--font-sans',
+  weight: ['200', '400', '500', '600'],
+  display: 'swap',
+})
 
 export default function RootLayout({
   children,

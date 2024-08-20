@@ -1,23 +1,58 @@
-.container {
-  border-radius: 15px;
-  background-color: var(--light-background-color);
+.card {
   width: 270px;
+  color: #fff;
+  transition: 0.5s;
+  cursor: pointer;
+  background: linear-gradient(to bottom, #44cf6c 10%, #2f243a 70%);
+  border-radius: 1.2em;
+  box-shadow: 0px 0px 48px -8px rgba(68, 207, 108, 1);
 }
 
-.container h3 {
-  padding: 5px 0;
-  font-size: 22px;
-  font-weight: 600;
-  font-family: 'Inter';
-}
-
-.container span {
-  font-family: 'Inter';
-  font-weight: 500;
-  font-size: medium;
-  color: #333;
+.card:hover {
+  transform: translateY(-20px);
 }
 
 .content {
   padding: 10px;
+}
+
+.content h3 {
+  font-family: 400;
+  font-family: 'Poppins';
+}
+
+.content span {
+  font-family: 400;
+  font-family: 'Poppins';
+}
+
+.contentWrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 1rem;
+}
+
+.rating {
+  font-size: 16px;
+  background-color: #44cf6c;
+  padding: 3px;
+}
+
+.priceContainer {
+  display: flex;
+}
+
+.priceContainer span {
+  font-size: 16px;
+}
+
+.titleContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.titleContainer span {
+  font-size: 12px;
 }
