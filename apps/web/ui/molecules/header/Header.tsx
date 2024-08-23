@@ -40,6 +40,8 @@ export const Navigation = () => {
       <div>
         <span>Dionis</span>
         <Image
+          style={{ width: 40, height: 40 }}
+          priority={true}
           width={40}
           height={40}
           alt='logo'

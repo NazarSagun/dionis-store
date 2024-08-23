@@ -9,21 +9,21 @@
 }
 
 .card:hover {
-  transform: translateY(-20px);
+  transform: translateY(-5px);
 }
 
 .content {
-  padding: 10px;
+  padding: 0.5rem 1rem;
 }
 
 .content h3 {
-  font-family: 400;
-  font-family: 'Poppins';
+  font-weight: 400;
+  font-family: var('--font-sans');
 }
 
 .content span {
-  font-family: 400;
-  font-family: 'Poppins';
+  font-weight: 400;
+  font-family: var('--font-sans');
 }
 
 .contentWrapper {
@@ -34,13 +34,14 @@
 }
 
 .rating {
-  font-size: 16px;
-  background-color: #44cf6c;
+  font-size: 0.8rem;
+  background-color: #04ff4b75;
   padding: 3px;
 }
 
 .priceContainer {
   display: flex;
+  flex-flow: row-reverse;
 }
 
 .priceContainer span {

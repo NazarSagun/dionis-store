@@ -10,6 +10,15 @@ import { Loader } from '@/ui'
 import { useRouter } from 'next/navigation'
 import { TOKEN_REMOVED_EVENT } from './authEvent'
 
+const containerStyles = {
+  display: 'flex',
+  'min-height': '100vh',
+  background: 'var(--dark-background-color)',
+  'padding-bottom': '5rem',
+  'justify-content': 'center',
+  'align-items': 'center',
+}
+
 interface GlobalInitialState {
   state: GlobalState
   dispatch: Dispatch<ActionType>
@@ -24,13 +33,11 @@ GlobalStateContext.displayName = 'GlobalStateContext'
 
 export const GlobalStateProvider = ({ children }: GlobalStateProviderProps) => {
   const [state, dispatch] = useReducer(rootReducer, globalInitialState)
-  const [loading, setLoading] = useState<boolean>(false)
+  const [loading, setLoading] = useState<boolean>(true)
   const router = useRouter()
   useRefreshToken()
 
   useEffect(() => {
-    setLoading(true)
-
     const token = localStorage.getItem('token')
 
     if (!token) {
@@ -54,7 +61,13 @@ export const GlobalStateProvider = ({ children }: GlobalStateProviderProps) => {
 
   return (
     <GlobalStateContext.Provider value={{ state, dispatch }}>
-      {loading ? <Loader /> : children}
+      {loading ? (
+        <div style={containerStyles}>
+          <Loader />
+        </div>
+      ) : (
+        children
+      )}
     </GlobalStateContext.Provider>
   )
 }

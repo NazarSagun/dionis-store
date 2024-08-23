@@ -22,11 +22,12 @@ export function DropdownAppearence() {
       <DropdownMenuTrigger asChild>
         <button className='flex items-center bg-transparent hover:bg-gray-700 font-semibold text-white py-1 px-2 rounded outline-none select-none'>
           <Image
-            priority
+            priority={true}
             alt='light-theme'
             src={`/icons/${isDarkTheme}.svg`}
             width={18}
             height={18}
+            style={{ width: 18, height: 18 }}
           />
           <span className='ml-1 mr-0 text-sm hover:cursor-pointer'>{theme}</span>
         </button>

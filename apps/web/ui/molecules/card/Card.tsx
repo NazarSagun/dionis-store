@@ -28,7 +28,8 @@ export const Card = ({ title, rating, price, onClick, platform, imageSrc }: Card
       onClick={onClickHandler}
     >
       <Image
-        style={{ borderTopLeftRadius: '1.2em', borderTopRightRadius: '1.2em' }}
+        priority={true}
+        style={{ borderTopLeftRadius: '1.2em', borderTopRightRadius: '1.2em', width: 270, height: 150 }}
         width={270}
         height={150}
         alt='img'
