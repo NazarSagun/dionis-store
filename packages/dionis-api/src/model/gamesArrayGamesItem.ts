@@ -5,7 +5,7 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export type GamesArrayItem = {
+export type GamesArrayGamesItem = {
   developer?: string;
   freetogame_profile_url?: string;
   game_url?: string;

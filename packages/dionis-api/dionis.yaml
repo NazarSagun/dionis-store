@@ -290,36 +290,42 @@ components:
             type: string
             format: date
     gamesArray:
-      type: array
-      items:
-        type: object
-        properties:
-          id:
-            type: integer
-          title:
-            type: string
-          thumbnail:
-            type: string
-          short_description:
-            type: string
-          game_url:
-            type: string
-          genre:
-            type: string
-          platform:
-            type: string
-          publisher:
-            type: string
-          developer:
-            type: string
-          release_date:
-            type: string
-          freetogame_profile_url:
-            type: string
-          rating:
-            type: string
-          price:
-            type: number
+      type: object
+      properties:
+        totalPages:
+          type: integer
+        games:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+              title:
+                type: string
+              thumbnail:
+                type: string
+              short_description:
+                type: string
+              game_url:
+                type: string
+              genre:
+                type: string
+              platform:
+                type: string
+              publisher:
+                type: string
+              developer:
+                type: string
+              release_date:
+                type: string
+              freetogame_profile_url:
+                type: string
+              rating:
+                type: string
+              price:
+                type: number
+
     userCredentials:
       type: object
       properties:

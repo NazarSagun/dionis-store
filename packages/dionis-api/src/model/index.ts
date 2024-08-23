@@ -10,7 +10,7 @@ export * from './authErrorMessageUser';
 export * from './deleteUserBody';
 export * from './errorMessage';
 export * from './gamesArray';
-export * from './gamesArrayItem';
+export * from './gamesArrayGamesItem';
 export * from './successMessage';
 export * from './userCredentials';
 export * from './userObject';

@@ -1,9 +1,9 @@
 import Image from 'next/image'
 import classes from './Card.module.css'
 import clsx from 'clsx'
-import { GamesArrayItem } from '@repo/dionis-api/src/model'
+import { GamesArrayGamesItem } from '@repo/dionis-api/src/model'
 
-type CardProps = Pick<GamesArrayItem, 'title' | 'rating' | 'price' | 'platform'> & {
+type CardProps = Pick<GamesArrayGamesItem, 'title' | 'rating' | 'price' | 'platform'> & {
   onClick?: () => void
   imageSrc: string
 }

@@ -5,6 +5,7 @@
   padding-bottom: 5rem;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
 }
 
 .container h1 {

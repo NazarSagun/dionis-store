@@ -1,10 +1,6 @@
 import { PrismaClient } from '@prisma/client'
-import { User } from '../types'
 import { CustomError } from '../middleware'
-import bcrypt from 'bcrypt'
 import dotenv from 'dotenv'
-import { createAccessToken, createRefreshToken, getDecodedDto } from '../helpers'
-import { CLIENT_RENEG_LIMIT } from 'tls'
 
 dotenv.config()
 
@@ -24,10 +20,13 @@ export class GamesService {
       take: limit,
     })
 
+    const totalGames = await this.prisma.game_pc.count()
+    const totalPages = Math.ceil(totalGames / limit)
+
     if (!games || games.length === 0) {
       throw new CustomError('There is no more games available', 400)
     }
 
-    return games
+    return { totalPages, games }
   }
 }
