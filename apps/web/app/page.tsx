@@ -8,16 +8,8 @@ import { GamesList } from './components'
 import { useGetGames } from '@repo/dionis-api/src/dionis/default/default'
 import { useState } from 'react'
 import { GamesArrayGamesItem } from '@repo/dionis-api/src/model'
-import {
-  Loader,
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from '@/ui'
+import { Loader } from '@/ui'
+import { GamesPagination } from './components/gamesPagination'
 
 export default function Home() {
   const [page, setPage] = useState(1)
@@ -25,11 +17,6 @@ export default function Home() {
   const containerStyles = clsx(classes.container, state.mode === 'light' ? classes.light : null)
 
   const { data, isLoading, error, isError } = useGetGames(page)
-
-  const countPageNumber = (page: number) => {
-    const pageString = page + page.toString()
-    return Number(pageString)
-  }
 
   if (isLoading) {
     return (
@@ -40,35 +27,14 @@ export default function Home() {
   }
 
   if (data) {
-    const pagesArray = Array.from({ length: data.totalPages as number }, (_, index) => index + 1)
-
-    console.log(countPageNumber(page))
-
     return (
       <div className={containerStyles}>
         <GamesList gamesList={data.games as GamesArrayGamesItem[]} />
-        <Pagination>
-          <PaginationContent>
-            <PaginationItem>
-              <PaginationPrevious
-                onClick={() => {
-                  const isFirstPage = page === 1
-                  setPage((prevState) => (isFirstPage ? prevState : prevState - 1))
-                }}
-              />
-            </PaginationItem>
-            {pagesArray.map((item, index) =>
-              index <= pagesArray.length && index < countPageNumber(page) ? (
-                <PaginationItem>
-                  <PaginationLink isActive={page === item}>{item}</PaginationLink>
-                </PaginationItem>
-              ) : null
-            )}
-            <PaginationItem>
-              <PaginationNext />
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
+        <GamesPagination
+          currentPage={page}
+          totalPages={data.totalPages as number}
+          onChange={setPage}
+        />
       </div>
     )
   }

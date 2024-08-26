@@ -37,18 +37,21 @@ PaginationItem.displayName = 'PaginationItem'
 type PaginationLinkProps = {
   isActive?: boolean
 } & Pick<ButtonProps, 'size'> &
-  React.ComponentProps<'span'>
+  React.ComponentProps<'button'>
 
 const PaginationLink = ({ className, isActive, size = 'icon', ...props }: PaginationLinkProps) => (
-  <span
+  <button
     aria-current={isActive ? 'page' : undefined}
     className={cn(
+      isActive ? 'border-b border-white' : null,
       'cursor-pointer',
       buttonVariants({
-        variant: isActive ? 'outline' : 'ghost',
+        variant: 'link',
         size,
       }),
-      className
+      className,
+      'text-white',
+      'hover:no-underline'
     )}
     {...props}
   />
@@ -62,7 +65,7 @@ const PaginationPrevious = ({ className, ...props }: React.ComponentProps<typeof
     className={cn('gap-1 pl-2.5', className)}
     {...props}
   >
-    <ChevronLeftIcon className='h-4 w-4' />
+    <ChevronLeftIcon className='h-4 w-4c text-white' />
   </PaginationLink>
 )
 PaginationPrevious.displayName = 'PaginationPrevious'
@@ -74,7 +77,7 @@ const PaginationNext = ({ className, ...props }: React.ComponentProps<typeof Pag
     className={cn('gap-1 pr-2.5', className)}
     {...props}
   >
-    <ChevronRightIcon className='h-4 w-4' />
+    <ChevronRightIcon className='h-4 w-4 text-white' />
   </PaginationLink>
 )
 PaginationNext.displayName = 'PaginationNext'
