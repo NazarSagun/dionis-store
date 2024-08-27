@@ -1,18 +1,18 @@
-import { GamesArrayGamesItem } from '@repo/dionis-api/src/model'
+import { GameObject } from '@repo/dionis-api/src/model'
 import clsx from 'clsx'
 import classes from './GamesList.module.css'
 import { Card } from '@/ui/molecules'
 import Link from 'next/link'
 
 interface GamesListProps {
-  gamesList: GamesArrayGamesItem[]
+  gamesList: GameObject[]
 }
 
 export const GamesList = ({ gamesList }: GamesListProps) => {
   const gamesListStyles = clsx(classes.container)
   return (
     <div className={gamesListStyles}>
-      {gamesList.map((game: GamesArrayGamesItem) => (
+      {gamesList.map((game: GameObject) => (
         <Link
           key={game.id}
           href={`/game/${game.id}`}

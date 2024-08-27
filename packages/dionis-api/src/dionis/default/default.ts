@@ -24,6 +24,7 @@ import type {
 import type {
   AuthErrorMessage,
   ErrorMessage,
+  GameObject,
   GamesArray,
   SuccessMessage,
   UserCredentials,
@@ -233,6 +234,107 @@ export const useGetGames = <TData = Awaited<ReturnType<typeof getGames>>, TError
   ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } => {
 
   const queryOptions = getGetGamesQueryOptions(page,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+/**
+ * @summary Fetch game by id
+ */
+export const getGame = (
+    gameId: number,
+ options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<GameObject>(
+      {url: `/game/${gameId}`, method: 'GET', signal
+    },
+      options);
+    }
+  
+
+export const getGetGameQueryKey = (gameId: number,) => {
+    return [`/game/${gameId}`] as const;
+    }
+
+    
+export const getGetGameInfiniteQueryOptions = <TData = InfiniteData<Awaited<ReturnType<typeof getGame>>>, TError = ErrorType<ErrorMessage>>(gameId: number, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getGame>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetGameQueryKey(gameId);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getGame>>> = ({ signal }) => getGame(gameId, requestOptions, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, enabled: !!(gameId), ...queryOptions} as UseInfiniteQueryOptions<Awaited<ReturnType<typeof getGame>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetGameInfiniteQueryResult = NonNullable<Awaited<ReturnType<typeof getGame>>>
+export type GetGameInfiniteQueryError = ErrorType<ErrorMessage>
+
+/**
+ * @summary Fetch game by id
+ */
+export const useGetGameInfinite = <TData = InfiniteData<Awaited<ReturnType<typeof getGame>>>, TError = ErrorType<ErrorMessage>>(
+ gameId: number, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getGame>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+
+  ):  UseInfiniteQueryResult<TData, TError> & { queryKey: QueryKey } => {
+
+  const queryOptions = getGetGameInfiniteQueryOptions(gameId,options)
+
+  const query = useInfiniteQuery(queryOptions) as  UseInfiniteQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+export const getGetGameQueryOptions = <TData = Awaited<ReturnType<typeof getGame>>, TError = ErrorType<ErrorMessage>>(gameId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getGame>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetGameQueryKey(gameId);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getGame>>> = ({ signal }) => getGame(gameId, requestOptions, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, enabled: !!(gameId), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getGame>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetGameQueryResult = NonNullable<Awaited<ReturnType<typeof getGame>>>
+export type GetGameQueryError = ErrorType<ErrorMessage>
+
+/**
+ * @summary Fetch game by id
+ */
+export const useGetGame = <TData = Awaited<ReturnType<typeof getGame>>, TError = ErrorType<ErrorMessage>>(
+ gameId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getGame>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+
+  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } => {
+
+  const queryOptions = getGetGameQueryOptions(gameId,options)
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 

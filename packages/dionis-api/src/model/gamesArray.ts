@@ -4,9 +4,9 @@
  * Swagger Dionis
  * OpenAPI spec version: 1.0.0
  */
-import type { GamesArrayGamesItem } from './gamesArrayGamesItem';
+import type { GameObject } from './gameObject';
 
 export interface GamesArray {
-  games?: GamesArrayGamesItem[];
+  games?: GameObject[];
   totalPages?: number;
 }

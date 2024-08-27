@@ -6,5 +6,5 @@
  */
 
 export type DeleteUserBody = {
-  message?: string;
+  id?: number;
 };

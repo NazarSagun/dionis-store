@@ -11,12 +11,12 @@ export class GamesService {
     this.prisma = new PrismaClient()
   }
 
-  async fetchGames(data: { page: number }) {
+  async fetchGames({ page }: { page: number }) {
     const limit = 20
-    const page: number = data.page || 1
+    const currentPage: number = page || 1
 
     const games = await this.prisma.game_pc.findMany({
-      skip: (page - 1) * limit,
+      skip: (currentPage - 1) * limit,
       take: limit,
     })
 
@@ -28,5 +28,19 @@ export class GamesService {
     }
 
     return { totalPages, games }
+  }
+
+  async fetchGameById({ gameId }: { gameId: number }) {
+    const game = await this.prisma.game_pc.findUnique({
+      where: {
+        id: gameId,
+      },
+    })
+
+    if (!game) {
+      throw new CustomError('There is no such game', 400)
+    }
+
+    return game
   }
 }

@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react'
 
 import { Theme, ThemeStateProvider } from '@/providers/theme'
 
-import { Button, ButtonType } from './Button'
+import { Button } from './Button'
 
 const meta = {
   title: 'Atoms/Button',
@@ -13,19 +13,20 @@ const meta = {
   tags: ['autodocs'],
   args: {
     onClick: () => {},
-    variant: ButtonType.PRIMARY,
+    variant: 'default',
     disabled: false,
   },
   argTypes: {
     variant: {
       control: 'radio',
-      options: [ButtonType.PRIMARY, ButtonType.SECONDARY],
+      options: ['default', 'secondary'],
     },
     onClick: {
       table: {
         disable: true,
       },
     },
+    asChild: { table: { disable: true } },
   },
 } satisfies Meta<typeof Button>
 
@@ -45,6 +46,7 @@ export const Dark: Story = {
     },
   },
   decorators: (Story) => <ThemeStateProvider mode={Theme.DARK}>{Story()}</ThemeStateProvider>,
+  render: (args) => <Button {...args}>click</Button>,
 }
 
 export const Light: Story = {
@@ -60,4 +62,5 @@ export const Light: Story = {
     ],
   },
   decorators: (Story) => <ThemeStateProvider mode={Theme.LIGHT}>{Story()}</ThemeStateProvider>,
+  render: (args) => <Button {...args}>click</Button>,
 }

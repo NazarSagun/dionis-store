@@ -1,14 +1,12 @@
 import Image from 'next/image'
 import classes from './Card.module.css'
 import clsx from 'clsx'
-import { GamesArrayGamesItem } from '@repo/dionis-api/src/model'
+import { GameObject } from '@repo/dionis-api/src/model'
 
-type CardProps = Pick<GamesArrayGamesItem, 'title' | 'rating' | 'price' | 'platform'> & {
+type CardProps = Pick<GameObject, 'title' | 'rating' | 'price' | 'platform'> & {
   onClick?: () => void
   imageSrc: string
 }
-
-interface Card {}
 
 export const Card = ({ title, rating, price, onClick, platform, imageSrc }: CardProps) => {
   const containerStyles = clsx(classes.card)

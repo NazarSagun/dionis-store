@@ -63,6 +63,37 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/errorMessage'
+  /game/{gameId}:
+    get:
+      summary: Fetch game by id
+      operationId: getGame
+      parameters:
+        - name: gameId
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 1
+          description: The game id to retrieve
+      responses:
+        '200':
+          description: Game object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/gameObject'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
   /user/delete:
     post:
       summary: Delete user
@@ -76,9 +107,9 @@ paths:
             schema:
               type: object
               properties:
-                message:
-                  type: string
-                  example: User deleted!
+                id:
+                  type: number
+                  example: 1
       responses:
         '200':
           description: An object with success message
@@ -297,35 +328,36 @@ components:
         games:
           type: array
           items:
-            type: object
-            properties:
-              id:
-                type: integer
-              title:
-                type: string
-              thumbnail:
-                type: string
-              short_description:
-                type: string
-              game_url:
-                type: string
-              genre:
-                type: string
-              platform:
-                type: string
-              publisher:
-                type: string
-              developer:
-                type: string
-              release_date:
-                type: string
-              freetogame_profile_url:
-                type: string
-              rating:
-                type: string
-              price:
-                type: number
-
+            $ref: '#/components/schemas/gameObject'
+    gameObject:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        thumbnail:
+          type: string
+        short_description:
+          type: string
+        game_url:
+          type: string
+        genre:
+          type: string
+        platform:
+          type: string
+        publisher:
+          type: string
+        developer:
+          type: string
+        release_date:
+          type: string
+        freetogame_profile_url:
+          type: string
+        rating:
+          type: string
+        price:
+          type: number
     userCredentials:
       type: object
       properties:

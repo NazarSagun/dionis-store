@@ -5,7 +5,7 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export type GamesArrayGamesItem = {
+export interface GameObject {
   developer?: string;
   freetogame_profile_url?: string;
   game_url?: string;
@@ -19,4 +19,4 @@ export type GamesArrayGamesItem = {
   short_description?: string;
   thumbnail?: string;
   title?: string;
-};
+}
