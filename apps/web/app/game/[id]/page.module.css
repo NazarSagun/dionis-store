@@ -1,0 +1,48 @@
+.container {
+  display: flex;
+  min-height: 75vh;
+  background: var(--dark-background-color);
+  padding: 3rem;
+  gap: 4rem;
+}
+
+.container.light {
+  background: var(--light-background-color);
+}
+
+.info {
+  color: var(--dark-text-color);
+}
+
+.info.light {
+  color: var(--light-text-color);
+}
+
+.info div {
+  display: flex;
+  align-items: flex-end;
+}
+
+.info h1 {
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.info div span {
+  margin-right: 1rem;
+  font-size: 1rem;
+  font-weight: 400;
+}
+
+.info div {
+  padding: 0.2rem 0;
+}
+
+.info div h2 {
+  font-weight: 600;
+}
+
+.info p {
+  font-size: 1rem;
+  margin: 1rem 0;
+}
