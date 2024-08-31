@@ -1,7 +1,6 @@
 .container {
   display: flex;
   min-height: 75vh;
-  background: var(--dark-background-color);
   padding-bottom: 5rem;
   justify-content: center;
   align-items: center;

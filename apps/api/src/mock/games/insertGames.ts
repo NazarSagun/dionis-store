@@ -5,7 +5,14 @@ export const insertGamesData = async (prismaClient) => {
   try {
     const data = JSON.parse(fs.readFileSync(path.join(__dirname, 'games.json'), 'utf8'))
 
-    for (const item of data) {
+    const upadtedData = data.map((item) => {
+      return {
+        ...item,
+        discount: getRandomDiscount(5, 85),
+      }
+    })
+
+    for (const item of upadtedData) {
       const {
         id,
         title,
@@ -20,6 +27,7 @@ export const insertGamesData = async (prismaClient) => {
         freetogame_profile_url,
         price,
         rating,
+        discount,
       } = item
 
       await prismaClient.game_pc.create({
@@ -37,6 +45,7 @@ export const insertGamesData = async (prismaClient) => {
           freetogame_profile_url,
           price,
           rating,
+          discount,
         },
       })
 
@@ -47,4 +56,8 @@ export const insertGamesData = async (prismaClient) => {
   } catch (error) {
     console.error('Error inserting data:', error)
   }
+}
+
+function getRandomDiscount(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min
 }

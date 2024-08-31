@@ -358,6 +358,8 @@ components:
           type: string
         price:
           type: number
+        discount:
+          type: number
     userCredentials:
       type: object
       properties:

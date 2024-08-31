@@ -11,6 +11,7 @@ CREATE TABLE "Game_pc" (
     "developer" TEXT NOT NULL,
     "release_date" TEXT NOT NULL,
     "freetogame_profile_url" TEXT NOT NULL,
+    "discount" INTEGER NOT NULL,
 
     CONSTRAINT "Game_pc_pkey" PRIMARY KEY ("id")
 );

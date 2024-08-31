@@ -3,7 +3,6 @@
   display: grid;
   justify-content: center;
   grid-template-columns: auto auto auto;
-  gap: 4rem;
-  grid-auto-rows: minmax(100px, auto);
+  gap: 2rem;
   padding-bottom: 5rem;
 }

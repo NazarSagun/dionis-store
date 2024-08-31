@@ -27,7 +27,7 @@ export const Card = ({ title, rating, price, onClick, platform, imageSrc }: Card
     >
       <Image
         priority={true}
-        style={{ borderTopLeftRadius: '1.2em', borderTopRightRadius: '1.2em', width: 270, height: 150 }}
+        style={{ borderTopLeftRadius: '1.2em', borderTopRightRadius: '1.2em', width: 'auto', height: 'auto' }}
         width={270}
         height={150}
         alt='img'
@@ -39,10 +39,12 @@ export const Card = ({ title, rating, price, onClick, platform, imageSrc }: Card
             <h3>{title}</h3>
             <span>{platform}</span>
           </div>
-          <span className={ratingStyles}>{rating}</span>
-        </div>
-        <div className={priceContainerStyles}>
-          <span>€{price}</span>
+          <div className={priceContainerStyles}>
+            <span className={ratingStyles}>{rating}</span>
+            <div>
+              <span>€{price}</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>

@@ -56,8 +56,6 @@ export const GamesPagination = ({ totalPages, onChange, currentPage }: Paginatio
 
   const pageNumbers = getPageNumbers()
 
-  console.log(currentPage)
-
   return (
     <Pagination>
       <PaginationContent>

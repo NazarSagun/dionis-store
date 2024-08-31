@@ -79,7 +79,7 @@
   --light-primary-color: #898989;
   --light-secondary-color: #b7b3a1;
   --light-text-color: #333;
-  --light-background-color: #fcfafa;
+  --light-background-color: linear-gradient(140deg, #fcfafa, #4c2480d3);
   --light-background-secondary-color: #343434;
   --light-content-block-color: #565254;
   --light-link-color: #2980b9;
@@ -87,7 +87,7 @@
   --dark-primary-color: #2f306177;
   --dark-secondary-color: #ffe66d;
   --dark-text-color: #f7fff7;
-  --dark-background-color: #343434;
+  --dark-background-color: linear-gradient(135deg, #000000, #2e004f);
   --dark-background-secondary-color: #1b2021;
   --dark-content-block-color: #1b2021;
   --dark-link-color: #3498db;
@@ -115,6 +115,7 @@ body {
 
 main {
   flex: 1;
+  background: var(--dark-background-color);
 }
 
 footer {

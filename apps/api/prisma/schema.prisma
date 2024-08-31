@@ -34,4 +34,5 @@ model Game_pc {
   freetogame_profile_url String
   price                  Int
   rating                 String
+  discount               Int
 }

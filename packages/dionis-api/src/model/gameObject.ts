@@ -7,6 +7,7 @@
 
 export interface GameObject {
   developer?: string;
+  discount?: number;
   freetogame_profile_url?: string;
   game_url?: string;
   genre?: string;
