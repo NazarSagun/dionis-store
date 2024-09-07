@@ -4,7 +4,7 @@ import { useGetGame } from '@repo/dionis-api/src/dionis/default/default'
 import classes from '../../page.module.css'
 import styles from './page.module.css'
 import clsx from 'clsx'
-import { useThemeState } from '@/providers/theme'
+import { ThemeState, useThemeState } from '@/providers/theme'
 import { Loader } from '@/ui'
 import Image from 'next/image'
 import { useParams } from 'next/navigation'
@@ -16,14 +16,18 @@ export default function GamePage() {
 
   const { data, isLoading, error, isError } = useGetGame(Number(id))
 
-  const loaderStyles = clsx(classes.container, state.mode === 'light' ? classes.light : null)
-  const containerStyles = clsx(styles.container, state.mode === 'light' ? classes.light : null)
-  const infoStyles = clsx(styles.info, state.mode === 'light' ? classes.light : null)
-  const topContainer = clsx(styles.topContainer, state.mode === 'light' ? classes.light : null)
-  const descriptionStyles = clsx(styles.descriptionStyles, state.mode === 'light' ? classes.light : null)
-  const priceContainer = clsx(styles.priceContainer, state.mode === 'light' ? classes.light : null)
-  const buttonsContainer = clsx(styles.buttonsContainer)
-  const button = clsx(styles.button)
+  const {
+    loaderStyles,
+    containerStyles,
+    infoStyles,
+    topContainer,
+    descriptionStyles,
+    labelStyles,
+    valueStyles,
+    priceContainer,
+    buttonsContainer,
+    button,
+  } = returnStyles(state)
 
   if (isLoading) {
     return (
@@ -35,7 +39,6 @@ export default function GamePage() {
 
   if (data) {
     const informationData = [
-      { label: 'Title', value: data.title },
       { label: 'Genre', value: data.genre },
       { label: 'Platform', value: data.platform },
       { label: 'Publisher', value: data.publisher },
@@ -90,15 +93,45 @@ export default function GamePage() {
             </div>
           </div>
         </div>
-        <div>
+        <div className={descriptionStyles}>
           {informationData.map((item) => (
             <div key={item.label}>
-              <span>{item.label}: </span>
-              <h2>{item.value}</h2>
+              <div className={labelStyles}>
+                <span>{item.label}: </span>
+              </div>
+              <div className={valueStyles}>
+                <span>{item.value}</span>
+              </div>
             </div>
           ))}
         </div>
       </div>
     )
+  }
+}
+
+function returnStyles(state: ThemeState) {
+  const loaderStyles = clsx(classes.container, state.mode === 'light' ? classes.light : null)
+  const containerStyles = clsx(styles.container, state.mode === 'light' ? classes.light : null)
+  const infoStyles = clsx(styles.info, state.mode === 'light' ? classes.light : null)
+  const topContainer = clsx(styles.topContainer, state.mode === 'light' ? classes.light : null)
+  const descriptionStyles = clsx(styles.descriptionContainer, state.mode === 'light' ? classes.light : null)
+  const labelStyles = clsx(styles.labelContainer, state.mode === 'light' ? classes.light : null)
+  const valueStyles = clsx(styles.valueContainer, state.mode === 'light' ? classes.light : null)
+  const priceContainer = clsx(styles.priceContainer, state.mode === 'light' ? classes.light : null)
+  const buttonsContainer = clsx(styles.buttonsContainer)
+  const button = clsx(styles.button)
+
+  return {
+    loaderStyles,
+    containerStyles,
+    infoStyles,
+    topContainer,
+    descriptionStyles,
+    labelStyles,
+    valueStyles,
+    priceContainer,
+    buttonsContainer,
+    button,
   }
 }

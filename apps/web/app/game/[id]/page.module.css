@@ -34,7 +34,7 @@
 
 .topContainer {
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
   gap: 3rem;
 }
 
@@ -114,4 +114,22 @@
 .priceContainer span:nth-of-type(3) {
   font-size: 3rem;
   line-height: 1.1;
+}
+
+.descriptionContainer div {
+  display: flex;
+}
+
+.labelContainer {
+  width: 6rem;
+  margin-right: 1rem;
+}
+
+.labelContainer span {
+  color: #888;
+  font-size: 1rem;
+}
+
+.valueContainer span {
+  font-size: 1rem;
 }

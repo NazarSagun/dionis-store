@@ -34,13 +34,13 @@ export const Navigation = () => {
   const { refetch: logout } = useLogout({ query: { enabled: false } })
 
   const headerStyles = clsx(classes.header, state.mode === 'light' ? classes.light : null)
+  const cartWrapperStyles = clsx(classes.cartWrapper)
 
   return (
     <header className={headerStyles}>
       <div>
         <span>Dionis</span>
         <Image
-          style={{ width: 40, height: 40 }}
           priority={true}
           width={40}
           height={40}
@@ -76,6 +76,26 @@ export const Navigation = () => {
           )}
         </ul>
       </nav>
+      <div className={cartWrapperStyles}>
+        <Link href='/cart'>
+          <Image
+            priority={true}
+            width={25}
+            height={25}
+            alt='logo'
+            src={`/icons/shopping-cart.svg`}
+          />
+        </Link>
+        <Link href='/account'>
+          <Image
+            priority={true}
+            width={25}
+            height={25}
+            alt='logo'
+            src={`/icons/account.svg`}
+          />
+        </Link>
+      </div>
     </header>
   )
 }
