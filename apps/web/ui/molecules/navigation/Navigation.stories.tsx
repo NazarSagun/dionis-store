@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react'
 
 import { Theme, ThemeStateProvider } from '@/providers/theme'
 
-import { Navigation } from './Header'
+import { Navigation } from './Navigation'
 
 const meta = {
   title: 'Molecules/Navigation',
@@ -29,6 +29,9 @@ export const Dark: Story = {
       ],
     },
   },
+  args: {
+    isCart: false,
+  },
   decorators: (Story) => <ThemeStateProvider mode={Theme.DARK}>{Story()}</ThemeStateProvider>,
 }
 
@@ -43,6 +46,9 @@ export const Light: Story = {
         value: '#f8f8f8',
       },
     ],
+  },
+  args: {
+    isCart: false,
   },
   decorators: (Story) => <ThemeStateProvider mode={Theme.LIGHT}>{Story()}</ThemeStateProvider>,
 }

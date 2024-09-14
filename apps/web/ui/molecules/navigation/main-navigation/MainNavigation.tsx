@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { useThemeState } from '@/providers/theme/ThemeContext'
 
 import clsx from 'clsx'
-import classes from './Header.module.css'
+import classes from './MainNavigation.module.css'
 import { useGlobalState } from '@/providers/store/GlobalStateContext'
 import { AuthActionType } from '@/providers/store/actions'
 import { useLogout } from '@repo/dionis-api/src/dionis/default/default'
@@ -25,7 +25,7 @@ const navigation = [
   },
 ]
 
-export const Navigation = () => {
+export const MainNavigation = () => {
   const { state: authState, dispatch: authDispatch } = useGlobalState()
   const isUserAuth = authState.auth.isAuthenticated
 

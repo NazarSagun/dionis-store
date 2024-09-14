@@ -1,5 +1,5 @@
 export * from './footer'
-export * from './header'
+export * from './navigation'
 export * from './dropdown'
 export * from './toast'
 export * from './card'

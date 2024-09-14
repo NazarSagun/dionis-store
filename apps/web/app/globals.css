@@ -93,6 +93,10 @@
   --dark-link-color: #3498db;
 
   --header-link-color: var(--light-background-color);
+  --success-color: #54da58;
+  --error-color: #f44336;
+  --warning-color: #ff9800;
+  --info-color: #2196f3;
 }
 
 * {

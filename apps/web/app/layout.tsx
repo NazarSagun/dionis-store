@@ -38,7 +38,7 @@ export default function RootLayout({
         <QueryClientProvider client={queryClient}>
           <GlobalStateProvider>
             <ThemeStateProvider>
-              <Navigation />
+              <Navigation isCart={true} />
               <main>{children}</main>
               <Footer />
               <Toaster />
