@@ -2,6 +2,7 @@ import Image from 'next/image'
 import classes from './Card.module.css'
 import clsx from 'clsx'
 import { GameObject } from '@repo/dionis-api/src/model'
+import { useState } from 'react'
 // import { fontSans } from '@/app/layout'
 
 type CardProps = Pick<GameObject, 'title' | 'rating' | 'price' | 'platform'> & {
@@ -10,6 +11,7 @@ type CardProps = Pick<GameObject, 'title' | 'rating' | 'price' | 'platform'> & {
 }
 
 export const Card = ({ title, rating, price, onClick, platform, imageSrc }: CardProps) => {
+  const [isImageLoading, setImageLoading] = useState(true)
   const containerStyles = clsx(classes.card)
   const contentStyles = clsx(classes.content)
   const contentWrapperStyles = clsx(classes.contentWrapper)
@@ -29,9 +31,9 @@ export const Card = ({ title, rating, price, onClick, platform, imageSrc }: Card
       <Image
         priority={true}
         style={{ borderTopLeftRadius: '1.2em', borderTopRightRadius: '1.2em', width: 'auto', height: 'auto' }}
-        width={270}
-        height={150}
-        alt='img'
+        width={500}
+        height={270}
+        alt={`${title} thumbnail`}
         src={imageSrc}
       />
       <div className={contentStyles}>

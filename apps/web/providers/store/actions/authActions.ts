@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 export enum AuthActionType {
   AUTHENTICATE = 'AUTHENTICATE',
   LOGOUT = 'LOGOUT',

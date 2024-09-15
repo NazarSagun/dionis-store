@@ -331,6 +331,21 @@ components:
             $ref: '#/components/schemas/gameObject'
     gameObject:
       type: object
+      required:
+        - developer
+        - discount
+        - freetogame_profile_url
+        - game_url
+        - genre
+        - id
+        - platform
+        - price
+        - publisher
+        - rating
+        - release_date
+        - short_description
+        - thumbnail
+        - title
       properties:
         id:
           type: integer

@@ -6,18 +6,18 @@
  */
 
 export interface GameObject {
-  developer?: string;
-  discount?: number;
-  freetogame_profile_url?: string;
-  game_url?: string;
-  genre?: string;
-  id?: number;
-  platform?: string;
-  price?: number;
-  publisher?: string;
-  rating?: string;
-  release_date?: string;
-  short_description?: string;
-  thumbnail?: string;
-  title?: string;
+  developer: string;
+  discount: number;
+  freetogame_profile_url: string;
+  game_url: string;
+  genre: string;
+  id: number;
+  platform: string;
+  price: number;
+  publisher: string;
+  rating: string;
+  release_date: string;
+  short_description: string;
+  thumbnail: string;
+  title: string;
 }
