@@ -16,10 +16,9 @@
 }
 
 .content h3 {
-  font-size: 1vw;
+  font-size: 1.3vw;
   font-weight: 400;
   max-width: 15rem;
-  font-family: var('--font-sans');
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
@@ -27,7 +26,6 @@
 
 .content span {
   font-weight: 400;
-  font-family: var('--font-sans');
 }
 
 .contentWrapper {
@@ -38,7 +36,7 @@
 }
 
 .rating {
-  font-size: 0.7vw;
+  font-size: 1vw;
   background-color: #04ff4b75;
   padding: 3px;
 }
@@ -53,7 +51,7 @@
 }
 
 .priceContainer div span {
-  font-size: 1.2vw;
+  font-size: 1.3vw;
 }
 
 .titleContainer {
@@ -65,5 +63,5 @@
 }
 
 .titleContainer span {
-  font-size: 0.7vw;
+  font-size: 0.8vw;
 }

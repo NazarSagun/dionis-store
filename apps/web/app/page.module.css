@@ -7,10 +7,6 @@
   flex-direction: column;
 }
 
-.container h1 {
-  font-family: var('--font-sans');
-}
-
 .container.light {
   background: var(--light-background-color);
 }

@@ -2,6 +2,7 @@ import Image from 'next/image'
 import classes from './Card.module.css'
 import clsx from 'clsx'
 import { GameObject } from '@repo/dionis-api/src/model'
+// import { fontSans } from '@/app/layout'
 
 type CardProps = Pick<GameObject, 'title' | 'rating' | 'price' | 'platform'> & {
   onClick?: () => void

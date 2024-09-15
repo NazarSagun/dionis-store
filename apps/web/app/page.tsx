@@ -4,12 +4,12 @@ import { useThemeState } from '@/providers/theme'
 
 import clsx from 'clsx'
 import classes from './page.module.css'
-import { GamesList } from './components'
+import { GamesList } from './(shop)/components'
 import { useGetGames } from '@repo/dionis-api/src/dionis/default/default'
 import { useState } from 'react'
 import { GameObject } from '@repo/dionis-api/src/model'
-import { Loader } from '@/ui'
-import { GamesPagination } from './components/gamesPagination'
+import { Loader, MainNavigation, Footer } from '@/ui'
+import { GamesPagination } from './(shop)/components/gamesPagination'
 
 export default function Home() {
   const [page, setPage] = useState(1)
@@ -28,14 +28,20 @@ export default function Home() {
 
   if (data) {
     return (
-      <div className={containerStyles}>
-        <GamesList gamesList={data.games as GameObject[]} />
-        <GamesPagination
-          currentPage={page}
-          totalPages={data.totalPages as number}
-          onChange={setPage}
-        />
-      </div>
+      <>
+        <MainNavigation />
+        <main>
+          <div className={containerStyles}>
+            <GamesList gamesList={data.games as GameObject[]} />
+            <GamesPagination
+              currentPage={page}
+              totalPages={data.totalPages as number}
+              onChange={setPage}
+            />
+          </div>
+        </main>
+        <Footer />
+      </>
     )
   }
 }

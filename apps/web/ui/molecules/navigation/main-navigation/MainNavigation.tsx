@@ -37,16 +37,18 @@ export const MainNavigation = () => {
   const cartWrapperStyles = clsx(classes.cartWrapper)
 
   return (
-    <header className={headerStyles}>
+    <nav className={headerStyles}>
       <div>
-        <span>Dionis</span>
-        <Image
-          priority={true}
-          width={40}
-          height={40}
-          alt='logo'
-          src={`/icons/logo.png`}
-        />
+        <Link href='/'>
+          <span>Dionis</span>
+          <Image
+            priority={true}
+            width={40}
+            height={40}
+            alt='logo'
+            src={`/icons/logo.png`}
+          />
+        </Link>
       </div>
       <nav>
         <DropdownAppearence />
@@ -96,6 +98,6 @@ export const MainNavigation = () => {
           />
         </Link>
       </div>
-    </header>
+    </nav>
   )
 }

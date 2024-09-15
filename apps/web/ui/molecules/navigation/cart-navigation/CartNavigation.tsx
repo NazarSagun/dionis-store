@@ -3,6 +3,7 @@ import classes from './CartNavigation.module.css'
 import clsx from 'clsx'
 import { useThemeState } from '@/providers/theme'
 import Image from 'next/image'
+import Link from 'next/link'
 
 const steps = [
   {
@@ -26,16 +27,18 @@ export const CartNavigation = () => {
   const navContainer = clsx(classes.navContainer, state.mode === 'light' ? classes.light : null)
 
   return (
-    <div className={navContainer}>
+    <nav className={navContainer}>
       <div className={classes.logo}>
-        <span>Dionis</span>
-        <Image
-          priority={true}
-          width={40}
-          height={40}
-          alt='logo'
-          src={`/icons/logo.png`}
-        />
+        <Link href='/'>
+          <span>Dionis</span>
+          <Image
+            priority={true}
+            width={40}
+            height={40}
+            alt='logo'
+            src={`/icons/logo.png`}
+          />
+        </Link>
       </div>
       <div className={classes.steps}>
         {steps.map((item) => {
@@ -70,6 +73,6 @@ export const CartNavigation = () => {
           <span>256-bit SSL Secured</span>
         </div>
       </div>
-    </div>
+    </nav>
   )
 }

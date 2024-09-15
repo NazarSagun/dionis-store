@@ -11,6 +11,15 @@
   background: var(--light-primary-color);
 }
 
+.header a {
+  display: flex;
+  align-items: center;
+}
+
+.header a span {
+  cursor: pointer;
+}
+
 .header div {
   display: flex;
   align-items: center;

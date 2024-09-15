@@ -128,7 +128,6 @@ footer {
 
 p,
 span {
-  font-size: 1.6rem;
   color: var(--dark-text-color);
 }
 
@@ -144,4 +143,8 @@ a {
 
 ul li {
   font-size: 1.5rem;
+}
+
+span p h1 h2 h3 h4 h5 h6 {
+  font-family: var(--font-sans);
 }
