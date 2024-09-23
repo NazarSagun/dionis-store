@@ -2,23 +2,16 @@ import type { Meta, StoryObj } from '@storybook/react'
 
 import { Theme, ThemeStateProvider } from '@/providers/theme'
 
-import { ThemeIcon } from './ThemeIcon'
+import { Loader } from './Loader'
 
 const meta = {
-  title: 'Atoms/Theme Icon',
-  component: ThemeIcon,
+  title: 'Atoms/Loader',
+  component: Loader,
   parameters: {
     layout: 'centered',
   },
   tags: ['autodocs'],
-  argTypes: {
-    onClick: {
-      table: {
-        disable: true,
-      },
-    },
-  },
-} satisfies Meta<typeof ThemeIcon>
+} satisfies Meta<typeof Loader>
 
 export default meta
 type Story = StoryObj<typeof meta>
@@ -26,14 +19,15 @@ type Story = StoryObj<typeof meta>
 export const Component: Story = {
   parameters: {
     backgrounds: {
-      default: 'light',
+      default: 'dark',
       values: [
         {
-          name: 'light',
-          value: '#f8f8f8',
+          name: 'dark',
+          value: '#2c3e50',
         },
       ],
     },
   },
-  decorators: (Story) => <ThemeStateProvider>{Story()}</ThemeStateProvider>,
+  decorators: (Story) => <ThemeStateProvider mode={Theme.DARK}>{Story()}</ThemeStateProvider>,
+  render: (args) => <Loader {...args} />,
 }

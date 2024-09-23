@@ -2,29 +2,26 @@ import type { Meta, StoryObj } from '@storybook/react'
 
 import { Theme, ThemeStateProvider } from '@/providers/theme'
 
-import { Card } from './Card'
+import { MainNavigation } from './MainNavigation'
 
 const meta = {
-  title: 'Molecules/Card',
-  component: Card,
+  title: 'Molecules/MainNavigation',
+  component: MainNavigation,
   parameters: {
-    layout: 'centered',
+    layout: 'fullscreen',
   },
   tags: ['autodocs'],
-  args: {},
-  argTypes: {
-    onClick: {
-      table: {
-        disable: true,
-      },
-    },
-    imageSrc: {
-      table: {
-        disable: true,
-      },
-    },
+  args: {
+    isCart: false,
   },
-} satisfies Meta<typeof Card>
+  argTypes: {
+    isCart: {
+      table: {
+        disable: true,
+      },
+    },
+  }
+} satisfies Meta<typeof MainNavigation>
 
 export default meta
 type Story = StoryObj<typeof meta>
@@ -36,17 +33,10 @@ export const Dark: Story = {
       values: [
         {
           name: 'dark',
-          value: '#343434',
+          value: '#2c3e50',
         },
       ],
     },
-  },
-  args: {
-    title: 'Overwatch',
-    rating: '4.4',
-    price: 55,
-    platform: 'Windows',
-    imageSrc: 'https://www.freetogame.com/g/1/thumbnail.jpg',
   },
   decorators: (Story) => <ThemeStateProvider mode={Theme.DARK}>{Story()}</ThemeStateProvider>,
 }
@@ -59,16 +49,9 @@ export const Light: Story = {
     values: [
       {
         name: 'light',
-        value: '#fcfafa',
+        value: '#f8f8f8',
       },
     ],
-  },
-  args: {
-    title: 'Overwatch',
-    rating: '4.4',
-    price: 55,
-    platform: 'Windows',
-    imageSrc: 'https://www.freetogame.com/g/1/thumbnail.jpg',
   },
   decorators: (Story) => <ThemeStateProvider mode={Theme.LIGHT}>{Story()}</ThemeStateProvider>,
 }

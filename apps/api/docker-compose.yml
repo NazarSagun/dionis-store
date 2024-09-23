@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  dionis:
+    image: postgres:15
+    container_name: dionis_db
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: dionis_db
+    volumes:
+      - dionis_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - dionis_network
+    restart: unless-stopped
+
+volumes:
+  dionis_data:
+
+networks:
+  dionis_network:

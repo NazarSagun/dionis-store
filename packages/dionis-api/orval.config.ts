@@ -24,4 +24,4 @@ export default defineConfig({
       target: './dionis.yaml',
     },
   },
-})
+}) as typeof defineConfig

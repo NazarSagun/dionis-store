@@ -2,17 +2,26 @@ import type { Meta, StoryObj } from '@storybook/react'
 
 import { Theme, ThemeStateProvider } from '@/providers/theme'
 
-import { Navigation } from './Navigation'
+import { CartNavigation } from './CartNavigation'
 
 const meta = {
-  title: 'Molecules/Navigation',
-  component: Navigation,
+  title: 'Molecules/CartNavigation',
+  component: CartNavigation,
   parameters: {
     layout: 'fullscreen',
   },
   tags: ['autodocs'],
-  args: {},
-} satisfies Meta<typeof Navigation>
+  args: {
+    isCart: false,
+  },
+  argTypes: {
+    isCart: {
+      table: {
+        disable: true,
+      },
+    },
+  }
+} satisfies Meta<typeof CartNavigation>
 
 export default meta
 type Story = StoryObj<typeof meta>
@@ -29,9 +38,6 @@ export const Dark: Story = {
       ],
     },
   },
-  args: {
-    isCart: false,
-  },
   decorators: (Story) => <ThemeStateProvider mode={Theme.DARK}>{Story()}</ThemeStateProvider>,
 }
 
@@ -46,9 +52,6 @@ export const Light: Story = {
         value: '#f8f8f8',
       },
     ],
-  },
-  args: {
-    isCart: false,
   },
   decorators: (Story) => <ThemeStateProvider mode={Theme.LIGHT}>{Story()}</ThemeStateProvider>,
 }

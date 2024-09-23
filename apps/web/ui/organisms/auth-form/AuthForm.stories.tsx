@@ -11,6 +11,7 @@ const meta = {
   },
   tags: ['autodocs'],
   args: {
+    isLoading: false,
     variant: 'login',
     onSubmitForm(userData) {
       console.log(userData)
@@ -20,10 +21,14 @@ const meta = {
   },
   argTypes: {
     title: {
-      control: 'text',
+      table: {
+        disable: true,
+      },
     },
     privacyText: {
-      control: 'text',
+      table: {
+        disable: true,
+      },
     },
     variant: {
       defaultValue: 'login',

@@ -2,29 +2,16 @@ import type { Meta, StoryObj } from '@storybook/react'
 
 import { Theme, ThemeStateProvider } from '@/providers/theme'
 
-import { Card } from './Card'
+import { DropdownAppearence } from './DropdownAppearence'
 
 const meta = {
-  title: 'Molecules/Card',
-  component: Card,
+  title: 'Atoms/Dropdown',
+  component: DropdownAppearence,
   parameters: {
     layout: 'centered',
   },
   tags: ['autodocs'],
-  args: {},
-  argTypes: {
-    onClick: {
-      table: {
-        disable: true,
-      },
-    },
-    imageSrc: {
-      table: {
-        disable: true,
-      },
-    },
-  },
-} satisfies Meta<typeof Card>
+} satisfies Meta<typeof DropdownAppearence>
 
 export default meta
 type Story = StoryObj<typeof meta>
@@ -36,19 +23,13 @@ export const Dark: Story = {
       values: [
         {
           name: 'dark',
-          value: '#343434',
+          value: '#2c3e50',
         },
       ],
     },
   },
-  args: {
-    title: 'Overwatch',
-    rating: '4.4',
-    price: 55,
-    platform: 'Windows',
-    imageSrc: 'https://www.freetogame.com/g/1/thumbnail.jpg',
-  },
   decorators: (Story) => <ThemeStateProvider mode={Theme.DARK}>{Story()}</ThemeStateProvider>,
+  render: (args) => <DropdownAppearence {...args} />,
 }
 
 export const Light: Story = {
@@ -59,16 +40,10 @@ export const Light: Story = {
     values: [
       {
         name: 'light',
-        value: '#fcfafa',
+        value: '#f8f8f8',
       },
     ],
   },
-  args: {
-    title: 'Overwatch',
-    rating: '4.4',
-    price: 55,
-    platform: 'Windows',
-    imageSrc: 'https://www.freetogame.com/g/1/thumbnail.jpg',
-  },
   decorators: (Story) => <ThemeStateProvider mode={Theme.LIGHT}>{Story()}</ThemeStateProvider>,
+  render: (args) => <DropdownAppearence {...args} />,
 }

@@ -4,10 +4,7 @@ import Axios, { AxiosError, AxiosRequestConfig } from 'axios'
 
 export const AXIOS_INSTANCE = Axios.create({
   baseURL: 'http://localhost:3500/api',
-  withCredentials: true,
-  headers: {
-    'Content-Type': 'application/json',
-  },
+  withCredentials: true
 }) // use your own URL here or environment variable
 
 // add a second `options` argument here if you want to pass extra options to each generated query
