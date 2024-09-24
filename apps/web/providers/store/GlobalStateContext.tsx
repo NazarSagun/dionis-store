@@ -11,11 +11,11 @@ import { TOKEN_REMOVED_EVENT } from './authEvent'
 
 const containerStyles = {
   display: 'flex',
-  'min-height': '100vh',
+  minHeight: '100vh',
   background: 'var(--dark-background-color)',
-  'padding-bottom': '5rem',
-  'justify-content': 'center',
-  'align-items': 'center',
+  paddingBottom: '5rem',
+  justifyContent: 'center',
+  AlignItems: 'center',
 }
 
 interface GlobalInitialState {

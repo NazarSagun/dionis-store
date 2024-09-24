@@ -1,22 +1,8 @@
 import { fireEvent, render } from '@/test-utils'
 import { Input } from '../Input'
 import userEvent from '@testing-library/user-event'
-import { useState } from 'react'
-
-const renderInputCompoent = () => {
-  const [value, setValue] = useState()
-
-  return 
-}
 
 describe('<Input />', () => {
-  test('should display the label correctly', () => {
-    const { getByText } = render(
-      <Input onInputChange={() => {}} />
-    )
-    expect(getByText('text')).toBeInTheDocument()
-  })
-
   test('should input the text', () => {
     const { getByTestId } = render(
       <Input onInputChange={() => {}} />

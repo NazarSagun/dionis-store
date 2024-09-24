@@ -3,12 +3,19 @@ import { render, RenderOptions } from '@testing-library/react'
 
 import { GlobalStateProvider } from '@/providers/store/GlobalStateContext'
 import { Theme, ThemeStateProvider } from '@/providers/theme'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+
+
+const client = new QueryClient()
 
 const AllTheProviders = ({ children }: { children: React.ReactNode }) => {
   return (
-    <GlobalStateProvider>
-      <ThemeStateProvider mode={Theme.LIGHT}>{children}</ThemeStateProvider>
-    </GlobalStateProvider>
+    <QueryClientProvider client={client}>
+      <GlobalStateProvider>
+        <ThemeStateProvider mode={Theme.LIGHT}>{children}</ThemeStateProvider>
+      </GlobalStateProvider>
+    </QueryClientProvider>
+    
   )
 }
 

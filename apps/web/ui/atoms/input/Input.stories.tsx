@@ -11,6 +11,7 @@ const meta = {
   },
   tags: ['autodocs'],
   args: {
+    onInputChange: () => {},
     name: 'Text',
     type: 'text',
   },

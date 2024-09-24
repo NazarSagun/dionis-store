@@ -39,7 +39,7 @@ describe('<Button />', () => {
     expect(mockFn).not.toHaveBeenCalled()
   })
   test('should render with correct label', () => {
-    const { getByTestId } = render(<Button variant='default' />)
+    const { getByTestId } = render(<Button variant='default'>click</Button>)
     const button = getByTestId('button')
     expect(button).toHaveTextContent('click')
   })
