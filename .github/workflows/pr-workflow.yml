@@ -1,0 +1,36 @@
+name: Build and Test on PR
+
+# Triggers the workflow on pull request events
+on:
+  pull_request:
+    branches:
+      - main
+      # - develop  # Add any other branches you want to trigger the workflow on
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest  # Define the environment for running the jobs (Linux in this case)
+
+    steps:
+      # Check out the repository code
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Set up the language environment, e.g., Node.js, Python, etc.
+      # For example, if you're using Node.js:
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+
+      # Install dependencies
+      - name: Install dependencies
+        run: pnpm install  # Modify this to match your package manager (e.g., `pip install` for Python)
+
+      # Run build command
+      - name: Build the project
+        run: pnpm build  # Replace this with your actual build command
+
+      # Run tests
+      - name: Run tests
+        run: pnpm test  # Replace this with your test command
