@@ -24,6 +24,9 @@ jobs:
           node-version: '16'
 
       # Install dependencies
+      - name: Install pnpm
+        run: npm i -g pnpm@8.5.0 
+
       - name: Install dependencies
         run: pnpm install  # Modify this to match your package manager (e.g., `pip install` for Python)
 
