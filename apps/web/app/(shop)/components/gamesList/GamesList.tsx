@@ -22,7 +22,7 @@ export const GamesList = ({ gamesList }: GamesListProps) => {
             price={game.price}
             rating={game.rating}
             platform={game.platform}
-            imageSrc={game.thumbnail as string}
+            imageSrc={game.thumbnail}
           />
         </Link>
       ))}
