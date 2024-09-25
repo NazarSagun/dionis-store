@@ -23,19 +23,14 @@ jobs:
       # Install dependencies
       - name: Install pnpm
         run: npm i -g pnpm@8.5.0
-        displayName: Install pnpm package
-
 
       - name: Install dependencies
         run: pnpm install
-        displayName: Install packages
 
       # Run build command
       - name: Build the project
         run: pnpm build
-        displayName: Build project
 
       # Run tests
       - name: Run tests for web
         run: pnpm test --filter web
-        displayName: Rub tests for web
