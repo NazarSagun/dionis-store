@@ -1,9 +1,6 @@
 import Image from 'next/image'
 import classes from './Card.module.css'
-import clsx from 'clsx'
 import { GameObject } from '@repo/dionis-api/src/model'
-import { useState } from 'react'
-// import { fontSans } from '@/app/layout'
 
 type CardProps = Pick<GameObject, 'title' | 'rating' | 'price' | 'platform'> & {
   onClick?: () => void
@@ -24,17 +21,20 @@ export const Card = ({ title, rating, price, onClick, platform, imageSrc }: Card
   }
 
   return (
-    <div
-      className={containerStyles}
-      onClick={onClickHandler}
-    >
+    <div className={classes.card} onClick={onClickHandler} data-testid="card">
       <Image
         priority={true}
-        style={{ borderTopLeftRadius: '1.2em', borderTopRightRadius: '1.2em', width: 'auto', height: 'auto' }}
+        style={{
+          borderTopLeftRadius: '1.2em',
+          borderTopRightRadius: '1.2em',
+          width: 'auto',
+          height: 'auto',
+        }}
         width={500}
         height={270}
         alt={`${title} thumbnail`}
         src={imageSrc}
+        data-testid="image"
       />
       <div className={contentStyles}>
         <div className={contentWrapperStyles}>
