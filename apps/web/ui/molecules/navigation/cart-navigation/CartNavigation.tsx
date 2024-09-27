@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import classes from './CartNavigation.module.css'
 import clsx from 'clsx'
 import { useThemeState } from '@/providers/theme'

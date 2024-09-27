@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { useThemeState } from '@/providers/theme/ThemeContext'
 
 import clsx from 'clsx'
+
 import classes from './MainNavigation.module.css'
 import { useGlobalState } from '@/providers/store/GlobalStateContext'
 import { AuthActionType } from '@/providers/store/actions'
@@ -41,13 +42,7 @@ export const MainNavigation = () => {
       <div>
         <Link href='/'>
           <span>Dionis</span>
-          <Image
-            priority={true}
-            width={40}
-            height={40}
-            alt='logo'
-            src={`/icons/logo.png`}
-          />
+          <Image priority={true} width={40} height={40} alt='logo' src={`/icons/logo.png`} />
         </Link>
       </div>
       <nav>
@@ -58,10 +53,7 @@ export const MainNavigation = () => {
           </Link>
           {!isUserAuth ? (
             navigation.map((item) => (
-              <Link
-                href={item.link}
-                key={item.id}
-              >
+              <Link href={item.link} key={item.id}>
                 <li>{item.label}</li>
               </Link>
             ))
@@ -80,22 +72,10 @@ export const MainNavigation = () => {
       </nav>
       <div className={cartWrapperStyles}>
         <Link href='/cart'>
-          <Image
-            priority={true}
-            width={25}
-            height={25}
-            alt='logo'
-            src={`/icons/shopping-cart.svg`}
-          />
+          <Image priority={true} width={25} height={25} alt='logo' src={`/icons/shopping-cart.svg`} />
         </Link>
         <Link href='/account'>
-          <Image
-            priority={true}
-            width={25}
-            height={25}
-            alt='logo'
-            src={`/icons/account.svg`}
-          />
+          <Image priority={true} width={25} height={25} alt='logo' src={`/icons/account.svg`} />
         </Link>
       </div>
     </nav>
