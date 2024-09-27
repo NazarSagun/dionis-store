@@ -1,9 +1,13 @@
-import { fireEvent, render } from '@/test-utils'
+import { cleanup, fireEvent, render } from '@/test-utils/utils'
 import { Input } from '../Input'
 import userEvent from '@testing-library/user-event'
+import { describe, it, expect, beforeEach } from 'vitest'
 
 describe('<Input />', () => {
-  test('should input the text', () => {
+  beforeEach(() => {
+    cleanup()
+  })
+  it('should input the text', () => {
     const { getByTestId } = render(
       <Input onInputChange={() => {}} />
     )
@@ -12,7 +16,7 @@ describe('<Input />', () => {
     expect(element.value).toBe('test')
   })
 
-  test('should not input the text if disabled', async () => {
+  it('should not input the text if disabled', async () => {
     const user = userEvent.setup()
 
     const { getByTestId } = render(

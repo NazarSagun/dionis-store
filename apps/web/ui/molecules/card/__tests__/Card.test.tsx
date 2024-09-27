@@ -1,5 +1,6 @@
-import { fireEvent, render } from '@/test-utils'
+import { cleanup, fireEvent, render } from '@/test-utils/utils'
 import { Card, CardProps } from '@/ui'
+import { describe, expect, it, beforeEach, vi } from 'vitest'
 
 const game: CardProps = {
   title: 'Kings',
@@ -10,7 +11,10 @@ const game: CardProps = {
 }
 
 describe('<Card />', () => {
-  test('Should render Card with correct data', () => {
+  beforeEach(() => {
+    cleanup()
+  })
+  it('Should render Card with correct data', () => {
     const { getByText } = render(
       <Card
         title={game.title}
@@ -32,8 +36,8 @@ describe('<Card />', () => {
     expect(platform).toBeInTheDocument()
   })
 
-  test('Should trigger a click on Card', () => {
-    const mockFn = jest.fn()
+  it('Should trigger a click on Card', () => {
+    const mockFn = vi.fn()
     const { getByTestId } = render(
       <Card
         title={game.title}
@@ -51,7 +55,7 @@ describe('<Card />', () => {
     expect(mockFn).toHaveBeenCalled()
   })
 
-  test('Should render correct image', () => {
+  it('Should render correct image', () => {
     const { getByAltText } = render(
       <Card
         title={game.title}

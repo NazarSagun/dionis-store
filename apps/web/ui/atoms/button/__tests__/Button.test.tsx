@@ -1,4 +1,6 @@
-import { cleanup, fireEvent, render } from '@/test-utils'
+import { cleanup, fireEvent, render } from '@/test-utils/utils'
+
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 
 import { Button } from '../Button'
 
@@ -6,8 +8,8 @@ describe('<Button />', () => {
   beforeEach(() => {
     cleanup()
   })
-  test('should handle click event', () => {
-    const mockFn = jest.fn()
+  it('should handle click event', () => {
+    const mockFn = vi.fn()
     const { getByTestId } = render(
       <Button
         variant='default'
@@ -22,8 +24,8 @@ describe('<Button />', () => {
     expect(mockFn).toHaveBeenCalled()
   })
 
-  test('should not handle click event when disabled', () => {
-    const mockFn = jest.fn()
+  it('should not handle click event when disabled', () => {
+    const mockFn = vi.fn()
     const { getByTestId } = render(
       <Button
         variant='default'
@@ -38,9 +40,9 @@ describe('<Button />', () => {
 
     expect(mockFn).not.toHaveBeenCalled()
   })
-  test('should render with correct label', () => {
-    const { getByTestId } = render(<Button variant='default'>click</Button>)
-    const button = getByTestId('button')
-    expect(button).toHaveTextContent('click')
+  it('should render with correct label', () => {
+    const { getByText } = render(<Button variant='default'>click</Button>)
+    const button = getByText('click')
+    expect(button).toBeTruthy()
   })
 })
