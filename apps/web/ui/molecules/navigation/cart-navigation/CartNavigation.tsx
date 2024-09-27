@@ -20,8 +20,7 @@ const steps = [
   },
 ]
 
-export const CartNavigation = () => {
-  const [activeStep, setActiveStep] = useState(1)
+export const CartNavigation = ({ activeStep }: { activeStep?: number }) => {
   const { state } = useThemeState()
 
   const navContainer = clsx(classes.navContainer, state.mode === 'light' ? classes.light : null)
@@ -48,9 +47,10 @@ export const CartNavigation = () => {
           return (
             <>
               <div
-                onClick={() => setActiveStep(item.number)}
                 key={item.number}
                 className={step}
+                aria-label={`${activeStep === item.number ? 'active' : 'inactive'} step`}
+                data-testid='cart-navigation-step'
               >
                 <span className={stepLine}></span>
                 <span className={stepNumber}>{item.number}</span>

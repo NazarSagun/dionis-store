@@ -12,13 +12,12 @@ const meta = {
   },
   tags: ['autodocs'],
   args: {
-    isCart: false,
+    activeStep: 1
   },
   argTypes: {
-    isCart: {
-      table: {
-        disable: true,
-      },
+    activeStep: {
+      control: 'radio',
+      options: [1, 2, 3]
     },
   }
 } satisfies Meta<typeof CartNavigation>
