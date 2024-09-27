@@ -7,6 +7,25 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     setupFiles: './test-utils/utils.tsx',
+    coverage: {
+      provider: 'istanbul',
+      reporter: ['html', 'lcov', 'cobertura'],
+      exclude: [
+        '**/*.stories.tsx',
+        '**/*.test.tsx',
+        '**/index.ts',
+        '.eslintrc.ts',
+        '.prettierrc.js',
+        '*.config.js',
+        '*.config.ts',
+        '.setup',
+        './public',
+        './lib',
+        '.next',
+        '.storybook',
+      ],
+    },
+    
   },
   resolve: {
     alias: {
@@ -17,4 +36,5 @@ export default defineConfig({
       '@/ui': resolve(__dirname, './ui'),
     },
   },
+  
 })
