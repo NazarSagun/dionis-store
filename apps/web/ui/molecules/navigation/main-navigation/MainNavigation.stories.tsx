@@ -11,16 +11,7 @@ const meta = {
     layout: 'fullscreen',
   },
   tags: ['autodocs'],
-  args: {
-    isCart: false,
-  },
-  argTypes: {
-    isCart: {
-      table: {
-        disable: true,
-      },
-    },
-  }
+  args: {},
 } satisfies Meta<typeof MainNavigation>
 
 export default meta

@@ -7,7 +7,7 @@ import { ThemeStateProvider } from '@/providers/theme/ThemeContext'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 import './globals.css'
-import { Toaster } from '@/ui/molecules/toast/toaster'
+import { Toaster } from '@/ui/molecules/toast/Toaster'
 
 const queryClient = new QueryClient()
 
@@ -24,15 +24,8 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html
-      lang='en'
-      suppressHydrationWarning
-    >
-      <body
-        id='body'
-        style={{ margin: '0 !important' }}
-        className={fontSans.className}
-      >
+    <html lang='en' suppressHydrationWarning>
+      <body id='body' style={{ margin: '0 !important' }} className={fontSans.className}>
         <QueryClientProvider client={queryClient}>
           <GlobalStateProvider>
             <ThemeStateProvider>
