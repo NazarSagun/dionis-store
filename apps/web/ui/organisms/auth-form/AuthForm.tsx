@@ -14,7 +14,7 @@ export type UserData = {
   name?: string
 }
 
-interface AuthFormProps {
+export interface AuthFormProps {
   onSubmitForm: (userData: UserData) => void
   isLoading: boolean
   title: string
@@ -39,10 +39,7 @@ export const AuthForm = ({ onSubmitForm, title, privacyText, variant, isLoading 
   }
 
   return (
-    <form
-      onSubmit={submitHandler}
-      className={formStyles}
-    >
+    <form onSubmit={submitHandler} className={formStyles}>
       {title && <h3>{title}</h3>}
       {variant === 'signup' ? (
         <>
@@ -54,6 +51,7 @@ export const AuthForm = ({ onSubmitForm, title, privacyText, variant, isLoading 
             value={name}
             type='string'
             name='name'
+            data-testid='name'
           />
         </>
       ) : null}
@@ -65,6 +63,7 @@ export const AuthForm = ({ onSubmitForm, title, privacyText, variant, isLoading 
         value={email}
         type='email'
         name='email'
+        data-testid='email'
       />
       <Label>Password</Label>
       <Input
@@ -74,11 +73,9 @@ export const AuthForm = ({ onSubmitForm, title, privacyText, variant, isLoading 
         value={password}
         type='password'
         name='password'
+        data-testid='password'
       />
-      <Button
-        variant='default'
-        disabled={isLoading}
-      >
+      <Button data-testid='submit-button' variant='default' disabled={isLoading}>
         {variant === 'login' ? 'Login' : 'Register'}
       </Button>
 

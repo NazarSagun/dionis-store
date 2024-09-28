@@ -1,7 +1,7 @@
 import { defineConfig } from 'vitest/config'
 import react from '@vitejs/plugin-react'
 import { resolve } from 'path'
- 
+
 export default defineConfig({
   plugins: [react()],
   test: {
@@ -13,6 +13,7 @@ export default defineConfig({
       exclude: [
         '**/*.stories.tsx',
         '**/*.test.tsx',
+        '**/*.test.ts',
         '**/index.ts',
         '.eslintrc.ts',
         '.prettierrc.js',
@@ -25,7 +26,6 @@ export default defineConfig({
         '.storybook',
       ],
     },
-    
   },
   resolve: {
     alias: {
@@ -36,5 +36,4 @@ export default defineConfig({
       '@/ui': resolve(__dirname, './ui'),
     },
   },
-  
 })
