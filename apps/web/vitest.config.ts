@@ -11,19 +11,17 @@ export default defineConfig({
       provider: 'istanbul',
       reporter: ['html', 'lcov', 'cobertura'],
       exclude: [
-        '**/*.stories.tsx',
-        '**/*.test.tsx',
-        '**/*.test.ts',
+        'app/**',
+        '**/*.stories.{tsx,ts}', // Covers both TSX and TS
+        '**/*.test.{tsx,ts}', // Covers both TSX and TS
         '**/index.ts',
-        '.eslintrc.ts',
-        '.prettierrc.js',
-        '*.config.js',
-        '*.config.ts',
-        '.setup',
-        './public',
-        './lib',
-        '.next',
-        '.storybook',
+        '**/*.config.{js,ts}', // Covers both JS and TS config files
+        '**/*.{eslintrc,prettierrc}.{js,ts}', // Handles eslint and prettier config files
+        '**/.setup/**', // Exclude everything in .setup folder
+        'public/**', // Exclude public directory and its content
+        'lib/**', // Exclude lib directory and its content
+        '.next/**', // Exclude .next directory and its content
+        '.storybook/**',
       ],
     },
   },
