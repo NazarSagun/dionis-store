@@ -1,4 +1,31 @@
 .container {
   background-color: #0000008d;
   border-radius: 15px;
+  padding: 2rem;
+  color: var(--dark-text-color);
+}
+
+.priceContainer {
+  display: flex;
+  justify-content: space-between;
+  color: #b5b5b5d0;
+}
+
+.subtotalContainer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 0.8rem;
+  margin-bottom: 1rem;
+}
+
+.subtotalContainer div {
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.buttonsContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }

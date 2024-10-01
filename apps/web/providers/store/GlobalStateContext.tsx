@@ -15,7 +15,7 @@ const containerStyles = {
   background: 'var(--dark-background-color)',
   paddingBottom: '5rem',
   justifyContent: 'center',
-  AlignItems: 'center',
+  alignItems: 'center',
 }
 
 interface GlobalInitialState {
