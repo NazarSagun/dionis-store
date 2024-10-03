@@ -1,7 +1,11 @@
 import { Button } from '@/ui'
 import classes from './Summery.module.css'
+import { useGlobalState } from '@/providers/store/GlobalStateContext'
 
 export const Summery = () => {
+  const {
+    state: { cart },
+  } = useGlobalState()
   return (
     <div className={classes.container}>
       <div className={classes.priceContainer}>
@@ -19,7 +23,9 @@ export const Summery = () => {
         <div>0</div>
       </div>
       <div className={classes.buttonsContainer}>
-        <Button>Go to payment</Button>
+        <button disabled={cart.items.length === 0} className={classes.button}>
+          Go to payment
+        </button>
         <div>or</div>
         <Button variant='link'>Continue shopping</Button>
       </div>

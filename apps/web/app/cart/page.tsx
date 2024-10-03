@@ -11,7 +11,6 @@ const Page = () => {
     state: { cart },
   } = useGlobalState()
 
-  console.log(cart)
   return (
     <div className={classes.container}>
       <section>
