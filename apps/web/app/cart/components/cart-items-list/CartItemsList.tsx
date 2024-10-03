@@ -1,7 +1,8 @@
 'use client'
 
 import { CartItem } from '@/providers/store/reducers/cartReducer'
-import { EmptyState } from '../empty-state'
+import classes from './CartItemsList.module.css'
+import { CartItem as CartItemComponent } from '../cart-item/CartItem'
 
 export interface CartItems {
   cartItems: CartItem[]
@@ -9,9 +10,9 @@ export interface CartItems {
 
 export const CartItemsList = ({ cartItems }: CartItems) => {
   return (
-    <div>
+    <div className={classes.container}>
       {cartItems.map((item) => (
-        <div key={item.id}>{item.title}</div>
+        <CartItemComponent key={item.id} {...item} />
       ))}
     </div>
   )

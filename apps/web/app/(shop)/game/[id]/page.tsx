@@ -5,7 +5,7 @@ import classes from '../../../page.module.css'
 import styles from './page.module.css'
 import clsx from 'clsx'
 import { ThemeState, useThemeState } from '@/providers/theme'
-import { Loader } from '@/ui'
+import { Loader, useToast } from '@/ui'
 import Image from 'next/image'
 import { useParams } from 'next/navigation'
 import { calculateDiscountedPrice } from '../helpers'
@@ -19,6 +19,8 @@ export default function GamePage() {
     state: { cart },
     dispatch,
   } = useGlobalState()
+
+  const { toast } = useToast()
 
   const { id } = useParams()
 
@@ -38,8 +40,8 @@ export default function GamePage() {
   } = returnStyles(state)
 
   const addGameHandler = (cartItem: CartItem) => {
-    console.log('item id', cartItem.id)
     const gameInCart = cart.items.find((item) => item.id === cartItem.id)
+    toast({ title: `${data?.title} was added to your cart!` })
     if (gameInCart) {
       dispatch({
         type: CartActionType.UPDATE_ITEM_QUANTITY,
@@ -77,18 +79,14 @@ export default function GamePage() {
       title: data.title,
       price: data.price,
       platform: data.platform,
+      discount: data.discount,
     }
 
     return (
       <div className={containerStyles}>
         <div className={topContainer}>
           <div>
-            <Image
-              alt={data.title as string}
-              width={500}
-              height={300}
-              src={data.thumbnail as string}
-            />
+            <Image alt={data.title as string} width={500} height={300} src={data.thumbnail as string} />
           </div>
           <div className={infoStyles}>
             <div className={descriptionStyles}>
@@ -104,23 +102,10 @@ export default function GamePage() {
               </div>
               <div>
                 <button className={button}>
-                  <Image
-                    width={24}
-                    height={24}
-                    alt='favorite'
-                    src='/icons/favorite.svg'
-                  />
+                  <Image width={24} height={24} alt='favorite' src='/icons/favorite.svg' />
                 </button>
-                <button
-                  className={button}
-                  onClick={() => addGameHandler(cartItem)}
-                >
-                  <Image
-                    width={24}
-                    height={24}
-                    alt='shopping-cart'
-                    src='/icons/shopping-cart.svg'
-                  />{' '}
+                <button className={button} onClick={() => addGameHandler(cartItem)}>
+                  <Image width={24} height={24} alt='shopping-cart' src='/icons/shopping-cart.svg' />{' '}
                   <span>Add to Cart</span>
                 </button>
               </div>

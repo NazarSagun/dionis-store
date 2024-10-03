@@ -9,6 +9,7 @@ export type CartItem = {
   price: number
   platform: string
   quantity: number
+  discount: number
 }
 
 export interface CartState {
