@@ -32,11 +32,14 @@
   position: relative;
 }
 
-.actionWrapper span {
+.actionWrapper button {
+  color: var(--dark-text-color);
+  appearance: none;
   font-weight: 300;
+  font-size: 0.8rem;
 }
 
-.actionWrapper span::after {
+.actionWrapper button::after {
   content: '';
   background-color: #fff;
   position: absolute;
@@ -45,4 +48,15 @@
   top: 50%;
   transform: translateY(-50%);
   left: 23%;
+  pointer-events: none;
+}
+
+.selectContainer {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+}
+
+.selectContainer span {
+  margin-right: 1rem;
 }
