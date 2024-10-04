@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { calculateCartSummary } from './helpers'
 import { useEffect, useState } from 'react'
 
-export const Summery = () => {
+export const Summary = () => {
   const {
     state: { cart },
   } = useGlobalState()

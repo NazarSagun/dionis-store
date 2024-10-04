@@ -4,7 +4,7 @@ import { useGlobalState } from '@/providers/store/GlobalStateContext'
 import { EmptyState } from './components/empty-state'
 import { CartItemsList } from './components/cart-items-list'
 import classes from './page.module.css'
-import { Summery } from './components/summery/Summery'
+import { Summary } from './components/summary/Summary'
 
 const Page = () => {
   const {
@@ -19,8 +19,8 @@ const Page = () => {
         {cart.items.length > 0 && <CartItemsList cartItems={cart.items} />}
       </section>
       <section>
-        <h2>Summery</h2>
-        <Summery />
+        <h2>Summary</h2>
+        <Summary />
       </section>
     </div>
   )
