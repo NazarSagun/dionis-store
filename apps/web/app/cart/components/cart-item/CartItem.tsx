@@ -2,6 +2,7 @@ import { CartItem as CartItemProps } from '@/providers/store/reducers/cartReduce
 import Image from 'next/image'
 import classes from './CartItem.module.css'
 import { calculateDiscountedPrice } from '@/app/(shop)/game/helpers'
+import { Select } from '@/ui/atoms/select'
 
 export const CartItem = ({ title, thumbnailUrl, price, quantity, platform, discount }: CartItemProps) => {
   return (
@@ -19,6 +20,8 @@ export const CartItem = ({ title, thumbnailUrl, price, quantity, platform, disco
       </div>
       <div>
         <span>{calculateDiscountedPrice(price, discount)}€</span>
+
+        <Select onChange={(number) => console.log(number)} selectedOption={quantity} />
       </div>
     </div>
   )
