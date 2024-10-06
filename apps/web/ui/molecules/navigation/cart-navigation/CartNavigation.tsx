@@ -3,7 +3,9 @@ import clsx from 'clsx'
 import { useThemeState } from '@/providers/theme'
 import Image from 'next/image'
 import Link from 'next/link'
-import { Fragment } from 'react'
+import { Dispatch, Fragment } from 'react'
+import { ActionType } from '@/providers/store/types'
+import { CartActionType } from '@/providers/store/actions'
 
 const steps = [
   {
@@ -20,7 +22,13 @@ const steps = [
   },
 ]
 
-export const CartNavigation = ({ activeStep }: { activeStep: number }) => {
+export const CartNavigation = ({
+  activeStep,
+  onStepClick,
+}: {
+  activeStep: number
+  onStepClick: Dispatch<ActionType>
+}) => {
   const { state } = useThemeState()
 
   const navContainer = clsx(classes.navContainer, state.mode === 'light' ? classes.light : null)
@@ -35,12 +43,17 @@ export const CartNavigation = ({ activeStep }: { activeStep: number }) => {
       </div>
       <div className={classes.steps}>
         {steps.map((item) => {
-          const step = clsx(classes.step, activeStep === item.number ? classes.active : null)
+          const step = clsx(
+            classes.step,
+            activeStep > item.number && classes.clickableStep,
+            activeStep === item.number ? classes.active : null
+          )
           const stepNumber = clsx(classes.stepNumber, activeStep === item.number ? classes.active : null)
           const stepLine = clsx(classes.stepLine, activeStep === item.number ? classes.active : null)
           return (
             <Fragment key={item.number}>
               <div
+                onClick={() => onStepClick({ type: CartActionType.SET_STEP, payload: { step: item.number } })}
                 className={step}
                 aria-label={`${activeStep === item.number ? 'active' : 'inactive'} step`}
                 data-testid='cart-navigation-step'

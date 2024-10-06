@@ -9,12 +9,13 @@ export default function ShopLayout({
   children: React.ReactNode
 }>) {
   const {
+    dispatch,
     state: { cart },
   } = useGlobalState()
 
   return (
     <>
-      <CartNavigation activeStep={cart.currentStep} />
+      <CartNavigation onStepClick={dispatch} activeStep={cart.currentStep} />
       <main>{children}</main>
       <Footer />
     </>

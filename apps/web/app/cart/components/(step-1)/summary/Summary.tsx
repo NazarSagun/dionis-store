@@ -4,9 +4,11 @@ import { useGlobalState } from '@/providers/store/GlobalStateContext'
 import { useRouter } from 'next/navigation'
 import { calculateCartSummary } from './helpers'
 import { useEffect, useState } from 'react'
+import { CartActionType } from '@/providers/store/actions'
 
 export const Summary = () => {
   const {
+    dispatch,
     state: { cart, auth },
   } = useGlobalState()
   const { push } = useRouter()
@@ -36,7 +38,11 @@ export const Summary = () => {
       </div>
       <div className={classes.buttonsContainer}>
         {auth.isAuthenticated ? (
-          <button disabled={cart.items.length === 0} className={classes.button}>
+          <button
+            onClick={() => dispatch({ type: CartActionType.SET_STEP, payload: { step: 2 } })}
+            disabled={cart.items.length === 0}
+            className={classes.button}
+          >
             Go to payment
           </button>
         ) : (

@@ -4,9 +4,10 @@ import { useGlobalState } from '@/providers/store/GlobalStateContext'
 import classes from './page.module.css'
 import { AuthForm, Dialog, DialogContent, FormVariant, toast, UserData } from '@/ui'
 import { useLogin, useRegister } from '@repo/dionis-api/src/dionis/default/default'
-import { AuthActionType } from '@/providers/store/actions'
-import { ShoppingCart } from './components/(shopping-cart)/shopping-cart'
+import { AuthActionType, CartActionType } from '@/providers/store/actions'
+import { ShoppingCart } from './components/(step-1)/shopping-cart'
 import { useState } from 'react'
+import { Payment } from './components'
 
 const Page = () => {
   const [isOpen, setIsOpen] = useState(false)
@@ -35,6 +36,7 @@ const Page = () => {
     mutation: {
       onSuccess: (data) => {
         dispatch({ type: AuthActionType.AUTHENTICATE, payload: data.user?.accessToken as string })
+        dispatch({ type: CartActionType.SET_STEP, payload: { step: 2 } })
         setIsOpen(false)
       },
       onError: (error) => {
@@ -63,7 +65,10 @@ const Page = () => {
         setIsOpen(open)
       }}
     >
-      <div className={classes.container}>{cart.currentStep === 1 && <ShoppingCart />}</div>
+      <div className={classes.container}>
+        {cart.currentStep === 1 && <ShoppingCart />}
+        {cart.currentStep === 2 && <Payment />}
+      </div>
       <DialogContent className='sm:max-w-[425px]'>
         <AuthForm
           isLoading={isPending || isRegisterPending}

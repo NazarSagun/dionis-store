@@ -38,6 +38,7 @@
   display: flex;
   align-items: center;
   opacity: 0.5;
+  pointer-events: none;
 }
 
 .step span {
@@ -118,4 +119,9 @@
 
 .active {
   opacity: 1;
+}
+
+.clickableStep {
+  pointer-events: all;
+  cursor: pointer;
 }

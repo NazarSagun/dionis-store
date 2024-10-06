@@ -36,7 +36,6 @@ export default function GamePage() {
     valueStyles,
     priceContainer,
     buttonsContainer,
-    button,
   } = returnStyles(state)
 
   const addGameHandler = (cartItem: CartItem) => {
@@ -101,10 +100,10 @@ export default function GamePage() {
                 <span>{calculateDiscountedPrice(data.price, data.discount)}€</span>
               </div>
               <div>
-                <button className={button}>
+                <button className={styles.button}>
                   <Image width={24} height={24} alt='favorite' src='/icons/favorite.svg' />
                 </button>
-                <button className={button} onClick={() => addGameHandler(cartItem)}>
+                <button className={styles.button} onClick={() => addGameHandler(cartItem)}>
                   <Image width={24} height={24} alt='shopping-cart' src='/icons/shopping-cart.svg' />{' '}
                   <span>Add to Cart</span>
                 </button>
@@ -139,7 +138,6 @@ function returnStyles(state: ThemeState) {
   const valueStyles = clsx(styles.valueContainer, state.mode === 'light' ? classes.light : null)
   const priceContainer = clsx(styles.priceContainer, state.mode === 'light' ? classes.light : null)
   const buttonsContainer = clsx(styles.buttonsContainer)
-  const button = clsx(styles.button)
 
   return {
     loaderStyles,
@@ -151,6 +149,5 @@ function returnStyles(state: ThemeState) {
     valueStyles,
     priceContainer,
     buttonsContainer,
-    button,
   }
 }

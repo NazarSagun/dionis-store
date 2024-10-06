@@ -1,5 +1,5 @@
 import { useGlobalState } from '@/providers/store/GlobalStateContext'
-import { EmptyState, CartItemsList, Summary } from '../'
+import { EmptyState, CartItemsList, Summary } from '..'
 
 export const ShoppingCart = () => {
   const {
