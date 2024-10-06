@@ -1,5 +1,5 @@
-import { Button } from '@/ui'
-import classes from './Summery.module.css'
+import { Button, DialogTrigger } from '@/ui'
+import classes from './Summary.module.css'
 import { useGlobalState } from '@/providers/store/GlobalStateContext'
 import { useRouter } from 'next/navigation'
 import { calculateCartSummary } from './helpers'
@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react'
 
 export const Summary = () => {
   const {
-    state: { cart },
+    state: { cart, auth },
   } = useGlobalState()
   const { push } = useRouter()
 
@@ -35,10 +35,20 @@ export const Summary = () => {
         <div>{summery.finalPrice.toFixed(2)}€</div>
       </div>
       <div className={classes.buttonsContainer}>
-        <button disabled={cart.items.length === 0} className={classes.button}>
-          Go to payment
-        </button>
+        {auth.isAuthenticated ? (
+          <button disabled={cart.items.length === 0} className={classes.button}>
+            Go to payment
+          </button>
+        ) : (
+          <DialogTrigger asChild>
+            <button disabled={cart.items.length === 0} className={classes.button}>
+              Go to payment
+            </button>
+          </DialogTrigger>
+        )}
+
         <div>or</div>
+
         <Button variant='link' onClick={() => push('/')}>
           Continue shopping
         </Button>

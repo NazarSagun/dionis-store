@@ -1,6 +1,6 @@
 'use client'
 
-import { AuthPage, useToast } from '@/ui'
+import { AuthPage, FormVariant, useToast } from '@/ui'
 import { useThemeState } from '@/providers/theme'
 
 import clsx from 'clsx'
@@ -26,7 +26,6 @@ const LoginPage = () => {
         router.push('/')
       },
       onError: (error) => {
-        console.error('Error:', error.response?.data.message)
         toast({
           variant: 'destructive',
           title: error.response?.data.message + ' Please try again.',
@@ -44,7 +43,7 @@ const LoginPage = () => {
   return (
     <div className={containerStyles}>
       <AuthPage
-        variant='login'
+        variant={FormVariant.LOGIN}
         isFormLoading={isPending}
         onSubmitForm={(formData) => {
           mutate({ data: { email: formData.email, password: formData.password } })

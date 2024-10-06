@@ -29,3 +29,13 @@
 .form.light p {
   color: #858585;
 }
+
+.register {
+  margin: 0 !important;
+  text-align: start !important;
+}
+
+.register button {
+  font-size: 0.8rem !important;
+  padding: 5px !important;
+}

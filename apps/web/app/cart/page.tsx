@@ -1,28 +1,78 @@
 'use client'
 
 import { useGlobalState } from '@/providers/store/GlobalStateContext'
-import { EmptyState } from './components/empty-state'
-import { CartItemsList } from './components/cart-items-list'
 import classes from './page.module.css'
-import { Summary } from './components/summary/Summary'
+import { AuthForm, Dialog, DialogContent, FormVariant, toast, UserData } from '@/ui'
+import { useLogin, useRegister } from '@repo/dionis-api/src/dionis/default/default'
+import { AuthActionType } from '@/providers/store/actions'
+import { ShoppingCart } from './components/(shopping-cart)/shopping-cart'
+import { useState } from 'react'
 
 const Page = () => {
+  const [isOpen, setIsOpen] = useState(false)
+  const [formVariant, setFormVariant] = useState(FormVariant.LOGIN)
   const {
+    dispatch,
     state: { cart },
   } = useGlobalState()
 
+  const { mutate, isPending } = useLogin({
+    mutation: {
+      onSuccess: (data) => {
+        dispatch({ type: AuthActionType.AUTHENTICATE, payload: data.user?.accessToken as string })
+        setIsOpen(false)
+      },
+      onError: (error) => {
+        toast({
+          variant: 'destructive',
+          title: error.response?.data.message + ' Please try again.',
+        })
+      },
+    },
+  })
+
+  const { mutate: mutateRegister, isPending: isRegisterPending } = useRegister({
+    mutation: {
+      onSuccess: (data) => {
+        dispatch({ type: AuthActionType.AUTHENTICATE, payload: data.user?.accessToken as string })
+        setIsOpen(false)
+      },
+      onError: (error) => {
+        console.error('Error:', error.response?.data.message)
+        toast({
+          variant: 'destructive',
+          title: error.response?.data.message + ' Please try again.',
+        })
+      },
+    },
+  })
+
+  const submitHandler = (formData: UserData) => {
+    if (formVariant === FormVariant.LOGIN) {
+      mutate({ data: { email: formData.email, password: formData.password } })
+    } else {
+      mutateRegister({ data: { email: formData.email, password: formData.password, name: formData.name } })
+    }
+  }
+
   return (
-    <div className={classes.container}>
-      <section>
-        <h2>Cart</h2>
-        {cart.items.length === 0 && <EmptyState />}
-        {cart.items.length > 0 && <CartItemsList cartItems={cart.items} />}
-      </section>
-      <section>
-        <h2>Summary</h2>
-        <Summary />
-      </section>
-    </div>
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => {
+        console.log(open)
+        setIsOpen(open)
+      }}
+    >
+      <div className={classes.container}>{cart.currentStep === 1 && <ShoppingCart />}</div>
+      <DialogContent className='sm:max-w-[425px]'>
+        <AuthForm
+          isLoading={isPending || isRegisterPending}
+          onSubmitForm={submitHandler}
+          variant={FormVariant.LOGIN}
+          onVariantChange={(variant) => setFormVariant(variant)}
+        />
+      </DialogContent>
+    </Dialog>
   )
 }
 

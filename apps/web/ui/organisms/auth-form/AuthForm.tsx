@@ -1,6 +1,6 @@
 'use client'
 
-import { FormEvent, useState } from 'react'
+import { FormEvent, useEffect, useState } from 'react'
 
 import { Input, Button, Label } from '@/ui'
 import { useThemeState } from '@/providers/theme'
@@ -14,18 +14,23 @@ export type UserData = {
   name?: string
 }
 
+export enum FormVariant {
+  LOGIN = 'login',
+  SIGNUP = 'signup',
+}
+
 export interface AuthFormProps {
   onSubmitForm: (userData: UserData) => void
   isLoading: boolean
-  title: string
-  privacyText: string
-  variant: 'login' | 'signup'
+  variant: FormVariant
+  onVariantChange?: (form: FormVariant) => void
 }
 
-export const AuthForm = ({ onSubmitForm, title, privacyText, variant, isLoading }: AuthFormProps) => {
+export const AuthForm = ({ onSubmitForm, variant, isLoading, onVariantChange }: AuthFormProps) => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [name, setName] = useState('')
+  const [formVariant, setFormVariant] = useState(variant)
 
   const { state } = useThemeState()
   const formStyles = clsx(classes.form, state.mode === 'light' && classes.light)
@@ -35,13 +40,18 @@ export const AuthForm = ({ onSubmitForm, title, privacyText, variant, isLoading 
 
     setName('')
     setPassword('')
-    variant === 'signup' ? onSubmitForm({ email, password, name }) : onSubmitForm({ email, password })
+    formVariant === FormVariant.SIGNUP ? onSubmitForm({ email, password, name }) : onSubmitForm({ email, password })
   }
+
+  const authTitle = formVariant === 'login' ? 'Login into' : 'Create'
+  const authPrivacyText = formVariant === 'login' ? 'Logging into' : 'Creating'
+
+  useEffect(() => onVariantChange && onVariantChange(formVariant), [formVariant])
 
   return (
     <form onSubmit={submitHandler} className={formStyles}>
-      {title && <h3>{title}</h3>}
-      {variant === 'signup' ? (
+      <h3>{authTitle} your Dionis account</h3>
+      {formVariant === FormVariant.SIGNUP ? (
         <>
           <Label>Name</Label>
           <Input
@@ -76,10 +86,19 @@ export const AuthForm = ({ onSubmitForm, title, privacyText, variant, isLoading 
         data-testid='password'
       />
       <Button data-testid='submit-button' variant='default' disabled={isLoading}>
-        {variant === 'login' ? 'Login' : 'Register'}
+        {formVariant === FormVariant.LOGIN ? 'Login' : 'Register'}
       </Button>
 
-      {privacyText && <p>{privacyText}</p>}
+      {formVariant === FormVariant.LOGIN && (
+        <p className={classes.register}>
+          Don't have an account?{' '}
+          <Button onClick={() => setFormVariant(FormVariant.SIGNUP)} variant='link'>
+            Register
+          </Button>
+        </p>
+      )}
+
+      <p>{authPrivacyText} an account, you agree to our terms and privacy policy.</p>
     </form>
   )
 }

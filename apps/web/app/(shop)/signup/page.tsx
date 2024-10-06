@@ -1,6 +1,6 @@
 'use client'
 
-import { AuthPage, useToast } from '@/ui'
+import { AuthPage, FormVariant, useToast } from '@/ui'
 import { useThemeState } from '@/providers/theme'
 
 import clsx from 'clsx'
@@ -45,7 +45,7 @@ const SignUpPage = () => {
     <div className={containerStyles}>
       <AuthPage
         isFormLoading={isPending}
-        variant='signup'
+        variant={FormVariant.SIGNUP}
         onSubmitForm={(formData) => {
           mutate({ data: { email: formData.email, password: formData.password, name: formData.name } })
         }}
