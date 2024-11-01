@@ -7,7 +7,7 @@ import { ThemeStateProvider } from '@/providers/theme/ThemeContext'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 import './globals.css'
-import { Toaster } from '@/ui/molecules/toast/Toaster'
+import { Toaster } from '@/ui'
 
 const queryClient = new QueryClient()
 
