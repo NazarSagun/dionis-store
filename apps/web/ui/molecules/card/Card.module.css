@@ -17,9 +17,9 @@
 }
 
 .content h3 {
-  font-size: 1.3vw;
+  font-size: 1vw;
   font-weight: 400;
-  max-width: 15rem;
+  max-width: 13rem;
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
@@ -37,7 +37,7 @@
 }
 
 .rating {
-  font-size: 1vw;
+  font-size: 0.9vw;
   background-color: #04ff4b75;
   padding: 3px;
 }
@@ -52,7 +52,7 @@
 }
 
 .priceContainer div span {
-  font-size: 1.3vw;
+  font-size: 1.1vw;
 }
 
 .titleContainer {
@@ -64,5 +64,55 @@
 }
 
 .titleContainer span {
-  font-size: 0.8vw;
+  font-size: 0.7vw;
+}
+
+@media only screen and (max-width: 768px) {
+  .content h3 {
+    font-size: 3vw;
+    max-width: 12.5rem;
+  }
+  .titleContainer span {
+    font-size: 2vw;
+  }
+  .priceContainer div span {
+    font-size: 3vw;
+  }
+  .rating {
+    font-size: 2.5vw;
+  }
+}
+
+.placeholder {
+  width: 350px;
+  height: 200px;
+  background: linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 50%, #e0e0e0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite linear;
+  border-radius: 8px;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -100% 0;
+  }
+  100% {
+    background-position: 100% 0;
+  }
+}
+
+@media only screen and (max-width: 480px) {
+  .content h3 {
+    font-size: 3vw;
+    max-width: 12.5rem;
+  }
+  .titleContainer span {
+    font-size: 2vw;
+  }
+  .priceContainer div span {
+    font-size: 3vw;
+  }
+  .rating {
+    font-size: 2.5vw;
+  }
 }

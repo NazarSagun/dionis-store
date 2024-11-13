@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import classes from './Card.module.css'
 import { GameObject } from '@repo/dionis-api/src/model'
+import { useState } from 'react'
 
 export type CardProps = Pick<GameObject, 'title' | 'rating' | 'price' | 'platform'> & {
   onClick?: () => void
@@ -8,26 +9,35 @@ export type CardProps = Pick<GameObject, 'title' | 'rating' | 'price' | 'platfor
 }
 
 export const Card = ({ title, rating, price, onClick, platform, imageSrc }: CardProps) => {
+  const [isImageLoaded, setIsImageLoaded] = useState(false)
   const onClickHandler = () => {
     onClick && onClick()
   }
 
+  const loader = () => {
+    return <div className={classes.placeholder} />
+  }
+
   return (
-    <div className={classes.card} onClick={onClickHandler} data-testid="card">
+    <div
+      className={classes.card}
+      onClick={onClickHandler}
+      data-testid='card'
+    >
       <Image
+        onLoadingComplete={() => setIsImageLoaded(true)}
         priority={true}
         style={{
           borderTopLeftRadius: '1.2em',
           borderTopRightRadius: '1.2em',
-          width: 'auto',
-          height: 'auto',
         }}
-        width={500}
-        height={270}
+        width={isImageLoaded ? 350 : 0}
+        height={isImageLoaded ? 270 : 0}
         alt={`${title} thumbnail`}
         src={imageSrc}
-        data-testid="image"
+        data-testid='image'
       />
+      {!isImageLoaded && <div className={classes.placeholder} />}
       <div className={classes.content}>
         <div className={classes.contentWrapper}>
           <div className={classes.titleContainer}>

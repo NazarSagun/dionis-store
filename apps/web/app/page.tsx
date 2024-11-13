@@ -16,13 +16,13 @@ export default function Home() {
   const { state } = useThemeState()
   const containerStyles = clsx(classes.container, state.mode === 'light' ? classes.light : null)
 
-  const { data, isLoading, error, isError } = useGetGames(page)
+  const { data, isLoading } = useGetGames(page)
 
   if (isLoading) {
     return (
-      <div className={containerStyles}>
+      <main className={containerStyles}>
         <Loader />
-      </div>
+      </main>
     )
   }
 
