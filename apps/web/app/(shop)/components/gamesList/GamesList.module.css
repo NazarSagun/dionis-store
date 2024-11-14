@@ -1,8 +1,9 @@
 .container {
+  width: 60vw;
   padding-top: 5rem;
-  display: grid;
+  display: flex;
   justify-content: center;
-  grid-template-columns: 350px 350px 350px;
+  flex-direction: column;
   gap: 2rem;
   padding-bottom: 5rem;
 }

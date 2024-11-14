@@ -61,3 +61,8 @@
 .cartWrapper a:first-of-type {
   margin-right: 1rem;
 }
+
+.username {
+  color: white;
+  margin-right: 1rem;
+}

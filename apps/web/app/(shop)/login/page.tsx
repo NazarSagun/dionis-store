@@ -22,7 +22,10 @@ const LoginPage = () => {
   const { mutate, isPending } = useLogin({
     mutation: {
       onSuccess: (data) => {
-        dispatch({ type: AuthActionType.AUTHENTICATE, payload: data.user?.accessToken as string })
+        dispatch({
+          type: AuthActionType.AUTHENTICATE,
+          payload: { token: data.user?.accessToken as string, name: data.user?.name as string },
+        })
         router.push('/')
       },
       onError: (error) => {

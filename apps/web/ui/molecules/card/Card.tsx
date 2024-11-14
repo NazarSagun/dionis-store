@@ -28,27 +28,24 @@ export const Card = ({ title, rating, price, onClick, platform, imageSrc }: Card
         onLoadingComplete={() => setIsImageLoaded(true)}
         priority={true}
         style={{
-          borderTopLeftRadius: '1.2em',
-          borderTopRightRadius: '1.2em',
+          borderRadius: '1.2em',
         }}
-        width={isImageLoaded ? 350 : 0}
-        height={isImageLoaded ? 270 : 0}
+        width={isImageLoaded ? 200 : 0}
+        height={isImageLoaded ? 250 : 0}
         alt={`${title} thumbnail`}
         src={imageSrc}
         data-testid='image'
       />
       {!isImageLoaded && <div className={classes.placeholder} />}
       <div className={classes.content}>
-        <div className={classes.contentWrapper}>
-          <div className={classes.titleContainer}>
-            <h3>{title}</h3>
-            <span>{platform}</span>
-          </div>
-          <div className={classes.priceContainer}>
-            <span className={classes.rating}>{rating}</span>
-            <div>
-              <span>€{price}</span>
-            </div>
+        <div className={classes.titleContainer}>
+          <h3>{title}</h3>
+          <span>{platform}</span>
+        </div>
+        <div className={classes.priceContainer}>
+          <span className={classes.rating}>{rating}</span>
+          <div>
+            <span>€{price}</span>
           </div>
         </div>
       </div>

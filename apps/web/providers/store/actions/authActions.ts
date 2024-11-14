@@ -4,5 +4,5 @@ export enum AuthActionType {
 }
 
 export type AuthAction =
-  | { type: AuthActionType.AUTHENTICATE; payload: string | null | Promise<string | null> }
+  | { type: AuthActionType.AUTHENTICATE; payload: { token: string | null | Promise<string | null>; name: string } }
   | { type: AuthActionType.LOGOUT }
