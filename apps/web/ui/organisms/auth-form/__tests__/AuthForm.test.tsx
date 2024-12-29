@@ -1,14 +1,12 @@
 import userEvent from '@testing-library/user-event'
 import { expect, it, describe } from 'vitest'
-import { AuthForm, AuthFormProps } from '../AuthForm'
+import { AuthForm, AuthFormProps, FormVariant } from '../AuthForm'
 import { fireEvent, render } from '@/test-utils/utils'
 
 const formProps: AuthFormProps = {
-  title: 'Form',
-  privacyText: 'Privacy text',
   isLoading: false,
   onSubmitForm: () => {},
-  variant: 'login',
+  variant: FormVariant.LOGIN,
 }
 
 describe('<AuthForm />', () => {
@@ -28,7 +26,12 @@ describe('<AuthForm />', () => {
 
   it('Should input values in signup fields', async () => {
     const user = userEvent.setup()
-    const { getByTestId } = render(<AuthForm {...formProps} variant='signup' />)
+    const { getByTestId } = render(
+      <AuthForm
+        {...formProps}
+        variant={FormVariant.SIGNUP}
+      />
+    )
 
     const email = getByTestId('email') as HTMLInputElement
     const password = getByTestId('password') as HTMLInputElement
@@ -44,17 +47,28 @@ describe('<AuthForm />', () => {
   })
 
   it('Should display title and privacy text', async () => {
-    const { getByText } = render(<AuthForm {...formProps} variant='signup' />)
+    const { getByText } = render(
+      <AuthForm
+        {...formProps}
+        variant={FormVariant.SIGNUP}
+      />
+    )
 
-    const title = getByText('Form')
-    const privacy = getByText('Privacy text')
+    const title = getByText('Create your Dionis account')
+    const privacy = getByText('Creating an account, you agree to our terms and privacy policy.')
 
     expect(title).toBeInTheDocument()
     expect(privacy).toBeInTheDocument()
   })
 
   it('Should disable submit button if loading', async () => {
-    const { getByRole } = render(<AuthForm {...formProps} variant='signup' isLoading={true} />)
+    const { getByRole } = render(
+      <AuthForm
+        {...formProps}
+        variant={FormVariant.SIGNUP}
+        isLoading={true}
+      />
+    )
     const button = getByRole('button')
 
     expect(button).toBeDisabled()
@@ -64,7 +78,11 @@ describe('<AuthForm />', () => {
     let submittedFormData
 
     const { getByTestId } = render(
-      <AuthForm {...formProps} variant='signup' onSubmitForm={(data) => (submittedFormData = data)} />
+      <AuthForm
+        {...formProps}
+        variant={FormVariant.SIGNUP}
+        onSubmitForm={(data) => (submittedFormData = data)}
+      />
     )
 
     const email = getByTestId('email') as HTMLInputElement
