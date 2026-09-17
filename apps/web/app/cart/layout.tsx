@@ -1,22 +1,20 @@
 'use client'
 
-import { useGlobalState } from '@/providers/store/GlobalStateContext'
-import { Footer, CartNavigation } from '@/ui/molecules'
+import { Footer } from '@/components'
+import { CartNavigation, useCartStore } from '@/features/cart'
 
 export default function ShopLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  const {
-    dispatch,
-    state: { cart },
-  } = useGlobalState()
+  const currentStep = useCartStore((state) => state.currentStep)
+  const setStep = useCartStore((state) => state.setStep)
 
   return (
     <>
-      <CartNavigation onStepClick={dispatch} activeStep={cart.currentStep} />
-      <main>{children}</main>
+      <CartNavigation onStepClick={setStep} activeStep={currentStep} />
+      <main className='flex-1'>{children}</main>
       <Footer />
     </>
   )

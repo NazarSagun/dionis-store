@@ -1,25 +1,22 @@
 'use client'
 
-import { AuthPage, FormVariant, useToast } from '@/ui'
+import { useToast } from '@repo/ui'
+import { AuthPage, FormVariant, useAuthStore } from '@/features/auth'
 
 import { useLogin } from '@repo/dionis-api/src/dionis/default/default'
-import { useGlobalState } from '@/providers/store/GlobalStateContext'
-import { AuthActionType } from '@/providers/store/actions'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 
 const LoginPage = () => {
-  const { state: globalState, dispatch } = useGlobalState()
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated)
+  const login = useAuthStore((state) => state.login)
   const router = useRouter()
   const { toast } = useToast()
 
   const { mutate, isPending } = useLogin({
     mutation: {
       onSuccess: (data) => {
-        dispatch({
-          type: AuthActionType.AUTHENTICATE,
-          payload: { token: data.user?.accessToken as string, name: data.user?.name as string },
-        })
+        login(data.user?.accessToken as string, data.user?.name as string)
         router.push('/')
       },
       onError: (error) => {
@@ -32,7 +29,7 @@ const LoginPage = () => {
   })
 
   useEffect(() => {
-    if (globalState.auth.isAuthenticated) {
+    if (isAuthenticated) {
       router.push('/')
     }
   }, [])

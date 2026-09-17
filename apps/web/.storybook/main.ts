@@ -7,7 +7,11 @@ const config: StorybookConfig = {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@100..900&display=swap" rel="stylesheet">
   `,
-  stories: ['../ui/**/*.stories.@(ts|tsx)', '../../../packages/ui/src/**/*.stories.@(ts|tsx)'],
+  stories: [
+    '../features/**/*.stories.@(ts|tsx)',
+    '../components/**/*.stories.@(ts|tsx)',
+    '../../../packages/ui/src/**/*.stories.@(ts|tsx)',
+  ],
   addons: [
     '@storybook/addon-links',
     '@storybook/addon-essentials',

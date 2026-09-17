@@ -1,11 +1,11 @@
 'use client'
 
-import { GamesList } from './(shop)/components'
+import { GamesList, GamesPagination } from '@/features/games'
 import { useGetGames } from '@repo/dionis-api/src/dionis/default/default'
 import { useState } from 'react'
 import { GameObject } from '@repo/dionis-api/src/model'
-import { Loader, MainNavigation, Footer } from '@/ui'
-import { GamesPagination } from './(shop)/components/gamesPagination'
+import { Loader } from '@repo/ui'
+import { MainNavigation, Footer } from '@/components'
 
 const containerStyles =
   'flex flex-1 min-h-[75vh] flex-col items-center justify-center pb-20 bg-[image:var(--light-background-color)] dark:bg-[image:var(--dark-background-color)]'

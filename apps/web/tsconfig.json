@@ -20,8 +20,6 @@
     ],
     "paths": {
       "@/*": ["./*"],
-      "@/providers": ["./providers"],
-      "@/ui": ["./ui"],
       "@/test-utils": ["./test-utils"]
     }
   },

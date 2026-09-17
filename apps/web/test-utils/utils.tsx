@@ -2,10 +2,11 @@ import React, { ReactElement } from 'react'
 import { render, RenderOptions, cleanup } from '@testing-library/react'
 import { expect, afterEach, beforeAll, afterAll, vi } from 'vitest';
 import * as matchers from "@testing-library/jest-dom/matchers";
-import { GlobalStateProvider } from '@/providers/store/GlobalStateContext'
 import { ThemeProvider } from 'next-themes'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { serviceWorker } from './mock-server';
+import { useAuthStore } from '@/features/auth'
+import { useCartStore } from '@/features/cart'
 
 expect.extend(matchers);
 
@@ -26,6 +27,9 @@ Object.defineProperty(window, 'matchMedia', {
 
 afterEach(() => {
   cleanup();
+  localStorage.clear();
+  useAuthStore.setState({ isAuthenticated: false, accessToken: null, user: null });
+  useCartStore.setState({ items: [], currentStep: 1 });
 });
 
 // Start worker before all tests
@@ -42,11 +46,9 @@ const client = new QueryClient()
 const AllTheProviders = ({ children }: { children: React.ReactNode }) => {
   return (
     <QueryClientProvider client={client}>
-      <GlobalStateProvider>
-        <ThemeProvider attribute='class' defaultTheme='dark' enableSystem={false} forcedTheme='dark'>
-          {children}
-        </ThemeProvider>
-      </GlobalStateProvider>
+      <ThemeProvider attribute='class' defaultTheme='dark' enableSystem={false} forcedTheme='dark'>
+        {children}
+      </ThemeProvider>
     </QueryClientProvider>
   )
 }

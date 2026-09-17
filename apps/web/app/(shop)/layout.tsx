@@ -1,6 +1,6 @@
 'use client'
 
-import { Footer, MainNavigation } from '@/ui/molecules'
+import { Footer, MainNavigation } from '@/components'
 
 export default function ShopLayout({
   children,
