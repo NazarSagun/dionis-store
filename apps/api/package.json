@@ -8,7 +8,8 @@
     "build": "tsc",
     "migrate": "npx prisma migrate dev",
     "build:mock": "tsc ./src/mock/insertAllData.ts",
-    "insert:mock": "node ./src/mock/insertAllData.js"
+    "insert:mock": "node ./src/mock/insertAllData.js",
+    "seed:api": "ts-node src/seed/populate-via-api.ts"
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",

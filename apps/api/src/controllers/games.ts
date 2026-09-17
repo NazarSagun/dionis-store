@@ -49,4 +49,70 @@ export class GamesController {
       res.status(500).json(error)
     }
   }
+
+  createGame = async (req: Request, res: Response) => {
+    const {
+      id,
+      title,
+      thumbnail,
+      short_description,
+      game_url,
+      genre,
+      platform,
+      publisher,
+      developer,
+      release_date,
+      freetogame_profile_url,
+      price,
+      rating,
+      discount,
+    } = req.body
+
+    if (
+      !id ||
+      !title ||
+      !thumbnail ||
+      !short_description ||
+      !game_url ||
+      !genre ||
+      !platform ||
+      !publisher ||
+      !developer ||
+      !release_date ||
+      !freetogame_profile_url ||
+      price === undefined ||
+      !rating ||
+      discount === undefined
+    ) {
+      return res.status(400).json({ message: 'One or more game fields are missing' })
+    }
+
+    try {
+      const game = await this.gamesService.createGame({
+        id,
+        title,
+        thumbnail,
+        short_description,
+        game_url,
+        genre,
+        platform,
+        publisher,
+        developer,
+        release_date,
+        freetogame_profile_url,
+        price,
+        rating,
+        discount,
+      })
+
+      res.status(201).send(game)
+    } catch (error) {
+      if (error instanceof CustomError) {
+        return res.status(error.statusCode).json({
+          message: error.message,
+        })
+      }
+      res.status(500).json(error)
+    }
+  }
 }

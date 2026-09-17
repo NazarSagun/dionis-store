@@ -1,8 +1,25 @@
-import { PrismaClient } from '@prisma/client'
+import { Prisma, PrismaClient } from '@prisma/client'
 import { CustomError } from '../middleware'
 import dotenv from 'dotenv'
 
 dotenv.config()
+
+export interface CreateGameInput {
+  id: number
+  title: string
+  thumbnail: string
+  short_description: string
+  game_url: string
+  genre: string
+  platform: string
+  publisher: string
+  developer: string
+  release_date: string
+  freetogame_profile_url: string
+  price: number
+  rating: string
+  discount: number
+}
 
 export class GamesService {
   private prisma: PrismaClient
@@ -42,5 +59,16 @@ export class GamesService {
     }
 
     return game
+  }
+
+  async createGame(data: CreateGameInput) {
+    try {
+      return await this.prisma.game_pc.create({ data })
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+        throw new CustomError('A game with this id or title already exists', 409)
+      }
+      throw error
+    }
   }
 }
