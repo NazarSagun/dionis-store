@@ -2,8 +2,9 @@
 
 import { ReactNode, useEffect, useState } from 'react'
 import { Loader } from '@repo/ui'
-import { useAuthStore } from '../../store/useAuthStore'
+
 import { useRefreshToken } from '../../hooks/useRefreshToken'
+import { useAuthStore } from '../../store/useAuthStore'
 
 interface AuthInitializerProps {
   children: ReactNode

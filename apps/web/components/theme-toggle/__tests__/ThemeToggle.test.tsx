@@ -1,7 +1,9 @@
 import userEvent from '@testing-library/user-event'
+import { beforeEach, describe, expect, it } from 'vitest'
+
 import { cleanup, render } from '@/test-utils/utils'
+
 import { ThemeToggle } from '../ThemeToggle'
-import { describe, expect, it, beforeEach } from 'vitest'
 
 describe('<ThemeToggle />', () => {
   beforeEach(() => {

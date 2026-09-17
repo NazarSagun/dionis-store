@@ -19,6 +19,6 @@ export function calculateCartSummary(cartItems: CartItem[]): Summary {
 
       return summary
     },
-    { initialPrice: 0, totalDiscount: 0, finalPrice: 0 }
+    { initialPrice: 0, totalDiscount: 0, finalPrice: 0 },
   )
 }

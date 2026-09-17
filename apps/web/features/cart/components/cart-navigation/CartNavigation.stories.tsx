@@ -16,9 +16,9 @@ const meta = {
   argTypes: {
     activeStep: {
       control: 'radio',
-      options: [1, 2, 3]
+      options: [1, 2, 3],
     },
-  }
+  },
 } satisfies Meta<typeof CartNavigation>
 
 export default meta

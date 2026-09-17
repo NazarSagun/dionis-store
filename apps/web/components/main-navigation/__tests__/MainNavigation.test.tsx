@@ -1,6 +1,8 @@
-import { fireEvent, render } from '@/test-utils/utils'
+import { describe, expect, it } from 'vitest'
+
+import { render } from '@/test-utils/utils'
+
 import { MainNavigation } from '../MainNavigation'
-import { expect, describe, it, vi } from 'vitest'
 
 describe('<MainNavigation />', () => {
   it('Should render component', () => {

@@ -1,14 +1,16 @@
 'use client'
 
-import { useGetGame } from '@repo/dionis-api/src/dionis/default/default'
-import { cn } from '@/lib/utils'
-import { Loader, useToast } from '@repo/ui'
 import Image from 'next/image'
-import { calculateDiscountedPrice } from '../../helpers'
+import { useGetGame } from '@repo/dionis-api/src/dionis/default/default'
+import { Loader, useToast } from '@repo/ui'
+
 import { CartItem, useCartStore } from '@/features/cart/store/useCartStore'
+import { cn } from '@/lib/utils'
+
+import { calculateDiscountedPrice } from '../../helpers'
 
 const buttonStyles =
-  "flex items-center gap-2 rounded-[10px] border-0 bg-[linear-gradient(45deg,#ff512f_0%,#f09819_51%,#ff512f_100%)] bg-[length:200%_auto] px-[30px] py-[15px] text-white shadow-[0px_0px_14px_-7px_#f09819] transition-[background-position] duration-500 select-none touch-manipulation hover:bg-right active:scale-95"
+  'flex items-center gap-2 rounded-[10px] border-0 bg-[linear-gradient(45deg,#ff512f_0%,#f09819_51%,#ff512f_100%)] bg-[length:200%_auto] px-[30px] py-[15px] text-white shadow-[0px_0px_14px_-7px_#f09819] transition-[background-position] duration-500 select-none touch-manipulation hover:bg-right active:scale-95'
 
 interface GameDetailsProps {
   gameId: number

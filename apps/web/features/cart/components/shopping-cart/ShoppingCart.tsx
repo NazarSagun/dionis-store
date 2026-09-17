@@ -1,5 +1,5 @@
 import { useCartStore } from '../../store/useCartStore'
-import { EmptyState, CartItemsList, Summary } from '..'
+import { CartItemsList, EmptyState, Summary } from '..'
 
 export const ShoppingCart = () => {
   const items = useCartStore((state) => state.items)

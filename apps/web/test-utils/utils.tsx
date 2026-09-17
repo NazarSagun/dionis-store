@@ -1,14 +1,16 @@
 import React, { ReactElement } from 'react'
-import { render, RenderOptions, cleanup } from '@testing-library/react'
-import { expect, afterEach, beforeAll, afterAll, vi } from 'vitest';
-import * as matchers from "@testing-library/jest-dom/matchers";
 import { ThemeProvider } from 'next-themes'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { serviceWorker } from './mock-server';
+import * as matchers from '@testing-library/jest-dom/matchers'
+import { cleanup, render, RenderOptions } from '@testing-library/react'
+import { afterAll, afterEach, beforeAll, expect, vi } from 'vitest'
+
 import { useAuthStore } from '@/features/auth'
 import { useCartStore } from '@/features/cart'
 
-expect.extend(matchers);
+import { serviceWorker } from './mock-server'
+
+expect.extend(matchers)
 
 // next-themes reads window.matchMedia, which jsdom does not implement.
 Object.defineProperty(window, 'matchMedia', {
@@ -23,23 +25,29 @@ Object.defineProperty(window, 'matchMedia', {
     removeEventListener: vi.fn(),
     dispatchEvent: vi.fn(),
   })),
-});
+})
 
 afterEach(() => {
-  cleanup();
-  localStorage.clear();
-  useAuthStore.setState({ isAuthenticated: false, accessToken: null, user: null });
-  useCartStore.setState({ items: [], currentStep: 1 });
-});
+  cleanup()
+  localStorage.clear()
+  useAuthStore.setState({ isAuthenticated: false, accessToken: null, user: null })
+  useCartStore.setState({ items: [], currentStep: 1 })
+})
 
 // Start worker before all tests
-beforeAll(() => { serviceWorker.listen() })
+beforeAll(() => {
+  serviceWorker.listen()
+})
 
 //  Close worker after all tests
-afterAll(() => {serviceWorker.close()})
+afterAll(() => {
+  serviceWorker.close()
+})
 
 // Reset handlers after each test `important for test isolation`
-afterEach(() => {serviceWorker.resetHandlers()})
+afterEach(() => {
+  serviceWorker.resetHandlers()
+})
 
 const client = new QueryClient()
 

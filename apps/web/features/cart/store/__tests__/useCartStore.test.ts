@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest'
+
 import { useCartStore } from '../useCartStore'
 
 const mockItem = { id: 1, thumbnailUrl: 'test', title: 'title', price: 23, platform: 'PC', quantity: 1, discount: 0 }

@@ -1,6 +1,8 @@
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+
 import { cleanup, fireEvent, render } from '@/test-utils/utils'
+
 import { GameCard, GameCardProps } from '../GameCard'
-import { describe, expect, it, beforeEach, vi } from 'vitest'
 
 const game: GameCardProps = {
   title: 'Kings',

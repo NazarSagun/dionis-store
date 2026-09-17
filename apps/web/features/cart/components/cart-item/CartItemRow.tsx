@@ -1,7 +1,9 @@
-import { CartItem as CartItemProps, useCartStore } from '../../store/useCartStore'
 import Image from 'next/image'
-import { cn } from '@/lib/utils'
+
 import { calculateDiscountedPrice } from '@/features/games'
+import { cn } from '@/lib/utils'
+
+import { CartItem as CartItemProps, useCartStore } from '../../store/useCartStore'
 import { QuantitySelect } from '../quantity-select'
 
 const dividerAfter =

@@ -1,11 +1,11 @@
 'use client'
 
-import { useToast } from '@repo/ui'
-import { AuthPage, FormVariant, useAuthStore } from '@/features/auth'
-
+import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useRegister } from '@repo/dionis-api/src/dionis/default/default'
-import { useEffect } from 'react'
+import { useToast } from '@repo/ui'
+
+import { AuthPage, FormVariant, useAuthStore } from '@/features/auth'
 
 const SignUpPage = () => {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated)

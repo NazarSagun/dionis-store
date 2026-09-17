@@ -1,6 +1,7 @@
 'use client'
 
 import { useParams } from 'next/navigation'
+
 import { GameDetails } from '@/features/games'
 
 export default function GamePage() {

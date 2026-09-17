@@ -69,21 +69,15 @@ export const GamesPagination = ({ totalPages, onChange, currentPage }: Paginatio
         </PaginationItem>
         {pageNumbers.map((page, index) =>
           typeof page === 'number' ? (
-            <PaginationItem
-              onClick={() => handlePageChange(page)}
-              key={index}
-            >
+            <PaginationItem onClick={() => handlePageChange(page)} key={index}>
               <PaginationLink isActive={currentPage === page}>{page}</PaginationLink>
             </PaginationItem>
           ) : (
             page // Render the Ellipsis component directly
-          )
+          ),
         )}
         <PaginationItem>
-          <PaginationNext
-            disabled={currentPage === totalPages}
-            onClick={() => handlePageChange(currentPage + 1)}
-          />
+          <PaginationNext disabled={currentPage === totalPages} onClick={() => handlePageChange(currentPage + 1)} />
         </PaginationItem>
       </PaginationContent>
     </Pagination>

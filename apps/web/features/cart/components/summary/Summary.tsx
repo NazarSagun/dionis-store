@@ -1,12 +1,15 @@
-import { Button, DialogTrigger } from '@repo/ui'
-import { useAuthStore } from '@/features/auth'
-import { useCartStore } from '../../store/useCartStore'
-import { useRouter } from 'next/navigation'
-import { calculateCartSummary } from './helpers'
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { Button, DialogTrigger } from '@repo/ui'
+
+import { useAuthStore } from '@/features/auth'
+
+import { useCartStore } from '../../store/useCartStore'
+
+import { calculateCartSummary } from './helpers'
 
 const ctaButtonStyles =
-  "w-full rounded-[10px] border-0 bg-[linear-gradient(45deg,#ff512f_0%,#f09819_51%,#ff512f_100%)] bg-[length:200%_auto] px-[30px] py-[15px] font-bold text-white shadow-[0px_0px_14px_-7px_#f09819] transition-[background-position] duration-500 select-none touch-manipulation hover:bg-right active:scale-95 disabled:pointer-events-none disabled:opacity-50"
+  'w-full rounded-[10px] border-0 bg-[linear-gradient(45deg,#ff512f_0%,#f09819_51%,#ff512f_100%)] bg-[length:200%_auto] px-[30px] py-[15px] font-bold text-white shadow-[0px_0px_14px_-7px_#f09819] transition-[background-position] duration-500 select-none touch-manipulation hover:bg-right active:scale-95 disabled:pointer-events-none disabled:opacity-50'
 
 export const Summary = () => {
   const items = useCartStore((state) => state.items)

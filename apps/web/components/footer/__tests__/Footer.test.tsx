@@ -1,6 +1,8 @@
-import { render } from "@/test-utils/utils";
-import { it, expect } from "vitest";
-import { Footer } from "../Footer";
+import { expect, it } from 'vitest'
+
+import { render } from '@/test-utils/utils'
+
+import { Footer } from '../Footer'
 
 it('Should render footer', () => {
   const { container } = render(<Footer />)

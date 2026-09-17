@@ -1,11 +1,11 @@
 'use client'
 
-import { useToast } from '@repo/ui'
-import { AuthPage, FormVariant, useAuthStore } from '@/features/auth'
-
-import { useLogin } from '@repo/dionis-api/src/dionis/default/default'
-import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+import { useLogin } from '@repo/dionis-api/src/dionis/default/default'
+import { useToast } from '@repo/ui'
+
+import { AuthPage, FormVariant, useAuthStore } from '@/features/auth'
 
 const LoginPage = () => {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated)

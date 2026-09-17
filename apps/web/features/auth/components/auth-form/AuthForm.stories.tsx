@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react'
 
-import { AuthForm } from './AuthForm'
+import { AuthForm, FormVariant } from './AuthForm'
 
 const meta = {
   title: 'Organisms/AuthForm',
@@ -11,28 +11,16 @@ const meta = {
   tags: ['autodocs'],
   args: {
     isLoading: false,
-    variant: 'login',
+    variant: FormVariant.LOGIN,
     onSubmitForm(userData) {
       console.log(userData)
     },
-    title: 'Create Dionis account',
-    privacyText: 'By creating an account, you agree to our terms and privacy policy.',
   },
   argTypes: {
-    title: {
-      table: {
-        disable: true,
-      },
-    },
-    privacyText: {
-      table: {
-        disable: true,
-      },
-    },
     variant: {
-      defaultValue: 'login',
+      defaultValue: FormVariant.LOGIN,
       control: 'radio',
-      options: ['login', 'signup'],
+      options: [FormVariant.LOGIN, FormVariant.SIGNUP],
     },
     onSubmitForm: {
       table: {

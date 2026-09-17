@@ -1,8 +1,7 @@
 'use client'
 
 import { FormEvent, useEffect, useState } from 'react'
-
-import { Input, Button, Label } from '@repo/ui'
+import { Button, Input, Label } from '@repo/ui'
 
 export type UserData = {
   email: string
@@ -42,10 +41,7 @@ export const AuthForm = ({ onSubmitForm, variant, isLoading, onVariantChange }: 
   useEffect(() => onVariantChange && onVariantChange(formVariant), [formVariant])
 
   return (
-    <form
-      onSubmit={submitHandler}
-      className='flex w-[350px] flex-col rounded-[5px] bg-muted px-5 py-[15px]'
-    >
+    <form onSubmit={submitHandler} className='flex w-[350px] flex-col rounded-[5px] bg-muted px-5 py-[15px]'>
       <h3 className='mb-5 mt-2.5 text-foreground'>{authTitle} your Dionis account</h3>
       {formVariant === FormVariant.SIGNUP ? (
         <>

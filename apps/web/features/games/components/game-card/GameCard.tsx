@@ -1,6 +1,6 @@
+import { useState } from 'react'
 import Image from 'next/image'
 import { GameObject } from '@repo/dionis-api/src/model'
-import { useState } from 'react'
 
 export type GameCardProps = Pick<GameObject, 'title' | 'rating' | 'price' | 'platform'> & {
   onClick?: () => void

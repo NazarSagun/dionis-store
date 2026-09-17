@@ -1,7 +1,8 @@
-import { cn } from '@/lib/utils'
+import { Fragment } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { Fragment } from 'react'
+
+import { cn } from '@/lib/utils'
 
 const steps = [
   {
@@ -45,7 +46,7 @@ export const CartNavigation = ({
                 className={cn(
                   'flex items-center opacity-50 pointer-events-none',
                   activeStep > item.number && 'pointer-events-auto cursor-pointer',
-                  isActive && 'opacity-100'
+                  isActive && 'opacity-100',
                 )}
                 aria-label={`${isActive ? 'active' : 'inactive'} step`}
                 data-testid='cart-navigation-step'
@@ -56,7 +57,7 @@ export const CartNavigation = ({
                 <span
                   className={cn(
                     'mr-4 flex h-5 w-5 items-center justify-center rounded-full border-[3px] border-white p-[0.7rem] text-base text-white',
-                    isActive && 'border-[var(--success-color)]'
+                    isActive && 'border-[var(--success-color)]',
                   )}
                 >
                   {item.number}

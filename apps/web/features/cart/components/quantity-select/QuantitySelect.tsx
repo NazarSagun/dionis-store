@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+
 import { cn } from '@/lib/utils'
 
 export interface QuantitySelectProps {
@@ -41,7 +42,7 @@ export const QuantitySelect = ({ onChange, selectedOption }: QuantitySelectProps
         data-testid='select'
         className={cn(
           'flex cursor-pointer items-center justify-between rounded border border-[#292b2f] bg-[#292b2f] px-2.5 py-[5px] text-white shadow-[0px_0px_0px_2px_transparent] transition-shadow duration-200 ease-in-out',
-          isOpen && 'shadow-[0px_0px_0px_2px_var(--success-color)]'
+          isOpen && 'shadow-[0px_0px_0px_2px_var(--success-color)]',
         )}
         onClick={toggleDropdown}
       >
@@ -56,7 +57,7 @@ export const QuantitySelect = ({ onChange, selectedOption }: QuantitySelectProps
               key={option}
               className={cn(
                 'cursor-pointer rounded-[5px] bg-[#333] px-[5px] text-sm text-white transition-colors duration-200 ease-in-out hover:bg-[#444]',
-                option === selectedNumber && 'bg-[var(--success-color)] opacity-60'
+                option === selectedNumber && 'bg-[var(--success-color)] opacity-60',
               )}
               onClick={() => handleOptionClick(option)}
             >

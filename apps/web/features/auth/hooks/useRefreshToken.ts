@@ -3,6 +3,7 @@
 import { useEffect } from 'react'
 import { AXIOS_INSTANCE } from '@repo/dionis-api/instance'
 import { useRefresh } from '@repo/dionis-api/src/dionis/default/default'
+
 import { useAuthStore } from '../store/useAuthStore'
 
 export const useRefreshToken = () => {
@@ -28,7 +29,7 @@ export const useRefreshToken = () => {
         }
         return config
       },
-      (error) => Promise.reject(error)
+      (error) => Promise.reject(error),
     )
     const responseInterceptor = AXIOS_INSTANCE.interceptors.response.use(
       (response) => response,
@@ -47,7 +48,7 @@ export const useRefreshToken = () => {
           logout()
         }
         return Promise.reject(error)
-      }
+      },
     )
     return () => {
       AXIOS_INSTANCE.interceptors.response.eject(responseInterceptor)

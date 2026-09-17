@@ -1,12 +1,14 @@
 'use client'
 
+import type { ReactNode } from 'react'
+
 import { Footer } from '@/components'
 import { CartNavigation, useCartStore } from '@/features/cart'
 
 export default function ShopLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode
+  children: ReactNode
 }>) {
   const currentStep = useCartStore((state) => state.currentStep)
   const setStep = useCartStore((state) => state.setStep)

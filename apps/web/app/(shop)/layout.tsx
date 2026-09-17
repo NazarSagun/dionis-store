@@ -1,11 +1,13 @@
 'use client'
 
+import type { ReactNode } from 'react'
+
 import { Footer, MainNavigation } from '@/components'
 
 export default function ShopLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode
+  children: ReactNode
 }>) {
   return (
     <>

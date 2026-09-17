@@ -1,10 +1,11 @@
 'use client'
 
-import { Dialog, DialogContent, toast } from '@repo/ui'
-import { AuthForm, FormVariant, UserData, useAuthStore } from '@/features/auth'
-import { useLogin, useRegister } from '@repo/dionis-api/src/dionis/default/default'
-import { ShoppingCart, Payment, useCartStore } from '@/features/cart'
 import { useState } from 'react'
+import { useLogin, useRegister } from '@repo/dionis-api/src/dionis/default/default'
+import { Dialog, DialogContent, toast } from '@repo/ui'
+
+import { AuthForm, FormVariant, useAuthStore, UserData } from '@/features/auth'
+import { Payment, ShoppingCart, useCartStore } from '@/features/cart'
 
 const Page = () => {
   const [isOpen, setIsOpen] = useState(false)

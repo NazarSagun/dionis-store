@@ -1,5 +1,7 @@
+import { describe, expect, test } from 'vitest'
+
 import { fireEvent, render } from '@/test-utils/utils'
-import { test, expect, describe } from 'vitest'
+
 import { QuantitySelect } from '../QuantitySelect'
 
 describe('<QuantitySelect />', () => {
