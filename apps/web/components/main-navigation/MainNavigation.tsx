@@ -29,10 +29,10 @@ export const MainNavigation = () => {
   const { refetch: logout } = useLogout({ query: { enabled: false } })
 
   return (
-    <nav className='flex h-[10vh] items-center justify-between bg-muted px-[35px]'>
+    <nav className='flex h-[10vh] items-center justify-between border-b-4 border-neon-magenta bg-muted px-[35px]'>
       <div className='flex items-center'>
         <Link href='/' className='flex items-center'>
-          <span className='mr-2.5 cursor-pointer font-mono text-xl font-semibold text-foreground'>Dionis</span>
+          <span className='mr-2.5 cursor-pointer font-display text-sm text-neon-magenta'>Dionis</span>
           <Image priority={true} width={40} height={40} alt='logo' src={`/icons/logo.png`} />
         </Link>
       </div>
@@ -40,12 +40,14 @@ export const MainNavigation = () => {
         <ThemeToggle />
         <ul className='flex items-center'>
           <Link href={'/'} className='ml-4 flex items-center last:ml-8'>
-            <li className='text-base font-semibold text-foreground'>Home</li>
+            <li className='text-base font-bold uppercase tracking-wide text-foreground hover:text-neon-cyan'>Home</li>
           </Link>
           {!isUserAuth ? (
             navigation.map((item) => (
               <Link href={item.link} key={item.id} className='ml-4 flex items-center last:ml-8'>
-                <li className='text-base font-semibold text-foreground'>{item.label}</li>
+                <li className='text-base font-bold uppercase tracking-wide text-foreground hover:text-neon-cyan'>
+                  {item.label}
+                </li>
               </Link>
             ))
           ) : (
@@ -57,13 +59,15 @@ export const MainNavigation = () => {
                 clearAuth()
               }}
             >
-              <li className='text-base font-semibold text-foreground'>Logout</li>
+              <li className='text-base font-bold uppercase tracking-wide text-foreground hover:text-neon-cyan'>
+                Logout
+              </li>
             </Link>
           )}
         </ul>
       </nav>
       <div className='flex items-center'>
-        {user && <div className='mr-4 text-foreground'>Hi, {user.name}</div>}
+        {user && <div className='mr-4 font-mono text-foreground'>Hi, {user.name}</div>}
         <Link href='/cart' className='mr-4'>
           <Image priority={true} width={25} height={25} alt='logo' src={`/icons/shopping-cart.svg`} />
         </Link>

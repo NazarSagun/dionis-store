@@ -2,7 +2,12 @@ import type { Config } from 'tailwindcss'
 
 const config = {
   darkMode: ['class'],
-  content: ['./ui/**/*.{ts,tsx}', './app/**/*.{ts,tsx}', '../../packages/ui/src/**/*.{ts,tsx}'],
+  content: [
+    './app/**/*.{ts,tsx}',
+    './components/**/*.{ts,tsx}',
+    './features/**/*.{ts,tsx}',
+    '../../packages/ui/src/**/*.{ts,tsx}',
+  ],
   prefix: '',
   theme: {
     container: {
@@ -13,7 +18,24 @@ const config = {
       },
     },
     extend: {
+      fontFamily: {
+        sans: ['var(--font-mono)', 'monospace'],
+        mono: ['var(--font-mono)', 'monospace'],
+        display: ['var(--font-display)', 'var(--font-mono)', 'monospace'],
+      },
+      boxShadow: {
+        retro: '5px 5px 0 0 var(--shadow-retro-color)',
+        'retro-sm': '3px 3px 0 0 var(--shadow-retro-color)',
+      },
       colors: {
+        ink: 'var(--ink-border)',
+        'panel-alt': 'var(--panel-alt)',
+        neon: {
+          magenta: 'var(--neon-magenta)',
+          cyan: 'var(--neon-cyan)',
+          amber: 'var(--neon-amber)',
+          green: 'var(--neon-green)',
+        },
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
