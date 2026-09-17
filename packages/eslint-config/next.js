@@ -10,15 +10,11 @@ module.exports = {
     require.resolve("@vercel/style-guide/eslint/next"),
     "eslint-config-turbo",
   ],
-  globals: {
-    React: true,
-    JSX: true,
-  },
   env: {
     node: true,
     browser: true,
   },
-  plugins: ["only-warn", "simple-import-sort"],
+  plugins: ["only-warn", "simple-import-sort", "prettier"],
   settings: {
     "import/resolver": {
       typescript: {
@@ -27,15 +23,7 @@ module.exports = {
     },
   },
   rules: {
-    "prettier/prettier": [
-      "error",
-      {
-        "trailingComma": "es5",
-        "singleQuote": true,
-        "printWidth": 120,
-        "semi": false
-      }
-    ]
+    "prettier/prettier": "warn"
   },
   ignorePatterns: [
     // Ignore dotfiles
@@ -46,7 +34,10 @@ module.exports = {
     { files: ["*.js?(x)", "*.ts?(x)"] },
     {
       files: ["*.ts", "*.tsx"],
+      plugins: ["@typescript-eslint"],
       rules: {
+        "no-unused-vars": "off",
+        "@typescript-eslint/no-unused-vars": "warn",
         "simple-import-sort/imports": [
           "error",
           {

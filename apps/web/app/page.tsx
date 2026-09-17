@@ -1,20 +1,19 @@
 'use client'
 
-import { useThemeState } from '@/providers/theme'
-
-import clsx from 'clsx'
-import classes from './page.module.css'
-import { GamesList } from './(shop)/components'
-import { useGetGames } from '@repo/dionis-api/src/dionis/default/default'
 import { useState } from 'react'
+import { useGetGames } from '@repo/dionis-api/src/dionis/default/default'
 import { GameObject } from '@repo/dionis-api/src/model'
-import { Loader, MainNavigation, Footer } from '@/ui'
-import { GamesPagination } from './(shop)/components/gamesPagination'
+import { Loader } from '@repo/ui'
+
+import { Footer } from '@/components/footer'
+import { MainNavigation } from '@/components/main-navigation'
+import { GamesList, GamesPagination } from '@/features/games'
+
+const containerStyles =
+  'flex flex-1 min-h-[75vh] flex-col items-center justify-center pb-20 bg-[image:var(--light-background-color)] dark:bg-[image:var(--dark-background-color)]'
 
 export default function Home() {
   const [page, setPage] = useState(1)
-  const { state } = useThemeState()
-  const containerStyles = clsx(classes.container, state.mode === 'light' ? classes.light : null)
 
   const { data, isLoading } = useGetGames(page)
 
@@ -30,14 +29,10 @@ export default function Home() {
     return (
       <>
         <MainNavigation />
-        <main>
+        <main className='flex-1'>
           <div className={containerStyles}>
             <GamesList gamesList={data.games as GameObject[]} />
-            <GamesPagination
-              currentPage={page}
-              totalPages={data.totalPages as number}
-              onChange={setPage}
-            />
+            <GamesPagination currentPage={page} totalPages={data.totalPages as number} onChange={setPage} />
           </div>
         </main>
         <Footer />

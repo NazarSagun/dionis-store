@@ -1,13 +1,15 @@
 'use client'
 
+import type { ReactNode } from 'react'
 import { Barlow } from 'next/font/google'
-
-import { GlobalStateProvider } from '@/providers/store/GlobalStateContext'
-import { ThemeStateProvider } from '@/providers/theme/ThemeContext'
+import { ThemeProvider } from 'next-themes'
+import { Toaster } from '@repo/ui'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
+import { AuthInitializer } from '@/features/auth'
+import { cn } from '@/lib/utils'
+
 import './globals.css'
-import { Toaster } from '@/ui'
 
 const queryClient = new QueryClient()
 
@@ -21,18 +23,21 @@ const fontSans = Barlow({
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode
+  children: ReactNode
 }>) {
   return (
     <html lang='en' suppressHydrationWarning>
-      <body id='body' style={{ margin: '0 !important' }} className={fontSans.className}>
+      <body
+        id='body'
+        className={cn('m-0 flex min-h-screen max-w-[100vw] flex-col overflow-x-hidden', fontSans.className)}
+      >
         <QueryClientProvider client={queryClient}>
-          <GlobalStateProvider>
-            <ThemeStateProvider>
+          <ThemeProvider attribute='class' defaultTheme='dark' enableSystem={false}>
+            <AuthInitializer>
               {children}
               <Toaster />
-            </ThemeStateProvider>
-          </GlobalStateProvider>
+            </AuthInitializer>
+          </ThemeProvider>
         </QueryClientProvider>
       </body>
     </html>

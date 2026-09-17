@@ -1,16 +1,21 @@
 'use client'
 
-import { Footer, MainNavigation } from '@/ui/molecules'
+import type { ReactNode } from 'react'
+
+import { Footer } from '@/components/footer'
+import { MainNavigation } from '@/components/main-navigation'
 
 export default function ShopLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode
+  children: ReactNode
 }>) {
   return (
     <>
       <MainNavigation />
-      <main>{children}</main>
+      <main className='flex-1 bg-[image:var(--light-background-color)] dark:bg-[image:var(--dark-background-color)]'>
+        {children}
+      </main>
       <Footer />
     </>
   )

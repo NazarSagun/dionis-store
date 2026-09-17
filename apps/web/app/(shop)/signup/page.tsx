@@ -1,28 +1,22 @@
 'use client'
 
-import { AuthPage, FormVariant, useToast } from '@/ui'
-import { useThemeState } from '@/providers/theme'
-
-import clsx from 'clsx'
-import classes from './page.module.css'
-
-import { useGlobalState } from '@/providers/store/GlobalStateContext'
+import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useRegister } from '@repo/dionis-api/src/dionis/default/default'
-import { AuthActionType } from '@/providers/store/actions'
-import { useEffect } from 'react'
+import { useToast } from '@repo/ui'
+
+import { AuthPage, FormVariant, useAuthStore } from '@/features/auth'
 
 const SignUpPage = () => {
-  const { state } = useThemeState()
-  const { state: globalState, dispatch } = useGlobalState()
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated)
+  const login = useAuthStore((state) => state.login)
   const router = useRouter()
   const { toast } = useToast()
-  const containerStyles = clsx(classes.container, state.mode === 'light' ? classes.light : null)
 
   const { mutate, isPending } = useRegister({
     mutation: {
       onSuccess: (data) => {
-        dispatch({ type: AuthActionType.AUTHENTICATE, payload: data.user?.accessToken as string })
+        login(data.user?.accessToken as string, data.user?.name as string)
         router.push('/')
       },
       onError: (error) => {
@@ -36,13 +30,13 @@ const SignUpPage = () => {
   })
 
   useEffect(() => {
-    if (globalState.auth.isAuthenticated) {
+    if (isAuthenticated) {
       router.push('/')
     }
   }, [])
 
   return (
-    <div className={containerStyles}>
+    <div className='min-h-[75vh]'>
       <AuthPage
         isFormLoading={isPending}
         variant={FormVariant.SIGNUP}

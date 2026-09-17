@@ -1,8 +1,0 @@
-.container {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-  background-color: #444444d8;
-  padding: 1rem;
-  border-radius: 15px;
-}

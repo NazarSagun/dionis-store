@@ -1,6 +1,6 @@
-import { defineConfig } from 'vitest/config'
 import react from '@vitejs/plugin-react'
 import { resolve } from 'path'
+import { defineConfig } from 'vitest/config'
 
 export default defineConfig({
   plugins: [react()],
@@ -26,12 +26,6 @@ export default defineConfig({
     },
   },
   resolve: {
-    alias: {
-      '@/*': resolve(__dirname, './'),
-      '@/lib': resolve(__dirname, './lib'),
-      '@/test-utils': resolve(__dirname, './test-utils'),
-      '@/providers': resolve(__dirname, './providers'),
-      '@/ui': resolve(__dirname, './ui'),
-    },
+    alias: [{ find: /^@\/(.*)/, replacement: resolve(__dirname, './$1') }],
   },
 })

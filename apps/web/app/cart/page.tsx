@@ -1,26 +1,23 @@
 'use client'
 
-import { useGlobalState } from '@/providers/store/GlobalStateContext'
-import classes from './page.module.css'
-import { AuthForm, Dialog, DialogContent, FormVariant, toast, UserData } from '@/ui'
-import { useLogin, useRegister } from '@repo/dionis-api/src/dionis/default/default'
-import { AuthActionType, CartActionType } from '@/providers/store/actions'
-import { ShoppingCart } from './components/(step-1)/shopping-cart'
 import { useState } from 'react'
-import { Payment } from './components'
+import { useLogin, useRegister } from '@repo/dionis-api/src/dionis/default/default'
+import { Dialog, DialogContent, toast } from '@repo/ui'
+
+import { AuthForm, FormVariant, useAuthStore, UserData } from '@/features/auth'
+import { Payment, ShoppingCart, useCartStore } from '@/features/cart'
 
 const Page = () => {
   const [isOpen, setIsOpen] = useState(false)
   const [formVariant, setFormVariant] = useState(FormVariant.LOGIN)
-  const {
-    dispatch,
-    state: { cart },
-  } = useGlobalState()
+  const login = useAuthStore((state) => state.login)
+  const currentStep = useCartStore((state) => state.currentStep)
+  const setStep = useCartStore((state) => state.setStep)
 
   const { mutate, isPending } = useLogin({
     mutation: {
       onSuccess: (data) => {
-        dispatch({ type: AuthActionType.AUTHENTICATE, payload: data.user?.accessToken as string })
+        login(data.user?.accessToken as string, data.user?.name as string)
         setIsOpen(false)
       },
       onError: (error) => {
@@ -35,8 +32,8 @@ const Page = () => {
   const { mutate: mutateRegister, isPending: isRegisterPending } = useRegister({
     mutation: {
       onSuccess: (data) => {
-        dispatch({ type: AuthActionType.AUTHENTICATE, payload: data.user?.accessToken as string })
-        dispatch({ type: CartActionType.SET_STEP, payload: { step: 2 } })
+        login(data.user?.accessToken as string, data.user?.name as string)
+        setStep(2)
         setIsOpen(false)
       },
       onError: (error) => {
@@ -65,9 +62,9 @@ const Page = () => {
         setIsOpen(open)
       }}
     >
-      <div className={classes.container}>
-        {cart.currentStep === 1 && <ShoppingCart />}
-        {cart.currentStep === 2 && <Payment />}
+      <div>
+        {currentStep === 1 && <ShoppingCart />}
+        {currentStep === 2 && <Payment />}
       </div>
       <DialogContent className='sm:max-w-[425px]'>
         <AuthForm

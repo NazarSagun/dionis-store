@@ -1,8 +1,0 @@
-.container {
-  min-height: 75vh;
-  background: var(--dark-background-color);
-}
-
-.container.light {
-  background: var(--light-background-color);
-}

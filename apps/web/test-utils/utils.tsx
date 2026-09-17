@@ -1,35 +1,62 @@
 import React, { ReactElement } from 'react'
-import { render, RenderOptions, cleanup } from '@testing-library/react'
-import { expect, afterEach, beforeAll, afterAll } from 'vitest';
-import * as matchers from "@testing-library/jest-dom/matchers";
-import { GlobalStateProvider } from '@/providers/store/GlobalStateContext'
-import { Theme, ThemeStateProvider } from '@/providers/theme'
+import { ThemeProvider } from 'next-themes'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { serviceWorker } from './mock-server';
+import * as matchers from '@testing-library/jest-dom/matchers'
+import { cleanup, render, RenderOptions } from '@testing-library/react'
+import { afterAll, afterEach, beforeAll, expect, vi } from 'vitest'
 
-expect.extend(matchers);
+import { useAuthStore } from '@/features/auth'
+import { useCartStore } from '@/features/cart'
+
+import { serviceWorker } from './mock-server'
+
+expect.extend(matchers)
+
+// next-themes reads window.matchMedia, which jsdom does not implement.
+Object.defineProperty(window, 'matchMedia', {
+  writable: true,
+  value: vi.fn().mockImplementation((query: string) => ({
+    matches: false,
+    media: query,
+    onchange: null,
+    addListener: vi.fn(),
+    removeListener: vi.fn(),
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    dispatchEvent: vi.fn(),
+  })),
+})
 
 afterEach(() => {
-  cleanup();
-});
+  cleanup()
+  localStorage.clear()
+  useAuthStore.setState({ isAuthenticated: false, accessToken: null, user: null })
+  useCartStore.setState({ items: [], currentStep: 1 })
+})
 
 // Start worker before all tests
-beforeAll(() => { serviceWorker.listen() })
+beforeAll(() => {
+  serviceWorker.listen()
+})
 
 //  Close worker after all tests
-afterAll(() => {serviceWorker.close()})
+afterAll(() => {
+  serviceWorker.close()
+})
 
 // Reset handlers after each test `important for test isolation`
-afterEach(() => {serviceWorker.resetHandlers()})
+afterEach(() => {
+  serviceWorker.resetHandlers()
+})
 
 const client = new QueryClient()
 
 const AllTheProviders = ({ children }: { children: React.ReactNode }) => {
   return (
     <QueryClientProvider client={client}>
-      <GlobalStateProvider>
-        <ThemeStateProvider mode={Theme.DARK}>{children}</ThemeStateProvider>
-      </GlobalStateProvider>
+      <ThemeProvider attribute='class' defaultTheme='dark' enableSystem={false} forcedTheme='dark'>
+        {children}
+      </ThemeProvider>
     </QueryClientProvider>
   )
 }

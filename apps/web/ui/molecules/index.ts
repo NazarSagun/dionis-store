@@ -1,6 +1,0 @@
-export * from './footer'
-export * from './navigation'
-export * from './dropdown'
-export * from './toast'
-export * from './card'
-export * from './pagination'
