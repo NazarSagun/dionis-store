@@ -9,7 +9,7 @@ import { useCartStore } from '../../store/useCartStore'
 import { calculateCartSummary } from './helpers'
 
 const ctaButtonStyles =
-  'w-full rounded-[10px] border-0 bg-[linear-gradient(45deg,#ff512f_0%,#f09819_51%,#ff512f_100%)] bg-[length:200%_auto] px-[30px] py-[15px] font-bold text-white shadow-[0px_0px_14px_-7px_#f09819] transition-[background-position] duration-500 select-none touch-manipulation hover:bg-right active:scale-95 disabled:pointer-events-none disabled:opacity-50'
+  'w-full rounded-md border-2 border-ink bg-neon-magenta px-[30px] py-[15px] font-display text-xs text-ink shadow-retro transition-transform duration-200 select-none touch-manipulation active:scale-95 disabled:pointer-events-none disabled:opacity-50'
 
 export const Summary = () => {
   const items = useCartStore((state) => state.items)
@@ -25,8 +25,8 @@ export const Summary = () => {
   }, [items])
 
   return (
-    <div className='rounded-[15px] bg-[#0000008d] p-8 text-foreground'>
-      <div className='flex justify-between text-[#b5b5b5d0]'>
+    <div className='rounded-md border-2 border-ink bg-panel-alt p-8 font-mono text-foreground'>
+      <div className='flex justify-between text-muted-foreground'>
         <div>
           <div>Official price</div>
           <div>Discount</div>
@@ -36,9 +36,9 @@ export const Summary = () => {
           <div>{summery.totalDiscount}€</div>
         </div>
       </div>
-      <div className='mb-4 mt-[0.8rem] flex justify-between'>
-        <div className='text-xl font-semibold'>Subtotal</div>
-        <div className='text-xl font-semibold'>{summery.finalPrice.toFixed(2)}€</div>
+      <div className='mb-4 mt-[0.8rem] flex justify-between border-t-2 border-ink pt-4'>
+        <div className='text-xl font-bold'>Subtotal</div>
+        <div className='font-display text-lg text-neon-amber'>{summery.finalPrice.toFixed(2)}€</div>
       </div>
       <div className='flex flex-col items-center'>
         {isAuthenticated ? (

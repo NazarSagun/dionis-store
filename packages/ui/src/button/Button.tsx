@@ -5,16 +5,16 @@ import { cva, type VariantProps } from 'class-variance-authority'
 import { cn } from '../lib/utils'
 
 export const buttonVariants = cva(
-  'inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50',
+  'inline-flex items-center justify-center whitespace-nowrap rounded-md border-2 border-transparent font-display text-xs uppercase tracking-wide ring-offset-background transition-colors active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50',
   {
     variants: {
       variant: {
-        default: 'bg-primary text-primary-foreground hover:bg-primary/90',
-        destructive: 'bg-destructive text-destructive-foreground hover:bg-destructive/90',
-        outline: 'border border-input bg-background hover:bg-accent hover:text-accent-foreground',
-        secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80',
-        ghost: 'hover:bg-accent hover:text-accent-foreground',
-        link: 'text-white underline-offset-4 hover:underline',
+        default: 'border-ink bg-primary text-primary-foreground shadow-retro hover:bg-primary/90',
+        destructive: 'border-ink bg-destructive text-destructive-foreground shadow-retro hover:bg-destructive/90',
+        outline: 'border-neon-cyan bg-transparent text-neon-cyan hover:bg-accent',
+        secondary: 'border-ink bg-secondary text-secondary-foreground shadow-retro hover:bg-secondary/80',
+        ghost: 'border-transparent hover:bg-accent hover:text-accent-foreground',
+        link: 'border-transparent font-mono normal-case tracking-normal text-neon-cyan underline-offset-4 hover:underline',
       },
       size: {
         default: 'h-10 px-4 py-2',

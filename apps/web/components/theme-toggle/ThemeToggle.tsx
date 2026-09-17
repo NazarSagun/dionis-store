@@ -49,7 +49,7 @@ export function ThemeToggle() {
               className='flex items-center bg-transparent font-semibold py-0 px-0 rounded outline-none'
             >
               <Image priority alt='light-theme' src={`/icons/moon.svg`} width={16} height={16} />
-              <span className='ml-1 mr-0 text-sm text-black hover:cursor-pointer'>dark</span>
+              <span className='ml-1 mr-0 text-sm text-foreground hover:cursor-pointer'>dark</span>
             </button>
           </DropdownMenuRadioItem>
           <DropdownMenuRadioItem className='px-0 py-1 flex flex-col justify-center' value='light'>
@@ -58,7 +58,7 @@ export function ThemeToggle() {
               className='flex items-center bg-transparent font-semibold py-0 px-0 rounded outline-none'
             >
               <Image priority alt='light-theme' src={`/icons/sun.svg`} width={16} height={16} />
-              <span className='ml-1 mr-0 text-sm text-black hover:cursor-pointer'>light</span>
+              <span className='ml-1 mr-0 text-sm text-foreground hover:cursor-pointer'>light</span>
             </button>
           </DropdownMenuRadioItem>
         </DropdownMenuRadioGroup>
