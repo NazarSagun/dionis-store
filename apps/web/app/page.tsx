@@ -10,7 +10,7 @@ import { MainNavigation } from '@/components/main-navigation'
 import { GamesList, GamesPagination } from '@/features/games'
 
 const containerStyles =
-  'flex flex-1 min-h-[75vh] flex-col items-center justify-center pb-20 bg-[image:var(--light-background-color)] dark:bg-[image:var(--dark-background-color)]'
+  'flex flex-1 min-h-[75vh] flex-col items-center justify-center pb-20 bg-[image:var(--light-background-color)]'
 
 export default function Home() {
   const [page, setPage] = useState(1)
@@ -31,7 +31,9 @@ export default function Home() {
         <MainNavigation />
         <main className='flex-1'>
           <div className={containerStyles}>
-            <GamesList gamesList={data.games as GameObject[]} />
+            <div className='grid w-full grid-cols-12'>
+              <GamesList gamesList={data.games as GameObject[]} />
+            </div>
             <GamesPagination currentPage={page} totalPages={data.totalPages as number} onChange={setPage} />
           </div>
         </main>

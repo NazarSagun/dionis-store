@@ -3,9 +3,7 @@
 @tailwind utilities;
 
 @layer base {
-  :root,
-  .dark {
-    /* Retro arcade theme — single palette regardless of light/dark toggle */
+  :root {
     --background: 259 55% 10%;
     --foreground: 260 100% 97%;
 
@@ -45,7 +43,6 @@
     --shadow-retro-color: #0d0716;
 
     --light-background-color: linear-gradient(135deg, #150c29 0%, #241442 55%, #3a1f66 100%);
-    --dark-background-color: linear-gradient(135deg, #150c29 0%, #241442 55%, #3a1f66 100%);
     --success-color: var(--neon-green);
   }
 }

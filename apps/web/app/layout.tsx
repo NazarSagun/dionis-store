@@ -2,7 +2,6 @@
 
 import type { ReactNode } from 'react'
 import { Press_Start_2P, Space_Mono } from 'next/font/google'
-import { ThemeProvider } from 'next-themes'
 import { Toaster } from '@repo/ui'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
@@ -33,7 +32,7 @@ export default function RootLayout({
   children: ReactNode
 }>) {
   return (
-    <html lang='en' suppressHydrationWarning>
+    <html lang='en'>
       <body
         id='body'
         className={cn(
@@ -44,12 +43,10 @@ export default function RootLayout({
         )}
       >
         <QueryClientProvider client={queryClient}>
-          <ThemeProvider attribute='class' defaultTheme='dark' enableSystem={false}>
-            <AuthInitializer>
-              {children}
-              <Toaster />
-            </AuthInitializer>
-          </ThemeProvider>
+          <AuthInitializer>
+            {children}
+            <Toaster />
+          </AuthInitializer>
         </QueryClientProvider>
       </body>
     </html>

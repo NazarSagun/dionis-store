@@ -16,7 +16,6 @@ describe('<MainNavigation />', () => {
 
     expect(getByText('Login')).toBeInTheDocument()
     expect(getByText('Home')).toBeInTheDocument()
-    expect(getByText('Sign Up')).toBeInTheDocument()
     expect(getByText('Dionis')).toBeInTheDocument()
   })
 })

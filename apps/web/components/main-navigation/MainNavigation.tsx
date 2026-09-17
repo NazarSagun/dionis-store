@@ -6,21 +6,6 @@ import { useLogout } from '@repo/dionis-api/src/dionis/default/default'
 
 import { useAuthStore } from '@/features/auth'
 
-import { ThemeToggle } from '../theme-toggle'
-
-const navigation = [
-  {
-    id: 1,
-    label: 'Login',
-    link: '/login',
-  },
-  {
-    id: 2,
-    label: 'Sign Up',
-    link: '/signup',
-  },
-]
-
 export const MainNavigation = () => {
   const isUserAuth = useAuthStore((state) => state.isAuthenticated)
   const user = useAuthStore((state) => state.user)
@@ -37,37 +22,33 @@ export const MainNavigation = () => {
         </Link>
       </div>
       <nav className='flex'>
-        <ThemeToggle />
         <ul className='flex items-center'>
           <Link href={'/'} className='ml-4 flex items-center last:ml-8'>
             <li className='text-base font-bold uppercase tracking-wide text-foreground hover:text-neon-cyan'>Home</li>
           </Link>
-          {!isUserAuth ? (
-            navigation.map((item) => (
-              <Link href={item.link} key={item.id} className='ml-4 flex items-center last:ml-8'>
-                <li className='text-base font-bold uppercase tracking-wide text-foreground hover:text-neon-cyan'>
-                  {item.label}
-                </li>
-              </Link>
-            ))
-          ) : (
-            <Link
-              href={'/'}
-              className='ml-4 flex items-center last:ml-8'
-              onClick={() => {
-                logout()
-                clearAuth()
-              }}
-            >
-              <li className='text-base font-bold uppercase tracking-wide text-foreground hover:text-neon-cyan'>
-                Logout
-              </li>
-            </Link>
-          )}
         </ul>
       </nav>
       <div className='flex items-center'>
         {user && <div className='mr-4 font-mono text-foreground'>Hi, {user.name}</div>}
+        {!isUserAuth ? (
+          <Link href='/login' className='mr-4'>
+            <span className='text-base font-bold uppercase tracking-wide text-foreground hover:text-neon-cyan'>
+              Login
+            </span>
+          </Link>
+        ) : (
+          <button
+            className='mr-4'
+            onClick={() => {
+              logout()
+              clearAuth()
+            }}
+          >
+            <span className='text-base font-bold uppercase tracking-wide text-foreground hover:text-neon-cyan'>
+              Logout
+            </span>
+          </button>
+        )}
         <Link href='/cart' className='mr-4'>
           <Image priority={true} width={25} height={25} alt='logo' src={`/icons/shopping-cart.svg`} />
         </Link>
