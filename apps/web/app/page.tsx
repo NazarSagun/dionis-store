@@ -5,7 +5,8 @@ import { useGetGames } from '@repo/dionis-api/src/dionis/default/default'
 import { GameObject } from '@repo/dionis-api/src/model'
 import { Loader } from '@repo/ui'
 
-import { Footer, MainNavigation } from '@/components'
+import { Footer } from '@/components/footer'
+import { MainNavigation } from '@/components/main-navigation'
 import { GamesList, GamesPagination } from '@/features/games'
 
 const containerStyles =

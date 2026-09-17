@@ -2,7 +2,7 @@
 
 import type { ReactNode } from 'react'
 
-import { Footer } from '@/components'
+import { Footer } from '@/components/footer'
 import { CartNavigation, useCartStore } from '@/features/cart'
 
 export default function ShopLayout({
