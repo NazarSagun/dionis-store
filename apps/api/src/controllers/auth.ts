@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 import { AuthService } from '../services'
 import { CustomError } from '../middleware'
 import { setHtttpOnlyCookie } from '../helpers/auth'
+import { Roles } from '../types'
 
 export class AuthController {
   private authService: AuthService
@@ -11,7 +12,7 @@ export class AuthController {
   }
 
   register = async (req: Request, res: Response) => {
-    const { name, email, password, role } = req.body
+    const { name, email, password } = req.body
     const isEmailValid = /\S+@\S+\.\S+/.test(email)
 
     if (!name || !email || !password) {
@@ -26,14 +27,12 @@ export class AuthController {
       })
     }
 
-    const userRole = !role ? 101 : role
-
     try {
       const user = await this.authService.register({
         name,
         email,
         password,
-        role: userRole,
+        role: Roles.User,
       })
 
       setHtttpOnlyCookie(res, user.refreshToken)
