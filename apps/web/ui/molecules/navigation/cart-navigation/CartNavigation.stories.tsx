@@ -1,7 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
 
-import { Theme, ThemeStateProvider } from '@/providers/theme'
-
 import { CartNavigation } from './CartNavigation'
 
 const meta = {
@@ -37,7 +35,7 @@ export const Dark: Story = {
       ],
     },
   },
-  decorators: (Story) => <ThemeStateProvider mode={Theme.DARK}>{Story()}</ThemeStateProvider>,
+  decorators: (Story) => <div className='dark'>{Story()}</div>,
 }
 
 export const Light: Story = {
@@ -52,5 +50,4 @@ export const Light: Story = {
       },
     ],
   },
-  decorators: (Story) => <ThemeStateProvider mode={Theme.LIGHT}>{Story()}</ThemeStateProvider>,
 }

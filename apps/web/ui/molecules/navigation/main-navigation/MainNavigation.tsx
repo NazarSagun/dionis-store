@@ -3,11 +3,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
 
-import { useThemeState } from '@/providers/theme/ThemeContext'
-
-import clsx from 'clsx'
-
-import classes from './MainNavigation.module.css'
 import { useGlobalState } from '@/providers/store/GlobalStateContext'
 import { AuthActionType } from '@/providers/store/actions'
 import { useLogout } from '@repo/dionis-api/src/dionis/default/default'
@@ -30,18 +25,13 @@ export const MainNavigation = () => {
   const { state: authState, dispatch: authDispatch } = useGlobalState()
   const isUserAuth = authState.auth.isAuthenticated
 
-  const { state } = useThemeState()
-
   const { refetch: logout } = useLogout({ query: { enabled: false } })
 
-  const headerStyles = clsx(classes.header, state.mode === 'light' ? classes.light : null)
-  const cartWrapperStyles = clsx(classes.cartWrapper)
-
   return (
-    <nav className={headerStyles}>
-      <div>
-        <Link href='/'>
-          <span>Dionis</span>
+    <nav className='flex h-[10vh] items-center justify-between bg-muted px-[35px]'>
+      <div className='flex items-center'>
+        <Link href='/' className='flex items-center'>
+          <span className='mr-2.5 cursor-pointer font-mono text-xl font-semibold text-foreground'>Dionis</span>
           <Image
             priority={true}
             width={40}
@@ -51,37 +41,39 @@ export const MainNavigation = () => {
           />
         </Link>
       </div>
-      <nav>
+      <nav className='flex'>
         <DropdownAppearence />
-        <ul>
-          <Link href={'/'}>
-            <li>Home</li>
+        <ul className='flex items-center'>
+          <Link href={'/'} className='ml-4 flex items-center last:ml-8'>
+            <li className='text-base font-semibold text-foreground'>Home</li>
           </Link>
           {!isUserAuth ? (
             navigation.map((item) => (
               <Link
                 href={item.link}
                 key={item.id}
+                className='ml-4 flex items-center last:ml-8'
               >
-                <li>{item.label}</li>
+                <li className='text-base font-semibold text-foreground'>{item.label}</li>
               </Link>
             ))
           ) : (
             <Link
               href={'/'}
+              className='ml-4 flex items-center last:ml-8'
               onClick={() => {
                 logout()
                 authDispatch({ type: AuthActionType.LOGOUT })
               }}
             >
-              <li>Logout</li>
+              <li className='text-base font-semibold text-foreground'>Logout</li>
             </Link>
           )}
         </ul>
       </nav>
-      <div className={cartWrapperStyles}>
-        {authState.auth.user && <div className={classes.username}>Hi, {authState.auth.user.name}</div>}
-        <Link href='/cart'>
+      <div className='flex items-center'>
+        {authState.auth.user && <div className='mr-4 text-foreground'>Hi, {authState.auth.user.name}</div>}
+        <Link href='/cart' className='mr-4'>
           <Image
             priority={true}
             width={25}

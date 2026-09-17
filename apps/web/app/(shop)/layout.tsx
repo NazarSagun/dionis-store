@@ -10,7 +10,9 @@ export default function ShopLayout({
   return (
     <>
       <MainNavigation />
-      <main>{children}</main>
+      <main className='flex-1 bg-[image:var(--light-background-color)] dark:bg-[image:var(--dark-background-color)]'>
+        {children}
+      </main>
       <Footer />
     </>
   )

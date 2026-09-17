@@ -1,7 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
 
-import { Theme, ThemeStateProvider } from '@/providers/theme'
-
 import { Card } from './Card'
 
 const meta = {
@@ -48,7 +46,7 @@ export const Dark: Story = {
     platform: 'Windows',
     imageSrc: 'https://www.freetogame.com/g/1/thumbnail.jpg',
   },
-  decorators: (Story) => <ThemeStateProvider mode={Theme.DARK}>{Story()}</ThemeStateProvider>,
+  decorators: (Story) => <div className='dark'>{Story()}</div>,
 }
 
 export const Light: Story = {
@@ -70,5 +68,4 @@ export const Light: Story = {
     platform: 'Windows',
     imageSrc: 'https://www.freetogame.com/g/1/thumbnail.jpg',
   },
-  decorators: (Story) => <ThemeStateProvider mode={Theme.LIGHT}>{Story()}</ThemeStateProvider>,
 }

@@ -1,6 +1,4 @@
 import { GameObject } from '@repo/dionis-api/src/model'
-import clsx from 'clsx'
-import classes from './GamesList.module.css'
 import { Card } from '@/ui/molecules'
 import Link from 'next/link'
 
@@ -9,9 +7,8 @@ interface GamesListProps {
 }
 
 export const GamesList = ({ gamesList }: GamesListProps) => {
-  const gamesListStyles = clsx(classes.container)
   return (
-    <div className={gamesListStyles}>
+    <div className='flex w-[60vw] flex-col justify-center gap-8 pb-20 pt-20'>
       {gamesList.map((game: GameObject) => (
         <Link
           key={game.id}

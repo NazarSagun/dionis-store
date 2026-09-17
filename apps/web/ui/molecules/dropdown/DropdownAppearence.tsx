@@ -9,13 +9,20 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from '@repo/ui'
-import { Theme, ThemeActionType, useThemeState } from '@/providers/theme'
+import { useTheme } from 'next-themes'
 import Image from 'next/image'
 
 export function DropdownAppearence() {
-  const { state, dispatch } = useThemeState()
-  const [theme, setTheme] = React.useState(state.mode)
-  const isDarkTheme = theme === Theme.DARK ? 'moon' : 'sun'
+  const { theme, setTheme } = useTheme()
+  const [mounted, setMounted] = React.useState(false)
+
+  React.useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  if (!mounted) {
+    return null
+  }
 
   return (
     <DropdownMenu>
@@ -26,8 +33,8 @@ export function DropdownAppearence() {
         >
           <Image
             priority={true}
-            alt={`${theme === Theme.DARK ? 'dark' : 'light'}-theme`}
-            src={`/icons/${isDarkTheme}.svg`}
+            alt={`${theme}-theme`}
+            src={`/icons/${theme === 'dark' ? 'moon' : 'sun'}.svg`}
             width={18}
             height={18}
             style={{ width: 18, height: 18 }}
@@ -36,15 +43,8 @@ export function DropdownAppearence() {
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="min-w-20 px-0">
-        <DropdownMenuRadioGroup
-          value={theme}
-          onValueChange={(value: string) => {
-            setTheme(value as Theme)
-            localStorage.setItem('theme', value)
-            dispatch({ type: ThemeActionType.TOGGLE_THEME, payload: value as Theme })
-          }}
-        >
-          <DropdownMenuRadioItem className="px-0 py-1 flex flex-col justify-center" value={Theme.DARK}>
+        <DropdownMenuRadioGroup value={theme} onValueChange={setTheme}>
+          <DropdownMenuRadioItem className="px-0 py-1 flex flex-col justify-center" value="dark">
             <button
               data-testid="dark-theme-button"
               className="flex items-center bg-transparent font-semibold py-0 px-0 rounded outline-none"
@@ -53,7 +53,7 @@ export function DropdownAppearence() {
               <span className="ml-1 mr-0 text-sm text-black hover:cursor-pointer">dark</span>
             </button>
           </DropdownMenuRadioItem>
-          <DropdownMenuRadioItem className="px-0 py-1 flex flex-col justify-center" value={Theme.LIGHT}>
+          <DropdownMenuRadioItem className="px-0 py-1 flex flex-col justify-center" value="light">
             <button
               data-testid="light-theme-button"
               className="flex items-center bg-transparent font-semibold py-0 px-0 rounded outline-none"

@@ -1,7 +1,6 @@
 'use client'
 
 import { useGlobalState } from '@/providers/store/GlobalStateContext'
-import classes from './page.module.css'
 import { AuthForm, Dialog, DialogContent, FormVariant, toast, UserData } from '@/ui'
 import { useLogin, useRegister } from '@repo/dionis-api/src/dionis/default/default'
 import { AuthActionType, CartActionType } from '@/providers/store/actions'
@@ -65,7 +64,7 @@ const Page = () => {
         setIsOpen(open)
       }}
     >
-      <div className={classes.container}>
+      <div>
         {cart.currentStep === 1 && <ShoppingCart />}
         {cart.currentStep === 2 && <Payment />}
       </div>

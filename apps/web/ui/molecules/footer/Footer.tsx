@@ -1,18 +1,7 @@
-'use client'
-
-import { useThemeState } from '@/providers/theme/ThemeContext'
-
-import clsx from 'clsx'
-import classes from './Footer.module.css'
-
 export const Footer = () => {
-  const { state } = useThemeState()
-
-  const footerStyles = clsx(classes.footer, state.mode === 'light' ? classes.light : null)
-
   return (
-    <footer className={footerStyles}>
-      <span>Footer</span>
+    <footer className='flex h-[15vh] shrink-0 items-center justify-center bg-muted py-[30px]'>
+      <span className='cursor-default text-xl font-semibold text-foreground'>Footer</span>
     </footer>
   )
 }

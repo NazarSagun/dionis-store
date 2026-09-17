@@ -1,30 +1,41 @@
 import { CartItem as CartItemProps } from '@/providers/store/reducers/cartReducer'
 import Image from 'next/image'
-import classes from './CartItem.module.css'
+import { cn } from '@/lib/utils'
 import { calculateDiscountedPrice } from '@/app/(shop)/game/helpers'
 import { Select } from '@/ui/atoms/select'
 import { useGlobalState } from '@/providers/store/GlobalStateContext'
 import { CartActionType } from '@/providers/store/actions'
 
+const dividerAfter =
+  "relative after:absolute after:left-[23%] after:top-1/2 after:h-[80%] after:w-px after:-translate-y-1/2 after:bg-white after:content-[''] after:pointer-events-none"
+
 export const CartItem = ({ title, thumbnailUrl, price, quantity, platform, discount, id }: CartItemProps) => {
   const { dispatch } = useGlobalState()
   return (
-    <div className={classes.container}>
-      <Image className={classes.itemImage} width={190} height={108} alt={title} src={thumbnailUrl} />
-      <div className={classes.wrapper}>
+    <div className='flex gap-4'>
+      <Image className='rounded-[10px]' width={190} height={108} alt={title} src={thumbnailUrl} />
+      <div className='flex flex-col justify-between py-[0.1rem]'>
         <div>
-          <h3>{title}</h3>
-          <span>{platform}</span>
+          <h3 className='text-xl font-medium text-foreground'>{title}</h3>
+          <span className='text-[0.8rem] opacity-50'>{platform}</span>
         </div>
-        <div className={classes.actionWrapper}>
-          <button onClick={() => dispatch({ type: CartActionType.REMOVE_ITEM, payload: { id } })}>
+        <div className='flex items-center gap-4'>
+          <button
+            className={cn(dividerAfter, 'font-light text-[0.8rem] text-foreground')}
+            onClick={() => dispatch({ type: CartActionType.REMOVE_ITEM, payload: { id } })}
+          >
             <Image width={24} height={24} alt='delete item' src='/icons/trash-can.svg' />
           </button>
-          <button onClick={() => console.log(id)}>Move to Wishlist</button>
+          <button
+            className={cn(dividerAfter, 'font-light text-[0.8rem] text-foreground')}
+            onClick={() => console.log(id)}
+          >
+            Move to Wishlist
+          </button>
         </div>
       </div>
-      <div className={classes.selectContainer}>
-        <span>{calculateDiscountedPrice(price, discount)}€</span>
+      <div className='ml-auto flex items-center'>
+        <span className='mr-4'>{calculateDiscountedPrice(price, discount)}€</span>
 
         <Select
           onChange={(number) =>

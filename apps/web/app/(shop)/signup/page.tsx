@@ -1,10 +1,6 @@
 'use client'
 
 import { AuthPage, FormVariant, useToast } from '@/ui'
-import { useThemeState } from '@/providers/theme'
-
-import clsx from 'clsx'
-import classes from './page.module.css'
 
 import { useGlobalState } from '@/providers/store/GlobalStateContext'
 import { useRouter } from 'next/navigation'
@@ -13,11 +9,9 @@ import { AuthActionType } from '@/providers/store/actions'
 import { useEffect } from 'react'
 
 const SignUpPage = () => {
-  const { state } = useThemeState()
   const { state: globalState, dispatch } = useGlobalState()
   const router = useRouter()
   const { toast } = useToast()
-  const containerStyles = clsx(classes.container, state.mode === 'light' ? classes.light : null)
 
   const { mutate, isPending } = useRegister({
     mutation: {
@@ -42,7 +36,7 @@ const SignUpPage = () => {
   }, [])
 
   return (
-    <div className={containerStyles}>
+    <div className='min-h-[75vh]'>
       <AuthPage
         isFormLoading={isPending}
         variant={FormVariant.SIGNUP}

@@ -1,7 +1,6 @@
 'use client'
 
 import { CartItem } from '@/providers/store/reducers/cartReducer'
-import classes from './CartItemsList.module.css'
 import { CartItem as CartItemComponent } from '../cart-item/CartItem'
 
 export interface CartItems {
@@ -10,7 +9,7 @@ export interface CartItems {
 
 export const CartItemsList = ({ cartItems }: CartItems) => {
   return (
-    <div className={classes.container}>
+    <div className='flex flex-col gap-8 rounded-[15px] bg-[#444444d8] p-4'>
       {cartItems.map((item) => (
         <CartItemComponent key={item.id} {...item} />
       ))}

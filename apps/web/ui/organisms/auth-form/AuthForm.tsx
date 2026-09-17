@@ -3,10 +3,6 @@
 import { FormEvent, useEffect, useState } from 'react'
 
 import { Input, Button, Label } from '@/ui'
-import { useThemeState } from '@/providers/theme'
-
-import clsx from 'clsx'
-import classes from './AuthForm.module.css'
 
 export type UserData = {
   email: string
@@ -32,9 +28,6 @@ export const AuthForm = ({ onSubmitForm, variant, isLoading, onVariantChange }: 
   const [name, setName] = useState('')
   const [formVariant, setFormVariant] = useState(variant)
 
-  const { state } = useThemeState()
-  const formStyles = clsx(classes.form, state.mode === 'light' && classes.light)
-
   const submitHandler = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
@@ -49,8 +42,11 @@ export const AuthForm = ({ onSubmitForm, variant, isLoading, onVariantChange }: 
   useEffect(() => onVariantChange && onVariantChange(formVariant), [formVariant])
 
   return (
-    <form onSubmit={submitHandler} className={formStyles}>
-      <h3>{authTitle} your Dionis account</h3>
+    <form
+      onSubmit={submitHandler}
+      className='flex w-[350px] flex-col rounded-[5px] bg-muted px-5 py-[15px]'
+    >
+      <h3 className='mb-5 mt-2.5 text-foreground'>{authTitle} your Dionis account</h3>
       {formVariant === FormVariant.SIGNUP ? (
         <>
           <Label>Name</Label>
@@ -90,15 +86,21 @@ export const AuthForm = ({ onSubmitForm, variant, isLoading, onVariantChange }: 
       </Button>
 
       {formVariant === FormVariant.LOGIN && (
-        <p className={classes.register}>
+        <p className='m-0 mt-[15px] text-start text-xs text-balance text-muted-foreground'>
           Don't have an account?{' '}
-          <Button onClick={() => setFormVariant(FormVariant.SIGNUP)} variant='link'>
+          <Button
+            className='px-[5px] py-[5px] text-xs'
+            onClick={() => setFormVariant(FormVariant.SIGNUP)}
+            variant='link'
+          >
             Register
           </Button>
         </p>
       )}
 
-      <p>{authPrivacyText} an account, you agree to our terms and privacy policy.</p>
+      <p className='mb-0 mt-[15px] text-balance text-center text-xs text-muted-foreground'>
+        {authPrivacyText} an account, you agree to our terms and privacy policy.
+      </p>
     </form>
   )
 }

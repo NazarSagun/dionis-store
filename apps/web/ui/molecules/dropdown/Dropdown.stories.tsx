@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react'
 
-import { Theme, ThemeStateProvider } from '@/providers/theme'
+import { ThemeProvider } from 'next-themes'
 
 import { DropdownAppearence } from './DropdownAppearence'
 
@@ -28,7 +28,11 @@ export const Dark: Story = {
       ],
     },
   },
-  decorators: (Story) => <ThemeStateProvider mode={Theme.DARK}>{Story()}</ThemeStateProvider>,
+  decorators: (Story) => (
+    <ThemeProvider attribute='class' forcedTheme='dark'>
+      {Story()}
+    </ThemeProvider>
+  ),
   render: (args) => <DropdownAppearence {...args} />,
 }
 
@@ -44,6 +48,10 @@ export const Light: Story = {
       },
     ],
   },
-  decorators: (Story) => <ThemeStateProvider mode={Theme.LIGHT}>{Story()}</ThemeStateProvider>,
+  decorators: (Story) => (
+    <ThemeProvider attribute='class' forcedTheme='light'>
+      {Story()}
+    </ThemeProvider>
+  ),
   render: (args) => <DropdownAppearence {...args} />,
 }
