@@ -8,7 +8,7 @@ import {
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
-} from './Dropdown'
+} from '@repo/ui'
 import { Theme, ThemeActionType, useThemeState } from '@/providers/theme'
 import Image from 'next/image'
 
