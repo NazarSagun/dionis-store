@@ -11,10 +11,12 @@ interface AuthPageProps {
 }
 
 export const AuthPage = ({ variant, onSubmitForm, isFormLoading }: AuthPageProps) => {
+  const switchHref = variant === FormVariant.LOGIN ? '/signup' : '/login'
+
   return (
     <section className='flex items-center justify-center gap-[10vw] px-20'>
       <LeftContentBlock variant={variant} />
-      <AuthForm isLoading={isFormLoading} onSubmitForm={onSubmitForm} variant={variant} />
+      <AuthForm isLoading={isFormLoading} onSubmitForm={onSubmitForm} variant={variant} switchHref={switchHref} />
     </section>
   )
 }

@@ -1,6 +1,7 @@
 'use client'
 
 import { FormEvent, useEffect, useState } from 'react'
+import Link from 'next/link'
 import { Button, Input, Label } from '@repo/ui'
 
 export type UserData = {
@@ -19,9 +20,16 @@ export interface AuthFormProps {
   isLoading: boolean
   variant: FormVariant
   onVariantChange?: (form: FormVariant) => void
+  /**
+   * When set, the "switch to login/register" link navigates to this route
+   * instead of toggling the form in place. Used on the standalone
+   * /login and /signup pages; left unset for the in-modal cart flow,
+   * which has no separate route to navigate to.
+   */
+  switchHref?: string
 }
 
-export const AuthForm = ({ onSubmitForm, variant, isLoading, onVariantChange }: AuthFormProps) => {
+export const AuthForm = ({ onSubmitForm, variant, isLoading, onVariantChange, switchHref }: AuthFormProps) => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [name, setName] = useState('')
@@ -84,17 +92,32 @@ export const AuthForm = ({ onSubmitForm, variant, isLoading, onVariantChange }: 
         {formVariant === FormVariant.LOGIN ? 'Login' : 'Register'}
       </Button>
 
-      {formVariant === FormVariant.LOGIN && (
+      {formVariant === FormVariant.LOGIN ? (
         <p className='m-0 mt-[15px] text-start text-xs text-balance text-muted-foreground'>
           Don't have an account?{' '}
-          <Button
-            className='px-[5px] py-[5px] text-xs'
-            onClick={() => setFormVariant(FormVariant.SIGNUP)}
-            variant='link'
-          >
-            Register
-          </Button>
+          {switchHref ? (
+            <Link href={switchHref} className='px-[5px] py-[5px] text-xs text-neon-cyan hover:underline'>
+              Register
+            </Link>
+          ) : (
+            <Button
+              className='px-[5px] py-[5px] text-xs'
+              onClick={() => setFormVariant(FormVariant.SIGNUP)}
+              variant='link'
+            >
+              Register
+            </Button>
+          )}
         </p>
+      ) : (
+        switchHref && (
+          <p className='m-0 mt-[15px] text-start text-xs text-balance text-muted-foreground'>
+            Already have an account?{' '}
+            <Link href={switchHref} className='px-[5px] py-[5px] text-xs text-neon-cyan hover:underline'>
+              Login
+            </Link>
+          </p>
+        )
       )}
 
       <p className='mb-0 mt-[15px] text-balance text-center text-xs text-muted-foreground'>
