@@ -15,7 +15,7 @@ export const GameCard = ({ title, rating, price, onClick, platform, imageSrc }: 
 
   return (
     <div
-      className='flex cursor-pointer rounded-[1.2em] bg-gradient-to-b from-[#36076b] from-10% to-[#2f243a] to-70% text-white shadow-[0px_2px_8px_0px_rgba(96,0,252,0.459)] transition-transform duration-500 hover:-translate-y-[5px]'
+      className='flex cursor-pointer rounded-lg border-2 border-ink bg-panel-alt text-foreground shadow-retro transition-transform duration-500 hover:-translate-y-[5px]'
       onClick={onClickHandler}
       data-testid='card'
     >
@@ -23,7 +23,7 @@ export const GameCard = ({ title, rating, price, onClick, platform, imageSrc }: 
         onLoadingComplete={() => setIsImageLoaded(true)}
         priority={true}
         style={{
-          borderRadius: '1.2em',
+          borderRadius: '0.4em 0 0 0.4em',
         }}
         width={isImageLoaded ? 200 : 0}
         height={isImageLoaded ? 250 : 0}
@@ -36,13 +36,15 @@ export const GameCard = ({ title, rating, price, onClick, platform, imageSrc }: 
       )}
       <div className='flex w-full justify-between px-4 py-2'>
         <div className='flex max-w-[15rem] flex-col items-start overflow-hidden'>
-          <h3 className='max-w-[13rem] truncate text-xl font-normal'>{title}</h3>
-          <span className='text-sm font-normal'>{platform}</span>
+          <h3 className='max-w-[13rem] truncate font-mono text-xl font-bold'>{title}</h3>
+          <span className='font-mono text-sm text-muted-foreground'>{platform}</span>
         </div>
         <div className='flex items-center'>
-          <span className='bg-[#04ff4b75] p-[3px] text-xl font-normal'>{rating}</span>
+          <span className='rounded border-2 border-ink bg-neon-green p-[3px] font-mono text-sm font-bold text-ink'>
+            {rating}
+          </span>
           <div className='ml-4'>
-            <span className='text-xl font-normal'>€{price}</span>
+            <span className='font-display text-lg text-neon-magenta'>€{price}</span>
           </div>
         </div>
       </div>

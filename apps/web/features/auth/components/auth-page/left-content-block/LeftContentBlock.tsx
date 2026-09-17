@@ -7,8 +7,8 @@ interface LeftContentBlockProps {
 export const LeftContentBlock = ({ variant }: LeftContentBlockProps) => {
   return (
     <div className='md:pt-[50px]'>
-      <h3 className='font-mono text-[25px] text-foreground'>
-        {variant === 'login' ? 'Welcome back!🚀' : 'Welcome to Dionis community!🌍'}
+      <h3 className='font-display text-lg leading-relaxed text-neon-cyan'>
+        {variant === 'login' ? 'Welcome back!' : 'Welcome to Dionis community!'}
       </h3>
       {variant === 'login' ? (
         <Image alt='Login' src='/images/svg/login.svg' width={500} height={500} />

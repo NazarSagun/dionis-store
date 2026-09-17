@@ -10,7 +10,7 @@ import { cn } from '@/lib/utils'
 import { calculateDiscountedPrice } from '../../helpers'
 
 const buttonStyles =
-  'flex items-center gap-2 rounded-[10px] border-0 bg-[linear-gradient(45deg,#ff512f_0%,#f09819_51%,#ff512f_100%)] bg-[length:200%_auto] px-[30px] py-[15px] text-white shadow-[0px_0px_14px_-7px_#f09819] transition-[background-position] duration-500 select-none touch-manipulation hover:bg-right active:scale-95'
+  'flex items-center gap-2 rounded-md border-2 border-ink bg-neon-magenta px-[30px] py-[15px] text-ink shadow-retro transition-transform duration-200 select-none touch-manipulation active:scale-95'
 
 interface GameDetailsProps {
   gameId: number
@@ -62,15 +62,17 @@ export const GameDetails = ({ gameId }: GameDetailsProps) => {
           </div>
           <div className='flex w-[50vw] flex-col justify-between text-foreground'>
             <div>
-              <h1 className='text-[2rem] font-bold'>{data.title}</h1>
+              <h1 className='font-display text-2xl'>{data.title}</h1>
 
-              <p className='m-0 text-2xl'>{data.short_description}</p>
+              <p className='m-0 mt-4 font-mono text-lg text-muted-foreground'>{data.short_description}</p>
             </div>
             <div className='flex flex-col'>
               <div className='mb-4 mt-8 flex items-end justify-center gap-[0.6rem]'>
-                <span className='text-xl line-through'>{data.price}€</span>
-                <span className='text-xl text-[#fc6d42]'>-{data.discount}%</span>
-                <span className='text-5xl leading-[1.1]'>{calculateDiscountedPrice(data.price, data.discount)}€</span>
+                <span className='font-mono text-xl text-muted-foreground line-through'>{data.price}€</span>
+                <span className='font-mono text-xl text-neon-amber'>-{data.discount}%</span>
+                <span className='font-display text-3xl leading-[1.4] text-neon-magenta'>
+                  {calculateDiscountedPrice(data.price, data.discount)}€
+                </span>
               </div>
               <div className='flex gap-4'>
                 <button className={buttonStyles}>
@@ -78,20 +80,20 @@ export const GameDetails = ({ gameId }: GameDetailsProps) => {
                 </button>
                 <button className={cn(buttonStyles, 'w-full justify-center')} onClick={() => addGameHandler(cartItem)}>
                   <Image width={24} height={24} alt='shopping-cart' src='/icons/shopping-cart.svg' />{' '}
-                  <span className='text-base font-bold'>Add to Cart</span>
+                  <span className='font-display text-xs'>Add to Cart</span>
                 </button>
               </div>
             </div>
           </div>
         </div>
-        <div>
+        <div className='rounded-md border-2 border-ink bg-panel-alt px-8 py-6'>
           {informationData.map((item) => (
-            <div key={item.label} className='flex'>
-              <div className='mr-4 w-24'>
-                <span className='text-base text-[#888]'>{item.label}: </span>
+            <div key={item.label} className='flex py-1'>
+              <div className='mr-4 w-32'>
+                <span className='font-mono text-base text-neon-cyan'>{item.label}: </span>
               </div>
               <div>
-                <span className='text-base text-foreground'>{item.value}</span>
+                <span className='font-mono text-base text-foreground'>{item.value}</span>
               </div>
             </div>
           ))}
