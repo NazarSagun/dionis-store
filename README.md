@@ -1,81 +1,87 @@
-# Turborepo starter
+# Dionis Store
 
-This is an official starter Turborepo.
+Dionis Store is an online store for PC games. The project has two applications: a web storefront and an API. Both live in this pnpm and Turborepo monorepo.
 
-## Using this example
+## Apps and packages
 
-Run the following command:
+- `apps/web`: the storefront, built with Next.js. It shows the game catalog, cart, and wishlist.
+- `apps/api`: the backend, built with NestJS. It handles authentication, users, and games, and stores data in a PostgreSQL database through Prisma.
+- `packages/dionis-api`: a typed API client for the web app. Orval generates it from the API.
+- `packages/e2e`: end-to-end tests, built with Playwright. The tests run against a live web app and API.
+- `packages/ui`: shared React components for the web app.
+- `packages/eslint-config`, `packages/prettier-config`, `packages/typescript-config`: shared lint, format, and TypeScript settings.
+
+## Prerequisites
+
+Install Node.js 18 or later. Install pnpm 8.9.0. Set up a local PostgreSQL database and note its connection URL.
+
+## Setup
+
+Run the following command from the repository root to install dependencies for every app and package.
 
 ```sh
-npx create-turbo@latest
+pnpm install
 ```
 
-## What's inside?
+Copy `apps/api/.env.example` to `apps/api/.env`, then fill in `DATABASE_URL` and the other values. Copy `apps/web/.env.example` to `apps/web/.env`, then fill in `NEXT_PUBLIC_BASE_URL`. If you plan to run the end-to-end tests, copy `packages/e2e/.env.example` to `packages/e2e/.env` too. The root `.env.example` lists every variable from all three files in one place, for reference.
 
-This Turborepo includes the following packages/apps:
+Run the following command from `apps/api` to apply database migrations.
 
-### Apps and Packages
-
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
-
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
-
-### Utilities
-
-This Turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-
-### Build
-
-To build all apps and packages, run the following command:
-
-```
-cd my-turborepo
-pnpm build
+```sh
+pnpm migrate
 ```
 
-### Develop
+## Development
 
-To develop all apps and packages, run the following command:
+Run the following command from the repository root to start both the web app and the API together.
 
-```
-cd my-turborepo
+```sh
 pnpm dev
 ```
 
-### Remote Caching
+The API listens on the port set in `apps/api/.env` (`8080` in the example files) and serves routes under `/api`. The web app listens on port 3000.
 
-Turborepo can use a technique known as [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
+To start only one app, run one of the following commands instead.
 
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup), then enter the following commands:
-
-```
-cd my-turborepo
-npx turbo login
+```sh
+pnpm dev:api
+pnpm dev:web
 ```
 
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
+## Seed data
 
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
+To seed sample games into a running API, run the following command from `apps/api`.
 
+```sh
+pnpm seed:api
 ```
-npx turbo link
+
+This command reads `SEED_API_URL`, `SEED_ADMIN_NAME`, `SEED_ADMIN_EMAIL`, and `SEED_ADMIN_PASSWORD` from `apps/api/.env`.
+
+## Testing
+
+Run the following command from the repository root to run unit tests across all apps.
+
+```sh
+pnpm test
 ```
 
-## Useful Links
+Run the following command from the repository root to run the Playwright end-to-end tests. Before you run it, start the web app and the API.
 
-Learn more about the power of Turborepo:
+```sh
+pnpm test:e2e
+```
 
-- [Tasks](https://turbo.build/repo/docs/core-concepts/monorepos/running-tasks)
-- [Caching](https://turbo.build/repo/docs/core-concepts/caching)
-- [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching)
-- [Filtering](https://turbo.build/repo/docs/core-concepts/monorepos/filtering)
-- [Configuration Options](https://turbo.build/repo/docs/reference/configuration)
-- [CLI Usage](https://turbo.build/repo/docs/reference/command-line-reference)
+## Build and lint
+
+Run the following command from the repository root to build all apps and packages.
+
+```sh
+pnpm build
+```
+
+Run the following command from the repository root to lint all apps and packages.
+
+```sh
+pnpm lint
+```
