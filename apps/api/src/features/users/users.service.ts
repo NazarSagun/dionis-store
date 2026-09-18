@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
-import { PrismaService } from '../common/prisma/prisma.service'
-import { CustomError } from '../common/errors/custom-error'
+import { PrismaService } from '../../common/prisma/prisma.service'
+import { CustomError } from '../../common/errors/custom-error'
 
 @Injectable()
 export class UsersService {

@@ -2,9 +2,9 @@ import { Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import * as bcrypt from 'bcrypt'
 import * as jwt from 'jsonwebtoken'
-import { PrismaService } from '../common/prisma/prisma.service'
-import { CustomError } from '../common/errors/custom-error'
-import { Role, Roles } from '../common/types/roles'
+import { PrismaService } from '../../common/prisma/prisma.service'
+import { CustomError } from '../../common/errors/custom-error'
+import { Role, Roles } from '../../common/types/roles'
 import { createAccessToken, createRefreshToken, getDecodedDto } from './auth-token.util'
 
 interface RegisterInput {

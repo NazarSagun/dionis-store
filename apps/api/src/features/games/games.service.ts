@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { Prisma } from '@prisma/client'
-import { PrismaService } from '../common/prisma/prisma.service'
-import { CustomError } from '../common/errors/custom-error'
+import { PrismaService } from '../../common/prisma/prisma.service'
+import { CustomError } from '../../common/errors/custom-error'
 import { CreateGameDto } from './dto/create-game.dto'
 
 @Injectable()

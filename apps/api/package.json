@@ -8,9 +8,9 @@
     "build": "nest build",
     "start": "node dist/main.js",
     "migrate": "npx prisma migrate dev",
-    "build:mock": "tsc ./src/mock/insertAllData.ts",
-    "insert:mock": "node ./src/mock/insertAllData.js",
-    "seed:api": "ts-node src/seed/populate-via-api.ts"
+    "build:mock": "tsc ./src/db-seed/insertAllData.ts",
+    "insert:mock": "node ./src/db-seed/insertAllData.js",
+    "seed:api": "ts-node src/db-seed/populate-via-api.ts"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.4.5",

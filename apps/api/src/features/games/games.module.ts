@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common'
-import { GuardsModule } from '../common/guards/guards.module'
+import { GuardsModule } from '../../common/guards/guards.module'
 import { GamesController } from './games.controller'
 import { GamesService } from './games.service'
 

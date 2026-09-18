@@ -4,8 +4,8 @@ import { AuthService } from './auth.service'
 import { RegisterDto } from './dto/register.dto'
 import { LoginDto } from './dto/login.dto'
 import { setRefreshTokenCookie } from './auth-token.util'
-import { CustomError } from '../common/errors/custom-error'
-import { toHttpException } from '../common/errors/to-http-exception'
+import { CustomError } from '../../common/errors/custom-error'
+import { toHttpException } from '../../common/errors/to-http-exception'
 
 @Controller()
 export class AuthController {

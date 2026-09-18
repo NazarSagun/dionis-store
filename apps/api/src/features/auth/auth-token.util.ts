@@ -1,6 +1,6 @@
 import { Response } from 'express'
 import * as jwt from 'jsonwebtoken'
-import { Role } from '../common/types/roles'
+import { Role } from '../../common/types/roles'
 
 export interface DecodedToken {
   email: string
