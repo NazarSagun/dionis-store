@@ -15,16 +15,16 @@ export const GameCard = ({ title, rating, price, onClick, platform, imageSrc }: 
 
   return (
     <div
-      className='flex h-[112px] w-full cursor-pointer overflow-hidden rounded-lg border-2 border-ink bg-panel-alt text-foreground shadow-retro transition-transform duration-500 hover:-translate-y-[5px]'
+      className='flex w-full cursor-pointer flex-col overflow-hidden rounded-lg border-2 border-ink bg-panel-alt text-foreground shadow-retro transition-transform duration-500 hover:-translate-y-[5px]'
       onClick={onClickHandler}
       data-testid='card'
     >
-      <div className='relative h-[112px] w-[200px] shrink-0'>
+      <div className='relative aspect-[4/3] w-full shrink-0'>
         <Image
-          onLoadingComplete={() => setIsImageLoaded(true)}
+          onLoad={() => setIsImageLoaded(true)}
           priority={true}
           fill
-          sizes='200px'
+          sizes='(min-width: 1280px) 20vw, (min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw'
           style={{ objectFit: 'cover' }}
           alt={`${title} thumbnail`}
           src={imageSrc}
@@ -34,18 +34,14 @@ export const GameCard = ({ title, rating, price, onClick, platform, imageSrc }: 
           <div className='absolute inset-0 animate-shimmer bg-[length:200%_100%] bg-gradient-to-r from-[#313131] from-25% via-[#5a5a5a] via-50% to-[#303030] to-75%' />
         )}
       </div>
-      <div className='flex w-full min-w-0 items-center justify-between px-4'>
-        <div className='flex min-w-0 flex-col items-start overflow-hidden'>
-          <h3 className='w-full truncate font-mono text-xl font-bold'>{title}</h3>
-          <span className='font-mono text-sm text-muted-foreground'>{platform}</span>
-        </div>
-        <div className='flex shrink-0 items-center'>
+      <div className='flex min-w-0 flex-col gap-2 p-4'>
+        <h3 className='w-full truncate font-mono text-lg font-bold'>{title}</h3>
+        <span className='font-mono text-sm text-muted-foreground'>{platform}</span>
+        <div className='flex items-center justify-between pt-1'>
           <span className='rounded border-2 border-ink bg-neon-green p-[3px] font-mono text-sm font-bold text-ink'>
             {rating}
           </span>
-          <div className='ml-4'>
-            <span className='font-display text-lg text-neon-magenta'>€{price}</span>
-          </div>
+          <span className='font-display text-lg text-neon-magenta'>€{price}</span>
         </div>
       </div>
     </div>

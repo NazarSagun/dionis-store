@@ -9,7 +9,7 @@ interface GamesListProps {
 
 export const GamesList = ({ gamesList }: GamesListProps) => {
   return (
-    <div className='col-span-8 flex flex-col gap-7 pb-20 pt-20'>
+    <div className='grid w-full grid-cols-2 gap-6 pb-20 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5'>
       {gamesList.map((game: GameObject) => (
         <Link key={game.id} href={`/game/${game.id}`}>
           <GameCard

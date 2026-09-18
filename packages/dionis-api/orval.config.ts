@@ -14,10 +14,7 @@ export default defineConfig({
           path: './instance.ts',
           name: 'customInstance',
         },
-        query: {
-          useInfinite: true,
-          useInfiniteQueryParam: 'pageNumber',
-        },
+        query: {},
       },
     },
     input: {

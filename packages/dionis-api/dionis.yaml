@@ -44,6 +44,27 @@ paths:
             type: integer
             example: 1
           description: The page number to retrieve
+        - name: search
+          in: query
+          required: false
+          schema:
+            type: string
+            maxLength: 100
+          description: Case-insensitive title fragment to filter by
+        - name: platform
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [PC, PS5, Xbox, Switch]
+          description: Platform to filter by (matches games whose platform contains this value)
+        - name: sort
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [price_asc, price_desc, rating_desc]
+          description: Sort order to apply before pagination
       responses:
         '200':
           description: Array of games
