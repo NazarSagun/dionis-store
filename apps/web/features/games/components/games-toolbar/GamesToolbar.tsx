@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Check, ChevronDown } from 'lucide-react'
 import {
   DropdownMenu,
@@ -16,6 +16,7 @@ interface GamesToolbarProps {
   onSearchChange: (search: string) => void
   onPlatformChange: (platform?: GetGamesPlatform) => void
   onSortChange: (sort?: GetGamesSort) => void
+  onClearFilters: () => void
 }
 
 const PLATFORM_OPTIONS = Object.values(GetGamesPlatform)
@@ -35,8 +36,16 @@ const triggerStyles =
 const menuItemStyles =
   'flex cursor-pointer items-center gap-2 rounded-sm px-2 py-1.5 font-mono text-sm text-foreground outline-none focus:bg-neon-cyan focus:text-ink data-[state=checked]:font-bold'
 
-export const GamesToolbar = ({ platform, sort, onSearchChange, onPlatformChange, onSortChange }: GamesToolbarProps) => {
+export const GamesToolbar = ({
+  platform,
+  sort,
+  onSearchChange,
+  onPlatformChange,
+  onSortChange,
+  onClearFilters,
+}: GamesToolbarProps) => {
   const debounceTimer = useRef<ReturnType<typeof setTimeout>>()
+  const [searchResetKey, setSearchResetKey] = useState(0)
 
   useEffect(() => {
     return () => {
@@ -49,6 +58,12 @@ export const GamesToolbar = ({ platform, sort, onSearchChange, onPlatformChange,
     debounceTimer.current = setTimeout(() => onSearchChange(value), SEARCH_DEBOUNCE_MS)
   }
 
+  const handleClearFilters = () => {
+    if (debounceTimer.current) clearTimeout(debounceTimer.current)
+    setSearchResetKey((key) => key + 1)
+    onClearFilters()
+  }
+
   const selectedSortLabel = SORT_OPTIONS.find((option) => option.value === sort)?.label
 
   return (
@@ -57,14 +72,25 @@ export const GamesToolbar = ({ platform, sort, onSearchChange, onPlatformChange,
         <label htmlFor='search' className='font-mono text-xs font-bold uppercase tracking-wide text-neon-cyan'>
           Search
         </label>
-        <Input
-          name='search'
-          type='text'
-          placeholder='Search games...'
-          data-testid='search-input'
-          onInputChange={handleSearchInput}
-          className='mb-0 mt-0 w-72'
-        />
+        <div className='flex items-center gap-3'>
+          <Input
+            key={searchResetKey}
+            name='search'
+            type='text'
+            placeholder='Search games...'
+            data-testid='search-input'
+            onInputChange={handleSearchInput}
+            className='mb-0 mt-0 w-72'
+          />
+          <button
+            type='button'
+            data-testid='clear-filters'
+            onClick={handleClearFilters}
+            className='font-mono text-sm text-neon-cyan hover:underline'
+          >
+            Clear filters
+          </button>
+        </div>
       </div>
       <div className='flex items-center gap-4'>
         <DropdownMenu>

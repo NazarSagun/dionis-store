@@ -68,10 +68,14 @@ export const GameDetails = ({ gameId }: GameDetailsProps) => {
             </div>
             <div className='flex flex-col'>
               <div className='mb-4 mt-8 flex items-end justify-center gap-[0.6rem]'>
-                <span className='font-mono text-xl text-muted-foreground line-through'>{data.price}€</span>
-                <span className='font-mono text-xl text-neon-amber'>-{data.discount}%</span>
+                {data.discount > 0 && (
+                  <>
+                    <span className='font-mono text-xl text-muted-foreground line-through'>{data.price}€</span>
+                    <span className='font-mono text-xl text-neon-amber'>-{data.discount}%</span>
+                  </>
+                )}
                 <span className='font-display text-3xl leading-[1.4] text-neon-magenta'>
-                  {calculateDiscountedPrice(data.price, data.discount)}€
+                  {data.discount > 0 ? calculateDiscountedPrice(data.price, data.discount) : data.price}€
                 </span>
               </div>
               <div className='flex gap-4'>

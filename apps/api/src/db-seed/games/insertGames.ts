@@ -8,7 +8,7 @@ export const insertGamesData = async (prismaClient) => {
     const upadtedData = data.map((item) => {
       return {
         ...item,
-        discount: getRandomDiscount(5, 85),
+        discount: Math.random() < 0.15 ? getRandomDiscount(5, 85) : 0,
       }
     })
 

@@ -113,4 +113,24 @@ describe('GamesService', () => {
       )
     })
   })
+
+  describe('fetchTopDeals', () => {
+    it('only fetches games with a positive discount, ordered highest first, capped at 10', async () => {
+      await service.fetchTopDeals()
+
+      expect(prisma.game_pc.findMany).toHaveBeenCalledWith({
+        where: { discount: { gt: 0 } },
+        orderBy: { discount: 'desc' },
+        take: 10,
+      })
+    })
+
+    it('returns an empty array instead of throwing when no game has a discount', async () => {
+      prisma.game_pc.findMany.mockResolvedValue([])
+
+      const result = await service.fetchTopDeals()
+
+      expect(result).toEqual([])
+    })
+  })
 })

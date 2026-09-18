@@ -22,6 +22,8 @@ import type {
 
 export const getGetUsersResponseMock = (): UsersArray => (Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({createdAt: faker.helpers.arrayElement([faker.date.past().toISOString().split('T')[0], undefined]), email: faker.helpers.arrayElement([faker.internet.email(), undefined]), id: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), name: faker.helpers.arrayElement([faker.word.sample(), undefined]), password: faker.helpers.arrayElement([faker.word.sample(), undefined]), refreshToken: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.word.sample(), null]), undefined]), role: faker.helpers.arrayElement([faker.helpers.arrayElement([101,500,233] as const), undefined])})))
 
+export const getGetGamesTopDealsResponseMock = (): GameObject[] => (Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({developer: faker.word.sample(), discount: faker.number.int({min: undefined, max: undefined}), freetogame_profile_url: faker.word.sample(), game_url: faker.word.sample(), genre: faker.word.sample(), id: faker.number.int({min: undefined, max: undefined}), platform: faker.word.sample(), price: faker.number.int({min: undefined, max: undefined}), publisher: faker.word.sample(), rating: faker.word.sample(), release_date: faker.word.sample(), short_description: faker.word.sample(), thumbnail: faker.word.sample(), title: faker.word.sample()})))
+
 export const getGetGamesResponseMock = (overrideResponse: Partial< GamesArray > = {}): GamesArray => ({games: faker.helpers.arrayElement([Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({developer: faker.word.sample(), discount: faker.number.int({min: undefined, max: undefined}), freetogame_profile_url: faker.word.sample(), game_url: faker.word.sample(), genre: faker.word.sample(), id: faker.number.int({min: undefined, max: undefined}), platform: faker.word.sample(), price: faker.number.int({min: undefined, max: undefined}), publisher: faker.word.sample(), rating: faker.word.sample(), release_date: faker.word.sample(), short_description: faker.word.sample(), thumbnail: faker.word.sample(), title: faker.word.sample()})), undefined]), totalPages: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), ...overrideResponse})
 
 export const getGetGameResponseMock = (overrideResponse: Partial< GameObject > = {}): GameObject => ({developer: faker.word.sample(), discount: faker.number.int({min: undefined, max: undefined}), freetogame_profile_url: faker.word.sample(), game_url: faker.word.sample(), genre: faker.word.sample(), id: faker.number.int({min: undefined, max: undefined}), platform: faker.word.sample(), price: faker.number.int({min: undefined, max: undefined}), publisher: faker.word.sample(), rating: faker.word.sample(), release_date: faker.word.sample(), short_description: faker.word.sample(), thumbnail: faker.word.sample(), title: faker.word.sample(), ...overrideResponse})
@@ -40,6 +42,21 @@ export const getGetUsersMockHandler = (overrideResponse?: UsersArray | ((info: P
     return new HttpResponse(JSON.stringify(overrideResponse !== undefined 
             ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse) 
             : getGetUsersResponseMock()),
+      {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      }
+    )
+  })
+}
+
+export const getGetGamesTopDealsMockHandler = (overrideResponse?: GameObject[] | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<GameObject[]> | GameObject[])) => {
+  return http.get('*/games/top-deals', async (info) => {await delay(1000);
+    return new HttpResponse(JSON.stringify(overrideResponse !== undefined 
+            ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse) 
+            : getGetGamesTopDealsResponseMock()),
       {
         status: 200,
         headers: {
@@ -141,6 +158,7 @@ export const getRefreshMockHandler = (overrideResponse?: UserObject | ((info: Pa
 }
 export const getDefaultMock = () => [
   getGetUsersMockHandler(),
+  getGetGamesTopDealsMockHandler(),
   getGetGamesMockHandler(),
   getGetGameMockHandler(),
   getRegisterMockHandler(),

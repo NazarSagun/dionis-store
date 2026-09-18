@@ -101,6 +101,67 @@ export const useGetUsers = <TData = Awaited<ReturnType<typeof getUsers>>, TError
 
 
 /**
+ * @summary List up to 10 games with the highest discount, discount > 0, highest first
+ */
+export const getGamesTopDeals = (
+    
+ options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<GameObject[]>(
+      {url: `/games/top-deals`, method: 'GET', signal
+    },
+      options);
+    }
+  
+
+export const getGetGamesTopDealsQueryKey = () => {
+    return [`/games/top-deals`] as const;
+    }
+
+    
+export const getGetGamesTopDealsQueryOptions = <TData = Awaited<ReturnType<typeof getGamesTopDeals>>, TError = ErrorType<ErrorMessage>>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getGamesTopDeals>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetGamesTopDealsQueryKey();
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getGamesTopDeals>>> = ({ signal }) => getGamesTopDeals(requestOptions, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getGamesTopDeals>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetGamesTopDealsQueryResult = NonNullable<Awaited<ReturnType<typeof getGamesTopDeals>>>
+export type GetGamesTopDealsQueryError = ErrorType<ErrorMessage>
+
+/**
+ * @summary List up to 10 games with the highest discount, discount > 0, highest first
+ */
+export const useGetGamesTopDeals = <TData = Awaited<ReturnType<typeof getGamesTopDeals>>, TError = ErrorType<ErrorMessage>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getGamesTopDeals>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+
+  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } => {
+
+  const queryOptions = getGetGamesTopDealsQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+/**
  * @summary List games in paged format from db
  */
 export const getGames = (

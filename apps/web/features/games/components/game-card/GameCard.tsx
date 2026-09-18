@@ -2,12 +2,15 @@ import { useState } from 'react'
 import Image from 'next/image'
 import { GameObject } from '@repo/dionis-api/src/model'
 
+import { calculateDiscountedPrice } from '../../helpers'
+
 export type GameCardProps = Pick<GameObject, 'title' | 'rating' | 'price' | 'platform'> & {
   onClick?: () => void
   imageSrc: string
+  discount?: number
 }
 
-export const GameCard = ({ title, rating, price, onClick, platform, imageSrc }: GameCardProps) => {
+export const GameCard = ({ title, rating, price, onClick, platform, imageSrc, discount }: GameCardProps) => {
   const [isImageLoaded, setIsImageLoaded] = useState(false)
   const onClickHandler = () => {
     onClick && onClick()
@@ -33,6 +36,14 @@ export const GameCard = ({ title, rating, price, onClick, platform, imageSrc }: 
         {!isImageLoaded && (
           <div className='absolute inset-0 animate-shimmer bg-[length:200%_100%] bg-gradient-to-r from-[#313131] from-25% via-[#5a5a5a] via-50% to-[#303030] to-75%' />
         )}
+        {!!discount && (
+          <span
+            data-testid='discount-badge'
+            className='absolute left-2 top-2 rounded border-2 border-ink bg-neon-amber px-1.5 py-0.5 font-mono text-xs font-bold text-ink'
+          >
+            -{discount}%
+          </span>
+        )}
       </div>
       <div className='flex min-w-0 flex-col gap-2 p-4'>
         <h3 className='w-full truncate font-mono text-lg font-bold'>{title}</h3>
@@ -41,7 +52,14 @@ export const GameCard = ({ title, rating, price, onClick, platform, imageSrc }: 
           <span className='rounded border-2 border-ink bg-neon-green p-[3px] font-mono text-sm font-bold text-ink'>
             {rating}
           </span>
-          <span className='font-display text-lg text-neon-magenta'>€{price}</span>
+          {discount ? (
+            <span className='flex items-baseline gap-1.5'>
+              <span className='font-mono text-xs text-muted-foreground line-through'>€{price}</span>
+              <span className='font-display text-lg text-neon-magenta'>€{calculateDiscountedPrice(price, discount)}</span>
+            </span>
+          ) : (
+            <span className='font-display text-lg text-neon-magenta'>€{price}</span>
+          )}
         </div>
       </div>
     </div>

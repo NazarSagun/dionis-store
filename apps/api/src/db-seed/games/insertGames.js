@@ -58,7 +58,7 @@ var insertGamesData = function (prismaClient) { return __awaiter(void 0, void 0,
                 _a.trys.push([0, 5, , 6]);
                 data = JSON.parse(fs.readFileSync(path.join(__dirname, 'games.json'), 'utf8'));
                 upadtedData = data.map(function (item) {
-                    return __assign(__assign({}, item), { discount: getRandomDiscount(5, 85) });
+                    return __assign(__assign({}, item), { discount: Math.random() < 0.15 ? getRandomDiscount(5, 85) : 0 });
                 });
                 _i = 0, upadtedData_1 = upadtedData;
                 _a.label = 1;

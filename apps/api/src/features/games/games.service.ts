@@ -57,6 +57,14 @@ export class GamesService {
     return { totalPages, games }
   }
 
+  async fetchTopDeals() {
+    return this.prisma.game_pc.findMany({
+      where: { discount: { gt: 0 } },
+      orderBy: { discount: 'desc' },
+      take: 10,
+    })
+  }
+
   async fetchGameById({ gameId }: { gameId: number }) {
     const game = await this.prisma.game_pc.findUnique({ where: { id: gameId } })
     if (!game) {

@@ -33,7 +33,7 @@ export const Summary = () => {
         </div>
         <div>
           <div>{summery.initialPrice}€</div>
-          <div>{summery.totalDiscount}€</div>
+          <div>{summery.totalDiscount.toFixed(2)}€</div>
         </div>
       </div>
       <div className='mb-4 mt-[0.8rem] flex justify-between border-t-2 border-ink pt-4'>

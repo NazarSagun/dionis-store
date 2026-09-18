@@ -32,6 +32,25 @@ paths:
                 $ref: '#/components/schemas/errorMessage'
       security:
         - bearerHttpAuthentication: []
+  /games/top-deals:
+    get:
+      summary: List up to 10 games with the highest discount, discount > 0, highest first
+      operationId: getGamesTopDeals
+      responses:
+        '200':
+          description: Array of discounted games, highest discount first
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/gameObject'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
   /games/{page}:
     get:
       summary: List games in paged format from db

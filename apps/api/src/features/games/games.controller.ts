@@ -13,6 +13,15 @@ import { GamesQueryDto } from './dto/games-query.dto'
 export class GamesController {
   constructor(private readonly gamesService: GamesService) {}
 
+  @Get('games/top-deals')
+  async getTopDeals() {
+    try {
+      return await this.gamesService.fetchTopDeals()
+    } catch (error) {
+      throw toHttpException(error)
+    }
+  }
+
   @Get('games/:page')
   async getGames(@Param('page') pageParam: string, @Query() query: GamesQueryDto) {
     const page = parseInt(pageParam, 10)
