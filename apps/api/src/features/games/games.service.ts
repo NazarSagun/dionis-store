@@ -61,7 +61,7 @@ export class GamesService {
     return this.prisma.game_pc.findMany({
       where: { discount: { gt: 0 } },
       orderBy: { discount: 'desc' },
-      take: 10,
+      take: 5,
     })
   }
 
