@@ -1,5 +1,6 @@
 import { FormEvent, useState } from 'react'
 import { useConfirmOrder } from '@repo/dionis-api/src/dionis/default/default'
+import { useToast } from '@repo/ui'
 import type { StripeError } from '@stripe/stripe-js'
 
 import { useCartStore } from '../../store/useCartStore'
@@ -17,6 +18,7 @@ export const PaymentForm = ({ finalPrice }: { finalPrice: number }) => {
   const setStep = useCartStore((state) => state.setStep)
   const setOrderId = useCartStore((state) => state.setOrderId)
   const { mutateAsync: confirmOrder } = useConfirmOrder()
+  const { toast } = useToast()
 
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string>()
@@ -43,6 +45,7 @@ export const PaymentForm = ({ finalPrice }: { finalPrice: number }) => {
       const order = await confirmOrder({ data: { paymentIntentId: paymentIntent.id } })
       setOrderId(order.id as number)
       items.forEach((item) => removeItem(item.id))
+      toast({ title: 'Payment successful! Your order is confirmed.' })
       setStep(3)
     } catch {
       setError('Payment succeeded, but we could not finish your order. Please contact support.')

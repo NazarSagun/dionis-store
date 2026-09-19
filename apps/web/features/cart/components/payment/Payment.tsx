@@ -51,15 +51,17 @@ export const Payment = () => {
           data-testid='payment-summary'
           className='rounded-md border-2 border-ink bg-panel-alt p-8 font-mono text-foreground'
         >
-          <div className='flex justify-between text-muted-foreground'>
-            <div>
+          <div className='flex flex-col gap-1 text-muted-foreground'>
+            <div className='flex justify-between'>
               <div>Official price</div>
-              <div>Discount</div>
-            </div>
-            <div>
               <div>{initialPrice}€</div>
-              <div>{totalDiscount.toFixed(2)}€</div>
             </div>
+            {totalDiscount > 0 && (
+              <div className='flex justify-between'>
+                <div>Discount</div>
+                <div>{totalDiscount.toFixed(2)}€</div>
+              </div>
+            )}
           </div>
           <div className='mb-4 mt-[0.8rem] flex justify-between border-t-2 border-ink pt-4'>
             <div className='text-xl font-bold'>Subtotal</div>
