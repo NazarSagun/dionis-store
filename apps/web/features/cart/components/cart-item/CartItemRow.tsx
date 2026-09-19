@@ -36,9 +36,7 @@ export const CartItemRow = ({ title, thumbnailUrl, price, quantity, platform, di
         </div>
       </div>
       <div className='ml-auto flex items-center'>
-        <span className='mr-4 font-display text-sm text-neon-amber'>
-          {calculateDiscountedPrice(price, discount)}€
-        </span>
+        <span className='mr-4 font-display text-sm text-neon-amber'>{calculateDiscountedPrice(price, discount)}€</span>
 
         <QuantitySelect onChange={(number) => updateItemQuantity(id, number)} selectedOption={quantity} />
       </div>

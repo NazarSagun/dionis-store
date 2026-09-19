@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { Check, ChevronDown } from 'lucide-react'
+import { GetGamesPlatform, GetGamesSort } from '@repo/dionis-api/src/model'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -8,7 +8,7 @@ import {
   DropdownMenuTrigger,
   Input,
 } from '@repo/ui'
-import { GetGamesPlatform, GetGamesSort } from '@repo/dionis-api/src/model'
+import { Check, ChevronDown } from 'lucide-react'
 
 interface GamesToolbarProps {
   platform?: GetGamesPlatform
