@@ -1,19 +1,32 @@
-import { useState } from 'react'
+import { MouseEvent, useState } from 'react'
 import Image from 'next/image'
 import { GameObject } from '@repo/dionis-api/src/model'
+
+import { useWishlistStore } from '@/features/wishlist/store/useWishlistStore'
 
 import { calculateDiscountedPrice } from '../../helpers'
 
 export type GameCardProps = Pick<GameObject, 'title' | 'rating' | 'price' | 'platform'> & {
+  id?: number
   onClick?: () => void
   imageSrc: string
   discount?: number
 }
 
-export const GameCard = ({ title, rating, price, onClick, platform, imageSrc, discount }: GameCardProps) => {
+export const GameCard = ({ id, title, rating, price, onClick, platform, imageSrc, discount }: GameCardProps) => {
   const [isImageLoaded, setIsImageLoaded] = useState(false)
+  const isWishlisted = useWishlistStore((state) => (id !== undefined ? state.isInWishlist(id) : false))
+  const toggleWishlistItem = useWishlistStore((state) => state.toggleItem)
+
   const onClickHandler = () => {
     onClick && onClick()
+  }
+
+  const onWishlistToggle = (event: MouseEvent) => {
+    event.preventDefault()
+    event.stopPropagation()
+    if (id === undefined) return
+    toggleWishlistItem({ id, thumbnailUrl: imageSrc, title, price, platform, rating, discount: discount ?? 0 })
   }
 
   return (
@@ -44,6 +57,19 @@ export const GameCard = ({ title, rating, price, onClick, platform, imageSrc, di
             -{discount}%
           </span>
         )}
+        {id !== undefined && (
+          <button
+            type='button'
+            aria-label={isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
+            data-testid='wishlist-toggle'
+            onClick={onWishlistToggle}
+            className={`absolute right-2 top-2 flex items-center justify-center rounded-full border-2 border-ink p-1 shadow-retro ${
+              isWishlisted ? 'bg-neon-magenta' : 'bg-panel-alt'
+            }`}
+          >
+            <Image width={18} height={18} alt='favorite' src='/icons/favorite.svg' />
+          </button>
+        )}
       </div>
       <div className='flex min-w-0 flex-col gap-2 p-4'>
         <h3 className='w-full truncate font-mono text-lg font-bold'>{title}</h3>
@@ -55,7 +81,9 @@ export const GameCard = ({ title, rating, price, onClick, platform, imageSrc, di
           {discount ? (
             <span className='flex items-baseline gap-1.5'>
               <span className='font-mono text-xs text-muted-foreground line-through'>€{price}</span>
-              <span className='font-display text-lg text-neon-magenta'>€{calculateDiscountedPrice(price, discount)}</span>
+              <span className='font-display text-lg text-neon-magenta'>
+                €{calculateDiscountedPrice(price, discount)}
+              </span>
             </span>
           ) : (
             <span className='font-display text-lg text-neon-magenta'>€{price}</span>

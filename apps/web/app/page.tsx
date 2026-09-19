@@ -8,6 +8,7 @@ import { Loader } from '@repo/ui'
 import { Footer } from '@/components/footer'
 import { MainNavigation } from '@/components/main-navigation'
 import { GamesList, GamesPagination, GamesToolbar, TopDeals } from '@/features/games'
+import { WishlistSection } from '@/features/wishlist'
 
 const containerStyles =
   'flex flex-1 min-h-[75vh] flex-col items-center justify-center px-[35px] pb-20 bg-[image:var(--light-background-color)]'
@@ -21,10 +22,12 @@ export default function Home() {
   const { data, isLoading, isError } = useGetGames(page, { search, platform, sort })
   const { data: topDeals } = useGetGamesTopDeals()
 
-  const resetToFirstPage = <T,>(setter: (value: T) => void) => (value: T) => {
-    setPage(1)
-    setter(value)
-  }
+  const resetToFirstPage =
+    <T,>(setter: (value: T) => void) =>
+    (value: T) => {
+      setPage(1)
+      setter(value)
+    }
 
   const handleClearFilters = () => {
     setPage(1)
@@ -47,6 +50,7 @@ export default function Home() {
             onClearFilters={handleClearFilters}
           />
           <TopDeals games={topDeals ?? []} />
+          <WishlistSection />
           {isLoading && <Loader />}
           {!isLoading && data && (
             <>
