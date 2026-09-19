@@ -45,7 +45,7 @@ describe('<GameActivation />', () => {
     Object.assign(navigator, { clipboard: { writeText } })
   })
 
-  it('lists every purchased game with its code and redeem link, Finish starts disabled', async () => {
+  it('lists every purchased game with its code and redeem link, Finish starts enabled', async () => {
     useCartStore.setState({ items: [], currentStep: 3, orderId: 101 })
     serviceWorker.use(http.get('*/orders/101', () => HttpResponse.json(buildOrder(101))))
 
@@ -58,7 +58,9 @@ describe('<GameActivation />', () => {
       'href',
       'https://store.steampowered.com/account/registerkey',
     )
-    expect(screen.getByTestId('finish-button')).toBeDisabled()
+    // Activation happens on Steam, outside this store. Finish must never
+    // force it - a user can finish now and activate later from their account.
+    expect(screen.getByTestId('finish-button')).toBeEnabled()
   })
 
   it('copies the exact code to the clipboard', async () => {
@@ -93,27 +95,13 @@ describe('<GameActivation />', () => {
     await waitFor(() => expect(within(rows[0]).getByTestId('activation-status')).toHaveTextContent(/activated/i))
   })
 
-  it('enables Finish once every row is activated, and Finish clears the cart and goes home', async () => {
+  it('Finish clears the cart and goes home even with unactivated items left', async () => {
     useCartStore.setState({ items: [], currentStep: 3, orderId: 104 })
-    serviceWorker.use(
-      http.get('*/orders/104', () => HttpResponse.json(buildOrder(104, { item2Activated: true }))),
-      http.patch('*/orders/104/items/10/activate', () =>
-        HttpResponse.json({ id: 10, activated: true, activationCode: 'K7X9-QP2M-3F8L' }),
-      ),
-    )
+    serviceWorker.use(http.get('*/orders/104', () => HttpResponse.json(buildOrder(104))))
 
     render(<GameActivation />)
 
-    const rows = await screen.findAllByTestId('activation-row', {}, { timeout: FETCH_TIMEOUT })
-    expect(within(rows[1]).getByTestId('activation-status')).toBeInTheDocument()
-
-    serviceWorker.use(
-      http.get('*/orders/104', () =>
-        HttpResponse.json(buildOrder(104, { item1Activated: true, item2Activated: true })),
-      ),
-    )
-    within(rows[0]).getByTestId('activation-mark-button').click()
-    await waitFor(() => expect(screen.getByTestId('finish-button')).toBeEnabled())
+    await screen.findAllByTestId('activation-row', {}, { timeout: FETCH_TIMEOUT })
 
     // Stub window.location only now, right before the click that navigates -
     // any earlier network requests in this test still need the real one.

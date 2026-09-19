@@ -3,7 +3,7 @@
 import Image from 'next/image'
 import { getGetOrderQueryKey, useActivateOrderItem, useGetOrder } from '@repo/dionis-api/src/dionis/default/default'
 import { OrderItemObject } from '@repo/dionis-api/src/model'
-import { Loader } from '@repo/ui'
+import { Skeleton } from '@repo/ui'
 import { useQueryClient } from '@tanstack/react-query'
 
 import { useCartStore } from '../../store/useCartStore'
@@ -99,14 +99,18 @@ export const GameActivation = () => {
 
   if (isLoading || !order) {
     return (
-      <div data-testid='game-activation' className='flex min-h-[50vh] w-full items-center justify-center'>
-        <Loader />
+      <div data-testid='game-activation' className='flex w-full flex-col items-center gap-10 px-[35px] py-16'>
+        <Skeleton className='h-8 w-64' />
+        <div className='flex w-full max-w-[900px] flex-col gap-4'>
+          {Array.from({ length: 3 }).map((_, index) => (
+            <Skeleton key={index} className='h-[88px] w-full' />
+          ))}
+        </div>
       </div>
     )
   }
 
   const items = order.items ?? []
-  const allActivated = items.length > 0 && items.every((item) => item.activated)
 
   const onFinish = () => {
     setOrderId(null)
@@ -127,9 +131,8 @@ export const GameActivation = () => {
       <button
         type='button'
         data-testid='finish-button'
-        disabled={!allActivated}
         onClick={onFinish}
-        className='rounded-md border-2 border-ink bg-neon-magenta px-[30px] py-[15px] font-display text-xs text-ink shadow-retro transition-transform duration-200 disabled:pointer-events-none disabled:opacity-50'
+        className='rounded-md border-2 border-ink bg-neon-magenta px-[30px] py-[15px] font-display text-xs text-ink shadow-retro transition-transform duration-200'
       >
         Finish
       </button>

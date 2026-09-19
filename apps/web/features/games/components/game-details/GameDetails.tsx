@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 import { useGetGame } from '@repo/dionis-api/src/dionis/default/default'
-import { Loader, useToast } from '@repo/ui'
+import { Skeleton, useToast } from '@repo/ui'
 
 import { CartItem, useCartStore } from '@/features/cart/store/useCartStore'
 import { useWishlistStore } from '@/features/wishlist/store/useWishlistStore'
@@ -50,8 +50,25 @@ export const GameDetails = ({ gameId }: GameDetailsProps) => {
 
   if (isLoading) {
     return (
-      <div className='flex min-h-[75vh] items-center justify-center'>
-        <Loader />
+      <div className='flex min-h-[75vh] flex-col gap-16 px-40 py-12'>
+        <div className='flex justify-between gap-12'>
+          <Skeleton className='h-[300px] w-[500px] shrink-0' />
+          <div className='flex w-[50vw] flex-col justify-between gap-6'>
+            <div className='flex flex-col gap-4'>
+              <Skeleton className='h-8 w-2/3' />
+              <Skeleton className='h-4 w-full' />
+              <Skeleton className='h-4 w-5/6' />
+            </div>
+            <div className='flex flex-col gap-4'>
+              <Skeleton className='h-8 w-32 self-center' />
+              <div className='flex gap-4'>
+                <Skeleton className='h-[58px] w-[58px]' />
+                <Skeleton className='h-[58px] w-full' />
+              </div>
+            </div>
+          </div>
+        </div>
+        <Skeleton className='h-40 w-full' />
       </div>
     )
   }

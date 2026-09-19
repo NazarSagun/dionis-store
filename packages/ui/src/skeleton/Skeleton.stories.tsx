@@ -1,20 +1,23 @@
 import type { Meta, StoryObj } from '@storybook/react'
 
-import { Loader } from './Loader'
+import { Skeleton } from './Skeleton'
 
 const meta = {
-  title: 'Atoms/Loader',
-  component: Loader,
+  title: 'Atoms/Skeleton',
+  component: Skeleton,
   parameters: {
     layout: 'centered',
   },
   tags: ['autodocs'],
-} satisfies Meta<typeof Loader>
+} satisfies Meta<typeof Skeleton>
 
 export default meta
 type Story = StoryObj<typeof meta>
 
 export const Component: Story = {
+  args: {
+    className: 'h-12 w-48',
+  },
   parameters: {
     backgrounds: {
       default: 'dark',
@@ -27,5 +30,5 @@ export const Component: Story = {
     },
   },
   decorators: (Story) => <div className='dark'>{Story()}</div>,
-  render: (args) => <Loader {...args} />,
+  render: (args) => <Skeleton {...args} />,
 }

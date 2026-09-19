@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { useCreatePaymentIntent } from '@repo/dionis-api/src/dionis/default/default'
-import { Loader } from '@repo/ui'
+import { Skeleton } from '@repo/ui'
 
 import { useCartStore } from '../../store/useCartStore'
 import { calculateCartSummary } from '../summary/helpers'
@@ -82,7 +82,10 @@ export const Payment = () => {
             <PaymentForm finalPrice={finalPrice} />
           </Elements>
         ) : (
-          <Loader />
+          <div data-testid='payment-skeleton' className='flex w-full flex-col gap-6'>
+            <Skeleton className='h-32 w-full' />
+            <Skeleton className='h-[52px] w-full' />
+          </div>
         )}
       </div>
     </div>

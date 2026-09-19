@@ -1,7 +1,7 @@
 'use client'
 
 import { ReactNode, useEffect, useState } from 'react'
-import { Loader } from '@repo/ui'
+import { Skeleton } from '@repo/ui'
 
 import { useRefreshToken } from '../../hooks/useRefreshToken'
 import { useAuthStore } from '../../store/useAuthStore'
@@ -22,8 +22,9 @@ export const AuthInitializer = ({ children }: AuthInitializerProps) => {
 
   if (!isHydrated) {
     return (
-      <div className='flex min-h-screen items-center justify-center'>
-        <Loader />
+      <div className='flex min-h-screen w-full flex-col items-center gap-4 px-[35px] pt-16'>
+        <Skeleton className='h-10 w-64' />
+        <Skeleton className='h-40 w-full max-w-[1200px]' />
       </div>
     )
   }

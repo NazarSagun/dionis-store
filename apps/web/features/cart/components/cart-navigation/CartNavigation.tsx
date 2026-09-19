@@ -33,7 +33,7 @@ export const CartNavigation = ({
           <span className='mr-2.5 cursor-default font-display text-sm text-neon-magenta hover:cursor-pointer'>
             Dionis
           </span>
-          <Image priority={true} width={40} height={40} alt='logo' src={`/icons/logo.png`} />
+          <Image priority={true} width={40} height={40} alt='logo' src={`/icons/retro-game.svg`} />
         </Link>
       </div>
       <div className='flex items-center'>

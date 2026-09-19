@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useGetGames, useGetGamesTopDeals } from '@repo/dionis-api/src/dionis/default/default'
 import { GameObject, GetGamesPlatform, GetGamesSort } from '@repo/dionis-api/src/model'
-import { Loader } from '@repo/ui'
+import { Skeleton } from '@repo/ui'
 
 import { Footer } from '@/components/footer'
 import { MainNavigation } from '@/components/main-navigation'
@@ -51,7 +51,16 @@ export default function Home() {
           />
           <TopDeals games={topDeals ?? []} />
           <WishlistSection />
-          {isLoading && <Loader />}
+          {isLoading && (
+            <div
+              data-testid='games-skeleton'
+              className='grid w-full grid-cols-2 gap-6 pt-16 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5'
+            >
+              {Array.from({ length: 10 }).map((_, index) => (
+                <Skeleton key={index} className='aspect-[3/4] w-full' />
+              ))}
+            </div>
+          )}
           {!isLoading && data && (
             <>
               <div data-testid='game-library' className='w-full'>
