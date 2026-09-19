@@ -19,10 +19,15 @@ import type {
 } from '@tanstack/react-query'
 import type {
   AuthErrorMessage,
+  ConfirmOrderBody,
+  CreatePaymentIntentBody,
   ErrorMessage,
   GameObject,
   GamesArray,
   GetGamesParams,
+  OrderItemObject,
+  OrderObject,
+  PaymentIntentResponse,
   SuccessMessage,
   UserCredentials,
   UserObject,
@@ -464,6 +469,237 @@ export const useLogout = <TData = Awaited<ReturnType<typeof logout>>, TError = E
 
 
 /**
+ * @summary Create a Stripe PaymentIntent for the given cart items, server-priced
+ */
+export const createPaymentIntent = (
+    createPaymentIntentBody: BodyType<CreatePaymentIntentBody>,
+ options?: SecondParameter<typeof customInstance>,) => {
+      
+      
+      return customInstance<PaymentIntentResponse>(
+      {url: `/orders/payment-intent`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: createPaymentIntentBody
+    },
+      options);
+    }
+  
+
+
+export const getCreatePaymentIntentMutationOptions = <TError = ErrorType<ErrorMessage>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createPaymentIntent>>, TError,{data: BodyType<CreatePaymentIntentBody>}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof createPaymentIntent>>, TError,{data: BodyType<CreatePaymentIntentBody>}, TContext> => {
+const {mutation: mutationOptions, request: requestOptions} = options ?? {};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createPaymentIntent>>, {data: BodyType<CreatePaymentIntentBody>}> = (props) => {
+          const {data} = props ?? {};
+
+          return  createPaymentIntent(data,requestOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CreatePaymentIntentMutationResult = NonNullable<Awaited<ReturnType<typeof createPaymentIntent>>>
+    export type CreatePaymentIntentMutationBody = BodyType<CreatePaymentIntentBody>
+    export type CreatePaymentIntentMutationError = ErrorType<ErrorMessage>
+
+    /**
+ * @summary Create a Stripe PaymentIntent for the given cart items, server-priced
+ */
+export const useCreatePaymentIntent = <TError = ErrorType<ErrorMessage>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createPaymentIntent>>, TError,{data: BodyType<CreatePaymentIntentBody>}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationResult<
+        Awaited<ReturnType<typeof createPaymentIntent>>,
+        TError,
+        {data: BodyType<CreatePaymentIntentBody>},
+        TContext
+      > => {
+
+      const mutationOptions = getCreatePaymentIntentMutationOptions(options);
+
+      return useMutation(mutationOptions);
+    }
+    /**
+ * @summary Confirm a succeeded PaymentIntent and create the order, with one activation code per game
+ */
+export const confirmOrder = (
+    confirmOrderBody: BodyType<ConfirmOrderBody>,
+ options?: SecondParameter<typeof customInstance>,) => {
+      
+      
+      return customInstance<OrderObject>(
+      {url: `/orders/confirm`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: confirmOrderBody
+    },
+      options);
+    }
+  
+
+
+export const getConfirmOrderMutationOptions = <TError = ErrorType<ErrorMessage>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof confirmOrder>>, TError,{data: BodyType<ConfirmOrderBody>}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof confirmOrder>>, TError,{data: BodyType<ConfirmOrderBody>}, TContext> => {
+const {mutation: mutationOptions, request: requestOptions} = options ?? {};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof confirmOrder>>, {data: BodyType<ConfirmOrderBody>}> = (props) => {
+          const {data} = props ?? {};
+
+          return  confirmOrder(data,requestOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type ConfirmOrderMutationResult = NonNullable<Awaited<ReturnType<typeof confirmOrder>>>
+    export type ConfirmOrderMutationBody = BodyType<ConfirmOrderBody>
+    export type ConfirmOrderMutationError = ErrorType<ErrorMessage>
+
+    /**
+ * @summary Confirm a succeeded PaymentIntent and create the order, with one activation code per game
+ */
+export const useConfirmOrder = <TError = ErrorType<ErrorMessage>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof confirmOrder>>, TError,{data: BodyType<ConfirmOrderBody>}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationResult<
+        Awaited<ReturnType<typeof confirmOrder>>,
+        TError,
+        {data: BodyType<ConfirmOrderBody>},
+        TContext
+      > => {
+
+      const mutationOptions = getConfirmOrderMutationOptions(options);
+
+      return useMutation(mutationOptions);
+    }
+    /**
+ * @summary Fetch an order placed by the current user
+ */
+export const getOrder = (
+    orderId: number,
+ options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<OrderObject>(
+      {url: `/orders/${orderId}`, method: 'GET', signal
+    },
+      options);
+    }
+  
+
+export const getGetOrderQueryKey = (orderId: number,) => {
+    return [`/orders/${orderId}`] as const;
+    }
+
+    
+export const getGetOrderQueryOptions = <TData = Awaited<ReturnType<typeof getOrder>>, TError = ErrorType<ErrorMessage>>(orderId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getOrder>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetOrderQueryKey(orderId);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getOrder>>> = ({ signal }) => getOrder(orderId, requestOptions, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, enabled: !!(orderId), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getOrder>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetOrderQueryResult = NonNullable<Awaited<ReturnType<typeof getOrder>>>
+export type GetOrderQueryError = ErrorType<ErrorMessage>
+
+/**
+ * @summary Fetch an order placed by the current user
+ */
+export const useGetOrder = <TData = Awaited<ReturnType<typeof getOrder>>, TError = ErrorType<ErrorMessage>>(
+ orderId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getOrder>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+
+  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } => {
+
+  const queryOptions = getGetOrderQueryOptions(orderId,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+/**
+ * @summary Mark one purchased game in an order as activated by the user
+ */
+export const activateOrderItem = (
+    orderId: number,
+    itemId: number,
+ options?: SecondParameter<typeof customInstance>,) => {
+      
+      
+      return customInstance<OrderItemObject>(
+      {url: `/orders/${orderId}/items/${itemId}/activate`, method: 'PATCH'
+    },
+      options);
+    }
+  
+
+
+export const getActivateOrderItemMutationOptions = <TError = ErrorType<ErrorMessage>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof activateOrderItem>>, TError,{orderId: number;itemId: number}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof activateOrderItem>>, TError,{orderId: number;itemId: number}, TContext> => {
+const {mutation: mutationOptions, request: requestOptions} = options ?? {};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof activateOrderItem>>, {orderId: number;itemId: number}> = (props) => {
+          const {orderId,itemId} = props ?? {};
+
+          return  activateOrderItem(orderId,itemId,requestOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type ActivateOrderItemMutationResult = NonNullable<Awaited<ReturnType<typeof activateOrderItem>>>
+    
+    export type ActivateOrderItemMutationError = ErrorType<ErrorMessage>
+
+    /**
+ * @summary Mark one purchased game in an order as activated by the user
+ */
+export const useActivateOrderItem = <TError = ErrorType<ErrorMessage>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof activateOrderItem>>, TError,{orderId: number;itemId: number}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationResult<
+        Awaited<ReturnType<typeof activateOrderItem>>,
+        TError,
+        {orderId: number;itemId: number},
+        TContext
+      > => {
+
+      const mutationOptions = getActivateOrderItemMutationOptions(options);
+
+      return useMutation(mutationOptions);
+    }
+    /**
  * @summary Refresh token
  */
 export const refresh = (

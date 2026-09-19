@@ -260,6 +260,157 @@ paths:
                 $ref: '#/components/schemas/errorMessage'
       security:
         - bearerHttpAuthentication: []
+  /orders/payment-intent:
+    post:
+      summary: Create a Stripe PaymentIntent for the given cart items, server-priced
+      operationId: createPaymentIntent
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - items
+              properties:
+                items:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/orderItemInput'
+      responses:
+        '201':
+          description: Client secret to confirm payment with on the client
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/paymentIntentResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+      security:
+        - bearerHttpAuthentication: []
+  /orders/confirm:
+    post:
+      summary: Confirm a succeeded PaymentIntent and create the order, with one activation code per game
+      operationId: confirmOrder
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - paymentIntentId
+              properties:
+                paymentIntentId:
+                  type: string
+      responses:
+        '201':
+          description: The created (or already-existing) order
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/orderObject'
+        '400':
+          description: Payment was not completed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+      security:
+        - bearerHttpAuthentication: []
+  /orders/{orderId}:
+    get:
+      summary: Fetch an order placed by the current user
+      operationId: getOrder
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 1
+          description: The order id to retrieve
+      responses:
+        '200':
+          description: Order object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/orderObject'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+        '404':
+          description: Order not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+      security:
+        - bearerHttpAuthentication: []
+  /orders/{orderId}/items/{itemId}/activate:
+    patch:
+      summary: Mark one purchased game in an order as activated by the user
+      operationId: activateOrderItem
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 1
+        - name: itemId
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: The updated order item
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/orderItemObject'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+        '404':
+          description: Order or item not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+      security:
+        - bearerHttpAuthentication: []
   /refresh:
     get:
       summary: Refresh token
@@ -415,6 +566,65 @@ components:
           type: number
         discount:
           type: number
+    orderItemInput:
+      type: object
+      required:
+        - gameId
+        - quantity
+      properties:
+        gameId:
+          type: integer
+        quantity:
+          type: integer
+    paymentIntentResponse:
+      type: object
+      properties:
+        clientSecret:
+          type: string
+        amount:
+          type: integer
+          description: Amount in cents, matching what Stripe charges
+    orderItemObject:
+      type: object
+      properties:
+        id:
+          type: integer
+        gameId:
+          type: integer
+        quantity:
+          type: integer
+        price:
+          type: integer
+          description: Unit price actually charged, in cents
+        activationCode:
+          type: string
+        activated:
+          type: boolean
+        activatedAt:
+          type: string
+          format: date-time
+          nullable: true
+        game:
+          $ref: '#/components/schemas/gameObject'
+    orderObject:
+      type: object
+      properties:
+        id:
+          type: integer
+        userId:
+          type: integer
+        totalPrice:
+          type: integer
+          description: Total actually charged, in cents
+        stripePaymentIntentId:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/orderItemObject'
     userCredentials:
       type: object
       properties:

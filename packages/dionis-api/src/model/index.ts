@@ -7,6 +7,8 @@
 
 export * from './authErrorMessage';
 export * from './authErrorMessageUser';
+export * from './confirmOrderBody';
+export * from './createPaymentIntentBody';
 export * from './deleteUserBody';
 export * from './errorMessage';
 export * from './gameObject';
@@ -14,6 +16,10 @@ export * from './gamesArray';
 export * from './getGamesParams';
 export * from './getGamesPlatform';
 export * from './getGamesSort';
+export * from './orderItemInput';
+export * from './orderItemObject';
+export * from './orderObject';
+export * from './paymentIntentResponse';
 export * from './successMessage';
 export * from './userCredentials';
 export * from './userObject';

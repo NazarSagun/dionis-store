@@ -15,7 +15,7 @@ afterEach(() => {
   cleanup()
   localStorage.clear()
   useAuthStore.setState({ isAuthenticated: false, accessToken: null, user: null })
-  useCartStore.setState({ items: [], currentStep: 1 })
+  useCartStore.setState({ items: [], currentStep: 1, orderId: null })
 })
 
 // Start worker before all tests

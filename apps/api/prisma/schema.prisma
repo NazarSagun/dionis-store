@@ -18,11 +18,12 @@ model User {
   refreshToken String?  @unique
   role         Int      @default(101)
   createdAt    DateTime @default(now())
+  orders       Order[]
 }
 
 model Game_pc {
-  id                     Int    @id
-  title                  String @unique
+  id                     Int         @id
+  title                  String      @unique
   thumbnail              String
   short_description      String
   game_url               String
@@ -35,4 +36,28 @@ model Game_pc {
   price                  Int
   rating                 String
   discount               Int
+  orderItems             OrderItem[]
+}
+
+model Order {
+  id                    Int         @id @default(autoincrement())
+  userId                Int
+  user                  User        @relation(fields: [userId], references: [id])
+  totalPrice            Int
+  stripePaymentIntentId String      @unique
+  createdAt             DateTime    @default(now())
+  items                 OrderItem[]
+}
+
+model OrderItem {
+  id             Int       @id @default(autoincrement())
+  orderId        Int
+  order          Order     @relation(fields: [orderId], references: [id])
+  gameId         Int
+  game           Game_pc   @relation(fields: [gameId], references: [id])
+  quantity       Int
+  price          Int
+  activationCode String
+  activated      Boolean   @default(false)
+  activatedAt    DateTime?
 }

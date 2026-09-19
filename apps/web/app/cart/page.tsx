@@ -5,7 +5,7 @@ import { useLogin, useRegister } from '@repo/dionis-api/src/dionis/default/defau
 import { Dialog, DialogContent, toast } from '@repo/ui'
 
 import { AuthForm, FormVariant, useAuthStore, UserData } from '@/features/auth'
-import { Payment, ShoppingCart, useCartStore } from '@/features/cart'
+import { GameActivation, Payment, ShoppingCart, useCartStore } from '@/features/cart'
 
 const Page = () => {
   const [isOpen, setIsOpen] = useState(false)
@@ -65,6 +65,7 @@ const Page = () => {
       <div>
         {currentStep === 1 && <ShoppingCart />}
         {currentStep === 2 && <Payment />}
+        {currentStep === 3 && <GameActivation />}
       </div>
       <DialogContent className='sm:max-w-[425px]'>
         <AuthForm
