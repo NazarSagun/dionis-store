@@ -25,7 +25,7 @@ export const WishlistSection = () => {
     <div data-testid='wishlist' className='w-full'>
       <h2 className='w-full pt-16 text-center font-display text-xl uppercase text-neon-magenta'>Wishlist</h2>
       <div className='w-full pt-10'>
-        <GamesList gamesList={games} showDiscount />
+        <GamesList gamesList={games} />
       </div>
     </div>
   )

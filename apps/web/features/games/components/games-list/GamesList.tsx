@@ -10,10 +10,9 @@ export type GamesListGame = Pick<
 
 interface GamesListProps {
   gamesList: GamesListGame[]
-  showDiscount?: boolean
 }
 
-export const GamesList = ({ gamesList, showDiscount = false }: GamesListProps) => {
+export const GamesList = ({ gamesList }: GamesListProps) => {
   return (
     <div className='grid w-full grid-cols-2 gap-6 pb-20 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5'>
       {gamesList.map((game) => (
@@ -25,7 +24,7 @@ export const GamesList = ({ gamesList, showDiscount = false }: GamesListProps) =
             rating={game.rating}
             platform={game.platform}
             imageSrc={game.thumbnail}
-            discount={showDiscount ? game.discount : undefined}
+            discount={game.discount}
           />
         </Link>
       ))}

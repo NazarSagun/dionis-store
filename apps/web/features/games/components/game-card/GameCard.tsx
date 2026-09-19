@@ -5,6 +5,7 @@ import { GameObject } from '@repo/dionis-api/src/model'
 import { useWishlistStore } from '@/features/wishlist/store/useWishlistStore'
 
 import { calculateDiscountedPrice } from '../../helpers'
+import { RatingBadge } from '../rating-badge'
 
 export type GameCardProps = Pick<GameObject, 'title' | 'rating' | 'price' | 'platform'> & {
   id?: number
@@ -75,18 +76,16 @@ export const GameCard = ({ id, title, rating, price, onClick, platform, imageSrc
         <h3 className='w-full truncate font-mono text-lg font-bold'>{title}</h3>
         <span className='font-mono text-sm text-muted-foreground'>{platform}</span>
         <div className='flex items-center justify-between pt-1'>
-          <span className='rounded border-2 border-ink bg-neon-green p-[3px] font-mono text-sm font-bold text-ink'>
-            {rating}
-          </span>
+          <RatingBadge rating={rating} />
           {discount ? (
             <span className='flex items-baseline gap-1.5'>
               <span className='font-mono text-xs text-muted-foreground line-through'>€{price}</span>
-              <span className='font-display text-lg text-neon-magenta'>
+              <span className='font-display text-xl text-neon-magenta'>
                 €{calculateDiscountedPrice(price, discount)}
               </span>
             </span>
           ) : (
-            <span className='font-display text-lg text-neon-magenta'>€{price}</span>
+            <span className='font-display text-xl text-neon-magenta'>€{price}</span>
           )}
         </div>
       </div>

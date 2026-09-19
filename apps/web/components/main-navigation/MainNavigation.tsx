@@ -16,9 +16,9 @@ export const MainNavigation = () => {
   return (
     <nav className='flex h-[10vh] items-center justify-between border-b-4 border-neon-magenta bg-muted px-[35px]'>
       <div className='flex items-center'>
-        <Link href='/' className='flex items-center'>
-          <span className='mr-2.5 cursor-pointer font-display text-sm text-neon-magenta'>Dionis</span>
-          <Image priority={true} width={40} height={40} alt='logo' src={`/icons/logo.png`} />
+        <Link href='/' className='flex items-center gap-3'>
+          <span className='size-8 rounded border-2 border-ink bg-neon-magenta' />
+          <span className='cursor-pointer font-display text-base text-neon-magenta'>DIONIS</span>
         </Link>
       </div>
       <nav className='flex'>

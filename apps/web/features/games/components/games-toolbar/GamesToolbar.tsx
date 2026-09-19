@@ -67,7 +67,7 @@ export const GamesToolbar = ({
   const selectedSortLabel = SORT_OPTIONS.find((option) => option.value === sort)?.label
 
   return (
-    <div data-testid='games-toolbar' className='flex w-full flex-wrap items-end justify-center gap-8 pt-20'>
+    <div data-testid='games-toolbar' className='flex w-full flex-wrap items-end justify-between gap-8 pt-20'>
       <div className='flex flex-col gap-2'>
         <label htmlFor='search' className='font-mono text-xs font-bold uppercase tracking-wide text-neon-cyan'>
           Search
