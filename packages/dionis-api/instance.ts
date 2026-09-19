@@ -3,7 +3,7 @@
 import Axios, { AxiosError, AxiosRequestConfig } from 'axios'
 
 export const AXIOS_INSTANCE = Axios.create({
-  baseURL: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:8080'}/api`,
+  baseURL: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3500'}/api`,
   withCredentials: true
 })
 

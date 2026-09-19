@@ -13,5 +13,5 @@ RUN pnpm --filter api exec prisma generate
 RUN pnpm --filter api build
 
 WORKDIR /app/apps/api
-EXPOSE 8080
+EXPOSE 3500
 CMD ["node", "dist/main.js"]

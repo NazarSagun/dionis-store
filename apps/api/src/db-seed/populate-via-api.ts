@@ -5,7 +5,7 @@ import dotenv from 'dotenv'
 
 dotenv.config()
 
-const API_URL = process.env.SEED_API_URL || 'http://localhost:8080/api'
+const API_URL = process.env.SEED_API_URL || 'http://localhost:3500/api'
 const SEED_ADMIN_NAME = process.env.SEED_ADMIN_NAME || 'Seed Admin'
 const SEED_ADMIN_EMAIL = process.env.SEED_ADMIN_EMAIL || 'seed-admin@dionis-store.local'
 const SEED_ADMIN_PASSWORD = process.env.SEED_ADMIN_PASSWORD || 'seed-admin-password'
