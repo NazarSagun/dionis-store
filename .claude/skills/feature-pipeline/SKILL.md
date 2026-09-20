@@ -32,8 +32,9 @@ Stop here and show the user the spec. Don't proceed to phase 2 until they've rev
 Build the screens/views the spec describes, in Figma, using this repo's existing Figma skills together:
 
 1. Load the `figma-use` skill first - it's a mandatory prerequisite for any `use_figma` call, per its own description.
-2. Load `anti-ui-slop` to actually design the new screens. It works by extracting the design DNA from an **existing selected frame** and extending it - it does not design from nothing. Ask the user to select the closest existing frame in the product's Figma file (e.g. the existing "Cart" frame, for anything in the checkout flow) before starting, if they haven't already. Feed it the spec's Requirements and Acceptance criteria as the content/requirements source per its "Content Handling" step - it must use that content as source of truth, not invent copy.
-3. Once the design is approved, update the spec's **Design reference** section with the resulting frame name(s) and link(s).
+2. Load `ui-ux-pro-max` to actually design the new screens. Feed it the spec's Requirements and Acceptance criteria as the content/requirements source - it must use that content as source of truth, not invent copy.
+3. Once the design is built, ask the user whether to run `anti-ui-slop` on it as a distinctiveness pass. It works by extracting the design DNA from an **existing selected frame** and extending it, so if they say yes, have them select the closest existing frame in the product's Figma file (e.g. the existing "Cart" frame, for anything in the checkout flow) first.
+4. Once the design is approved, update the spec's **Design reference** section with the resulting frame name(s) and link(s).
 
 Stop here and show the user the design. Don't proceed to phase 3 until they've reviewed it.
 
