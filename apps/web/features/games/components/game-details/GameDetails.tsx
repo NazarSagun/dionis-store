@@ -37,10 +37,10 @@ export const GameDetails = ({ gameId }: GameDetailsProps) => {
   const { data, isLoading } = useGetGame(gameId)
 
   const addGameHandler = (cartItem: CartItem) => {
-    const gameInCart = items.find((item) => item.id === cartItem.id)
-    toast({ title: `${data?.title} was added to your cart!` })
+    const gameInCart = items.find((item) => item.id === cartItem.id && item.editionId === cartItem.editionId)
+    toast({ title: `${cartItem.editionName ?? data?.title} was added to your cart!` })
     if (gameInCart) {
-      updateItemQuantity(gameInCart.id, gameInCart.quantity + 1)
+      updateItemQuantity(gameInCart.id, gameInCart.editionId, gameInCart.quantity + 1)
     } else {
       addItem(cartItem)
     }
@@ -90,6 +90,7 @@ export const GameDetails = ({ gameId }: GameDetailsProps) => {
     ]
 
     const cartItem = buildCartItem(data)
+    const editions = data.editions ?? []
 
     return (
       <div className='flex min-h-[75vh] flex-col gap-16 px-40 py-12'>
@@ -102,6 +103,13 @@ export const GameDetails = ({ gameId }: GameDetailsProps) => {
               <h1 className='font-display text-2xl'>{data.title}</h1>
 
               <p className='m-0 mt-4 font-mono text-lg text-muted-foreground'>{data.short_description}</p>
+
+              {editions.map((edition) => (
+                <div key={edition.id} data-testid='edition-description' className='mt-3'>
+                  <span className='font-mono text-sm font-bold text-neon-cyan'>{edition.name}: </span>
+                  <span className='font-mono text-sm text-muted-foreground'>{edition.description}</span>
+                </div>
+              ))}
             </div>
             <div className='flex flex-col'>
               <div className='mb-4 mt-8 flex items-end justify-center gap-[0.6rem]'>
@@ -115,7 +123,7 @@ export const GameDetails = ({ gameId }: GameDetailsProps) => {
                   {data.discount > 0 ? calculateDiscountedPrice(data.price, data.discount) : data.price}€
                 </span>
               </div>
-              <div className='flex gap-4'>
+              <div className='flex flex-wrap gap-4'>
                 <button
                   className={cn(buttonStyles, isWishlisted ? 'bg-neon-magenta' : 'bg-panel-alt')}
                   data-testid='wishlist-toggle'
@@ -135,12 +143,33 @@ export const GameDetails = ({ gameId }: GameDetailsProps) => {
                   <Image width={24} height={24} alt='favorite' src='/icons/favorite.svg' />
                 </button>
                 <button
-                  className={cn(buttonStyles, 'w-full justify-center bg-neon-magenta')}
+                  className={cn(buttonStyles, 'min-w-0 flex-1 justify-center bg-neon-magenta')}
+                  data-testid='edition-option'
                   onClick={() => addGameHandler(cartItem)}
                 >
                   <Image width={24} height={24} alt='shopping-cart' src='/icons/shopping-cart.svg' />{' '}
-                  <span className='font-display text-xs'>Add to Cart</span>
+                  <span className='font-display text-xs'>Add Digital Copy</span>
                 </button>
+                {editions.map((edition) => {
+                  const outOfStock = edition.stock <= 0
+                  return (
+                    <button
+                      key={edition.id}
+                      className={cn(
+                        buttonStyles,
+                        'min-w-0 flex-1 flex-col justify-center gap-0 bg-neon-magenta disabled:opacity-50',
+                      )}
+                      data-testid='edition-option'
+                      disabled={outOfStock}
+                      onClick={() => addGameHandler(buildEditionCartItem(data, edition))}
+                    >
+                      <span className='font-display text-xs'>{edition.name}</span>
+                      <span data-testid='edition-stock' className='font-mono text-xs'>
+                        {outOfStock ? 'Out of stock' : `${calculateDiscountedPrice(edition.price, edition.discount)}€`}
+                      </span>
+                    </button>
+                  )
+                })}
               </div>
             </div>
           </div>
@@ -172,11 +201,29 @@ function buildCartItem(data: {
 }) {
   return {
     id: data.id,
-    quantity: 1,
+    editionId: null,
     thumbnailUrl: data.thumbnail,
     title: data.title,
     price: data.price,
     platform: data.platform,
     discount: data.discount,
+    quantity: 1,
+  }
+}
+
+function buildEditionCartItem(
+  data: { id: number; thumbnail: string; title: string; platform: string },
+  edition: { id: number; name: string; price: number; discount: number },
+) {
+  return {
+    id: data.id,
+    editionId: edition.id,
+    editionName: edition.name,
+    thumbnailUrl: data.thumbnail,
+    title: data.title,
+    price: edition.price,
+    platform: data.platform,
+    discount: edition.discount,
+    quantity: 1,
   }
 }

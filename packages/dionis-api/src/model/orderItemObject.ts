@@ -4,13 +4,22 @@
  * Swagger Dionis
  * OpenAPI spec version: 1.0.0
  */
+import type { GameEditionObject } from './gameEditionObject';
 import type { GameObject } from './gameObject';
 
 export interface OrderItemObject {
   activated?: boolean;
   /** @nullable */
   activatedAt?: string | null;
-  activationCode?: string;
+  /**
+   * Null for a physical edition purchase - there is nothing to redeem
+   * @nullable
+   */
+  activationCode?: string | null;
+  /** @nullable */
+  edition?: GameEditionObject;
+  /** @nullable */
+  editionId?: number | null;
   game?: GameObject;
   gameId?: number;
   id?: number;

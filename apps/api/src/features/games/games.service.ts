@@ -66,7 +66,10 @@ export class GamesService {
   }
 
   async fetchGameById({ gameId }: { gameId: number }) {
-    const game = await this.prisma.game_pc.findUnique({ where: { id: gameId } })
+    const game = await this.prisma.game_pc.findUnique({
+      where: { id: gameId },
+      include: { editions: { orderBy: { id: 'asc' } } },
+    })
     if (!game) {
       throw new CustomError('There is no such game', 400)
     }

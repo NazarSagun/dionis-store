@@ -5,6 +5,7 @@ import { Skeleton } from '@repo/ui'
 
 import { useCartStore } from '../../store/useCartStore'
 import { ActivationRow } from '../activation-row'
+import { ShippingRow } from '../shipping-row'
 
 export const GameActivation = () => {
   const orderId = useCartStore((state) => state.orderId)
@@ -40,9 +41,13 @@ export const GameActivation = () => {
     <div data-testid='game-activation' className='flex w-full flex-col items-center gap-10 px-[35px] py-16'>
       <h1 className='font-display text-xl uppercase text-neon-magenta'>Game Activation</h1>
       <div className='flex w-full max-w-[900px] flex-col gap-4'>
-        {items.map((item) => (
-          <ActivationRow key={item.id} orderId={order.id as number} item={item} />
-        ))}
+        {items.map((item) =>
+          item.editionId != null ? (
+            <ShippingRow key={item.id} item={item} order={order} />
+          ) : (
+            <ActivationRow key={item.id} orderId={order.id as number} item={item} />
+          ),
+        )}
       </div>
       <button
         type='button'

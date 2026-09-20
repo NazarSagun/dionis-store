@@ -381,7 +381,7 @@ paths:
         - bearerHttpAuthentication: []
   /orders/confirm:
     post:
-      summary: Confirm a succeeded PaymentIntent and create the order, with one activation code per game
+      summary: Confirm a succeeded PaymentIntent and create the order, with one activation code per digital game
       operationId: confirmOrder
       requestBody:
         required: true
@@ -394,6 +394,8 @@ paths:
               properties:
                 paymentIntentId:
                   type: string
+                shippingAddress:
+                  $ref: '#/components/schemas/shippingAddressInput'
       responses:
         '201':
           description: The created (or already-existing) order
@@ -647,6 +649,32 @@ components:
           type: number
         discount:
           type: number
+        editions:
+          type: array
+          items:
+            $ref: '#/components/schemas/gameEditionObject'
+    gameEditionObject:
+      type: object
+      required:
+        - id
+        - name
+        - price
+        - discount
+        - stock
+        - description
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        price:
+          type: integer
+        discount:
+          type: integer
+        stock:
+          type: integer
+        description:
+          type: string
     orderItemInput:
       type: object
       required:
@@ -657,6 +685,10 @@ components:
           type: integer
         quantity:
           type: integer
+        editionId:
+          type: integer
+          nullable: true
+          description: A physical edition's id, or omitted/null for the digital purchase
     paymentIntentResponse:
       type: object
       properties:
@@ -672,6 +704,9 @@ components:
           type: integer
         gameId:
           type: integer
+        editionId:
+          type: integer
+          nullable: true
         quantity:
           type: integer
         price:
@@ -679,6 +714,8 @@ components:
           description: Unit price actually charged, in cents
         activationCode:
           type: string
+          nullable: true
+          description: Null for a physical edition purchase - there is nothing to redeem
         activated:
           type: boolean
         activatedAt:
@@ -687,6 +724,9 @@ components:
           nullable: true
         game:
           $ref: '#/components/schemas/gameObject'
+        edition:
+          $ref: '#/components/schemas/gameEditionObject'
+          nullable: true
     ordersArray:
       type: array
       items:
@@ -722,9 +762,27 @@ components:
           type: integer
         totalPrice:
           type: integer
-          description: Total actually charged, in cents
+          description: Total actually charged, in cents, including the shipping fee if any item is a physical edition
         stripePaymentIntentId:
           type: string
+        shippingName:
+          type: string
+          nullable: true
+        shippingLine1:
+          type: string
+          nullable: true
+        shippingLine2:
+          type: string
+          nullable: true
+        shippingCity:
+          type: string
+          nullable: true
+        shippingPostalCode:
+          type: string
+          nullable: true
+        shippingCountry:
+          type: string
+          nullable: true
         createdAt:
           type: string
           format: date-time
@@ -732,6 +790,27 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/orderItemObject'
+    shippingAddressInput:
+      type: object
+      required:
+        - shippingName
+        - shippingLine1
+        - shippingCity
+        - shippingPostalCode
+        - shippingCountry
+      properties:
+        shippingName:
+          type: string
+        shippingLine1:
+          type: string
+        shippingLine2:
+          type: string
+        shippingCity:
+          type: string
+        shippingPostalCode:
+          type: string
+        shippingCountry:
+          type: string
     userCredentials:
       type: object
       properties:

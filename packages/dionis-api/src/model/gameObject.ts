@@ -4,10 +4,12 @@
  * Swagger Dionis
  * OpenAPI spec version: 1.0.0
  */
+import type { GameEditionObject } from './gameEditionObject';
 
 export interface GameObject {
   developer: string;
   discount: number;
+  editions?: GameEditionObject[];
   freetogame_profile_url: string;
   game_url: string;
   genre: string;

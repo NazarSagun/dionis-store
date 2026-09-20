@@ -6,6 +6,11 @@
  */
 
 export interface OrderItemInput {
+  /**
+   * A physical edition's id, or omitted/null for the digital purchase
+   * @nullable
+   */
+  editionId?: number | null;
   gameId: number;
   quantity: number;
 }

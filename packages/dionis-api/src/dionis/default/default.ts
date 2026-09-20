@@ -705,7 +705,7 @@ export const useCreatePaymentIntent = <TError = ErrorType<ErrorMessage>,
       return useMutation(mutationOptions);
     }
     /**
- * @summary Confirm a succeeded PaymentIntent and create the order, with one activation code per game
+ * @summary Confirm a succeeded PaymentIntent and create the order, with one activation code per digital game
  */
 export const confirmOrder = (
     confirmOrderBody: BodyType<ConfirmOrderBody>,
@@ -746,7 +746,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?? {};
     export type ConfirmOrderMutationError = ErrorType<ErrorMessage>
 
     /**
- * @summary Confirm a succeeded PaymentIntent and create the order, with one activation code per game
+ * @summary Confirm a succeeded PaymentIntent and create the order, with one activation code per digital game
  */
 export const useConfirmOrder = <TError = ErrorType<ErrorMessage>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof confirmOrder>>, TError,{data: BodyType<ConfirmOrderBody>}, TContext>, request?: SecondParameter<typeof customInstance>}

@@ -23,7 +23,7 @@ export class OrdersController {
   @Post('confirm')
   async confirmOrder(@Req() req: AuthenticatedRequest, @Body() dto: ConfirmOrderDto) {
     try {
-      return await this.ordersService.confirmOrder(req.user.email, dto.paymentIntentId)
+      return await this.ordersService.confirmOrder(req.user.email, dto.paymentIntentId, dto.shippingAddress)
     } catch (error) {
       throw toHttpException(error)
     }

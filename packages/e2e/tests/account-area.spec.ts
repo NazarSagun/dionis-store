@@ -17,7 +17,7 @@ async function addGameToCartFromHome(page: Page, index: number) {
   await expect(card).toBeVisible()
   await card.click()
   await expect(page).toHaveURL(/\/game\/\d+/)
-  await page.getByRole('button', { name: /add to cart/i }).click()
+  await page.getByRole('button', { name: /add digital copy/i }).click()
 }
 
 // Marks every current Game Activation row activated and clicks Finish, which

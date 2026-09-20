@@ -8,8 +8,10 @@ describe('OrdersService', () => {
   let prisma: {
     user: { findUnique: jest.Mock }
     game_pc: { findMany: jest.Mock }
+    gameEdition: { findMany: jest.Mock; updateMany: jest.Mock }
     order: { findUnique: jest.Mock; findFirst: jest.Mock; findMany: jest.Mock; create: jest.Mock }
     orderItem: { update: jest.Mock }
+    $transaction: jest.Mock
   }
   let stripe: { createPaymentIntent: jest.Mock; retrievePaymentIntent: jest.Mock }
 
@@ -19,8 +21,13 @@ describe('OrdersService', () => {
     prisma = {
       user: { findUnique: jest.fn().mockResolvedValue(user) },
       game_pc: { findMany: jest.fn() },
+      gameEdition: { findMany: jest.fn().mockResolvedValue([]), updateMany: jest.fn().mockResolvedValue({ count: 1 }) },
       order: { findUnique: jest.fn(), findFirst: jest.fn(), findMany: jest.fn(), create: jest.fn() },
       orderItem: { update: jest.fn() },
+      // A transparent pass-through: the callback runs against the same mock
+      // `prisma`, so every other test can keep asserting on
+      // `prisma.order.create` etc. without knowing a transaction wraps it.
+      $transaction: jest.fn((callback) => callback(prisma)),
     }
     stripe = { createPaymentIntent: jest.fn(), retrievePaymentIntent: jest.fn() }
 
@@ -59,6 +66,29 @@ describe('OrdersService', () => {
     it('rejects an empty items array', async () => {
       await expect(service.createPaymentIntent(user.email, [])).rejects.toThrow('Invalid cart items supplied')
     })
+
+    it('adds the flat shipping fee once when the cart holds a physical edition', async () => {
+      prisma.game_pc.findMany.mockResolvedValue([{ id: 1, price: 50, discount: 0 }])
+      prisma.gameEdition.findMany.mockResolvedValue([{ id: 10, price: 69, discount: 0 }])
+      stripe.createPaymentIntent.mockResolvedValue({ client_secret: 'secret_789' })
+
+      await service.createPaymentIntent(user.email, [
+        { gameId: 1, quantity: 1 },
+        { gameId: 1, quantity: 1, editionId: 10 },
+      ])
+
+      // 50*100 digital + 69*100 physical + the 500-cent flat fee = 12400
+      expect(stripe.createPaymentIntent).toHaveBeenCalledWith(12400, expect.any(Object))
+    })
+
+    it('charges no shipping fee for a digital-only cart', async () => {
+      prisma.game_pc.findMany.mockResolvedValue([{ id: 1, price: 50, discount: 0 }])
+      stripe.createPaymentIntent.mockResolvedValue({ client_secret: 'secret_000' })
+
+      await service.createPaymentIntent(user.email, [{ gameId: 1, quantity: 1 }])
+
+      expect(stripe.createPaymentIntent).toHaveBeenCalledWith(5000, expect.any(Object))
+    })
   })
 
   describe('confirmOrder', () => {
@@ -87,6 +117,58 @@ describe('OrdersService', () => {
 
       const [args] = prisma.order.findUnique.mock.calls[0]
       expect(args.include.items.orderBy).toEqual({ id: 'asc' })
+    })
+  })
+
+  describe('confirmOrder with a physical edition', () => {
+    const shippingAddress = {
+      shippingName: 'Alex Doe',
+      shippingLine1: 'Unter den Linden 1',
+      shippingCity: 'Berlin',
+      shippingPostalCode: '10115',
+      shippingCountry: 'Germany',
+    }
+
+    beforeEach(() => {
+      prisma.order.findUnique.mockResolvedValue(null)
+      prisma.game_pc.findMany.mockResolvedValue([])
+      stripe.retrievePaymentIntent.mockResolvedValue({
+        status: 'succeeded',
+        metadata: { items: JSON.stringify([{ gameId: 1, quantity: 1, editionId: 10 }]) },
+      })
+      prisma.gameEdition.findMany.mockResolvedValue([{ id: 10, price: 69, discount: 0 }])
+      prisma.order.create.mockResolvedValue({ id: 1, items: [] })
+    })
+
+    it('rejects a physical order with no shipping address', async () => {
+      await expect(service.confirmOrder(user.email, 'pi_123')).rejects.toThrow(
+        'A shipping address is required for a physical edition',
+      )
+      expect(prisma.order.create).not.toHaveBeenCalled()
+    })
+
+    it('rejects an edition with insufficient stock and creates no order', async () => {
+      prisma.gameEdition.updateMany.mockResolvedValue({ count: 0 })
+
+      await expect(service.confirmOrder(user.email, 'pi_123', shippingAddress)).rejects.toThrow('out of stock')
+      expect(prisma.order.create).not.toHaveBeenCalled()
+    })
+
+    it('decrements the edition stock atomically and stores the shipping address', async () => {
+      await service.confirmOrder(user.email, 'pi_123', shippingAddress)
+
+      expect(prisma.gameEdition.updateMany).toHaveBeenCalledWith({
+        where: { id: 10, stock: { gte: 1 } },
+        data: { stock: { decrement: 1 } },
+      })
+      expect(prisma.order.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({
+            ...shippingAddress,
+            items: { create: [expect.objectContaining({ editionId: 10, activationCode: null })] },
+          }),
+        }),
+      )
     })
   })
 

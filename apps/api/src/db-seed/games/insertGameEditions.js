@@ -36,35 +36,55 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var insertGameEditions_1 = require("./games/insertGameEditions");
-var insertGames_1 = require("./games/insertGames");
-var client_1 = require("@prisma/client");
-var prisma = new client_1.PrismaClient();
-function insertAllData() {
-    return __awaiter(this, void 0, void 0, function () {
-        var error_1;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    _a.trys.push([0, 3, 4, 6]);
-                    return [4 /*yield*/, (0, insertGames_1.insertGamesData)(prisma)];
-                case 1:
-                    _a.sent();
-                    return [4 /*yield*/, (0, insertGameEditions_1.insertGameEditionsData)(prisma)];
-                case 2:
-                    _a.sent();
-                    return [3 /*break*/, 6];
-                case 3:
-                    error_1 = _a.sent();
-                    console.error('Error inserting data:', error_1);
-                    return [3 /*break*/, 6];
-                case 4: return [4 /*yield*/, prisma.$disconnect()];
-                case 5:
-                    _a.sent();
-                    return [7 /*endfinally*/];
-                case 6: return [2 /*return*/];
-            }
-        });
+exports.insertGameEditionsData = void 0;
+// Seeds physical editions onto the game the storefront's home page shows
+// first (lowest id, since GamesService.fetchGames defaults to `orderBy: {
+// id: 'asc' }`), per physical-editions-spec.md Feature 1's "Out of scope"
+// note: editions are seeded, not created from the storefront. The E2E suite
+// (packages/e2e/tests/physical-editions.spec.ts) assumes this exact game and
+// these exact edition names, via card index 0.
+var insertGameEditionsData = function (prismaClient) { return __awaiter(void 0, void 0, void 0, function () {
+    var firstGame, error_1;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 3, , 4]);
+                return [4 /*yield*/, prismaClient.game_pc.findFirst({ orderBy: { id: 'asc' } })];
+            case 1:
+                firstGame = _a.sent();
+                if (!firstGame) {
+                    throw new Error('No games to attach editions to - run insertGamesData first');
+                }
+                return [4 /*yield*/, prismaClient.gameEdition.createMany({
+                        data: [
+                            {
+                                gameId: firstGame.id,
+                                name: 'Standard Physical Edition',
+                                price: firstGame.price + 10,
+                                discount: 0,
+                                stock: 25,
+                                description: 'Physical disc case only, no bonus items.',
+                            },
+                            {
+                                gameId: firstGame.id,
+                                name: "Collector's Edition",
+                                price: firstGame.price + 40,
+                                discount: 0,
+                                stock: 0,
+                                description: 'Steelbook case, 80-page art book, 3 enamel pins, and a double-sided world map poster.',
+                            },
+                        ],
+                    })];
+            case 2:
+                _a.sent();
+                console.log("Inserted physical editions for: ".concat(firstGame.title));
+                return [3 /*break*/, 4];
+            case 3:
+                error_1 = _a.sent();
+                console.error('Error inserting game editions:', error_1);
+                return [3 /*break*/, 4];
+            case 4: return [2 /*return*/];
+        }
     });
-}
-insertAllData();
+}); };
+exports.insertGameEditionsData = insertGameEditionsData;

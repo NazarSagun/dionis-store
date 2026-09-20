@@ -22,8 +22,8 @@ model User {
 }
 
 model Game_pc {
-  id                     Int         @id
-  title                  String      @unique
+  id                     Int           @id
+  title                  String        @unique
   thumbnail              String
   short_description      String
   game_url               String
@@ -37,6 +37,19 @@ model Game_pc {
   rating                 String
   discount               Int
   orderItems             OrderItem[]
+  editions               GameEdition[]
+}
+
+model GameEdition {
+  id          Int         @id @default(autoincrement())
+  gameId      Int
+  game        Game_pc     @relation(fields: [gameId], references: [id])
+  name        String
+  price       Int
+  discount    Int         @default(0)
+  stock       Int
+  description String
+  orderItems  OrderItem[]
 }
 
 model Order {
@@ -45,19 +58,27 @@ model Order {
   user                  User        @relation(fields: [userId], references: [id])
   totalPrice            Int
   stripePaymentIntentId String      @unique
+  shippingName          String?
+  shippingLine1         String?
+  shippingLine2         String?
+  shippingCity          String?
+  shippingPostalCode    String?
+  shippingCountry       String?
   createdAt             DateTime    @default(now())
   items                 OrderItem[]
 }
 
 model OrderItem {
-  id             Int       @id @default(autoincrement())
+  id             Int          @id @default(autoincrement())
   orderId        Int
-  order          Order     @relation(fields: [orderId], references: [id])
+  order          Order        @relation(fields: [orderId], references: [id])
   gameId         Int
-  game           Game_pc   @relation(fields: [gameId], references: [id])
+  game           Game_pc      @relation(fields: [gameId], references: [id])
+  editionId      Int?
+  edition        GameEdition? @relation(fields: [editionId], references: [id])
   quantity       Int
   price          Int
-  activationCode String
-  activated      Boolean   @default(false)
+  activationCode String?
+  activated      Boolean      @default(false)
   activatedAt    DateTime?
 }

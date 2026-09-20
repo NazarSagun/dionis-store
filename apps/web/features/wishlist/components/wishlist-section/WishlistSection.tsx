@@ -27,6 +27,7 @@ export const WishlistSection = () => {
   const onAddToCart = (game: (typeof games)[number]) => {
     addItem({
       id: game.id,
+      editionId: null,
       thumbnailUrl: game.thumbnail,
       title: game.title,
       price: game.price,

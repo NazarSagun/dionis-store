@@ -20,6 +20,7 @@ vi.mock('../stripe-elements', () => ({
 
 const cartItem = {
   id: 1,
+  editionId: null,
   thumbnailUrl: 'https://example.com/thumb.jpg',
   title: 'Cyber Racer 2088',
   price: 59,

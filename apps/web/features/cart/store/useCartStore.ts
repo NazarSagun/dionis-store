@@ -5,6 +5,8 @@ import { persist } from 'zustand/middleware'
 
 export type CartItem = {
   id: number
+  editionId: number | null
+  editionName?: string
   thumbnailUrl: string
   title: string
   price: number
@@ -13,13 +15,16 @@ export type CartItem = {
   discount: number
 }
 
+const isSameLine = (item: CartItem, id: number, editionId: number | null) =>
+  item.id === id && item.editionId === editionId
+
 interface CartState {
   items: CartItem[]
   currentStep: number
   orderId: number | null
   addItem: (item: CartItem) => void
-  removeItem: (id: number) => void
-  updateItemQuantity: (id: number, quantity: number) => void
+  removeItem: (id: number, editionId: number | null) => void
+  updateItemQuantity: (id: number, editionId: number | null, quantity: number) => void
   setStep: (step: number) => void
   setOrderId: (orderId: number | null) => void
 }
@@ -31,10 +36,11 @@ export const useCartStore = create<CartState>()(
       currentStep: 1,
       orderId: null,
       addItem: (item) => set((state) => ({ items: [...state.items, item] })),
-      removeItem: (id) => set((state) => ({ items: state.items.filter((item) => item.id !== id) })),
-      updateItemQuantity: (id, quantity) =>
+      removeItem: (id, editionId) =>
+        set((state) => ({ items: state.items.filter((item) => !isSameLine(item, id, editionId)) })),
+      updateItemQuantity: (id, editionId, quantity) =>
         set((state) => ({
-          items: state.items.map((item) => (item.id === id ? { ...item, quantity } : item)),
+          items: state.items.map((item) => (isSameLine(item, id, editionId) ? { ...item, quantity } : item)),
         })),
       setStep: (step) => set({ currentStep: step }),
       setOrderId: (orderId) => set({ orderId }),

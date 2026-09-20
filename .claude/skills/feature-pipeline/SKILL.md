@@ -5,13 +5,13 @@ description: Run this repo's full feature-development pipeline end to end - writ
 
 # Feature Pipeline
 
-This repo builds a feature in four phases, in order: spec, design, tests, implementation. `checkout-payment-activation-spec.md` and `progress.md` are the working precedent - the Payment and Game Activation steps were built exactly this way, and `packages/e2e/tests/payment.spec.ts` / `game-activation.spec.ts` were written against that spec before the corresponding `apps/web` and `apps/api` code existed.
+This repo builds a feature in four phases, in order: spec, design, tests, implementation. `.claude/specs/features/cart/checkout-payment-activation-spec.md` and its `progress.md` are the working precedent - the Payment and Game Activation steps were built exactly this way, and `packages/e2e/tests/payment.spec.ts` / `game-activation.spec.ts` were written against that spec before the corresponding `apps/web` and `apps/api` code existed.
 
 The four phases exist as separate steps, not one long unattended run, because each one produces something the user needs to look at before the next one can build on it correctly: a spec they haven't approved isn't safe to build a Figma screen from, and a screen that hasn't been approved isn't safe to write E2E tests against. **Stop and wait for the user's go-ahead after phase 1 and after phase 2, and again right before starting phase 4's implementation work.** If the user's request only wants one phase, do only that phase.
 
 ## Phase 1: Spec
 
-Write a requirements spec as a new markdown file at the repo root (`<feature-name>-spec.md`), matching the structure of `checkout-payment-activation-spec.md`:
+Write a requirements spec as a new markdown file under `.claude/specs/`, matching the structure of `.claude/specs/features/cart/checkout-payment-activation-spec.md`. Mirror `apps/web`'s folder hierarchy to place it: a spec scoped to one `apps/web/features/<name>` folder goes at `.claude/specs/features/<name>/<feature-name>-spec.md`; a spec scoped to one route under `apps/web/app` goes at `.claude/specs/app/<feature-name>-spec.md`; a store-wide spec that touches more than one feature folder goes directly at `.claude/specs/<feature-name>-spec.md`.
 
 - **Purpose** - what's missing today and what this spec adds, referencing the actual current code (read it, don't guess).
 - **Design reference** - a placeholder for now; phase 2 fills this in once the Figma design exists.

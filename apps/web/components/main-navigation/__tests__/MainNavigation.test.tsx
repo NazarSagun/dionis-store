@@ -1,3 +1,4 @@
+import userEvent from '@testing-library/user-event'
 import { describe, expect, it } from 'vitest'
 
 import { render } from '@/test-utils/utils'
@@ -14,8 +15,17 @@ describe('<MainNavigation />', () => {
   it('Should render links correctly', () => {
     const { getByText } = render(<MainNavigation />)
 
-    expect(getByText('Login')).toBeInTheDocument()
     expect(getByText('Home')).toBeInTheDocument()
     expect(getByText('DIONIS')).toBeInTheDocument()
+  })
+
+  it('Should show Login and Sign Up in the account menu when signed out', async () => {
+    const user = userEvent.setup()
+    const { getByTestId, findByText } = render(<MainNavigation />)
+
+    await user.click(getByTestId('account-menu-trigger'))
+
+    expect(await findByText('Login')).toBeInTheDocument()
+    expect(await findByText('Sign Up')).toBeInTheDocument()
   })
 })

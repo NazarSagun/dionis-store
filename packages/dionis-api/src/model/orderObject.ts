@@ -10,8 +10,20 @@ export interface OrderObject {
   createdAt?: string;
   id?: number;
   items?: OrderItemObject[];
+  /** @nullable */
+  shippingCity?: string | null;
+  /** @nullable */
+  shippingCountry?: string | null;
+  /** @nullable */
+  shippingLine1?: string | null;
+  /** @nullable */
+  shippingLine2?: string | null;
+  /** @nullable */
+  shippingName?: string | null;
+  /** @nullable */
+  shippingPostalCode?: string | null;
   stripePaymentIntentId?: string;
-  /** Total actually charged, in cents */
+  /** Total actually charged, in cents, including the shipping fee if any item is a physical edition */
   totalPrice?: number;
   userId?: number;
 }

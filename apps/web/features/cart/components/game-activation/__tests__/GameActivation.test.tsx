@@ -39,6 +39,35 @@ const buildOrder = (orderId: number, overrides: { item1Activated?: boolean; item
   ],
 })
 
+const buildMixedOrder = (orderId: number) => ({
+  id: orderId,
+  shippingName: 'Alex Doe',
+  shippingCity: 'Berlin',
+  items: [
+    {
+      id: 20,
+      gameId: 1,
+      editionId: null,
+      quantity: 1,
+      price: 5900,
+      activationCode: 'K7X9-QP2M-3F8L',
+      activated: false,
+      game: { title: 'Cyber Racer 2088', platform: 'PC', thumbnail: 'https://example.com/thumb.jpg' },
+    },
+    {
+      id: 21,
+      gameId: 1,
+      editionId: 10,
+      quantity: 1,
+      price: 6900,
+      activationCode: null,
+      activated: false,
+      game: { title: 'Cyber Racer 2088', platform: 'PC', thumbnail: 'https://example.com/thumb.jpg' },
+      edition: { id: 10, name: 'Standard Physical Edition' },
+    },
+  ],
+})
+
 describe('<GameActivation />', () => {
   beforeEach(() => {
     writeText.mockReset()
@@ -95,6 +124,29 @@ describe('<GameActivation />', () => {
     await waitFor(() => expect(within(rows[0]).getByTestId('activation-status')).toHaveTextContent(/activated/i))
   })
 
+  it('shows a shipping row with no code for a physical item, Finish stays enabled', async () => {
+    useCartStore.setState({ items: [], currentStep: 3, orderId: 105 })
+    serviceWorker.use(http.get('*/orders/105', () => HttpResponse.json(buildMixedOrder(105))))
+
+    render(<GameActivation />)
+
+    const activationRows = await screen.findAllByTestId('activation-row', {}, { timeout: FETCH_TIMEOUT })
+    expect(activationRows).toHaveLength(1)
+
+    const shippingRows = await screen.findAllByTestId('shipping-row', {}, { timeout: FETCH_TIMEOUT })
+    expect(shippingRows).toHaveLength(1)
+    expect(within(shippingRows[0]).queryByTestId('activation-code')).not.toBeInTheDocument()
+    expect(within(shippingRows[0]).getByTestId('shipping-note')).toHaveTextContent('Alex Doe')
+    expect(within(shippingRows[0]).getByTestId('shipping-note')).toHaveTextContent('Berlin')
+
+    // Activation happens on Steam - a physical row has nothing to activate
+    // either way, so it never gates Finish.
+    expect(screen.getByTestId('finish-button')).toBeEnabled()
+  })
+
+  // Stubs window.location and never restores it - keep this test last in the
+  // file, or any test after it can hang forever on MSW resolving a request
+  // URL against a destructured window.location.
   it('Finish clears the cart and goes home even with unactivated items left', async () => {
     useCartStore.setState({ items: [], currentStep: 3, orderId: 104 })
     serviceWorker.use(http.get('*/orders/104', () => HttpResponse.json(buildOrder(104))))

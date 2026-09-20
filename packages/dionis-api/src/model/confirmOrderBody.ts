@@ -4,7 +4,9 @@
  * Swagger Dionis
  * OpenAPI spec version: 1.0.0
  */
+import type { ShippingAddressInput } from './shippingAddressInput';
 
 export type ConfirmOrderBody = {
   paymentIntentId: string;
+  shippingAddress?: ShippingAddressInput;
 };

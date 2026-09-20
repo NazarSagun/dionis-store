@@ -3,8 +3,12 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { useLogout } from '@repo/dionis-api/src/dionis/default/default'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@repo/ui'
 
 import { useAuthStore } from '@/features/auth'
+
+const menuItemStyles =
+  'cursor-pointer rounded-sm px-3 py-2 font-mono text-sm uppercase tracking-wide text-foreground focus:bg-neon-cyan focus:text-ink'
 
 export const MainNavigation = () => {
   const isUserAuth = useAuthStore((state) => state.isAuthenticated)
@@ -30,31 +34,42 @@ export const MainNavigation = () => {
       </nav>
       <div className='flex items-center'>
         {user && <div className='mr-4 font-mono text-foreground'>Hi, {user.name}</div>}
-        {!isUserAuth ? (
-          <Link href='/login' className='mr-4'>
-            <span className='text-base font-bold uppercase tracking-wide text-foreground hover:text-neon-cyan'>
-              Login
-            </span>
-          </Link>
-        ) : (
-          <button
-            className='mr-4'
-            onClick={() => {
-              logout()
-              clearAuth()
-            }}
-          >
-            <span className='text-base font-bold uppercase tracking-wide text-foreground hover:text-neon-cyan'>
-              Logout
-            </span>
-          </button>
-        )}
+        <span className='mr-4 h-6 w-px bg-muted-foreground/40' />
         <Link href='/cart' className='mr-4'>
           <Image priority={true} width={25} height={25} alt='logo' src={`/icons/shopping-cart.svg`} />
         </Link>
-        <Link href='/account'>
-          <Image priority={true} width={25} height={25} alt='logo' src={`/icons/account.svg`} />
-        </Link>
+        <DropdownMenu>
+          <DropdownMenuTrigger data-testid='account-menu-trigger' aria-label='Account menu'>
+            <Image priority={true} width={25} height={25} alt='logo' src={`/icons/account.svg`} />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align='end' className='border-ink bg-panel-alt'>
+            {isUserAuth ? (
+              <>
+                <DropdownMenuItem asChild className={menuItemStyles}>
+                  <Link href='/account'>Account</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  className={menuItemStyles}
+                  onClick={() => {
+                    logout()
+                    clearAuth()
+                  }}
+                >
+                  Logout
+                </DropdownMenuItem>
+              </>
+            ) : (
+              <>
+                <DropdownMenuItem asChild className={menuItemStyles}>
+                  <Link href='/login'>Login</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild className={menuItemStyles}>
+                  <Link href='/signup'>Sign Up</Link>
+                </DropdownMenuItem>
+              </>
+            )}
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </nav>
   )
