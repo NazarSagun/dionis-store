@@ -65,7 +65,7 @@ export class OrdersService {
   async confirmOrder(email: string, paymentIntentId: string) {
     const existingOrder = await this.prisma.order.findUnique({
       where: { stripePaymentIntentId: paymentIntentId },
-      include: { items: { include: { game: true } } },
+      include: { items: { include: { game: true }, orderBy: { id: 'asc' } } },
     })
     if (existingOrder) {
       return existingOrder
@@ -115,7 +115,7 @@ export class OrdersService {
         stripePaymentIntentId: paymentIntentId,
         items: { create: orderItemsData },
       },
-      include: { items: { include: { game: true } } },
+      include: { items: { include: { game: true }, orderBy: { id: 'asc' } } },
     })
   }
 
@@ -127,7 +127,7 @@ export class OrdersService {
 
     return this.prisma.order.findMany({
       where: { userId: user.id },
-      include: { items: { include: { game: true } } },
+      include: { items: { include: { game: true }, orderBy: { id: 'asc' } } },
       orderBy: { createdAt: 'desc' },
     })
   }
@@ -135,7 +135,7 @@ export class OrdersService {
   async getOrder(email: string, orderId: number) {
     const order = await this.prisma.order.findFirst({
       where: { id: orderId, user: { email } },
-      include: { items: { include: { game: true } } },
+      include: { items: { include: { game: true }, orderBy: { id: 'asc' } } },
     })
 
     if (!order) {

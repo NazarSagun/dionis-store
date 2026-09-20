@@ -15,6 +15,8 @@ async function selectFromDropdown(page: Page, triggerTestId: string, optionTestI
 
 const libraryCards = (page: Page) => page.getByTestId('game-library').getByTestId('card')
 
+const apiUrl = process.env.E2E_API_URL ?? 'http://localhost:3500'
+
 test.describe('Search, filter, and sort toolbar', () => {
   test('filters the grid by title as the user types', async ({ page }) => {
     await page.goto('/')
@@ -56,15 +58,22 @@ test.describe('Search, filter, and sort toolbar', () => {
     await expect(cards.last()).toContainText('PS5')
   })
 
-  test('sorts the grid by price low to high', async ({ page }) => {
+  test('sorts the grid by price low to high', async ({ page, request }) => {
     await page.goto('/')
 
     await selectFromDropdown(page, 'sort-select', 'sort-option-price_asc')
 
-    const priceTexts = await libraryCards(page).locator('text=/€\\d+/').allInnerTexts()
-    const prices = priceTexts.map((text) => Number(text.replace('€', '')))
+    // price_asc sorts by list price (games.service.ts), not the discounted
+    // price a card may display, so the two can disagree on any discounted
+    // card. Compare rendered order against the API's own order instead of
+    // parsing price text back out of the DOM.
+    const response = await request.get(`${apiUrl}/api/games/1?sort=price_asc`)
+    const { games } = await response.json()
+    const expectedTitles = games.map((game: { title: string }) => game.title)
 
-    expect(prices).toEqual([...prices].sort((a, b) => a - b))
+    const renderedTitles = await libraryCards(page).locator('h3').allInnerTexts()
+
+    expect(renderedTitles).toEqual(expectedTitles)
   })
 
   test('combines a search term and a platform filter', async ({ page }) => {

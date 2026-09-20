@@ -159,8 +159,10 @@ test.describe('Account area', () => {
 
       const rows = page.getByTestId('account-library').getByTestId('activation-row')
       await expect(rows).toHaveCount(2)
+      // Once activated, ActivationRow swaps the button out for the status
+      // badge entirely - there's no disabled button left behind to assert on.
       await expect(rows.nth(0).getByTestId('activation-status')).toHaveText(/activated/i)
-      await expect(rows.nth(0).getByTestId('activation-mark-button')).toBeDisabled()
+      await expect(rows.nth(0).getByTestId('activation-mark-button')).toHaveCount(0)
       await expect(rows.nth(1).getByTestId('activation-mark-button')).toBeEnabled()
     })
   })

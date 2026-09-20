@@ -79,6 +79,15 @@ describe('OrdersService', () => {
       expect(stripe.retrievePaymentIntent).not.toHaveBeenCalled()
       expect(prisma.order.create).not.toHaveBeenCalled()
     })
+
+    it('orders the items by id when reading back an already-confirmed order', async () => {
+      prisma.order.findUnique.mockResolvedValue({ id: 1, items: [] })
+
+      await service.confirmOrder(user.email, 'pi_123')
+
+      const [args] = prisma.order.findUnique.mock.calls[0]
+      expect(args.include.items.orderBy).toEqual({ id: 'asc' })
+    })
   })
 
   describe('getOrders', () => {
@@ -92,6 +101,15 @@ describe('OrdersService', () => {
       expect(prisma.order.findMany).toHaveBeenCalledWith(
         expect.objectContaining({ where: { userId: user.id }, orderBy: { createdAt: 'desc' } }),
       )
+    })
+
+    it('orders each order’s items by id, since Postgres gives no default row order for a to-many include', async () => {
+      prisma.order.findMany.mockResolvedValue([])
+
+      await service.getOrders(user.email)
+
+      const [args] = prisma.order.findMany.mock.calls[0]
+      expect(args.include.items.orderBy).toEqual({ id: 'asc' })
     })
 
     it('rejects a user that does not exist', async () => {
@@ -110,6 +128,15 @@ describe('OrdersService', () => {
       expect(prisma.order.findFirst).toHaveBeenCalledWith(
         expect.objectContaining({ where: { id: 1, user: { email: user.email } } }),
       )
+    })
+
+    it('orders the items by id, so a client rendering by row index sees a stable order', async () => {
+      prisma.order.findFirst.mockResolvedValue({ id: 1, items: [] })
+
+      await service.getOrder(user.email, 1)
+
+      const [args] = prisma.order.findFirst.mock.calls[0]
+      expect(args.include.items.orderBy).toEqual({ id: 'asc' })
     })
   })
 

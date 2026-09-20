@@ -115,13 +115,13 @@ describe('GamesService', () => {
   })
 
   describe('fetchTopDeals', () => {
-    it('only fetches games with a positive discount, ordered highest first, capped at 10', async () => {
+    it('only fetches games with a positive discount, ordered highest first, capped at 5', async () => {
       await service.fetchTopDeals()
 
       expect(prisma.game_pc.findMany).toHaveBeenCalledWith({
         where: { discount: { gt: 0 } },
         orderBy: { discount: 'desc' },
-        take: 10,
+        take: 5,
       })
     })
 

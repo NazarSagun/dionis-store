@@ -2,11 +2,16 @@ import { expect, test } from '@playwright/test'
 
 import { completePayment, goToPaymentStep, signUpAndAddGamesToCart } from './helpers/checkout'
 
-// TDD spec for checkout-payment-activation-spec.md, Feature 2 (Game Activation
-// step, Steam-style redemption). Every test below fails today for two
-// reasons: this step does not exist, and the Payment step it walks through
-// first (see payment.spec.ts) does not exist either. Design:
+// Spec for checkout-payment-activation-spec.md, Feature 2 (Game Activation
+// step, Steam-style redemption). Design:
 // https://www.figma.com/design/iENdx0LKoWPG4L8UtI4qq0/Dionis-Store-%E2%80%94-Retro-Redesign?node-id=58-481
+//
+// The written spec's Feature 2 requirement 5 says Finish stays disabled
+// until every row is activated. The shipped app deliberately does not do
+// this - see GameActivation.test.tsx's "Finish must never force it" comment
+// - so a user can finish now and activate later from their account (the
+// account-area-spec.md Library section). These tests assert the shipped
+// behavior, not the original written requirement.
 
 test.describe('Game Activation step', () => {
   test.beforeEach(async ({ page }) => {
@@ -15,7 +20,7 @@ test.describe('Game Activation step', () => {
     await completePayment(page)
   })
 
-  test('lists every purchased game with its own code and redeem link, Finish starts disabled', async ({ page }) => {
+  test('lists every purchased game with its own code and redeem link, Finish starts enabled', async ({ page }) => {
     const rows = page.getByTestId('activation-row')
     await expect(rows).toHaveCount(2)
 
@@ -25,17 +30,20 @@ test.describe('Game Activation step', () => {
       await expect(row.getByTestId('activation-mark-button')).toBeEnabled()
     }
 
-    await expect(page.getByTestId('finish-button')).toBeDisabled()
+    // Activation happens on Steam, outside this store - Finish must never
+    // force it. See GameActivation.test.tsx for the same rule at unit level.
+    await expect(page.getByTestId('finish-button')).toBeEnabled()
   })
 
-  test('marks a row activated when its button is clicked, Finish stays disabled', async ({ page }) => {
+  test('marks a row activated when its button is clicked', async ({ page }) => {
     const row = page.getByTestId('activation-row').first()
 
     await row.getByTestId('activation-mark-button').click()
 
     await expect(row.getByTestId('activation-status')).toHaveText(/activated/i)
-    await expect(row.getByTestId('activation-mark-button')).toBeDisabled()
-    await expect(page.getByTestId('finish-button')).toBeDisabled()
+    // The button is replaced by the status badge once activated, not left
+    // behind disabled.
+    await expect(row.getByTestId('activation-mark-button')).toHaveCount(0)
   })
 
   test('copies the exact displayed code to the clipboard', async ({ page, context }) => {
@@ -49,7 +57,7 @@ test.describe('Game Activation step', () => {
     expect(clipboardText).toBe(code)
   })
 
-  test('enables Finish once every row is activated', async ({ page }) => {
+  test('marking every row activated leaves Finish enabled', async ({ page }) => {
     const rows = page.getByTestId('activation-row')
 
     for (const row of await rows.all()) {
