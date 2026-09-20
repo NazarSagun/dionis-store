@@ -1,3 +1,4 @@
+export * from './activation-row'
 export * from './cart-item'
 export * from './cart-items-list'
 export * from './cart-navigation'

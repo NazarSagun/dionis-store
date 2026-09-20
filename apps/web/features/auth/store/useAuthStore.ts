@@ -13,6 +13,7 @@ interface AuthState {
   login: (token: string, name: string) => void
   logout: () => void
   hydrate: () => void
+  setUserName: (name: string) => void
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
@@ -33,4 +34,5 @@ export const useAuthStore = create<AuthState>((set) => ({
       set({ isAuthenticated: true, accessToken: token })
     }
   },
+  setUserName: (name) => set((state) => ({ user: state.user ? { ...state.user, name } : state.user })),
 }))

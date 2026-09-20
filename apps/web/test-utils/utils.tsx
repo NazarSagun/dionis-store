@@ -4,6 +4,7 @@ import * as matchers from '@testing-library/jest-dom/matchers'
 import { cleanup, render, RenderOptions } from '@testing-library/react'
 import { afterAll, afterEach, beforeAll, expect } from 'vitest'
 
+import { useRecentlyViewedStore } from '@/features/account'
 import { useAuthStore } from '@/features/auth'
 import { useCartStore } from '@/features/cart'
 
@@ -16,6 +17,7 @@ afterEach(() => {
   localStorage.clear()
   useAuthStore.setState({ isAuthenticated: false, accessToken: null, user: null })
   useCartStore.setState({ items: [], currentStep: 1, orderId: null })
+  useRecentlyViewedStore.setState({ gameIds: [] })
 })
 
 // Start worker before all tests

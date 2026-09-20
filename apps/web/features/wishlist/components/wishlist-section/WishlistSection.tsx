@@ -1,11 +1,14 @@
 'use client'
 
+import { useCartStore } from '@/features/cart'
 import { GamesList } from '@/features/games'
 
 import { useWishlistStore } from '../../store/useWishlistStore'
+import { PriceDropBadge } from '../price-drop-badge'
 
 export const WishlistSection = () => {
   const items = useWishlistStore((state) => state.items)
+  const addItem = useCartStore((state) => state.addItem)
 
   if (items.length === 0) {
     return null
@@ -21,11 +24,27 @@ export const WishlistSection = () => {
     discount: item.discount,
   }))
 
+  const onAddToCart = (game: (typeof games)[number]) => {
+    addItem({
+      id: game.id,
+      thumbnailUrl: game.thumbnail,
+      title: game.title,
+      price: game.price,
+      platform: game.platform,
+      quantity: 1,
+      discount: game.discount,
+    })
+  }
+
   return (
     <div data-testid='wishlist' className='w-full'>
       <h2 className='w-full pt-16 text-center font-display text-xl uppercase text-neon-magenta'>Wishlist</h2>
       <div className='w-full pt-10'>
-        <GamesList gamesList={games} />
+        <GamesList
+          gamesList={games}
+          onAddToCart={onAddToCart}
+          renderExtra={(game) => <PriceDropBadge gameId={game.id as number} snapshotDiscount={game.discount ?? 0} />}
+        />
       </div>
     </div>
   )

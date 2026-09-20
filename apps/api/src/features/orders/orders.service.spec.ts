@@ -8,7 +8,7 @@ describe('OrdersService', () => {
   let prisma: {
     user: { findUnique: jest.Mock }
     game_pc: { findMany: jest.Mock }
-    order: { findUnique: jest.Mock; findFirst: jest.Mock; create: jest.Mock }
+    order: { findUnique: jest.Mock; findFirst: jest.Mock; findMany: jest.Mock; create: jest.Mock }
     orderItem: { update: jest.Mock }
   }
   let stripe: { createPaymentIntent: jest.Mock; retrievePaymentIntent: jest.Mock }
@@ -19,7 +19,7 @@ describe('OrdersService', () => {
     prisma = {
       user: { findUnique: jest.fn().mockResolvedValue(user) },
       game_pc: { findMany: jest.fn() },
-      order: { findUnique: jest.fn(), findFirst: jest.fn(), create: jest.fn() },
+      order: { findUnique: jest.fn(), findFirst: jest.fn(), findMany: jest.fn(), create: jest.fn() },
       orderItem: { update: jest.fn() },
     }
     stripe = { createPaymentIntent: jest.fn(), retrievePaymentIntent: jest.fn() }
@@ -78,6 +78,27 @@ describe('OrdersService', () => {
       expect(result).toBe(existingOrder)
       expect(stripe.retrievePaymentIntent).not.toHaveBeenCalled()
       expect(prisma.order.create).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('getOrders', () => {
+    it('lists every order for the user, newest first', async () => {
+      const orders = [{ id: 2 }, { id: 1 }]
+      prisma.order.findMany.mockResolvedValue(orders)
+
+      const result = await service.getOrders(user.email)
+
+      expect(result).toBe(orders)
+      expect(prisma.order.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({ where: { userId: user.id }, orderBy: { createdAt: 'desc' } }),
+      )
+    })
+
+    it('rejects a user that does not exist', async () => {
+      prisma.user.findUnique.mockResolvedValue(null)
+
+      await expect(service.getOrders(user.email)).rejects.toThrow('User does not exist')
+      expect(prisma.order.findMany).not.toHaveBeenCalled()
     })
   })
 

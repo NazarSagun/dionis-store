@@ -18,6 +18,7 @@ interface WishlistState {
   items: WishlistItem[]
   isInWishlist: (id: number) => boolean
   toggleItem: (item: Omit<WishlistItem, 'addedAt'>) => void
+  updateDiscountSnapshot: (id: number, discount: number) => void
 }
 
 export const useWishlistStore = create<WishlistState>()(
@@ -32,6 +33,10 @@ export const useWishlistStore = create<WishlistState>()(
           }
           return { items: [{ ...item, addedAt: Date.now() }, ...state.items] }
         }),
+      updateDiscountSnapshot: (id, discount) =>
+        set((state) => ({
+          items: state.items.map((item) => (item.id === id ? { ...item, discount } : item)),
+        })),
     }),
     {
       name: 'wishlist-storage',

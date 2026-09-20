@@ -22,6 +22,8 @@ export async function signUpAndAddGamesToCart(page: Page, count = 1) {
     await expect(page).toHaveURL(/\/game\/\d+/)
     await page.getByRole('button', { name: /add to cart/i }).click()
   }
+
+  return uniqueEmail
 }
 
 export async function goToPaymentStep(page: Page) {

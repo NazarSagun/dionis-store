@@ -29,6 +29,15 @@ export class OrdersController {
     }
   }
 
+  @Get()
+  async getOrders(@Req() req: AuthenticatedRequest) {
+    try {
+      return await this.ordersService.getOrders(req.user.email)
+    } catch (error) {
+      throw toHttpException(error)
+    }
+  }
+
   @Get(':orderId')
   async getOrder(@Req() req: AuthenticatedRequest, @Param('orderId') orderIdParam: string) {
     const orderId = Number(orderIdParam)

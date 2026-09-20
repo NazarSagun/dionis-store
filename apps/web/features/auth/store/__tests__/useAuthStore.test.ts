@@ -51,4 +51,22 @@ describe('useAuthStore', () => {
 
     expect(useAuthStore.getState().isAuthenticated).toBe(false)
   })
+
+  it('Should update the signed-in user’s name without touching the token', () => {
+    useAuthStore.getState().login('123', 'test')
+
+    useAuthStore.getState().setUserName('renamed')
+
+    expect(useAuthStore.getState()).toMatchObject({
+      isAuthenticated: true,
+      accessToken: '123',
+      user: { name: 'renamed' },
+    })
+  })
+
+  it('Should do nothing when no user is signed in', () => {
+    useAuthStore.getState().setUserName('renamed')
+
+    expect(useAuthStore.getState().user).toBeNull()
+  })
 })

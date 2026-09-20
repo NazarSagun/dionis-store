@@ -19,6 +19,7 @@ import type {
 } from '@tanstack/react-query'
 import type {
   AuthErrorMessage,
+  ChangePasswordInput,
   ConfirmOrderBody,
   CreatePaymentIntentBody,
   ErrorMessage,
@@ -27,8 +28,11 @@ import type {
   GetGamesParams,
   OrderItemObject,
   OrderObject,
+  OrdersArray,
   PaymentIntentResponse,
   SuccessMessage,
+  UpdateNameInput,
+  UpdateNameResponse,
   UserCredentials,
   UserObject,
   UsersArray
@@ -106,6 +110,120 @@ export const useGetUsers = <TData = Awaited<ReturnType<typeof getUsers>>, TError
 
 
 /**
+ * @summary Update the current user's display name
+ */
+export const updateName = (
+    updateNameInput: BodyType<UpdateNameInput>,
+ options?: SecondParameter<typeof customInstance>,) => {
+      
+      
+      return customInstance<UpdateNameResponse>(
+      {url: `/users/me`, method: 'PATCH',
+      headers: {'Content-Type': 'application/json', },
+      data: updateNameInput
+    },
+      options);
+    }
+  
+
+
+export const getUpdateNameMutationOptions = <TError = ErrorType<ErrorMessage>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateName>>, TError,{data: BodyType<UpdateNameInput>}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof updateName>>, TError,{data: BodyType<UpdateNameInput>}, TContext> => {
+const {mutation: mutationOptions, request: requestOptions} = options ?? {};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateName>>, {data: BodyType<UpdateNameInput>}> = (props) => {
+          const {data} = props ?? {};
+
+          return  updateName(data,requestOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type UpdateNameMutationResult = NonNullable<Awaited<ReturnType<typeof updateName>>>
+    export type UpdateNameMutationBody = BodyType<UpdateNameInput>
+    export type UpdateNameMutationError = ErrorType<ErrorMessage>
+
+    /**
+ * @summary Update the current user's display name
+ */
+export const useUpdateName = <TError = ErrorType<ErrorMessage>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateName>>, TError,{data: BodyType<UpdateNameInput>}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationResult<
+        Awaited<ReturnType<typeof updateName>>,
+        TError,
+        {data: BodyType<UpdateNameInput>},
+        TContext
+      > => {
+
+      const mutationOptions = getUpdateNameMutationOptions(options);
+
+      return useMutation(mutationOptions);
+    }
+    /**
+ * @summary Change the current user's password
+ */
+export const changePassword = (
+    changePasswordInput: BodyType<ChangePasswordInput>,
+ options?: SecondParameter<typeof customInstance>,) => {
+      
+      
+      return customInstance<SuccessMessage>(
+      {url: `/users/me/password`, method: 'PATCH',
+      headers: {'Content-Type': 'application/json', },
+      data: changePasswordInput
+    },
+      options);
+    }
+  
+
+
+export const getChangePasswordMutationOptions = <TError = ErrorType<ErrorMessage>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof changePassword>>, TError,{data: BodyType<ChangePasswordInput>}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof changePassword>>, TError,{data: BodyType<ChangePasswordInput>}, TContext> => {
+const {mutation: mutationOptions, request: requestOptions} = options ?? {};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof changePassword>>, {data: BodyType<ChangePasswordInput>}> = (props) => {
+          const {data} = props ?? {};
+
+          return  changePassword(data,requestOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type ChangePasswordMutationResult = NonNullable<Awaited<ReturnType<typeof changePassword>>>
+    export type ChangePasswordMutationBody = BodyType<ChangePasswordInput>
+    export type ChangePasswordMutationError = ErrorType<ErrorMessage>
+
+    /**
+ * @summary Change the current user's password
+ */
+export const useChangePassword = <TError = ErrorType<ErrorMessage>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof changePassword>>, TError,{data: BodyType<ChangePasswordInput>}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationResult<
+        Awaited<ReturnType<typeof changePassword>>,
+        TError,
+        {data: BodyType<ChangePasswordInput>},
+        TContext
+      > => {
+
+      const mutationOptions = getChangePasswordMutationOptions(options);
+
+      return useMutation(mutationOptions);
+    }
+    /**
  * @summary List up to 10 games with the highest discount, discount > 0, highest first
  */
 export const getGamesTopDeals = (
@@ -458,6 +576,67 @@ export const useLogout = <TData = Awaited<ReturnType<typeof logout>>, TError = E
   ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } => {
 
   const queryOptions = getLogoutQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+/**
+ * @summary List every order placed by the current user, newest first
+ */
+export const getOrders = (
+    
+ options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<OrdersArray>(
+      {url: `/orders`, method: 'GET', signal
+    },
+      options);
+    }
+  
+
+export const getGetOrdersQueryKey = () => {
+    return [`/orders`] as const;
+    }
+
+    
+export const getGetOrdersQueryOptions = <TData = Awaited<ReturnType<typeof getOrders>>, TError = ErrorType<ErrorMessage>>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getOrders>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetOrdersQueryKey();
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getOrders>>> = ({ signal }) => getOrders(requestOptions, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getOrders>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetOrdersQueryResult = NonNullable<Awaited<ReturnType<typeof getOrders>>>
+export type GetOrdersQueryError = ErrorType<ErrorMessage>
+
+/**
+ * @summary List every order placed by the current user, newest first
+ */
+export const useGetOrders = <TData = Awaited<ReturnType<typeof getOrders>>, TError = ErrorType<ErrorMessage>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getOrders>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+
+  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } => {
+
+  const queryOptions = getGetOrdersQueryOptions(options)
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 

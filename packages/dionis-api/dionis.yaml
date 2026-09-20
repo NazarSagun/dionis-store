@@ -32,6 +32,68 @@ paths:
                 $ref: '#/components/schemas/errorMessage'
       security:
         - bearerHttpAuthentication: []
+  /users/me:
+    patch:
+      summary: Update the current user's display name
+      operationId: updateName
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/updateNameInput'
+      responses:
+        '200':
+          description: Updated name
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/updateNameResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+      security:
+        - bearerHttpAuthentication: []
+  /users/me/password:
+    patch:
+      summary: Change the current user's password
+      operationId: changePassword
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/changePasswordInput'
+      responses:
+        '200':
+          description: Password updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/successMessage'
+        '400':
+          description: Bad request, such as a wrong current password
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+      security:
+        - bearerHttpAuthentication: []
   /games/top-deals:
     get:
       summary: List up to 10 games with the highest discount, discount > 0, highest first
@@ -254,6 +316,25 @@ paths:
                 $ref: '#/components/schemas/errorMessage'
         '500':
           description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+      security:
+        - bearerHttpAuthentication: []
+  /orders:
+    get:
+      summary: List every order placed by the current user, newest first
+      operationId: getOrders
+      responses:
+        '200':
+          description: Array of orders
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ordersArray'
+        '401':
+          description: Unauthorized
           content:
             application/json:
               schema:
@@ -606,6 +687,32 @@ components:
           nullable: true
         game:
           $ref: '#/components/schemas/gameObject'
+    ordersArray:
+      type: array
+      items:
+        $ref: '#/components/schemas/orderObject'
+    updateNameInput:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+    updateNameResponse:
+      type: object
+      properties:
+        name:
+          type: string
+    changePasswordInput:
+      type: object
+      required:
+        - currentPassword
+        - newPassword
+      properties:
+        currentPassword:
+          type: string
+        newPassword:
+          type: string
     orderObject:
       type: object
       properties:

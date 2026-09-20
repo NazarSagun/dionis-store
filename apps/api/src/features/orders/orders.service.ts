@@ -119,6 +119,19 @@ export class OrdersService {
     })
   }
 
+  async getOrders(email: string) {
+    const user = await this.prisma.user.findUnique({ where: { email } })
+    if (!user) {
+      throw new CustomError('User does not exist', 400)
+    }
+
+    return this.prisma.order.findMany({
+      where: { userId: user.id },
+      include: { items: { include: { game: true } } },
+      orderBy: { createdAt: 'desc' },
+    })
+  }
+
   async getOrder(email: string, orderId: number) {
     const order = await this.prisma.order.findFirst({
       where: { id: orderId, user: { email } },

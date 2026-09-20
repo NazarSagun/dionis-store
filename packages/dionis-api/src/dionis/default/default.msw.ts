@@ -17,13 +17,19 @@ import type {
   GamesArray,
   OrderItemObject,
   OrderObject,
+  OrdersArray,
   PaymentIntentResponse,
   SuccessMessage,
+  UpdateNameResponse,
   UserObject,
   UsersArray
 } from '../../model'
 
 export const getGetUsersResponseMock = (): UsersArray => (Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({createdAt: faker.helpers.arrayElement([faker.date.past().toISOString().split('T')[0], undefined]), email: faker.helpers.arrayElement([faker.internet.email(), undefined]), id: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), name: faker.helpers.arrayElement([faker.word.sample(), undefined]), password: faker.helpers.arrayElement([faker.word.sample(), undefined]), refreshToken: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.word.sample(), null]), undefined]), role: faker.helpers.arrayElement([faker.helpers.arrayElement([101,500,233] as const), undefined])})))
+
+export const getUpdateNameResponseMock = (overrideResponse: Partial< UpdateNameResponse > = {}): UpdateNameResponse => ({name: faker.helpers.arrayElement([faker.word.sample(), undefined]), ...overrideResponse})
+
+export const getChangePasswordResponseMock = (overrideResponse: Partial< SuccessMessage > = {}): SuccessMessage => ({message: faker.helpers.arrayElement([faker.word.sample(), undefined]), ...overrideResponse})
 
 export const getGetGamesTopDealsResponseMock = (): GameObject[] => (Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({developer: faker.word.sample(), discount: faker.number.int({min: undefined, max: undefined}), freetogame_profile_url: faker.word.sample(), game_url: faker.word.sample(), genre: faker.word.sample(), id: faker.number.int({min: undefined, max: undefined}), platform: faker.word.sample(), price: faker.number.int({min: undefined, max: undefined}), publisher: faker.word.sample(), rating: faker.word.sample(), release_date: faker.word.sample(), short_description: faker.word.sample(), thumbnail: faker.word.sample(), title: faker.word.sample()})))
 
@@ -36,6 +42,8 @@ export const getRegisterResponseMock = (overrideResponse: Partial< UserObject > 
 export const getLoginResponseMock = (overrideResponse: Partial< UserObject > = {}): UserObject => ({message: faker.helpers.arrayElement([faker.word.sample(), undefined]), user: faker.helpers.arrayElement([{accessToken: faker.helpers.arrayElement([faker.word.sample(), undefined]), email: faker.helpers.arrayElement([faker.word.sample(), undefined]), name: faker.helpers.arrayElement([faker.word.sample(), undefined]), role: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined])}, undefined]), ...overrideResponse})
 
 export const getLogoutResponseMock = (overrideResponse: Partial< SuccessMessage > = {}): SuccessMessage => ({message: faker.helpers.arrayElement([faker.word.sample(), undefined]), ...overrideResponse})
+
+export const getGetOrdersResponseMock = (): OrdersArray => (Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({createdAt: faker.helpers.arrayElement([`${faker.date.past().toISOString().split('.')[0]}Z`, undefined]), id: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), items: faker.helpers.arrayElement([Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({activated: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]), activatedAt: faker.helpers.arrayElement([faker.helpers.arrayElement([`${faker.date.past().toISOString().split('.')[0]}Z`, null]), undefined]), activationCode: faker.helpers.arrayElement([faker.word.sample(), undefined]), game: faker.helpers.arrayElement([{developer: faker.word.sample(), discount: faker.number.int({min: undefined, max: undefined}), freetogame_profile_url: faker.word.sample(), game_url: faker.word.sample(), genre: faker.word.sample(), id: faker.number.int({min: undefined, max: undefined}), platform: faker.word.sample(), price: faker.number.int({min: undefined, max: undefined}), publisher: faker.word.sample(), rating: faker.word.sample(), release_date: faker.word.sample(), short_description: faker.word.sample(), thumbnail: faker.word.sample(), title: faker.word.sample()}, undefined]), gameId: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), id: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), price: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), quantity: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined])})), undefined]), stripePaymentIntentId: faker.helpers.arrayElement([faker.word.sample(), undefined]), totalPrice: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), userId: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined])})))
 
 export const getCreatePaymentIntentResponseMock = (overrideResponse: Partial< PaymentIntentResponse > = {}): PaymentIntentResponse => ({amount: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), clientSecret: faker.helpers.arrayElement([faker.word.sample(), undefined]), ...overrideResponse})
 
@@ -53,6 +61,36 @@ export const getGetUsersMockHandler = (overrideResponse?: UsersArray | ((info: P
     return new HttpResponse(JSON.stringify(overrideResponse !== undefined 
             ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse) 
             : getGetUsersResponseMock()),
+      {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      }
+    )
+  })
+}
+
+export const getUpdateNameMockHandler = (overrideResponse?: UpdateNameResponse | ((info: Parameters<Parameters<typeof http.patch>[1]>[0]) => Promise<UpdateNameResponse> | UpdateNameResponse)) => {
+  return http.patch('*/users/me', async (info) => {await delay(1000);
+    return new HttpResponse(JSON.stringify(overrideResponse !== undefined 
+            ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse) 
+            : getUpdateNameResponseMock()),
+      {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      }
+    )
+  })
+}
+
+export const getChangePasswordMockHandler = (overrideResponse?: SuccessMessage | ((info: Parameters<Parameters<typeof http.patch>[1]>[0]) => Promise<SuccessMessage> | SuccessMessage)) => {
+  return http.patch('*/users/me/password', async (info) => {await delay(1000);
+    return new HttpResponse(JSON.stringify(overrideResponse !== undefined 
+            ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse) 
+            : getChangePasswordResponseMock()),
       {
         status: 200,
         headers: {
@@ -153,6 +191,21 @@ export const getLogoutMockHandler = (overrideResponse?: SuccessMessage | ((info:
   })
 }
 
+export const getGetOrdersMockHandler = (overrideResponse?: OrdersArray | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<OrdersArray> | OrdersArray)) => {
+  return http.get('*/orders', async (info) => {await delay(1000);
+    return new HttpResponse(JSON.stringify(overrideResponse !== undefined 
+            ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse) 
+            : getGetOrdersResponseMock()),
+      {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      }
+    )
+  })
+}
+
 export const getCreatePaymentIntentMockHandler = (overrideResponse?: PaymentIntentResponse | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<PaymentIntentResponse> | PaymentIntentResponse)) => {
   return http.post('*/orders/payment-intent', async (info) => {await delay(1000);
     return new HttpResponse(JSON.stringify(overrideResponse !== undefined 
@@ -229,12 +282,15 @@ export const getRefreshMockHandler = (overrideResponse?: UserObject | ((info: Pa
 }
 export const getDefaultMock = () => [
   getGetUsersMockHandler(),
+  getUpdateNameMockHandler(),
+  getChangePasswordMockHandler(),
   getGetGamesTopDealsMockHandler(),
   getGetGamesMockHandler(),
   getGetGameMockHandler(),
   getRegisterMockHandler(),
   getLoginMockHandler(),
   getLogoutMockHandler(),
+  getGetOrdersMockHandler(),
   getCreatePaymentIntentMockHandler(),
   getConfirmOrderMockHandler(),
   getGetOrderMockHandler(),

@@ -1,3 +1,4 @@
+import { ReactNode } from 'react'
 import Link from 'next/link'
 import { GameObject } from '@repo/dionis-api/src/model'
 
@@ -10,9 +11,11 @@ export type GamesListGame = Pick<
 
 interface GamesListProps {
   gamesList: GamesListGame[]
+  onAddToCart?: (game: GamesListGame) => void
+  renderExtra?: (game: GamesListGame) => ReactNode
 }
 
-export const GamesList = ({ gamesList }: GamesListProps) => {
+export const GamesList = ({ gamesList, onAddToCart, renderExtra }: GamesListProps) => {
   return (
     <div className='grid w-full grid-cols-2 gap-6 pb-20 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5'>
       {gamesList.map((game) => (
@@ -25,6 +28,8 @@ export const GamesList = ({ gamesList }: GamesListProps) => {
             platform={game.platform}
             imageSrc={game.thumbnail}
             discount={game.discount}
+            onAddToCart={onAddToCart ? () => onAddToCart(game) : undefined}
+            extraBadge={renderExtra?.(game)}
           />
         </Link>
       ))}

@@ -7,6 +7,7 @@
 
 export * from './authErrorMessage';
 export * from './authErrorMessageUser';
+export * from './changePasswordInput';
 export * from './confirmOrderBody';
 export * from './createPaymentIntentBody';
 export * from './deleteUserBody';
@@ -19,8 +20,11 @@ export * from './getGamesSort';
 export * from './orderItemInput';
 export * from './orderItemObject';
 export * from './orderObject';
+export * from './ordersArray';
 export * from './paymentIntentResponse';
 export * from './successMessage';
+export * from './updateNameInput';
+export * from './updateNameResponse';
 export * from './userCredentials';
 export * from './userObject';
 export * from './userObjectUser';

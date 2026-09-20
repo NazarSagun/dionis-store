@@ -1,4 +1,4 @@
-import { MouseEvent, useState } from 'react'
+import { MouseEvent, ReactNode, useState } from 'react'
 import Image from 'next/image'
 import { GameObject } from '@repo/dionis-api/src/model'
 
@@ -12,9 +12,22 @@ export type GameCardProps = Pick<GameObject, 'title' | 'rating' | 'price' | 'pla
   onClick?: () => void
   imageSrc: string
   discount?: number
+  onAddToCart?: () => void
+  extraBadge?: ReactNode
 }
 
-export const GameCard = ({ id, title, rating, price, onClick, platform, imageSrc, discount }: GameCardProps) => {
+export const GameCard = ({
+  id,
+  title,
+  rating,
+  price,
+  onClick,
+  platform,
+  imageSrc,
+  discount,
+  onAddToCart,
+  extraBadge,
+}: GameCardProps) => {
   const [isImageLoaded, setIsImageLoaded] = useState(false)
   const isWishlisted = useWishlistStore((state) => (id !== undefined ? state.isInWishlist(id) : false))
   const toggleWishlistItem = useWishlistStore((state) => state.toggleItem)
@@ -28,6 +41,12 @@ export const GameCard = ({ id, title, rating, price, onClick, platform, imageSrc
     event.stopPropagation()
     if (id === undefined) return
     toggleWishlistItem({ id, thumbnailUrl: imageSrc, title, price, platform, rating, discount: discount ?? 0 })
+  }
+
+  const onAddToCartClick = (event: MouseEvent) => {
+    event.preventDefault()
+    event.stopPropagation()
+    onAddToCart?.()
   }
 
   return (
@@ -75,6 +94,7 @@ export const GameCard = ({ id, title, rating, price, onClick, platform, imageSrc
       <div className='flex min-w-0 flex-col gap-2 p-4'>
         <h3 className='w-full truncate font-mono text-lg font-bold'>{title}</h3>
         <span className='font-mono text-sm text-muted-foreground'>{platform}</span>
+        {extraBadge}
         <div className='flex items-center justify-between pt-1'>
           <RatingBadge rating={rating} />
           {discount ? (
@@ -88,6 +108,16 @@ export const GameCard = ({ id, title, rating, price, onClick, platform, imageSrc
             <span className='font-display text-xl text-neon-magenta'>€{price}</span>
           )}
         </div>
+        {onAddToCart && (
+          <button
+            type='button'
+            data-testid='wishlist-add-to-cart'
+            onClick={onAddToCartClick}
+            className='w-full rounded border-2 border-ink bg-neon-cyan px-3 py-2 font-mono text-xs font-bold text-ink'
+          >
+            Add to cart
+          </button>
+        )}
       </div>
     </div>
   )

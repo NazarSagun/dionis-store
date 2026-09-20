@@ -1,9 +1,11 @@
 'use client'
 
+import { useEffect } from 'react'
 import Image from 'next/image'
 import { useGetGame } from '@repo/dionis-api/src/dionis/default/default'
 import { Skeleton, useToast } from '@repo/ui'
 
+import { useRecentlyViewedStore } from '@/features/account'
 import { CartItem, useCartStore } from '@/features/cart/store/useCartStore'
 import { useWishlistStore } from '@/features/wishlist/store/useWishlistStore'
 import { cn } from '@/lib/utils'
@@ -18,6 +20,11 @@ interface GameDetailsProps {
 }
 
 export const GameDetails = ({ gameId }: GameDetailsProps) => {
+  const recordView = useRecentlyViewedStore((state) => state.recordView)
+  useEffect(() => {
+    recordView(gameId)
+  }, [gameId, recordView])
+
   const items = useCartStore((state) => state.items)
   const addItem = useCartStore((state) => state.addItem)
   const updateItemQuantity = useCartStore((state) => state.updateItemQuantity)
