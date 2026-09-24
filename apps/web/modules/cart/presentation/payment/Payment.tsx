@@ -8,9 +8,43 @@ import { calculateCartSummary } from '../../domain/pricing'
 import { useCreatePaymentIntent } from '../../integration/repository'
 
 import { PaymentForm, ShippingAddress } from './PaymentForm'
-import { Elements, loadStripe } from './stripe-elements'
+import { Appearance, Elements, loadStripe } from './stripe-elements'
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY as string)
+
+// Mirrors app/globals.css's design tokens so the embedded Stripe iframe
+// doesn't look like a foreign widget dropped onto the dark UI.
+const stripeAppearance: Appearance = {
+  theme: 'night',
+  variables: {
+    colorBackground: '#020617', // --background
+    colorText: '#f8fafc', // --foreground
+    colorTextSecondary: '#94a3b8', // --muted-foreground
+    colorPrimary: '#ef4444', // --primary
+    colorDanger: '#ef4444', // --destructive
+    fontFamily: '"JetBrains Mono", monospace',
+    borderRadius: '6px', // --radius
+  },
+  rules: {
+    '.Input': {
+      border: '1px solid #334155', // --border
+      backgroundColor: '#1a1e2f', // --panel-alt
+    },
+    '.Input:focus': {
+      border: '1px solid #ef4444',
+      boxShadow: '0 0 0 1px #ef4444',
+    },
+    '.Tab': {
+      border: '1px solid #334155',
+      backgroundColor: '#1a1e2f',
+    },
+    '.Tab--selected': {
+      border: '1px solid #ef4444',
+    },
+  },
+}
+
+const stripeFonts = [{ cssSrc: 'https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap' }]
 
 // Mirrors apps/api/src/features/orders/shipping-fee.ts's SHIPPING_FEE_CENTS.
 // Only used for the summary line shown here - Stripe is always charged the
@@ -160,7 +194,7 @@ export const Payment = () => {
             </button>
           </div>
         ) : clientSecret ? (
-          <Elements stripe={stripePromise} options={{ clientSecret }}>
+          <Elements stripe={stripePromise} options={{ clientSecret, appearance: stripeAppearance, fonts: stripeFonts }}>
             <PaymentForm finalPrice={total} hasPhysicalItem={hasPhysicalItem} shippingAddress={shippingAddress} />
           </Elements>
         ) : (

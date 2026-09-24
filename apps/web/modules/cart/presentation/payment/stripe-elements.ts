@@ -4,3 +4,4 @@
 // the third-party packages themselves.
 export { Elements, PaymentElement, useElements, useStripe } from '@stripe/react-stripe-js'
 export { loadStripe } from '@stripe/stripe-js'
+export type { Appearance } from '@stripe/stripe-js'

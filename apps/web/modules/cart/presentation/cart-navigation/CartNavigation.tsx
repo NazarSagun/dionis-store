@@ -29,11 +29,8 @@ export const CartNavigation = ({
   return (
     <nav className='flex min-h-[10vh] flex-wrap items-center justify-between gap-y-3 border-b border-ink bg-background px-4 py-3 sm:px-8 lg:px-[35px]'>
       <div>
-        <Link href='/' className='flex items-center'>
-          <span className='mr-2.5 hidden cursor-default font-display text-sm text-neon-magenta hover:cursor-pointer sm:inline'>
-            Dionis
-          </span>
-          <Image priority={true} width={40} height={40} alt='logo' src={`/icons/retro-game.svg`} />
+        <Link href='/' className='font-display text-xl font-bold text-foreground'>
+          DIONIS
         </Link>
       </div>
       <div className='flex items-center'>

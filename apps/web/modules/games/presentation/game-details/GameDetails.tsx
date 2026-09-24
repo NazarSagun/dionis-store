@@ -99,9 +99,9 @@ export const GameDetails = ({ gameId }: GameDetailsProps) => {
     return (
       <div className='flex min-h-[75vh] flex-col gap-16 px-4 py-12 sm:px-8 lg:px-40'>
         <div className='flex flex-col gap-12 lg:flex-row lg:justify-between'>
-          <div>
+          <div className='w-full max-w-[500px] shrink-0'>
             <Image
-              className='h-auto w-full max-w-[500px]'
+              className='h-auto w-full'
               alt={data.title as string}
               width={500}
               height={300}

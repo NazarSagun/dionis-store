@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { Skeleton } from '@repo/ui'
 
 import { ActivationRow } from '@/modules/cart/presentation/activation-row/ActivationRow'
+import { ShippingRow } from '@/modules/cart/presentation/shipping-row/ShippingRow'
 
 import { formatCentsToEuros, formatOrderDate } from '../../domain/formatting'
 import { useGetOrders } from '../../integration/repository'
@@ -47,9 +48,13 @@ export const LibrarySection = () => {
                   {formatCentsToEuros(order.totalPrice as number)}
                 </span>
                 <div className='flex flex-col gap-4'>
-                  {(order.items ?? []).map((item) => (
-                    <ActivationRow key={item.id} orderId={order.id as number} item={item} />
-                  ))}
+                  {(order.items ?? []).map((item) =>
+                    item.editionId != null ? (
+                      <ShippingRow key={item.id} item={item} order={order} />
+                    ) : (
+                      <ActivationRow key={item.id} orderId={order.id as number} item={item} />
+                    ),
+                  )}
                 </div>
               </div>
             ))}
