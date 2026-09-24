@@ -51,8 +51,16 @@ export default function RootLayout({
       >
         <QueryClientProvider client={queryClient}>
           <AuthInitializer>
-            {children}
+            {/*
+              Toaster must mount before children: it subscribes its listener
+              in a useEffect, and sibling effects fire in render order. A
+              page's own mount-time effect calling toast() (e.g. the login
+              page's session-expired message) would otherwise dispatch
+              before Toaster is listening, and the toast would silently
+              never appear.
+            */}
             <Toaster />
+            {children}
           </AuthInitializer>
         </QueryClientProvider>
       </body>
