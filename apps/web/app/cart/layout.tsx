@@ -3,15 +3,15 @@
 import type { ReactNode } from 'react'
 
 import { Footer } from '@/components/footer'
-import { CartNavigation, useCartStore } from '@/features/cart'
+import { CartNavigation, useCartStep, useSetCartStep } from '@/modules/cart'
 
 export default function ShopLayout({
   children,
 }: Readonly<{
   children: ReactNode
 }>) {
-  const currentStep = useCartStore((state) => state.currentStep)
-  const setStep = useCartStore((state) => state.setStep)
+  const currentStep = useCartStep()
+  const setStep = useSetCartStep()
 
   return (
     <>

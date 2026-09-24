@@ -4,15 +4,15 @@ import { useState } from 'react'
 import { useLogin, useRegister } from '@repo/dionis-api/src/dionis/default/default'
 import { Dialog, DialogContent, toast } from '@repo/ui'
 
-import { AuthForm, FormVariant, useAuthStore, UserData } from '@/features/auth'
-import { GameActivation, Payment, ShoppingCart, useCartStore } from '@/features/cart'
+import { AuthForm, FormVariant, useAuthLogin, UserData } from '@/modules/auth'
+import { GameActivation, Payment, ShoppingCart, useCartStep, useSetCartStep } from '@/modules/cart'
 
 const Page = () => {
   const [isOpen, setIsOpen] = useState(false)
   const [formVariant, setFormVariant] = useState(FormVariant.LOGIN)
-  const login = useAuthStore((state) => state.login)
-  const currentStep = useCartStore((state) => state.currentStep)
-  const setStep = useCartStore((state) => state.setStep)
+  const login = useAuthLogin()
+  const currentStep = useCartStep()
+  const setStep = useSetCartStep()
 
   const { mutate, isPending } = useLogin({
     mutation: {

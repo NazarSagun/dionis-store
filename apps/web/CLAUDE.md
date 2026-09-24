@@ -2,11 +2,15 @@
 
 This file extends the root `CLAUDE.md`. It holds rules specific to the Next.js storefront in `apps/web`.
 
-## Feature folder shape
+## Module folder shape
 
-Each feature lives under `features/<name>`. A feature can have a `components/` folder, a `store/` folder, a `helpers.ts` file, and a `hooks/` folder. Each component gets its own folder with an `index.ts` that re-exports it. Each feature has its own `index.ts` at its root that re-exports its components, store, helpers, and hooks.
+Each module lives under `modules/<name>` (`account`, `auth`, `cart`, `games`, `wishlist`). This follows `.claude/rules/frontennd-architecture.md`. A module can have four folders. `domain/` holds types and pure business logic. `core/` holds `store.ts` for the zustand store and `facade.ts` for the selector and trigger hooks that components use. `integration/` holds `repository.ts`, a thin re-export seam around `packages/dionis-api` hooks and DTO types. `presentation/` holds one folder per component, each with its own `index.ts` that re-exports it.
 
-Import a feature's state through that feature's root `index.ts`, not through the store file's internal path. `GameCard.tsx` imports `useWishlistStore` through the internal path today. Treat this as debt to clean up, not a pattern to copy.
+A module with no client state, such as `games`, has no `core/` folder. Each module has its own `index.ts` at its root. This root file re-exports the module's presentation components, facade, and domain types.
+
+Import a module's state through its facade (`core/facade.ts`). Use hooks such as `useCartItems` or `useIsAuthenticated`. Do not call the store's selector directly from a component. Import a module's API calls through its own `integration/repository.ts`. Do not import `@repo/dionis-api` directly from a component. This way, a component reaches only one level into another module.
+
+One case is an exception to this rule. Test setup sometimes needs to reset a whole store. That code can import the store itself, such as `useCartStore` or `useAuthStore`. Import it from the module's root `index.ts`.
 
 ## Client state
 
@@ -17,6 +21,8 @@ A store that must survive a page reload uses `zustand`'s `create` together with 
 ## Data fetching
 
 Fetch data only through the generated client in `packages/dionis-api`. It exposes React Query hooks such as `useGetGames` and `useGetGamesTopDeals`. Do not call `fetch` or axios directly from a component, a hook, or a store in `apps/web`. If the generated client is missing an endpoint you need, add it to the OpenAPI source that Orval reads from. Then regenerate the client. Do not work around a missing endpoint with a manual request.
+
+Inside a module, import these hooks through that module's own `integration/repository.ts`, not directly from `packages/dionis-api`. `app/*` route files sit outside every module. A route file can still call `packages/dionis-api` hooks directly, for a flow such as login or checkout that spans more than one module.
 
 ## Design tokens
 
@@ -38,7 +44,7 @@ Do not write a raw hex value in a component's class name. `CartNavigation.tsx` a
 
 ## Tests
 
-Use Vitest and React Testing Library. Put a component's test in a `__tests__` folder next to the component, named `Component.test.tsx`. Put a store's test in a `__tests__` folder next to the store, named `useXStore.test.ts`.
+Use Vitest and React Testing Library. Put a component's test in a `__tests__` folder next to the component, named `Component.test.tsx`. Put a store's test in the module's root `__tests__` folder, named `store.test.ts`.
 
 Use the `render` helper from `apps/web/test-utils/utils.tsx` instead of React Testing Library's own `render`. This helper wraps the tree in a `QueryClientProvider` and connects the MSW mock server.
 

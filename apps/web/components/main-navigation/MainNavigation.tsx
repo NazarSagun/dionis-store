@@ -5,15 +5,15 @@ import Link from 'next/link'
 import { useLogout } from '@repo/dionis-api/src/dionis/default/default'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@repo/ui'
 
-import { useAuthStore } from '@/features/auth'
+import { useAuthLogout, useAuthUser, useIsAuthenticated } from '@/modules/auth'
 
 const menuItemStyles =
   'cursor-pointer rounded-sm px-3 py-2 font-mono text-sm uppercase tracking-wide text-foreground focus:bg-neon-cyan focus:text-ink'
 
 export const MainNavigation = () => {
-  const isUserAuth = useAuthStore((state) => state.isAuthenticated)
-  const user = useAuthStore((state) => state.user)
-  const clearAuth = useAuthStore((state) => state.logout)
+  const isUserAuth = useIsAuthenticated()
+  const user = useAuthUser()
+  const clearAuth = useAuthLogout()
 
   const { refetch: logout } = useLogout({ query: { enabled: false } })
 

@@ -5,11 +5,11 @@ import { useRouter } from 'next/navigation'
 import { useRegister } from '@repo/dionis-api/src/dionis/default/default'
 import { useToast } from '@repo/ui'
 
-import { AuthPage, FormVariant, useAuthStore } from '@/features/auth'
+import { AuthPage, FormVariant, useAuthLogin, useIsAuthenticated } from '@/modules/auth'
 
 const SignUpPage = () => {
-  const isAuthenticated = useAuthStore((state) => state.isAuthenticated)
-  const login = useAuthStore((state) => state.login)
+  const isAuthenticated = useIsAuthenticated()
+  const login = useAuthLogin()
   const router = useRouter()
   const { toast } = useToast()
 

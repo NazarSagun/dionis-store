@@ -7,8 +7,8 @@ import { Skeleton } from '@repo/ui'
 
 import { Footer } from '@/components/footer'
 import { MainNavigation } from '@/components/main-navigation'
-import { GamesList, GamesPagination, GamesToolbar, TopDeals } from '@/features/games'
-import { WishlistSection } from '@/features/wishlist'
+import { GamesList, GamesPagination, GamesToolbar, TopDeals } from '@/modules/games'
+import { WishlistSection } from '@/modules/wishlist'
 
 const containerStyles =
   'flex flex-1 min-h-[75vh] flex-col items-center justify-center px-[35px] pb-20 bg-[image:var(--light-background-color)]'

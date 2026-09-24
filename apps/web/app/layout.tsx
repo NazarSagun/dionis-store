@@ -5,8 +5,8 @@ import { Press_Start_2P, Space_Mono } from 'next/font/google'
 import { Toaster } from '@repo/ui'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
-import { AuthInitializer } from '@/features/auth'
 import { cn } from '@/lib/utils'
+import { AuthInitializer } from '@/modules/auth'
 
 import './globals.css'
 

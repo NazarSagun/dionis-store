@@ -4,7 +4,7 @@ const config = {
   content: [
     './app/**/*.{ts,tsx}',
     './components/**/*.{ts,tsx}',
-    './features/**/*.{ts,tsx}',
+    './modules/**/*.{ts,tsx}',
     '../../packages/ui/src/**/*.{ts,tsx}',
   ],
   prefix: '',
