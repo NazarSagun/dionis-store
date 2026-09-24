@@ -25,7 +25,7 @@ export const CartItemRow = ({
   const updateItemQuantity = useUpdateCartItemQuantity()
   return (
     <div data-testid='cart-item' className='flex gap-4'>
-      <Image className='rounded-md border-2 border-ink' width={190} height={108} alt={title} src={thumbnailUrl} />
+      <Image className='rounded-md border border-ink' width={190} height={108} alt={title} src={thumbnailUrl} />
       <div className='flex flex-col justify-between py-[0.1rem]'>
         <div>
           <h3 className='font-mono text-xl font-bold text-foreground'>{title}</h3>

@@ -7,6 +7,7 @@ import { Skeleton } from '@repo/ui'
 
 import { Footer } from '@/components/footer/Footer'
 import { MainNavigation } from '@/components/main-navigation/MainNavigation'
+import { CartDrawer } from '@/modules/cart/presentation/cart-drawer/CartDrawer'
 import { GamesList } from '@/modules/games/presentation/games-list/GamesList'
 import { GamesPagination } from '@/modules/games/presentation/games-pagination/GamesPagination'
 import { GamesToolbar } from '@/modules/games/presentation/games-toolbar/GamesToolbar'
@@ -44,6 +45,12 @@ export default function Home() {
       <MainNavigation />
       <main className='flex-1'>
         <div className={containerStyles}>
+          <div className='w-full pt-12'>
+            <p className='font-mono text-xs font-bold uppercase tracking-wide text-primary'>
+              Digital + Physical Game Marketplace
+            </p>
+            <h1 className='mt-2 font-display text-4xl font-bold text-foreground'>Find your next game.</h1>
+          </div>
           <GamesToolbar
             platform={platform}
             sort={sort}
@@ -67,9 +74,7 @@ export default function Home() {
           {!isLoading && data && (
             <>
               <div data-testid='game-library' className='w-full'>
-                <h2 className='w-full pt-16 text-center font-display text-xl uppercase text-neon-magenta'>
-                  Game Library
-                </h2>
+                <h2 className='w-full pt-16 font-display text-2xl font-bold text-foreground'>All Games</h2>
                 <div className='w-full pt-10'>
                   <GamesList gamesList={data.games as GameObject[]} />
                 </div>
@@ -81,6 +86,7 @@ export default function Home() {
         </div>
       </main>
       <Footer />
+      <CartDrawer />
     </>
   )
 }

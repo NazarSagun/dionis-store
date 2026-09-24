@@ -27,7 +27,7 @@ export const CartNavigation = ({
   onStepClick: (step: number) => void
 }) => {
   return (
-    <nav className='flex h-[10vh] items-center justify-between border-b-4 border-neon-magenta bg-muted px-[35px]'>
+    <nav className='flex h-[10vh] items-center justify-between border-b border-ink bg-background px-[35px]'>
       <div>
         <Link href='/' className='flex items-center'>
           <span className='mr-2.5 cursor-default font-display text-sm text-neon-magenta hover:cursor-pointer'>

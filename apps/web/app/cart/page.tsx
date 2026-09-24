@@ -1,86 +1,26 @@
 'use client'
 
-import { useState } from 'react'
-import { useLogin, useRegister } from '@repo/dionis-api/src/dionis/default/default'
-import { Dialog, DialogContent, toast } from '@repo/ui'
+import { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 
-import { useAuthLogin } from '@/modules/auth/core/facade'
-import { AuthForm, FormVariant, UserData } from '@/modules/auth/presentation/auth-form/AuthForm'
-import { useCartStep, useSetCartStep } from '@/modules/cart/core/facade'
+import { useCartStep } from '@/modules/cart/core/facade'
 import { GameActivation } from '@/modules/cart/presentation/game-activation/GameActivation'
 import { Payment } from '@/modules/cart/presentation/payment/Payment'
-import { ShoppingCart } from '@/modules/cart/presentation/shopping-cart/ShoppingCart'
 
 const Page = () => {
-  const [isOpen, setIsOpen] = useState(false)
-  const [formVariant, setFormVariant] = useState(FormVariant.LOGIN)
-  const login = useAuthLogin()
   const currentStep = useCartStep()
-  const setStep = useSetCartStep()
+  const { replace } = useRouter()
 
-  const { mutate, isPending } = useLogin({
-    mutation: {
-      onSuccess: (data) => {
-        login(data.user?.accessToken as string, data.user?.name as string)
-        setIsOpen(false)
-      },
-      onError: (error) => {
-        toast({
-          variant: 'destructive',
-          title: error.response?.data.message + ' Please try again.',
-        })
-      },
-    },
-  })
+  useEffect(() => {
+    // Shopping Cart (step 1) is a drawer over whatever page opened it, not a
+    // route of its own. Landing here without having gone through it first -
+    // a bookmark, a refresh - sends the shopper back to pick up from there.
+    if (currentStep === 1) replace('/')
+  }, [currentStep, replace])
 
-  const { mutate: mutateRegister, isPending: isRegisterPending } = useRegister({
-    mutation: {
-      onSuccess: (data) => {
-        login(data.user?.accessToken as string, data.user?.name as string)
-        setStep(2)
-        setIsOpen(false)
-      },
-      onError: (error) => {
-        console.error('Error:', error.response?.data.message)
-        toast({
-          variant: 'destructive',
-          title: error.response?.data.message + ' Please try again.',
-        })
-      },
-    },
-  })
-
-  const submitHandler = (formData: UserData) => {
-    if (formVariant === FormVariant.LOGIN) {
-      mutate({ data: { email: formData.email, password: formData.password } })
-    } else {
-      mutateRegister({ data: { email: formData.email, password: formData.password, name: formData.name } })
-    }
-  }
-
-  return (
-    <Dialog
-      open={isOpen}
-      onOpenChange={(open) => {
-        console.log(open)
-        setIsOpen(open)
-      }}
-    >
-      <div>
-        {currentStep === 1 && <ShoppingCart />}
-        {currentStep === 2 && <Payment />}
-        {currentStep === 3 && <GameActivation />}
-      </div>
-      <DialogContent className='sm:max-w-[425px]'>
-        <AuthForm
-          isLoading={isPending || isRegisterPending}
-          onSubmitForm={submitHandler}
-          variant={FormVariant.LOGIN}
-          onVariantChange={(variant) => setFormVariant(variant)}
-        />
-      </DialogContent>
-    </Dialog>
-  )
+  if (currentStep === 2) return <Payment />
+  if (currentStep === 3) return <GameActivation />
+  return null
 }
 
 export default Page

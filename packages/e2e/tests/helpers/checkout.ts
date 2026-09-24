@@ -27,7 +27,9 @@ export async function signUpAndAddGamesToCart(page: Page, count = 1) {
 }
 
 export async function goToPaymentStep(page: Page) {
-  await page.goto('/cart')
+  // Shopping Cart (step 1) is a drawer over the current page, not its own
+  // route - open it from wherever the test already is instead of navigating.
+  await page.getByTestId('cart-trigger').click()
   await page.getByRole('button', { name: 'Go to payment' }).click()
 }
 

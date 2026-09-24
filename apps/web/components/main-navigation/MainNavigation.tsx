@@ -6,41 +6,40 @@ import { useLogout } from '@repo/dionis-api/src/dionis/default/default'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@repo/ui'
 
 import { useAuthLogout, useAuthUser, useIsAuthenticated } from '@/modules/auth/core/facade'
+import { useCartItems, useOpenCartDrawer } from '@/modules/cart/core/facade'
 
 const menuItemStyles =
-  'cursor-pointer rounded-sm px-3 py-2 font-mono text-sm uppercase tracking-wide text-foreground focus:bg-neon-cyan focus:text-ink'
+  'cursor-pointer rounded-sm px-3 py-2 font-mono text-sm text-foreground focus:bg-neon-cyan focus:text-primary-foreground'
+const navLinkStyles = 'font-mono text-sm text-muted-foreground hover:text-foreground'
 
 export const MainNavigation = () => {
   const isUserAuth = useIsAuthenticated()
   const user = useAuthUser()
   const clearAuth = useAuthLogout()
+  const cartItems = useCartItems()
+  const openCartDrawer = useOpenCartDrawer()
 
   const { refetch: logout } = useLogout({ query: { enabled: false } })
 
   return (
-    <nav className='flex h-[10vh] items-center justify-between border-b-4 border-neon-magenta bg-muted px-[35px]'>
-      <div className='flex items-center'>
-        <Link href='/' className='flex items-center gap-3'>
-          <span className='size-8 rounded border-2 border-ink bg-neon-magenta' />
-          <span className='cursor-pointer font-display text-base text-neon-magenta'>DIONIS</span>
+    <nav className='flex items-center justify-between border-b border-ink bg-background px-8 py-4'>
+      <Link href='/' className='font-display text-xl font-bold text-foreground'>
+        DIONIS
+      </Link>
+      <div className='flex items-center gap-6'>
+        <Link href='/' className={navLinkStyles}>
+          Search
         </Link>
-      </div>
-      <nav className='flex'>
-        <ul className='flex items-center'>
-          <Link href={'/'} className='ml-4 flex items-center last:ml-8'>
-            <li className='text-base font-bold uppercase tracking-wide text-foreground hover:text-neon-cyan'>Home</li>
-          </Link>
-        </ul>
-      </nav>
-      <div className='flex items-center'>
-        {user && <div className='mr-4 font-mono text-foreground'>Hi, {user.name}</div>}
-        <span className='mr-4 h-6 w-px bg-muted-foreground/40' />
-        <Link href='/cart' className='mr-4'>
-          <Image priority={true} width={25} height={25} alt='logo' src={`/icons/shopping-cart.svg`} />
+        <Link href='/account#wishlist' className={navLinkStyles}>
+          Wishlist
         </Link>
+        {user && <span className='font-mono text-sm text-muted-foreground'>Hi, {user.name}</span>}
+        <button type='button' data-testid='cart-trigger' onClick={openCartDrawer} className={navLinkStyles}>
+          Cart ({cartItems.length})
+        </button>
         <DropdownMenu>
           <DropdownMenuTrigger data-testid='account-menu-trigger' aria-label='Account menu'>
-            <Image priority={true} width={25} height={25} alt='logo' src={`/icons/account.svg`} />
+            <Image priority={true} width={32} height={32} alt='logo' src={`/icons/account.svg`} />
           </DropdownMenuTrigger>
           <DropdownMenuContent align='end' className='border-ink bg-panel-alt'>
             {isUserAuth ? (

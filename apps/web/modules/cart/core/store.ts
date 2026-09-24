@@ -9,11 +9,14 @@ interface CartState {
   items: CartItem[]
   currentStep: number
   orderId: number | null
+  isDrawerOpen: boolean
   addItem: (item: CartItem) => void
   removeItem: (id: number, editionId: number | null) => void
   updateItemQuantity: (id: number, editionId: number | null, quantity: number) => void
   setStep: (step: number) => void
   setOrderId: (orderId: number | null) => void
+  openDrawer: () => void
+  closeDrawer: () => void
 }
 
 export const useCartStore = create<CartState>()(
@@ -22,6 +25,7 @@ export const useCartStore = create<CartState>()(
       items: [],
       currentStep: 1,
       orderId: null,
+      isDrawerOpen: false,
       addItem: (item) => set((state) => ({ items: [...state.items, item] })),
       removeItem: (id, editionId) =>
         set((state) => ({ items: state.items.filter((item) => !isSameLine(item, id, editionId)) })),
@@ -31,6 +35,8 @@ export const useCartStore = create<CartState>()(
         })),
       setStep: (step) => set({ currentStep: step }),
       setOrderId: (orderId) => set({ orderId }),
+      openDrawer: () => set({ isDrawerOpen: true }),
+      closeDrawer: () => set({ isDrawerOpen: false }),
     }),
     {
       name: 'cart-storage',

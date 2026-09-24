@@ -15,8 +15,10 @@ describe('<MainNavigation />', () => {
   it('Should render links correctly', () => {
     const { getByText } = render(<MainNavigation />)
 
-    expect(getByText('Home')).toBeInTheDocument()
     expect(getByText('DIONIS')).toBeInTheDocument()
+    expect(getByText('Search')).toBeInTheDocument()
+    expect(getByText('Wishlist')).toBeInTheDocument()
+    expect(getByText('Cart (0)')).toBeInTheDocument()
   })
 
   it('Should show Login and Sign Up in the account menu when signed out', async () => {

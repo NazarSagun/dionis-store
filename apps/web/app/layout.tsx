@@ -1,7 +1,7 @@
 'use client'
 
 import type { ReactNode } from 'react'
-import { Press_Start_2P, Space_Mono } from 'next/font/google'
+import { Inter, JetBrains_Mono, Space_Grotesk } from 'next/font/google'
 import { Toaster } from '@repo/ui'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
@@ -12,17 +12,23 @@ import './globals.css'
 
 const queryClient = new QueryClient()
 
-const fontMono = Space_Mono({
+const fontSans = Inter({
   subsets: ['latin'],
-  variable: '--font-mono',
-  weight: ['400', '700'],
+  variable: '--font-sans',
   display: 'swap',
 })
 
-const fontDisplay = Press_Start_2P({
+const fontMono = JetBrains_Mono({
+  subsets: ['latin'],
+  variable: '--font-mono',
+  weight: ['400', '500', '700'],
+  display: 'swap',
+})
+
+const fontDisplay = Space_Grotesk({
   subsets: ['latin'],
   variable: '--font-display',
-  weight: ['400'],
+  weight: ['500', '700'],
   display: 'swap',
 })
 
@@ -37,9 +43,10 @@ export default function RootLayout({
         id='body'
         className={cn(
           'm-0 flex min-h-screen max-w-[100vw] flex-col overflow-x-hidden',
+          fontSans.variable,
           fontMono.variable,
           fontDisplay.variable,
-          fontMono.className,
+          fontSans.className,
         )}
       >
         <QueryClientProvider client={queryClient}>

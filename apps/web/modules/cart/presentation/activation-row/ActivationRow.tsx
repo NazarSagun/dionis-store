@@ -41,10 +41,7 @@ export const ActivationRow = ({ orderId, item }: ActivationRowProps) => {
   }
 
   return (
-    <div
-      data-testid='activation-row'
-      className='flex items-center gap-4 rounded-lg border-2 border-ink bg-panel-alt p-4'
-    >
+    <div data-testid='activation-row' className='flex items-center gap-4 rounded-lg border border-ink bg-panel-alt p-4'>
       <div className='relative size-[72px] shrink-0 overflow-hidden rounded bg-ink'>
         {item.game?.thumbnail && (
           <Image
@@ -62,7 +59,7 @@ export const ActivationRow = ({ orderId, item }: ActivationRowProps) => {
       </div>
       <span
         data-testid='activation-code'
-        className='rounded border-2 border-ink bg-background px-3 py-2 font-mono text-sm text-muted-foreground'
+        className='rounded border border-ink bg-background px-3 py-2 font-mono text-sm text-muted-foreground'
       >
         {item.activationCode}
       </span>
@@ -86,7 +83,7 @@ export const ActivationRow = ({ orderId, item }: ActivationRowProps) => {
       {item.activated ? (
         <span
           data-testid='activation-status'
-          className='rounded border-2 border-ink bg-neon-green px-3 py-2 font-mono text-sm font-bold text-ink'
+          className='rounded border border-ink bg-neon-green px-3 py-2 font-mono text-sm font-bold text-ink'
         >
           Activated
         </span>
@@ -96,7 +93,7 @@ export const ActivationRow = ({ orderId, item }: ActivationRowProps) => {
           data-testid='activation-mark-button'
           onClick={onMarkActivated}
           disabled={isPending}
-          className='rounded border-2 border-neon-cyan bg-panel-alt px-3 py-2 font-mono text-sm font-bold text-neon-cyan disabled:opacity-50'
+          className='rounded border border-neon-cyan bg-panel-alt px-3 py-2 font-mono text-sm font-bold text-neon-cyan disabled:opacity-50'
         >
           Mark as activated
         </button>

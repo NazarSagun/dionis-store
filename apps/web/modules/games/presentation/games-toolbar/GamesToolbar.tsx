@@ -22,19 +22,19 @@ interface GamesToolbarProps {
 const PLATFORM_OPTIONS = Object.values(GetGamesPlatform)
 
 const SORT_OPTIONS: { value: GetGamesSort; label: string }[] = [
-  { value: GetGamesSort.price_asc, label: 'Price: low to high' },
-  { value: GetGamesSort.price_desc, label: 'Price: high to low' },
-  { value: GetGamesSort.rating_desc, label: 'Rating: high to low' },
+  { value: GetGamesSort.price_asc, label: 'Price (low to high)' },
+  { value: GetGamesSort.price_desc, label: 'Price (high to low)' },
+  { value: GetGamesSort.rating_desc, label: 'Rating (high to low)' },
 ]
 
 const SEARCH_DEBOUNCE_MS = 300
 const ALL_VALUE = 'all'
 
 const triggerStyles =
-  'flex h-10 items-center gap-2 rounded-md border-2 border-neon-cyan bg-transparent px-4 font-mono text-sm font-bold uppercase text-neon-cyan outline-none focus-visible:ring-2 focus-visible:ring-neon-cyan'
+  'flex h-10 items-center gap-2 rounded-md border border-ink bg-secondary px-4 font-mono text-sm text-muted-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring'
 
 const menuItemStyles =
-  'flex cursor-pointer items-center gap-2 rounded-sm px-2 py-1.5 font-mono text-sm text-foreground outline-none focus:bg-neon-cyan focus:text-ink data-[state=checked]:font-bold'
+  'flex cursor-pointer items-center gap-2 rounded-sm px-2 py-1.5 font-mono text-sm text-foreground outline-none focus:bg-neon-cyan focus:text-primary-foreground data-[state=checked]:font-bold'
 
 export const GamesToolbar = ({
   platform,
@@ -67,36 +67,21 @@ export const GamesToolbar = ({
   const selectedSortLabel = SORT_OPTIONS.find((option) => option.value === sort)?.label
 
   return (
-    <div data-testid='games-toolbar' className='flex w-full flex-wrap items-end justify-between gap-8 pt-20'>
-      <div className='flex flex-col gap-2'>
-        <label htmlFor='search' className='font-mono text-xs font-bold uppercase tracking-wide text-neon-cyan'>
-          Search
-        </label>
-        <div className='flex items-center gap-3'>
-          <Input
-            key={searchResetKey}
-            name='search'
-            type='text'
-            placeholder='Search games...'
-            data-testid='search-input'
-            onInputChange={handleSearchInput}
-            className='mb-0 mt-0 w-72'
-          />
-          <button
-            type='button'
-            data-testid='clear-filters'
-            onClick={handleClearFilters}
-            className='font-mono text-sm text-neon-cyan hover:underline'
-          >
-            Clear filters
-          </button>
-        </div>
-      </div>
-      <div className='flex items-center gap-4'>
+    <div data-testid='games-toolbar' className='flex w-full flex-wrap items-center gap-3 pt-8'>
+      <Input
+        key={searchResetKey}
+        name='search'
+        type='text'
+        placeholder='Search by title...'
+        data-testid='search-input'
+        onInputChange={handleSearchInput}
+        className='mb-0 mt-0 w-72 bg-secondary'
+      />
+      <div className='flex items-center gap-3'>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <button type='button' data-testid='platform-filter' className={triggerStyles}>
-              {platform ?? 'Platform'}
+              Platform: {platform ?? 'All'}
               <ChevronDown className='h-4 w-4' />
             </button>
           </DropdownMenuTrigger>
@@ -127,7 +112,7 @@ export const GamesToolbar = ({
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <button type='button' data-testid='sort-select' className={triggerStyles}>
-              {selectedSortLabel ?? 'Sort'}
+              Sort: {selectedSortLabel ?? 'Default'}
               <ChevronDown className='h-4 w-4' />
             </button>
           </DropdownMenuTrigger>
@@ -155,6 +140,14 @@ export const GamesToolbar = ({
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
+      <button
+        type='button'
+        data-testid='clear-filters'
+        onClick={handleClearFilters}
+        className='font-mono text-sm text-primary hover:underline'
+      >
+        Clear filters
+      </button>
     </div>
   )
 }

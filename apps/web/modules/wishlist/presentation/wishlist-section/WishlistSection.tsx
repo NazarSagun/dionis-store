@@ -39,7 +39,7 @@ export const WishlistSection = () => {
 
   return (
     <div data-testid='wishlist' className='w-full'>
-      <h2 className='w-full pt-16 text-center font-display text-xl uppercase text-neon-magenta'>Wishlist</h2>
+      <h2 className='w-full pt-16 font-display text-2xl font-bold text-foreground'>Wishlist</h2>
       <div className='w-full pt-10'>
         <GamesList
           gamesList={games}

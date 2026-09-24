@@ -76,7 +76,7 @@ export const Payment = () => {
       <div className='flex w-full max-w-[500px] flex-col gap-8'>
         <div
           data-testid='payment-summary'
-          className='rounded-md border-2 border-ink bg-panel-alt p-8 font-mono text-foreground'
+          className='rounded-md border border-ink bg-panel-alt p-8 font-mono text-foreground'
         >
           <div className='flex flex-col gap-1 text-muted-foreground'>
             <div className='flex justify-between'>
@@ -96,7 +96,7 @@ export const Payment = () => {
               </div>
             )}
           </div>
-          <div className='mb-4 mt-[0.8rem] flex justify-between border-t-2 border-ink pt-4'>
+          <div className='mb-4 mt-[0.8rem] flex justify-between border-t border-ink pt-4'>
             <div className='text-xl font-bold'>Subtotal</div>
             <div className='font-display text-lg text-neon-amber'>{total.toFixed(2)}€</div>
           </div>
@@ -154,7 +154,7 @@ export const Payment = () => {
             <button
               type='button'
               onClick={requestClientSecret}
-              className='rounded-md border-2 border-ink bg-neon-magenta px-[30px] py-[15px] font-display text-xs text-ink shadow-retro'
+              className='rounded-md border border-ink bg-neon-magenta px-[30px] py-[15px] font-display text-xs text-primary-foreground shadow-retro'
             >
               Retry
             </button>

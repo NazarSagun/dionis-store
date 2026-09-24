@@ -4,17 +4,24 @@ import { Button, DialogTrigger } from '@repo/ui'
 
 import { useIsAuthenticated } from '@/modules/auth/core/facade'
 
-import { useCartItems, useSetCartStep } from '../../core/facade'
+import { useCartItems, useCloseCartDrawer, useSetCartStep } from '../../core/facade'
 import { calculateCartSummary } from '../../domain/pricing'
 
 const ctaButtonStyles =
-  'w-full rounded-md border-2 border-ink bg-neon-magenta px-[30px] py-[15px] font-display text-xs text-ink shadow-retro transition-transform duration-200 select-none touch-manipulation active:scale-95 disabled:pointer-events-none disabled:opacity-50'
+  'w-full rounded-md border border-ink bg-neon-magenta px-[30px] py-[15px] font-display text-xs text-primary-foreground shadow-retro transition-transform duration-200 select-none touch-manipulation active:scale-95 disabled:pointer-events-none disabled:opacity-50'
 
 export const Summary = () => {
   const items = useCartItems()
   const setStep = useSetCartStep()
+  const closeDrawer = useCloseCartDrawer()
   const isAuthenticated = useIsAuthenticated()
   const { push } = useRouter()
+
+  const goToPayment = () => {
+    setStep(2)
+    closeDrawer()
+    push('/cart')
+  }
 
   const [summery, setSummery] = useState({ totalDiscount: 0, finalPrice: 0, initialPrice: 0 })
 
@@ -24,7 +31,7 @@ export const Summary = () => {
   }, [items])
 
   return (
-    <div className='rounded-md border-2 border-ink bg-panel-alt p-8 font-mono text-foreground'>
+    <div className='rounded-md border border-ink bg-panel-alt p-8 font-mono text-foreground'>
       <div className='flex flex-col gap-1 text-muted-foreground'>
         <div className='flex justify-between'>
           <div>Official price</div>
@@ -37,13 +44,13 @@ export const Summary = () => {
           </div>
         )}
       </div>
-      <div className='mb-4 mt-[0.8rem] flex justify-between border-t-2 border-ink pt-4'>
+      <div className='mb-4 mt-[0.8rem] flex justify-between border-t border-ink pt-4'>
         <div className='text-xl font-bold'>Subtotal</div>
         <div className='font-display text-lg text-neon-amber'>{summery.finalPrice.toFixed(2)}€</div>
       </div>
       <div className='flex flex-col items-center'>
         {isAuthenticated ? (
-          <button onClick={() => setStep(2)} disabled={items.length === 0} className={ctaButtonStyles}>
+          <button onClick={goToPayment} disabled={items.length === 0} className={ctaButtonStyles}>
             Go to payment
           </button>
         ) : (
@@ -58,7 +65,13 @@ export const Summary = () => {
           or
         </div>
 
-        <Button variant='link' onClick={() => push('/')}>
+        <Button
+          variant='link'
+          onClick={() => {
+            closeDrawer()
+            push('/')
+          }}
+        >
           Continue shopping
         </Button>
       </div>

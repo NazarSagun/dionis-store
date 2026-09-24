@@ -53,7 +53,7 @@ export const GameActivation = () => {
         type='button'
         data-testid='finish-button'
         onClick={onFinish}
-        className='rounded-md border-2 border-ink bg-neon-magenta px-[30px] py-[15px] font-display text-xs text-ink shadow-retro transition-transform duration-200'
+        className='rounded-md border border-ink bg-neon-magenta px-[30px] py-[15px] font-display text-xs text-primary-foreground shadow-retro transition-transform duration-200'
       >
         Finish
       </button>

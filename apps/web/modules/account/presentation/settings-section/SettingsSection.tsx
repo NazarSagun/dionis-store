@@ -8,7 +8,7 @@ import { useSetAuthUserName } from '@/modules/auth/core/facade'
 import { useChangePassword, useUpdateName } from '../../integration/repository'
 
 const buttonStyles =
-  'w-fit rounded-md border-2 border-ink bg-neon-magenta px-6 py-3 font-display text-xs text-ink shadow-retro-sm disabled:pointer-events-none disabled:opacity-50'
+  'w-fit rounded-md border border-ink bg-neon-magenta px-6 py-3 font-display text-xs text-primary-foreground shadow-retro-sm disabled:pointer-events-none disabled:opacity-50'
 
 export const SettingsSection = () => {
   const setUserName = useSetAuthUserName()

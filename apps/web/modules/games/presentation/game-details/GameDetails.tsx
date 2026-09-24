@@ -14,7 +14,7 @@ import { calculateDiscountedPrice } from '../../domain/pricing'
 import { useGetGame } from '../../integration/repository'
 
 const buttonStyles =
-  'flex items-center gap-2 rounded-md border-2 border-ink px-[30px] py-[15px] text-ink shadow-retro transition-transform duration-200 select-none touch-manipulation active:scale-95'
+  'flex items-center gap-2 rounded-md border border-ink px-[30px] py-[15px] text-primary-foreground shadow-retro transition-transform duration-200 select-none touch-manipulation active:scale-95'
 
 interface GameDetailsProps {
   gameId: number
@@ -175,7 +175,7 @@ export const GameDetails = ({ gameId }: GameDetailsProps) => {
             </div>
           </div>
         </div>
-        <div className='rounded-md border-2 border-ink bg-panel-alt px-8 py-6'>
+        <div className='rounded-md border border-ink bg-panel-alt px-8 py-6'>
           {informationData.map((item) => (
             <div key={item.label} className='flex py-1'>
               <div className='mr-4 w-32'>

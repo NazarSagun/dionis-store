@@ -12,7 +12,7 @@ interface ShippingRowProps {
 // where it ships, per physical-editions-spec.md Feature 6.
 export const ShippingRow = ({ item, order }: ShippingRowProps) => {
   return (
-    <div data-testid='shipping-row' className='flex items-center gap-4 rounded-lg border-2 border-ink bg-panel-alt p-4'>
+    <div data-testid='shipping-row' className='flex items-center gap-4 rounded-lg border border-ink bg-panel-alt p-4'>
       <div className='relative size-[72px] shrink-0 overflow-hidden rounded bg-ink'>
         {item.game?.thumbnail && (
           <Image

@@ -9,3 +9,7 @@ export const useRemoveCartItem = () => useCartStore((state) => state.removeItem)
 export const useUpdateCartItemQuantity = () => useCartStore((state) => state.updateItemQuantity)
 export const useSetCartStep = () => useCartStore((state) => state.setStep)
 export const useSetCartOrderId = () => useCartStore((state) => state.setOrderId)
+
+export const useCartDrawerOpen = () => useCartStore((state) => state.isDrawerOpen)
+export const useOpenCartDrawer = () => useCartStore((state) => state.openDrawer)
+export const useCloseCartDrawer = () => useCartStore((state) => state.closeDrawer)

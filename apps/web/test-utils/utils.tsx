@@ -16,7 +16,7 @@ afterEach(() => {
   cleanup()
   localStorage.clear()
   useAuthStore.setState({ isAuthenticated: false, accessToken: null, user: null })
-  useCartStore.setState({ items: [], currentStep: 1, orderId: null })
+  useCartStore.setState({ items: [], currentStep: 1, orderId: null, isDrawerOpen: false })
   useRecentlyViewedStore.setState({ gameIds: [] })
 })
 

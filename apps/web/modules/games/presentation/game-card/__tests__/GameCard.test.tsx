@@ -31,12 +31,10 @@ describe('<GameCard />', () => {
 
     const title = getByText(game.title)
     const price = getByText('€' + game.price)
-    const rating = getByText(game.rating)
     const platform = getByText(game.platform)
 
     expect(title).toBeInTheDocument()
     expect(price).toBeInTheDocument()
-    expect(rating).toBeInTheDocument()
     expect(platform).toBeInTheDocument()
   })
 

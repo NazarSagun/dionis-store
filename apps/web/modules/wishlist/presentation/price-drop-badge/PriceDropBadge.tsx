@@ -38,7 +38,7 @@ export const PriceDropBadge = ({ gameId, snapshotDiscount }: PriceDropBadgeProps
   return (
     <span
       data-testid='wishlist-price-drop-badge'
-      className='w-fit rounded border-2 border-ink bg-neon-green px-2 py-1 font-mono text-xs font-bold text-ink'
+      className='w-fit rounded border border-ink bg-neon-green px-2 py-1 font-mono text-xs font-bold text-ink'
     >
       Price dropped
     </span>

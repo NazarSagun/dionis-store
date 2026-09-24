@@ -41,7 +41,7 @@ export const QuantitySelect = ({ onChange, selectedOption }: QuantitySelectProps
       <div
         data-testid='select'
         className={cn(
-          'flex cursor-pointer items-center justify-between rounded border-2 border-ink bg-background px-2.5 py-[5px] font-mono text-foreground shadow-[0px_0px_0px_2px_transparent] transition-shadow duration-200 ease-in-out',
+          'flex cursor-pointer items-center justify-between rounded border border-ink bg-background px-2.5 py-[5px] font-mono text-foreground shadow-[0px_0px_0px_2px_transparent] transition-shadow duration-200 ease-in-out',
           isOpen && 'shadow-[0px_0px_0px_2px_var(--neon-cyan)]',
         )}
         onClick={toggleDropdown}
@@ -50,14 +50,14 @@ export const QuantitySelect = ({ onChange, selectedOption }: QuantitySelectProps
         <div className='h-0 w-0 border-x-[5px] border-t-[5px] border-x-transparent border-t-foreground' />
       </div>
       {isOpen && (
-        <div className='absolute left-0 top-[110%] z-10 flex w-full flex-col gap-[5px] rounded border-2 border-ink bg-panel-alt p-[5px]'>
+        <div className='absolute left-0 top-[110%] z-10 flex w-full flex-col gap-[5px] rounded border border-ink bg-panel-alt p-[5px]'>
           {options.map((option) => (
             <div
               data-testid={`option-${option}`}
               key={option}
               className={cn(
                 'cursor-pointer rounded-[5px] px-[5px] font-mono text-sm text-foreground transition-colors duration-200 ease-in-out hover:bg-muted',
-                option === selectedNumber && 'bg-neon-cyan text-ink',
+                option === selectedNumber && 'bg-neon-cyan text-primary-foreground',
               )}
               onClick={() => handleOptionClick(option)}
             >

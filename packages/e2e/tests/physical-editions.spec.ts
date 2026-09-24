@@ -74,7 +74,7 @@ test.describe('Cart support for editions', () => {
   })
 
   test('keeps the digital line and the physical edition line separate for the same game', async ({ page }) => {
-    await page.goto('/cart')
+    await page.getByTestId('cart-trigger').click()
 
     const rows = page.getByTestId('cart-item')
     await expect(rows).toHaveCount(2)
@@ -87,7 +87,7 @@ test.describe('Cart support for editions', () => {
   })
 
   test('removing the physical line leaves the digital line untouched', async ({ page }) => {
-    await page.goto('/cart')
+    await page.getByTestId('cart-trigger').click()
     const physicalRow = page.getByTestId('cart-item').filter({ has: page.getByTestId('cart-item-edition') })
 
     await physicalRow.getByRole('button').filter({ has: page.locator('img[alt="delete item"]') }).click()
@@ -97,7 +97,7 @@ test.describe('Cart support for editions', () => {
   })
 
   test('increasing the physical line quantity does not change the digital line quantity', async ({ page }) => {
-    await page.goto('/cart')
+    await page.getByTestId('cart-trigger').click()
     const physicalRow = page.getByTestId('cart-item').filter({ has: page.getByTestId('cart-item-edition') })
     const digitalRow = page.getByTestId('cart-item').filter({ hasNot: page.getByTestId('cart-item-edition') })
 

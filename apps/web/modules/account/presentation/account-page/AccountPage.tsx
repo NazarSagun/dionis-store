@@ -12,8 +12,8 @@ import { RecentlyViewedSection } from '../recently-viewed-section/RecentlyViewed
 import { SettingsSection } from '../settings-section/SettingsSection'
 
 const tabStyles =
-  'rounded-md border-2 border-ink px-6 py-3 font-display text-xs shadow-retro-sm transition-transform duration-200 active:scale-95'
-const activeTabStyles = 'bg-neon-magenta text-ink'
+  'rounded-md border border-ink px-6 py-3 font-display text-xs shadow-retro-sm transition-transform duration-200 active:scale-95'
+const activeTabStyles = 'bg-neon-magenta text-primary-foreground'
 const inactiveTabStyles = 'bg-panel-alt text-neon-cyan'
 
 const TABS = [
@@ -45,7 +45,7 @@ export const AccountPage = () => {
   return (
     <div data-testid='account-page' className='flex w-full flex-col items-center px-[35px] pb-20'>
       <div className='flex w-full max-w-[1200px] flex-col items-center gap-2 pt-16'>
-        <span className='rounded-full border-2 border-ink px-4 py-1 font-mono text-xs text-neon-cyan'>
+        <span className='rounded-full border border-ink px-4 py-1 font-mono text-xs text-neon-cyan'>
           Player account
         </span>
         {user && <h1 className='font-display text-xl text-foreground'>Hi, {user.name}</h1>}

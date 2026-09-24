@@ -90,7 +90,7 @@ test.describe('Account area', () => {
 
       await wishlistCard.getByTestId('wishlist-add-to-cart').click()
 
-      await page.goto('/cart')
+      await page.getByTestId('cart-trigger').click()
       await expect(page.getByText('Your cart is empty')).not.toBeVisible()
       await page.goto('/account')
       await expect(page.getByTestId('wishlist').getByTestId('card')).toHaveCount(1)

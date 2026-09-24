@@ -11,7 +11,7 @@ const OrderHistoryRow = ({ order }: { order: OrderObject }) => {
   const items = order.items ?? []
 
   return (
-    <div data-testid='order-history-row' className='flex flex-col gap-3 border-b-2 border-ink pb-4'>
+    <div data-testid='order-history-row' className='flex flex-col gap-3 border-b border-ink pb-4'>
       <div className='flex items-center justify-between'>
         <button
           type='button'

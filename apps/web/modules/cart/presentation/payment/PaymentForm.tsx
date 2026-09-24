@@ -8,7 +8,7 @@ import { useConfirmOrder } from '../../integration/repository'
 import { PaymentElement, useElements, useStripe } from './stripe-elements'
 
 const ctaButtonStyles =
-  'w-full rounded-md border-2 border-ink bg-neon-magenta px-[30px] py-[15px] font-display text-xs text-ink shadow-retro transition-transform duration-200 select-none touch-manipulation active:scale-95 disabled:pointer-events-none disabled:opacity-50'
+  'w-full rounded-md border border-ink bg-neon-magenta px-[30px] py-[15px] font-display text-xs text-primary-foreground shadow-retro transition-transform duration-200 select-none touch-manipulation active:scale-95 disabled:pointer-events-none disabled:opacity-50'
 
 export interface ShippingAddress {
   shippingName: string
