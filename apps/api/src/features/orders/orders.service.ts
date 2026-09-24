@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common'
 import { PrismaService } from '../../common/prisma/prisma.service'
 import { CustomError } from '../../common/errors/custom-error'
 import { ShippingAddressDto } from './dto/shipping-address.dto'
+import { findOwnedItem } from './order-ownership.util'
 import { SHIPPING_FEE_CENTS } from './shipping-fee'
 import { StripeService } from './stripe.service'
 
@@ -57,6 +58,8 @@ export class OrdersService {
     if (!user) {
       throw new CustomError('User does not exist', 400)
     }
+
+    await this.assertItemsNotOwned(user.id, items)
 
     const { totalPrice } = await this.priceOrderItems(items)
 
@@ -182,12 +185,28 @@ export class OrdersService {
     })
   }
 
+  // Charging via Stripe happens right after this call, so the check runs
+  // before a payment intent is even created - rejecting later, at confirm
+  // time, would mean the user already paid for a game they can't be sold.
+  private async assertItemsNotOwned(userId: number, items: OrderItemInput[]) {
+    const owned = await findOwnedItem(this.prisma, userId, items)
+
+    if (owned) {
+      throw new CustomError('You already own one or more of these items', 409)
+    }
+  }
+
   private async priceOrderItems(items: OrderItemInput[]) {
     const editionIds = items.filter((item) => item.editionId != null).map((item) => item.editionId as number)
 
+    // `in: []` is a valid Prisma query that simply returns no rows, so this
+    // always runs rather than branching on editionIds.length - a ternary
+    // whose other branch was a bare `[]` made this pair's type ambiguous
+    // enough to confuse ts-jest's checker (not plain tsc) into losing
+    // `editions`'s element type entirely.
     const [games, editions] = await Promise.all([
       this.prisma.game_pc.findMany({ where: { id: { in: items.map((item) => item.gameId) } } }),
-      editionIds.length > 0 ? this.prisma.gameEdition.findMany({ where: { id: { in: editionIds } } }) : [],
+      this.prisma.gameEdition.findMany({ where: { id: { in: editionIds } } }),
     ])
 
     const pricedItems = items.map((item) => {

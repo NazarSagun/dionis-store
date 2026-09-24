@@ -10,8 +10,9 @@ import { useAddCartItem, useCartItems, useUpdateCartItemQuantity } from '@/modul
 import { CartItem } from '@/modules/cart/domain/models'
 import { useIsInWishlist, useToggleWishlistItem } from '@/modules/wishlist/core/facade'
 
+import { isGameOwned } from '../../domain/ownership'
 import { calculateDiscountedPrice } from '../../domain/pricing'
-import { useGetGame } from '../../integration/repository'
+import { useGetGame, useGetOrders } from '../../integration/repository'
 
 const buttonStyles =
   'flex items-center gap-2 rounded-md border border-ink px-[30px] py-[15px] text-primary-foreground shadow-retro transition-transform duration-200 select-none touch-manipulation active:scale-95'
@@ -36,6 +37,7 @@ export const GameDetails = ({ gameId }: GameDetailsProps) => {
   const { toast } = useToast()
 
   const { data, isLoading } = useGetGame(gameId)
+  const { data: orders } = useGetOrders()
 
   const addGameHandler = (cartItem: CartItem) => {
     const gameInCart = items.find((item) => item.id === cartItem.id && item.editionId === cartItem.editionId)
@@ -92,6 +94,7 @@ export const GameDetails = ({ gameId }: GameDetailsProps) => {
 
     const cartItem = buildCartItem(data)
     const editions = data.editions ?? []
+    const isDigitalOwned = isGameOwned(orders, data.id, null)
 
     return (
       <div className='flex min-h-[75vh] flex-col gap-16 px-4 py-12 sm:px-8 lg:px-40'>
@@ -150,15 +153,23 @@ export const GameDetails = ({ gameId }: GameDetailsProps) => {
                   <Image width={24} height={24} alt='favorite' src='/icons/favorite.svg' />
                 </button>
                 <button
-                  className={cn(buttonStyles, 'min-w-0 flex-1 justify-center bg-neon-magenta')}
+                  className={cn(buttonStyles, 'min-w-0 flex-1 justify-center bg-neon-magenta disabled:opacity-50')}
                   data-testid='edition-option'
+                  disabled={isDigitalOwned}
                   onClick={() => addGameHandler(cartItem)}
                 >
-                  <Image width={24} height={24} alt='shopping-cart' src='/icons/shopping-cart.svg' />{' '}
-                  <span className='font-display text-xs'>Add Digital Copy</span>
+                  {isDigitalOwned ? (
+                    <span className='font-display text-xs'>Already in Library</span>
+                  ) : (
+                    <>
+                      <Image width={24} height={24} alt='shopping-cart' src='/icons/shopping-cart.svg' />{' '}
+                      <span className='font-display text-xs'>Add Digital Copy</span>
+                    </>
+                  )}
                 </button>
                 {editions.map((edition) => {
                   const outOfStock = edition.stock <= 0
+                  const isOwned = isGameOwned(orders, data.id, edition.id)
                   return (
                     <button
                       key={edition.id}
@@ -167,12 +178,16 @@ export const GameDetails = ({ gameId }: GameDetailsProps) => {
                         'min-w-0 flex-1 flex-col justify-center gap-0 bg-neon-magenta disabled:opacity-50',
                       )}
                       data-testid='edition-option'
-                      disabled={outOfStock}
+                      disabled={outOfStock || isOwned}
                       onClick={() => addGameHandler(buildEditionCartItem(data, edition))}
                     >
                       <span className='font-display text-xs'>{edition.name}</span>
                       <span data-testid='edition-stock' className='font-mono text-xs'>
-                        {outOfStock ? 'Out of stock' : `${calculateDiscountedPrice(edition.price, edition.discount)}€`}
+                        {isOwned
+                          ? 'Already in Library'
+                          : outOfStock
+                            ? 'Out of stock'
+                            : `${calculateDiscountedPrice(edition.price, edition.discount)}€`}
                       </span>
                     </button>
                   )

@@ -10,7 +10,7 @@ describe('OrdersService', () => {
     game_pc: { findMany: jest.Mock }
     gameEdition: { findMany: jest.Mock; updateMany: jest.Mock }
     order: { findUnique: jest.Mock; findFirst: jest.Mock; findMany: jest.Mock; create: jest.Mock }
-    orderItem: { update: jest.Mock }
+    orderItem: { update: jest.Mock; findFirst: jest.Mock }
     $transaction: jest.Mock
   }
   let stripe: { createPaymentIntent: jest.Mock; retrievePaymentIntent: jest.Mock }
@@ -23,7 +23,7 @@ describe('OrdersService', () => {
       game_pc: { findMany: jest.fn() },
       gameEdition: { findMany: jest.fn().mockResolvedValue([]), updateMany: jest.fn().mockResolvedValue({ count: 1 }) },
       order: { findUnique: jest.fn(), findFirst: jest.fn(), findMany: jest.fn(), create: jest.fn() },
-      orderItem: { update: jest.fn() },
+      orderItem: { update: jest.fn(), findFirst: jest.fn().mockResolvedValue(null) },
       // A transparent pass-through: the callback runs against the same mock
       // `prisma`, so every other test can keep asserting on
       // `prisma.order.create` etc. without knowing a transaction wraps it.
@@ -88,6 +88,46 @@ describe('OrdersService', () => {
       await service.createPaymentIntent(user.email, [{ gameId: 1, quantity: 1 }])
 
       expect(stripe.createPaymentIntent).toHaveBeenCalledWith(5000, expect.any(Object))
+    })
+
+    it('rejects a game already owned as a digital purchase, before Stripe is ever called', async () => {
+      prisma.orderItem.findFirst.mockResolvedValue({ id: 1 })
+
+      await expect(service.createPaymentIntent(user.email, [{ gameId: 1, quantity: 1 }])).rejects.toThrow(
+        'You already own',
+      )
+      expect(stripe.createPaymentIntent).not.toHaveBeenCalled()
+    })
+
+    it('rejects a specific edition already owned, even when the digital copy is not', async () => {
+      prisma.orderItem.findFirst.mockResolvedValue({ id: 1 })
+
+      await expect(
+        service.createPaymentIntent(user.email, [{ gameId: 1, quantity: 1, editionId: 10 }]),
+      ).rejects.toThrow('You already own')
+    })
+
+    it('looks up ownership by the exact (gameId, editionId) pair for every cart line', async () => {
+      prisma.game_pc.findMany.mockResolvedValue([{ id: 1, price: 50, discount: 0 }])
+      prisma.gameEdition.findMany.mockResolvedValue([{ id: 10, price: 69, discount: 0 }])
+      stripe.createPaymentIntent.mockResolvedValue({ client_secret: 'secret_ok' })
+
+      await service.createPaymentIntent(user.email, [
+        { gameId: 1, quantity: 1 },
+        { gameId: 1, quantity: 1, editionId: 10 },
+      ])
+
+      expect(prisma.orderItem.findFirst).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: {
+            order: { userId: user.id },
+            OR: [
+              { gameId: 1, editionId: null },
+              { gameId: 1, editionId: 10 },
+            ],
+          },
+        }),
+      )
     })
   })
 
