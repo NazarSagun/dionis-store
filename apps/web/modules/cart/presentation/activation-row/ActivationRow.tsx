@@ -41,7 +41,10 @@ export const ActivationRow = ({ orderId, item }: ActivationRowProps) => {
   }
 
   return (
-    <div data-testid='activation-row' className='flex items-center gap-4 rounded-lg border border-ink bg-panel-alt p-4'>
+    <div
+      data-testid='activation-row'
+      className='flex flex-wrap items-center gap-4 rounded-lg border border-ink bg-panel-alt p-4'
+    >
       <div className='relative size-[72px] shrink-0 overflow-hidden rounded bg-ink'>
         {item.game?.thumbnail && (
           <Image

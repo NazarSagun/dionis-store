@@ -24,8 +24,14 @@ export const CartItemRow = ({
   const removeItem = useRemoveCartItem()
   const updateItemQuantity = useUpdateCartItemQuantity()
   return (
-    <div data-testid='cart-item' className='flex gap-4'>
-      <Image className='rounded-md border border-ink' width={190} height={108} alt={title} src={thumbnailUrl} />
+    <div data-testid='cart-item' className='flex flex-col gap-4 sm:flex-row'>
+      <Image
+        className='h-auto w-full rounded-md border border-ink object-cover sm:h-[108px] sm:w-[190px]'
+        width={190}
+        height={108}
+        alt={title}
+        src={thumbnailUrl}
+      />
       <div className='flex flex-col justify-between py-[0.1rem]'>
         <div>
           <h3 className='font-mono text-xl font-bold text-foreground'>{title}</h3>
@@ -51,7 +57,7 @@ export const CartItemRow = ({
           </button>
         </div>
       </div>
-      <div className='ml-auto flex items-center'>
+      <div className='flex items-center justify-between sm:ml-auto sm:justify-normal'>
         <span className='mr-4 font-display text-sm text-neon-amber'>{calculateDiscountedPrice(price, discount)}€</span>
 
         <QuantitySelect onChange={(number) => updateItemQuantity(id, editionId, number)} selectedOption={quantity} />

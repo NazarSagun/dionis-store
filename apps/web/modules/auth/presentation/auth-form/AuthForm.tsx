@@ -51,7 +51,7 @@ export const AuthForm = ({ onSubmitForm, variant, isLoading, onVariantChange, sw
   return (
     <form
       onSubmit={submitHandler}
-      className='flex w-[350px] flex-col rounded-md border border-ink bg-panel-alt px-5 py-[15px] shadow-retro'
+      className='flex w-full max-w-[350px] flex-col rounded-md border border-ink bg-panel-alt px-5 py-[15px] shadow-retro'
     >
       <h3 className='mb-5 mt-2.5 font-display text-sm text-neon-magenta'>{authTitle} your Dionis account</h3>
       {formVariant === FormVariant.SIGNUP ? (

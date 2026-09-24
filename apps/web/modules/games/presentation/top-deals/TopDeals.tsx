@@ -27,9 +27,9 @@ export const TopDeals = ({ games }: TopDealsProps) => {
         <Link
           href={`/game/${featured.id}`}
           data-testid='featured-deal'
-          className='flex w-full items-center gap-6 md:w-[560px] md:shrink-0'
+          className='flex w-full flex-col items-start gap-6 sm:flex-row sm:items-center md:w-[560px] md:shrink-0'
         >
-          <div className='relative aspect-square w-[220px] shrink-0 overflow-hidden rounded bg-ink'>
+          <div className='relative aspect-square w-[140px] shrink-0 overflow-hidden rounded bg-ink sm:w-[220px]'>
             <Image
               fill
               sizes='220px'

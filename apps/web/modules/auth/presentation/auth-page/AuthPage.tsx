@@ -14,8 +14,10 @@ export const AuthPage = ({ variant, onSubmitForm, isFormLoading }: AuthPageProps
   const switchHref = variant === FormVariant.LOGIN ? '/signup' : '/login'
 
   return (
-    <section className='flex items-center justify-center gap-[10vw] px-20'>
-      <LeftContentBlock variant={variant} />
+    <section className='flex flex-col items-center justify-center gap-8 px-4 py-12 sm:px-8 lg:flex-row lg:gap-[10vw] lg:px-20 lg:py-0'>
+      <div className='hidden lg:block'>
+        <LeftContentBlock variant={variant} />
+      </div>
       <AuthForm isLoading={isFormLoading} onSubmitForm={onSubmitForm} variant={variant} switchHref={switchHref} />
     </section>
   )

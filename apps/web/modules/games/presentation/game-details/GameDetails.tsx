@@ -58,10 +58,10 @@ export const GameDetails = ({ gameId }: GameDetailsProps) => {
 
   if (isLoading) {
     return (
-      <div className='flex min-h-[75vh] flex-col gap-16 px-40 py-12'>
-        <div className='flex justify-between gap-12'>
-          <Skeleton className='h-[300px] w-[500px] shrink-0' />
-          <div className='flex w-[50vw] flex-col justify-between gap-6'>
+      <div className='flex min-h-[75vh] flex-col gap-16 px-4 py-12 sm:px-8 lg:px-40'>
+        <div className='flex flex-col gap-12 lg:flex-row lg:justify-between'>
+          <Skeleton className='h-[300px] w-full max-w-[500px] shrink-0' />
+          <div className='flex w-full flex-col justify-between gap-6 lg:w-[50vw]'>
             <div className='flex flex-col gap-4'>
               <Skeleton className='h-8 w-2/3' />
               <Skeleton className='h-4 w-full' />
@@ -94,12 +94,18 @@ export const GameDetails = ({ gameId }: GameDetailsProps) => {
     const editions = data.editions ?? []
 
     return (
-      <div className='flex min-h-[75vh] flex-col gap-16 px-40 py-12'>
-        <div className='flex justify-between gap-12'>
+      <div className='flex min-h-[75vh] flex-col gap-16 px-4 py-12 sm:px-8 lg:px-40'>
+        <div className='flex flex-col gap-12 lg:flex-row lg:justify-between'>
           <div>
-            <Image alt={data.title as string} width={500} height={300} src={data.thumbnail as string} />
+            <Image
+              className='h-auto w-full max-w-[500px]'
+              alt={data.title as string}
+              width={500}
+              height={300}
+              src={data.thumbnail as string}
+            />
           </div>
-          <div className='flex w-[50vw] flex-col justify-between text-foreground'>
+          <div className='flex w-full flex-col justify-between text-foreground lg:w-[50vw]'>
             <div>
               <h1 className='font-display text-2xl'>{data.title}</h1>
 
