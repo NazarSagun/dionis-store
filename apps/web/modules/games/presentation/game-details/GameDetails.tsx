@@ -183,8 +183,8 @@ export const GameDetails = ({ gameId }: GameDetailsProps) => {
         </div>
         <div className='rounded-md border border-ink bg-panel-alt px-8 py-6'>
           {informationData.map((item) => (
-            <div key={item.label} className='flex py-1'>
-              <div className='mr-4 w-32'>
+            <div key={item.label} className='flex flex-wrap py-1'>
+              <div className='mr-4 w-28 shrink-0 sm:w-32'>
                 <span className='font-mono text-base text-neon-cyan'>{item.label}: </span>
               </div>
               <div>

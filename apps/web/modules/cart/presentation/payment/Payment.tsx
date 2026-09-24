@@ -71,7 +71,7 @@ export const Payment = () => {
     setShippingAddress((address) => ({ ...address, [field]: value }))
 
   return (
-    <div data-testid='payment' className='flex w-full flex-col items-center gap-10 px-[35px] py-16'>
+    <div data-testid='payment' className='flex w-full flex-col items-center gap-10 px-4 py-16 sm:px-8 lg:px-[35px]'>
       <h1 className='font-display text-xl uppercase text-neon-magenta'>Payment</h1>
       <div className='flex w-full max-w-[500px] flex-col gap-8'>
         <div

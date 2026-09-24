@@ -58,7 +58,25 @@ export const GamesPagination = ({ totalPages, onChange, currentPage }: Paginatio
 
   return (
     <Pagination>
-      <PaginationContent>
+      <PaginationContent data-testid='games-pagination-compact' className='w-full justify-between sm:hidden'>
+        <PaginationItem>
+          <PaginationPrevious
+            onClick={() => {
+              handlePageChange(currentPage - 1)
+            }}
+            disabled={currentPage === 1}
+          />
+        </PaginationItem>
+        <PaginationItem>
+          <span className='font-mono text-sm text-muted-foreground'>
+            Page {currentPage} of {totalPages}
+          </span>
+        </PaginationItem>
+        <PaginationItem>
+          <PaginationNext disabled={currentPage === totalPages} onClick={() => handlePageChange(currentPage + 1)} />
+        </PaginationItem>
+      </PaginationContent>
+      <PaginationContent data-testid='games-pagination-full' className='hidden sm:flex'>
         <PaginationItem>
           <PaginationPrevious
             onClick={() => {

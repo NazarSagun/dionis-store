@@ -13,7 +13,7 @@ export const LibrarySection = () => {
 
   return (
     <div data-testid='account-library' className='w-full'>
-      <h2 className='w-full pt-16 text-center font-display text-xl uppercase text-neon-magenta'>My Games</h2>
+      <h2 className='w-full pt-16 text-left font-display text-xl uppercase text-neon-magenta'>My Games</h2>
       <div className='w-full pt-10'>
         {isLoading && (
           <div className='flex flex-col gap-4'>

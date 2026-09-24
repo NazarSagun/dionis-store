@@ -3,12 +3,17 @@ import { GetGamesEdition, GetGamesPlatform, GetGamesSort } from '@repo/dionis-ap
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
   Input,
 } from '@repo/ui'
-import { Check, ChevronDown } from 'lucide-react'
+import { Check, ChevronDown, SlidersHorizontal } from 'lucide-react'
+
+import { cn } from '@/lib/utils'
 
 interface GamesToolbarProps {
   platform?: GetGamesPlatform
@@ -77,6 +82,75 @@ export const GamesToolbar = ({
   const selectedSortLabel = SORT_OPTIONS.find((option) => option.value === sort)?.label
   const selectedEditionLabel = EDITION_OPTIONS.find((option) => option.value === edition)?.label
 
+  const platformRadioGroup = (
+    <DropdownMenuRadioGroup
+      value={platform ?? ALL_VALUE}
+      onValueChange={(value) => onPlatformChange(value === ALL_VALUE ? undefined : (value as GetGamesPlatform))}
+    >
+      <DropdownMenuRadioItem value={ALL_VALUE} data-testid='platform-option-all' className={menuItemStyles}>
+        {platform === undefined && <Check className='h-4 w-4' />}
+        All platforms
+      </DropdownMenuRadioItem>
+      {PLATFORM_OPTIONS.map((option) => (
+        <DropdownMenuRadioItem
+          key={option}
+          value={option}
+          data-testid={`platform-option-${option}`}
+          className={menuItemStyles}
+        >
+          {platform === option && <Check className='h-4 w-4' />}
+          {option}
+        </DropdownMenuRadioItem>
+      ))}
+    </DropdownMenuRadioGroup>
+  )
+
+  const sortRadioGroup = (
+    <DropdownMenuRadioGroup
+      value={sort ?? ALL_VALUE}
+      onValueChange={(value) => onSortChange(value === ALL_VALUE ? undefined : (value as GetGamesSort))}
+    >
+      <DropdownMenuRadioItem value={ALL_VALUE} data-testid='sort-option-default' className={menuItemStyles}>
+        {sort === undefined && <Check className='h-4 w-4' />}
+        Default
+      </DropdownMenuRadioItem>
+      {SORT_OPTIONS.map((option) => (
+        <DropdownMenuRadioItem
+          key={option.value}
+          value={option.value}
+          data-testid={`sort-option-${option.value}`}
+          className={menuItemStyles}
+        >
+          {sort === option.value && <Check className='h-4 w-4' />}
+          {option.label}
+        </DropdownMenuRadioItem>
+      ))}
+    </DropdownMenuRadioGroup>
+  )
+
+  const editionRadioGroup = (
+    <DropdownMenuRadioGroup
+      value={edition ?? ALL_VALUE}
+      onValueChange={(value) => onEditionChange(value === ALL_VALUE ? undefined : (value as GetGamesEdition))}
+    >
+      <DropdownMenuRadioItem value={ALL_VALUE} data-testid='edition-option-all' className={menuItemStyles}>
+        {edition === undefined && <Check className='h-4 w-4' />}
+        All editions
+      </DropdownMenuRadioItem>
+      {EDITION_OPTIONS.map((option) => (
+        <DropdownMenuRadioItem
+          key={option.value}
+          value={option.value}
+          data-testid={`edition-option-${option.value}`}
+          className={menuItemStyles}
+        >
+          {edition === option.value && <Check className='h-4 w-4' />}
+          {option.label}
+        </DropdownMenuRadioItem>
+      ))}
+    </DropdownMenuRadioGroup>
+  )
+
   return (
     <div data-testid='games-toolbar' className='flex w-full flex-wrap items-center gap-3 pt-8'>
       <Input
@@ -86,9 +160,32 @@ export const GamesToolbar = ({
         placeholder='Search by title...'
         data-testid='search-input'
         onInputChange={handleSearchInput}
-        className='mb-0 mt-0 h-10 w-72 bg-secondary px-4'
+        className='mb-0 mt-0 h-10 w-full bg-secondary px-4 sm:w-72'
       />
-      <div className='flex items-center gap-3'>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <button type='button' data-testid='filters-trigger' className={cn(triggerStyles, 'sm:hidden')}>
+            <SlidersHorizontal className='h-4 w-4' />
+            Filters
+          </button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align='end' className='w-64 border-ink bg-panel-alt'>
+          <DropdownMenuLabel>Platform</DropdownMenuLabel>
+          {platformRadioGroup}
+          <DropdownMenuSeparator className='bg-ink' />
+          <DropdownMenuLabel>Sort</DropdownMenuLabel>
+          {sortRadioGroup}
+          <DropdownMenuSeparator className='bg-ink' />
+          <DropdownMenuLabel>Edition</DropdownMenuLabel>
+          {editionRadioGroup}
+          <DropdownMenuSeparator className='bg-ink' />
+          <DropdownMenuItem data-testid='clear-filters-mobile' onClick={handleClearFilters} className={menuItemStyles}>
+            Clear filters
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+
+      <div className='hidden flex-wrap items-center gap-3 sm:flex'>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <button type='button' data-testid='platform-filter' className={triggerStyles}>
@@ -97,26 +194,7 @@ export const GamesToolbar = ({
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align='center' className='border-ink bg-panel-alt'>
-            <DropdownMenuRadioGroup
-              value={platform ?? ALL_VALUE}
-              onValueChange={(value) => onPlatformChange(value === ALL_VALUE ? undefined : (value as GetGamesPlatform))}
-            >
-              <DropdownMenuRadioItem value={ALL_VALUE} data-testid='platform-option-all' className={menuItemStyles}>
-                {platform === undefined && <Check className='h-4 w-4' />}
-                All platforms
-              </DropdownMenuRadioItem>
-              {PLATFORM_OPTIONS.map((option) => (
-                <DropdownMenuRadioItem
-                  key={option}
-                  value={option}
-                  data-testid={`platform-option-${option}`}
-                  className={menuItemStyles}
-                >
-                  {platform === option && <Check className='h-4 w-4' />}
-                  {option}
-                </DropdownMenuRadioItem>
-              ))}
-            </DropdownMenuRadioGroup>
+            {platformRadioGroup}
           </DropdownMenuContent>
         </DropdownMenu>
 
@@ -128,26 +206,7 @@ export const GamesToolbar = ({
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align='center' className='border-ink bg-panel-alt'>
-            <DropdownMenuRadioGroup
-              value={sort ?? ALL_VALUE}
-              onValueChange={(value) => onSortChange(value === ALL_VALUE ? undefined : (value as GetGamesSort))}
-            >
-              <DropdownMenuRadioItem value={ALL_VALUE} data-testid='sort-option-default' className={menuItemStyles}>
-                {sort === undefined && <Check className='h-4 w-4' />}
-                Default
-              </DropdownMenuRadioItem>
-              {SORT_OPTIONS.map((option) => (
-                <DropdownMenuRadioItem
-                  key={option.value}
-                  value={option.value}
-                  data-testid={`sort-option-${option.value}`}
-                  className={menuItemStyles}
-                >
-                  {sort === option.value && <Check className='h-4 w-4' />}
-                  {option.label}
-                </DropdownMenuRadioItem>
-              ))}
-            </DropdownMenuRadioGroup>
+            {sortRadioGroup}
           </DropdownMenuContent>
         </DropdownMenu>
 
@@ -159,26 +218,7 @@ export const GamesToolbar = ({
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align='center' className='border-ink bg-panel-alt'>
-            <DropdownMenuRadioGroup
-              value={edition ?? ALL_VALUE}
-              onValueChange={(value) => onEditionChange(value === ALL_VALUE ? undefined : (value as GetGamesEdition))}
-            >
-              <DropdownMenuRadioItem value={ALL_VALUE} data-testid='edition-option-all' className={menuItemStyles}>
-                {edition === undefined && <Check className='h-4 w-4' />}
-                All editions
-              </DropdownMenuRadioItem>
-              {EDITION_OPTIONS.map((option) => (
-                <DropdownMenuRadioItem
-                  key={option.value}
-                  value={option.value}
-                  data-testid={`edition-option-${option.value}`}
-                  className={menuItemStyles}
-                >
-                  {edition === option.value && <Check className='h-4 w-4' />}
-                  {option.label}
-                </DropdownMenuRadioItem>
-              ))}
-            </DropdownMenuRadioGroup>
+            {editionRadioGroup}
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
@@ -186,7 +226,7 @@ export const GamesToolbar = ({
         type='button'
         data-testid='clear-filters'
         onClick={handleClearFilters}
-        className='font-mono text-sm text-primary hover:underline'
+        className='hidden font-mono text-sm text-primary hover:underline sm:inline'
       >
         Clear filters
       </button>

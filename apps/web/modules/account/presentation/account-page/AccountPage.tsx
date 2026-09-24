@@ -11,10 +11,9 @@ import { OrderHistorySection } from '../order-history-section/OrderHistorySectio
 import { RecentlyViewedSection } from '../recently-viewed-section/RecentlyViewedSection'
 import { SettingsSection } from '../settings-section/SettingsSection'
 
-const tabStyles =
-  'rounded-md border border-ink px-6 py-3 font-display text-xs shadow-retro-sm transition-transform duration-200 active:scale-95'
-const activeTabStyles = 'bg-neon-magenta text-primary-foreground'
-const inactiveTabStyles = 'bg-panel-alt text-neon-cyan'
+const tabStyles = 'whitespace-nowrap border-b-2 pb-3 font-display text-sm uppercase tracking-wide'
+const activeTabStyles = 'border-primary text-foreground'
+const inactiveTabStyles = 'border-transparent text-muted-foreground hover:text-foreground'
 
 const TABS = [
   { testId: 'account-tab-library', label: 'My Games', anchor: 'account-library', Content: LibrarySection },
@@ -53,15 +52,15 @@ export const AccountPage = () => {
   const ActiveContent = TABS.find((tab) => tab.testId === activeTab)?.Content ?? LibrarySection
 
   return (
-    <div data-testid='account-page' className='flex w-full flex-col items-center px-[35px] pb-20'>
-      <div className='flex w-full max-w-[1200px] flex-col items-center gap-2 pt-16'>
+    <div data-testid='account-page' className='flex w-full flex-col items-start px-4 pb-20 sm:px-8 lg:px-[35px]'>
+      <div className='flex w-full max-w-[1200px] flex-col items-start gap-2 pt-12 sm:pt-16'>
         <span className='rounded-full border border-ink px-4 py-1 font-mono text-xs text-neon-cyan'>
           Player account
         </span>
         {user && <h1 className='font-display text-xl text-foreground'>Hi, {user.name}</h1>}
       </div>
 
-      <div className='flex flex-wrap justify-center gap-4 pt-10'>
+      <div className='flex w-full max-w-[1200px] flex-nowrap items-center gap-6 overflow-x-auto border-b border-ink pt-10 sm:gap-8'>
         {TABS.map((tab) => (
           <button
             key={tab.testId}

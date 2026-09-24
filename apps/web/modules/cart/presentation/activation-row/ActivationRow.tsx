@@ -43,64 +43,68 @@ export const ActivationRow = ({ orderId, item }: ActivationRowProps) => {
   return (
     <div
       data-testid='activation-row'
-      className='flex flex-wrap items-center gap-4 rounded-lg border border-ink bg-panel-alt p-4'
+      className='flex flex-col gap-4 rounded-lg border border-ink bg-panel-alt p-4 sm:flex-row sm:flex-wrap sm:items-center'
     >
-      <div className='relative size-[72px] shrink-0 overflow-hidden rounded bg-ink'>
-        {item.game?.thumbnail && (
-          <Image
-            fill
-            sizes='72px'
-            style={{ objectFit: 'cover' }}
-            alt={`${item.game.title} thumbnail`}
-            src={item.game.thumbnail}
-          />
-        )}
+      <div className='flex items-center gap-4 sm:contents'>
+        <div className='relative size-[72px] shrink-0 overflow-hidden rounded bg-ink'>
+          {item.game?.thumbnail && (
+            <Image
+              fill
+              sizes='72px'
+              style={{ objectFit: 'cover' }}
+              alt={`${item.game.title} thumbnail`}
+              src={item.game.thumbnail}
+            />
+          )}
+        </div>
+        <div className='flex min-w-0 flex-1 flex-col gap-1'>
+          <span className='truncate font-mono text-base font-bold text-foreground'>{item.game?.title}</span>
+          <span className='font-mono text-xs text-muted-foreground'>{item.game?.platform}</span>
+        </div>
       </div>
-      <div className='flex min-w-0 flex-1 flex-col gap-1'>
-        <span className='truncate font-mono text-base font-bold text-foreground'>{item.game?.title}</span>
-        <span className='font-mono text-xs text-muted-foreground'>{item.game?.platform}</span>
-      </div>
-      <span
-        data-testid='activation-code'
-        className='rounded border border-ink bg-background px-3 py-2 font-mono text-sm text-muted-foreground'
-      >
-        {item.activationCode}
-      </span>
-      <button
-        type='button'
-        data-testid='activation-copy'
-        onClick={onCopy}
-        className='font-mono text-sm font-bold text-neon-cyan underline'
-      >
-        Copy code
-      </button>
-      <a
-        href={REDEEM_URL}
-        target='_blank'
-        rel='noreferrer'
-        data-testid='activation-redeem-link'
-        className='font-mono text-sm font-bold text-neon-cyan underline'
-      >
-        Redeem on Steam
-      </a>
-      {item.activated ? (
+      <div className='flex flex-wrap items-center gap-3 sm:contents'>
         <span
-          data-testid='activation-status'
-          className='rounded border border-ink bg-neon-green px-3 py-2 font-mono text-sm font-bold text-ink'
+          data-testid='activation-code'
+          className='rounded border border-ink bg-background px-3 py-2 font-mono text-sm text-muted-foreground'
         >
-          Activated
+          {item.activationCode}
         </span>
-      ) : (
         <button
           type='button'
-          data-testid='activation-mark-button'
-          onClick={onMarkActivated}
-          disabled={isPending}
-          className='rounded border border-neon-cyan bg-panel-alt px-3 py-2 font-mono text-sm font-bold text-neon-cyan disabled:opacity-50'
+          data-testid='activation-copy'
+          onClick={onCopy}
+          className='font-mono text-sm font-bold text-neon-cyan underline'
         >
-          Mark as activated
+          Copy code
         </button>
-      )}
+        <a
+          href={REDEEM_URL}
+          target='_blank'
+          rel='noreferrer'
+          data-testid='activation-redeem-link'
+          className='font-mono text-sm font-bold text-neon-cyan underline'
+        >
+          Redeem on Steam
+        </a>
+        {item.activated ? (
+          <span
+            data-testid='activation-status'
+            className='rounded border border-ink bg-neon-green px-3 py-2 font-mono text-sm font-bold text-ink'
+          >
+            Activated
+          </span>
+        ) : (
+          <button
+            type='button'
+            data-testid='activation-mark-button'
+            onClick={onMarkActivated}
+            disabled={isPending}
+            className='rounded border border-neon-cyan bg-panel-alt px-3 py-2 font-mono text-sm font-bold text-neon-cyan disabled:opacity-50'
+          >
+            Mark as activated
+          </button>
+        )}
+      </div>
     </div>
   )
 }

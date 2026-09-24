@@ -22,12 +22,12 @@ export const MainNavigation = () => {
   const { refetch: logout } = useLogout({ query: { enabled: false } })
 
   return (
-    <nav className='flex items-center justify-between border-b border-ink bg-background px-8 py-4'>
+    <nav className='flex items-center justify-between border-b border-ink bg-background px-4 py-4 sm:px-8'>
       <Link href='/' className='font-display text-xl font-bold text-foreground'>
         DIONIS
       </Link>
-      <div className='flex items-center gap-6'>
-        {user && <span className='font-mono text-sm text-muted-foreground'>Hi, {user.name}</span>}
+      <div className='flex items-center gap-3 sm:gap-6'>
+        {user && <span className='hidden font-mono text-sm text-muted-foreground sm:inline'>Hi, {user.name}</span>}
         <button type='button' data-testid='cart-trigger' onClick={openCartDrawer} className={navLinkStyles}>
           Cart ({cartItems.length})
         </button>

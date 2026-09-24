@@ -36,7 +36,7 @@ export const RecentlyViewedSection = () => {
 
   return (
     <div data-testid='recently-viewed' className='w-full'>
-      <h2 className='w-full pt-16 text-center font-display text-xl uppercase text-neon-magenta'>Recently Viewed</h2>
+      <h2 className='w-full pt-16 text-left font-display text-xl uppercase text-neon-magenta'>Recently Viewed</h2>
       <div className='grid w-full grid-cols-2 gap-6 pt-10 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5'>
         {gameIds.map((gameId) => (
           <RecentlyViewedCard key={gameId} gameId={gameId} />

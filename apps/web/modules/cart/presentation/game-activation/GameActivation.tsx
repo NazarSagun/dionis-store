@@ -16,7 +16,10 @@ export const GameActivation = () => {
 
   if (isLoading || !order) {
     return (
-      <div data-testid='game-activation' className='flex w-full flex-col items-center gap-10 px-[35px] py-16'>
+      <div
+        data-testid='game-activation'
+        className='flex w-full flex-col items-center gap-10 px-4 py-16 sm:px-8 lg:px-[35px]'
+      >
         <Skeleton className='h-8 w-64' />
         <div className='flex w-full max-w-[900px] flex-col gap-4'>
           {Array.from({ length: 3 }).map((_, index) => (
@@ -38,7 +41,10 @@ export const GameActivation = () => {
   }
 
   return (
-    <div data-testid='game-activation' className='flex w-full flex-col items-center gap-10 px-[35px] py-16'>
+    <div
+      data-testid='game-activation'
+      className='flex w-full flex-col items-center gap-10 px-4 py-16 sm:px-8 lg:px-[35px]'
+    >
       <h1 className='font-display text-xl uppercase text-neon-magenta'>Game Activation</h1>
       <div className='flex w-full max-w-[900px] flex-col gap-4'>
         {items.map((item) =>

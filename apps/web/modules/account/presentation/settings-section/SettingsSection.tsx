@@ -46,7 +46,7 @@ export const SettingsSection = () => {
 
   return (
     <div data-testid='account-settings' className='w-full'>
-      <h2 className='w-full pt-16 text-center font-display text-xl uppercase text-neon-magenta'>Settings</h2>
+      <h2 className='w-full pt-16 text-left font-display text-xl uppercase text-neon-magenta'>Settings</h2>
       <div className='flex w-full flex-col gap-10 pt-10 sm:flex-row sm:justify-center'>
         <form
           className='flex w-full max-w-[320px] flex-col gap-3'
