@@ -2,9 +2,11 @@ import { IsIn, IsOptional, IsString, MaxLength } from 'class-validator'
 
 export const ALLOWED_PLATFORMS = ['PC', 'PS5', 'Xbox', 'Switch'] as const
 export const ALLOWED_SORTS = ['price_asc', 'price_desc', 'rating_desc'] as const
+export const ALLOWED_EDITIONS = ['digital', 'standard', 'collector'] as const
 
 export type AllowedPlatform = (typeof ALLOWED_PLATFORMS)[number]
 export type AllowedSort = (typeof ALLOWED_SORTS)[number]
+export type AllowedEdition = (typeof ALLOWED_EDITIONS)[number]
 
 export class GamesQueryDto {
   @IsOptional()
@@ -19,4 +21,8 @@ export class GamesQueryDto {
   @IsOptional()
   @IsIn(ALLOWED_SORTS)
   sort?: AllowedSort
+
+  @IsOptional()
+  @IsIn(ALLOWED_EDITIONS)
+  edition?: AllowedEdition
 }

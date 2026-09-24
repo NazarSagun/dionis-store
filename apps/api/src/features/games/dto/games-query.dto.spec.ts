@@ -24,6 +24,18 @@ describe('GamesQueryDto (security: input whitelisting)', () => {
     }
   })
 
+  it('accepts each whitelisted edition', async () => {
+    for (const edition of ['digital', 'standard', 'collector']) {
+      expect(await validateQuery({ edition })).toHaveLength(0)
+    }
+  })
+
+  it('rejects an edition value outside the whitelist', async () => {
+    const errors = await validateQuery({ edition: "standard'); DROP TABLE Game_pc;--" })
+    expect(errors).not.toHaveLength(0)
+    expect(errors[0].property).toBe('edition')
+  })
+
   it('rejects a platform value outside the whitelist', async () => {
     const errors = await validateQuery({ platform: 'PC (Windows); DROP TABLE Game_pc;--' })
     expect(errors).not.toHaveLength(0)

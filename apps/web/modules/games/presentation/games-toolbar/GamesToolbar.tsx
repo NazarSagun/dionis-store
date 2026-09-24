@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { GetGamesPlatform, GetGamesSort } from '@repo/dionis-api/src/model'
+import { GetGamesEdition, GetGamesPlatform, GetGamesSort } from '@repo/dionis-api/src/model'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,9 +13,11 @@ import { Check, ChevronDown } from 'lucide-react'
 interface GamesToolbarProps {
   platform?: GetGamesPlatform
   sort?: GetGamesSort
+  edition?: GetGamesEdition
   onSearchChange: (search: string) => void
   onPlatformChange: (platform?: GetGamesPlatform) => void
   onSortChange: (sort?: GetGamesSort) => void
+  onEditionChange: (edition?: GetGamesEdition) => void
   onClearFilters: () => void
 }
 
@@ -25,6 +27,12 @@ const SORT_OPTIONS: { value: GetGamesSort; label: string }[] = [
   { value: GetGamesSort.price_asc, label: 'Price (low to high)' },
   { value: GetGamesSort.price_desc, label: 'Price (high to low)' },
   { value: GetGamesSort.rating_desc, label: 'Rating (high to low)' },
+]
+
+const EDITION_OPTIONS: { value: GetGamesEdition; label: string }[] = [
+  { value: GetGamesEdition.digital, label: 'Digital' },
+  { value: GetGamesEdition.standard, label: 'Standard' },
+  { value: GetGamesEdition.collector, label: 'Collector' },
 ]
 
 const SEARCH_DEBOUNCE_MS = 300
@@ -39,9 +47,11 @@ const menuItemStyles =
 export const GamesToolbar = ({
   platform,
   sort,
+  edition,
   onSearchChange,
   onPlatformChange,
   onSortChange,
+  onEditionChange,
   onClearFilters,
 }: GamesToolbarProps) => {
   const debounceTimer = useRef<ReturnType<typeof setTimeout>>()
@@ -65,6 +75,7 @@ export const GamesToolbar = ({
   }
 
   const selectedSortLabel = SORT_OPTIONS.find((option) => option.value === sort)?.label
+  const selectedEditionLabel = EDITION_OPTIONS.find((option) => option.value === edition)?.label
 
   return (
     <div data-testid='games-toolbar' className='flex w-full flex-wrap items-center gap-3 pt-8'>
@@ -133,6 +144,37 @@ export const GamesToolbar = ({
                   className={menuItemStyles}
                 >
                   {sort === option.value && <Check className='h-4 w-4' />}
+                  {option.label}
+                </DropdownMenuRadioItem>
+              ))}
+            </DropdownMenuRadioGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
+
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button type='button' data-testid='edition-filter' className={triggerStyles}>
+              Edition: {selectedEditionLabel ?? 'All'}
+              <ChevronDown className='h-4 w-4' />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align='center' className='border-ink bg-panel-alt'>
+            <DropdownMenuRadioGroup
+              value={edition ?? ALL_VALUE}
+              onValueChange={(value) => onEditionChange(value === ALL_VALUE ? undefined : (value as GetGamesEdition))}
+            >
+              <DropdownMenuRadioItem value={ALL_VALUE} data-testid='edition-option-all' className={menuItemStyles}>
+                {edition === undefined && <Check className='h-4 w-4' />}
+                All editions
+              </DropdownMenuRadioItem>
+              {EDITION_OPTIONS.map((option) => (
+                <DropdownMenuRadioItem
+                  key={option.value}
+                  value={option.value}
+                  data-testid={`edition-option-${option.value}`}
+                  className={menuItemStyles}
+                >
+                  {edition === option.value && <Check className='h-4 w-4' />}
                   {option.label}
                 </DropdownMenuRadioItem>
               ))}

@@ -54,6 +54,28 @@ describe('GamesService', () => {
       )
     })
 
+    it('adds no editions filter when edition is digital', async () => {
+      await service.fetchGames({ page: 1, edition: 'digital' })
+
+      const call = prisma.game_pc.findMany.mock.calls[0][0]
+      expect(call.where?.editions).toBeUndefined()
+    })
+
+    it.each([
+      ['standard', 'standard'],
+      ['collector', 'collector'],
+    ] as const)('adds an editions.some.name contains filter when edition is %s', async (edition, expectedName) => {
+      await service.fetchGames({ page: 1, edition })
+
+      expect(prisma.game_pc.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            editions: { some: { name: { contains: expectedName, mode: 'insensitive' } } },
+          }),
+        }),
+      )
+    })
+
     it.each([
       ['price_asc', { price: 'asc' }],
       ['price_desc', { price: 'desc' }],

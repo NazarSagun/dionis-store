@@ -146,6 +146,13 @@ paths:
             type: string
             enum: [price_asc, price_desc, rating_desc]
           description: Sort order to apply before pagination
+        - name: edition
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [digital, standard, collector]
+          description: Edition to filter by. Digital matches every game; standard/collector match games with a physical edition whose name contains that word.
       responses:
         '200':
           description: Array of games

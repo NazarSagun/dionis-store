@@ -6,6 +6,7 @@
  */
 import type { GetGamesPlatform } from './getGamesPlatform';
 import type { GetGamesSort } from './getGamesSort';
+import type { GetGamesEdition } from './getGamesEdition';
 
 export type GetGamesParams = {
 /**
@@ -20,4 +21,8 @@ platform?: GetGamesPlatform;
  * Sort order to apply before pagination
  */
 sort?: GetGamesSort;
+/**
+ * Edition to filter by. Digital matches every game; standard/collector match games with a physical edition whose name contains that word.
+ */
+edition?: GetGamesEdition;
 };

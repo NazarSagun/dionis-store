@@ -3,7 +3,7 @@ import { Prisma } from '@prisma/client'
 import { PrismaService } from '../../common/prisma/prisma.service'
 import { CustomError } from '../../common/errors/custom-error'
 import { CreateGameDto } from './dto/create-game.dto'
-import { AllowedPlatform, AllowedSort } from './dto/games-query.dto'
+import { AllowedEdition, AllowedPlatform, AllowedSort } from './dto/games-query.dto'
 
 const SORT_TO_ORDER_BY: Record<AllowedSort, Prisma.Game_pcOrderByWithRelationInput> = {
   price_asc: { price: 'asc' },
@@ -25,18 +25,30 @@ export class GamesService {
     search,
     platform,
     sort,
+    edition,
   }: {
     page: number
     search?: string
     platform?: AllowedPlatform
     sort?: AllowedSort
+    edition?: AllowedEdition
   }) {
     const limit = 20
     const currentPage = page || 1
 
+    // ponytail: editions have no `kind` column, only a free-text `name`
+    // ("Standard Physical Edition", "Collector's Edition"), so standard/
+    // collector match on that name. Every game supports a digital purchase
+    // with no edition row at all, so `edition=digital` matches everything -
+    // upgrade path if that stops being true: an explicit GameEdition.kind
+    // enum column plus a migration backfilling it from the existing names.
     const where: Prisma.Game_pcWhereInput = {
       ...(search && { title: { contains: search, mode: 'insensitive' } }),
       ...(platform && { platform: { contains: platform, mode: 'insensitive' } }),
+      ...(edition === 'standard' && { editions: { some: { name: { contains: 'standard', mode: 'insensitive' } } } }),
+      ...(edition === 'collector' && {
+        editions: { some: { name: { contains: 'collector', mode: 'insensitive' } } },
+      }),
     }
     const orderBy = sort ? SORT_TO_ORDER_BY[sort] : { id: 'asc' as const }
 

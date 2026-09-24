@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useGetGames, useGetGamesTopDeals } from '@repo/dionis-api/src/dionis/default/default'
-import { GameObject, GetGamesPlatform, GetGamesSort } from '@repo/dionis-api/src/model'
+import { GameObject, GetGamesEdition, GetGamesPlatform, GetGamesSort } from '@repo/dionis-api/src/model'
 import { Skeleton } from '@repo/ui'
 
 import { Footer } from '@/components/footer/Footer'
@@ -21,8 +21,9 @@ export default function Home() {
   const [search, setSearch] = useState<string>()
   const [platform, setPlatform] = useState<GetGamesPlatform>()
   const [sort, setSort] = useState<GetGamesSort>()
+  const [edition, setEdition] = useState<GetGamesEdition>()
 
-  const { data, isLoading, isError } = useGetGames(page, { search, platform, sort })
+  const { data, isLoading, isError } = useGetGames(page, { search, platform, sort, edition })
   const { data: topDeals } = useGetGamesTopDeals()
 
   const resetToFirstPage =
@@ -37,6 +38,7 @@ export default function Home() {
     setSearch(undefined)
     setPlatform(undefined)
     setSort(undefined)
+    setEdition(undefined)
   }
 
   return (
@@ -53,9 +55,11 @@ export default function Home() {
           <GamesToolbar
             platform={platform}
             sort={sort}
+            edition={edition}
             onSearchChange={resetToFirstPage(setSearch)}
             onPlatformChange={resetToFirstPage(setPlatform)}
             onSortChange={resetToFirstPage(setSort)}
+            onEditionChange={resetToFirstPage(setEdition)}
             onClearFilters={handleClearFilters}
           />
           <TopDeals games={topDeals ?? []} />
