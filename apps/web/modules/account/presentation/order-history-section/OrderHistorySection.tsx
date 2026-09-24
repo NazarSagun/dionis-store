@@ -2,6 +2,8 @@
 
 import { useState } from 'react'
 import Image from 'next/image'
+import { useRouter } from 'next/navigation'
+import { Button, Skeleton } from '@repo/ui'
 
 import { formatCentsToEuros, formatOrderDate } from '../../domain/formatting'
 import { OrderObject, useGetOrders } from '../../integration/repository'
@@ -12,12 +14,12 @@ const OrderHistoryRow = ({ order }: { order: OrderObject }) => {
 
   return (
     <div data-testid='order-history-row' className='flex flex-col gap-3 border-b border-ink pb-4'>
-      <div className='flex items-center justify-between'>
+      <div className='flex flex-wrap items-center justify-between gap-2'>
         <button
           type='button'
           data-testid='order-history-toggle'
           onClick={() => setIsExpanded((expanded) => !expanded)}
-          className='font-mono text-sm font-bold text-foreground'
+          className='min-w-0 text-left font-mono text-sm font-bold text-foreground'
         >
           Order #{order.id} · {formatOrderDate(order.createdAt as string)} · {items.length}{' '}
           {items.length === 1 ? 'item' : 'items'}
@@ -52,15 +54,44 @@ const OrderHistoryRow = ({ order }: { order: OrderObject }) => {
 }
 
 export const OrderHistorySection = () => {
-  const { data: orders } = useGetOrders()
+  const { data: orders, isLoading, isError } = useGetOrders()
+  const { push } = useRouter()
 
   return (
     <div data-testid='account-order-history' className='w-full'>
-      <h2 className='w-full pt-16 text-center font-display text-xl uppercase text-neon-magenta'>Order History</h2>
-      <div className='flex w-full flex-col gap-4 pt-10'>
-        {(orders ?? []).map((order) => (
-          <OrderHistoryRow key={order.id} order={order} />
-        ))}
+      <h2 className='w-full pt-16 text-left font-display text-xl uppercase text-neon-magenta'>Order History</h2>
+      <div className='w-full pt-10'>
+        {isLoading && (
+          <div className='flex flex-col gap-4'>
+            {Array.from({ length: 2 }).map((_, index) => (
+              <Skeleton key={index} className='h-12 w-full' />
+            ))}
+          </div>
+        )}
+
+        {isError && (
+          <p className='text-left font-mono text-muted-foreground'>
+            Something went wrong loading your orders. Please try again.
+          </p>
+        )}
+
+        {!isLoading && !isError && orders?.length === 0 && (
+          <div
+            data-testid='order-history-empty'
+            className='flex flex-col items-center justify-center gap-4 rounded-md border border-ink bg-panel-alt px-0 py-12 text-foreground'
+          >
+            <p className='font-mono text-muted-foreground'>You have no orders yet.</p>
+            <Button onClick={() => push('/')}>Browse games</Button>
+          </div>
+        )}
+
+        {!isLoading && !isError && orders && orders.length > 0 && (
+          <div className='flex w-full flex-col gap-4'>
+            {orders.map((order) => (
+              <OrderHistoryRow key={order.id} order={order} />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   )
