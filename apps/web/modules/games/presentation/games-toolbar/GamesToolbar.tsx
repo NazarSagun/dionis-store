@@ -75,7 +75,7 @@ export const GamesToolbar = ({
         placeholder='Search by title...'
         data-testid='search-input'
         onInputChange={handleSearchInput}
-        className='mb-0 mt-0 w-72 bg-secondary'
+        className='mb-0 mt-0 h-10 w-72 bg-secondary px-4'
       />
       <div className='flex items-center gap-3'>
         <DropdownMenu>

@@ -16,7 +16,6 @@ describe('<MainNavigation />', () => {
     const { getByText } = render(<MainNavigation />)
 
     expect(getByText('DIONIS')).toBeInTheDocument()
-    expect(getByText('Search')).toBeInTheDocument()
     expect(getByText('Wishlist')).toBeInTheDocument()
     expect(getByText('Cart (0)')).toBeInTheDocument()
   })

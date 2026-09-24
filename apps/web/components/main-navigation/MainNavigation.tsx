@@ -27,9 +27,6 @@ export const MainNavigation = () => {
         DIONIS
       </Link>
       <div className='flex items-center gap-6'>
-        <Link href='/' className={navLinkStyles}>
-          Search
-        </Link>
         <Link href='/account#wishlist' className={navLinkStyles}>
           Wishlist
         </Link>
