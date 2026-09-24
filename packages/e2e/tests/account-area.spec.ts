@@ -74,18 +74,19 @@ test.describe('Account area', () => {
     })
 
     test('Wishlist shows the same game wishlisted from the home page', async ({ page }) => {
+      await page.getByTestId('account-tab-wishlist').click()
       await expect(page.getByTestId('wishlist').getByTestId('card')).toHaveCount(1)
     })
 
-    test('removing a game from the account Wishlist also removes it from the home page', async ({ page }) => {
+    test('removing a game from the account Wishlist removes it from the list', async ({ page }) => {
+      await page.getByTestId('account-tab-wishlist').click()
       await page.getByTestId('wishlist').getByTestId('wishlist-toggle').first().click()
-      await expect(page.getByTestId('wishlist').getByTestId('card')).toHaveCount(0)
 
-      await page.goto('/')
-      await expect(page.getByTestId('wishlist').getByTestId('card')).toHaveCount(0)
+      await expect(page.getByTestId('wishlist-empty')).toBeVisible()
     })
 
     test('Wishlist "Add to cart" adds the game without removing it from the wishlist', async ({ page }) => {
+      await page.getByTestId('account-tab-wishlist').click()
       const wishlistCard = page.getByTestId('wishlist').getByTestId('card').first()
 
       await wishlistCard.getByTestId('wishlist-add-to-cart').click()
@@ -93,10 +94,12 @@ test.describe('Account area', () => {
       await page.getByTestId('cart-trigger').click()
       await expect(page.getByText('Your cart is empty')).not.toBeVisible()
       await page.goto('/account')
+      await page.getByTestId('account-tab-wishlist').click()
       await expect(page.getByTestId('wishlist').getByTestId('card')).toHaveCount(1)
     })
 
     test('Order History lists the order with its date, item count, and total', async ({ page }) => {
+      await page.getByTestId('account-tab-order-history').click()
       const row = page.getByTestId('account-order-history').getByTestId('order-history-row').first()
 
       await expect(row).toBeVisible()
@@ -104,6 +107,7 @@ test.describe('Account area', () => {
     })
 
     test('expanding an Order History row shows its games with no activation controls', async ({ page }) => {
+      await page.getByTestId('account-tab-order-history').click()
       const row = page.getByTestId('account-order-history').getByTestId('order-history-row').first()
 
       await row.getByTestId('order-history-toggle').click()
@@ -113,6 +117,7 @@ test.describe('Account area', () => {
     })
 
     test('changing the display name updates the greeting immediately', async ({ page }) => {
+      await page.getByTestId('account-tab-settings').click()
       const settings = page.getByTestId('account-settings')
 
       await settings.getByTestId('settings-name-input').fill('E2E Renamed Player')
@@ -122,6 +127,7 @@ test.describe('Account area', () => {
     })
 
     test('changing the password with the wrong current password shows an error and keeps it unchanged', async ({ page }) => {
+      await page.getByTestId('account-tab-settings').click()
       const settings = page.getByTestId('account-settings')
 
       await settings.getByTestId('settings-current-password').fill('not-the-real-password')
@@ -132,6 +138,7 @@ test.describe('Account area', () => {
     })
 
     test('changing the password with the correct current password lets the next login succeed with it', async ({ page }) => {
+      await page.getByTestId('account-tab-settings').click()
       const settings = page.getByTestId('account-settings')
 
       await settings.getByTestId('settings-current-password').fill('password123')
@@ -182,6 +189,7 @@ test.describe('Account area', () => {
       await markAllActivatedAndFinish(page)
 
       await page.goto('/account')
+      await page.getByTestId('account-tab-order-history').click()
       await expect(page.getByTestId('account-order-history').getByTestId('order-history-row')).toHaveCount(2)
     })
   })
@@ -224,6 +232,7 @@ test.describe('Account area', () => {
 
       await page.getByTestId('wishlist-toggle').first().click()
       await page.goto('/account')
+      await page.getByTestId('account-tab-wishlist').click()
 
       await expect(page.getByTestId('wishlist').getByTestId('wishlist-price-drop-badge')).toHaveCount(0)
     })

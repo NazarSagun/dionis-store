@@ -27,9 +27,6 @@ export const MainNavigation = () => {
         DIONIS
       </Link>
       <div className='flex items-center gap-6'>
-        <Link href='/account#wishlist' className={navLinkStyles}>
-          Wishlist
-        </Link>
         {user && <span className='font-mono text-sm text-muted-foreground'>Hi, {user.name}</span>}
         <button type='button' data-testid='cart-trigger' onClick={openCartDrawer} className={navLinkStyles}>
           Cart ({cartItems.length})
@@ -43,6 +40,9 @@ export const MainNavigation = () => {
               <>
                 <DropdownMenuItem asChild className={menuItemStyles}>
                   <Link href='/account'>Account</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild className={menuItemStyles}>
+                  <Link href='/account#wishlist'>Wishlist</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   className={menuItemStyles}

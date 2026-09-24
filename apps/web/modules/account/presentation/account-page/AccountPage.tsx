@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 
 import { useAuthUser, useIsAuthenticated } from '@/modules/auth/core/facade'
@@ -17,16 +17,22 @@ const activeTabStyles = 'bg-neon-magenta text-primary-foreground'
 const inactiveTabStyles = 'bg-panel-alt text-neon-cyan'
 
 const TABS = [
-  { testId: 'account-tab-library', label: 'My Games', anchor: 'account-library' },
-  { testId: 'account-tab-wishlist', label: 'Wishlist', anchor: 'wishlist' },
-  { testId: 'account-tab-order-history', label: 'Order History', anchor: 'account-order-history' },
-  { testId: 'account-tab-settings', label: 'Settings', anchor: 'account-settings' },
+  { testId: 'account-tab-library', label: 'My Games', anchor: 'account-library', Content: LibrarySection },
+  { testId: 'account-tab-wishlist', label: 'Wishlist', anchor: 'wishlist', Content: WishlistSection },
+  {
+    testId: 'account-tab-order-history',
+    label: 'Order History',
+    anchor: 'account-order-history',
+    Content: OrderHistorySection,
+  },
+  { testId: 'account-tab-settings', label: 'Settings', anchor: 'account-settings', Content: SettingsSection },
 ] as const
 
 export const AccountPage = () => {
   const isAuthenticated = useIsAuthenticated()
   const user = useAuthUser()
   const router = useRouter()
+  const [activeTab, setActiveTab] = useState<(typeof TABS)[number]['testId']>(TABS[0].testId)
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -34,13 +40,17 @@ export const AccountPage = () => {
     }
   }, [isAuthenticated, router])
 
+  useEffect(() => {
+    const anchor = window.location.hash.slice(1)
+    const tab = TABS.find((tab) => tab.anchor === anchor)
+    if (tab) setActiveTab(tab.testId)
+  }, [])
+
   if (!isAuthenticated) {
     return null
   }
 
-  const scrollToSection = (anchor: string) => {
-    document.getElementById(anchor)?.scrollIntoView({ behavior: 'smooth' })
-  }
+  const ActiveContent = TABS.find((tab) => tab.testId === activeTab)?.Content ?? LibrarySection
 
   return (
     <div data-testid='account-page' className='flex w-full flex-col items-center px-[35px] pb-20'>
@@ -57,25 +67,16 @@ export const AccountPage = () => {
             key={tab.testId}
             type='button'
             data-testid={tab.testId}
-            onClick={() => scrollToSection(tab.anchor)}
-            className={`${tabStyles} ${tab.anchor === 'account-library' ? activeTabStyles : inactiveTabStyles}`}
+            onClick={() => setActiveTab(tab.testId)}
+            className={`${tabStyles} ${tab.testId === activeTab ? activeTabStyles : inactiveTabStyles}`}
           >
             {tab.label}
           </button>
         ))}
       </div>
 
-      <div id='account-library' className='w-full max-w-[1200px]'>
-        <LibrarySection />
-      </div>
-      <div id='wishlist' className='w-full max-w-[1200px]'>
-        <WishlistSection />
-      </div>
-      <div id='account-order-history' className='w-full max-w-[1200px]'>
-        <OrderHistorySection />
-      </div>
-      <div id='account-settings' className='w-full max-w-[1200px]'>
-        <SettingsSection />
+      <div className='w-full max-w-[1200px]'>
+        <ActiveContent />
       </div>
       <div className='w-full max-w-[1200px]'>
         <RecentlyViewedSection />

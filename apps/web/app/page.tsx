@@ -12,7 +12,6 @@ import { GamesList } from '@/modules/games/presentation/games-list/GamesList'
 import { GamesPagination } from '@/modules/games/presentation/games-pagination/GamesPagination'
 import { GamesToolbar } from '@/modules/games/presentation/games-toolbar/GamesToolbar'
 import { TopDeals } from '@/modules/games/presentation/top-deals/TopDeals'
-import { WishlistSection } from '@/modules/wishlist/presentation/wishlist-section/WishlistSection'
 
 const containerStyles =
   'flex flex-1 min-h-[75vh] flex-col items-center justify-center px-[35px] pb-20 bg-[image:var(--light-background-color)]'
@@ -60,7 +59,6 @@ export default function Home() {
             onClearFilters={handleClearFilters}
           />
           <TopDeals games={topDeals ?? []} />
-          <WishlistSection />
           {isLoading && (
             <div
               data-testid='games-skeleton'

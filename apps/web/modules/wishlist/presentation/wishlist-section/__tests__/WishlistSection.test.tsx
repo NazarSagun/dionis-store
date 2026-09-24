@@ -1,10 +1,14 @@
-import { beforeEach, describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { useWishlistStore } from '@/modules/wishlist/core/store'
 import { WishlistItem } from '@/modules/wishlist/domain/models'
 import { render } from '@/test-utils/utils'
 
 import { WishlistSection } from '../WishlistSection'
+
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({ push: vi.fn() }),
+}))
 
 const buildItem = (overrides: Partial<WishlistItem>): WishlistItem => ({
   id: 1,
@@ -23,10 +27,12 @@ describe('<WishlistSection />', () => {
     useWishlistStore.setState({ items: [] })
   })
 
-  it('renders nothing when the wishlist is empty', () => {
-    const { container } = render(<WishlistSection />)
+  it('renders an empty state prompting to browse games when the wishlist is empty', () => {
+    const { getByTestId, getByText } = render(<WishlistSection />)
 
-    expect(container).toBeEmptyDOMElement()
+    expect(getByTestId('wishlist-empty')).toBeInTheDocument()
+    expect(getByText('No games in your wishlist yet.')).toBeInTheDocument()
+    expect(getByText('Browse games')).toBeInTheDocument()
   })
 
   it('renders the heading and a card per saved game', () => {

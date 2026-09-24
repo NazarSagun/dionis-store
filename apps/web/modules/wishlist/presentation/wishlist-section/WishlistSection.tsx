@@ -1,5 +1,8 @@
 'use client'
 
+import { useRouter } from 'next/navigation'
+import { Button } from '@repo/ui'
+
 import { useAddCartItem } from '@/modules/cart/core/facade'
 import { GamesList } from '@/modules/games/presentation/games-list/GamesList'
 
@@ -9,10 +12,7 @@ import { PriceDropBadge } from '../price-drop-badge/PriceDropBadge'
 export const WishlistSection = () => {
   const items = useWishlistItems()
   const addItem = useAddCartItem()
-
-  if (items.length === 0) {
-    return null
-  }
+  const { push } = useRouter()
 
   const games = items.map((item) => ({
     id: item.id,
@@ -41,11 +41,21 @@ export const WishlistSection = () => {
     <div data-testid='wishlist' className='w-full'>
       <h2 className='w-full pt-16 font-display text-2xl font-bold text-foreground'>Wishlist</h2>
       <div className='w-full pt-10'>
-        <GamesList
-          gamesList={games}
-          onAddToCart={onAddToCart}
-          renderExtra={(game) => <PriceDropBadge gameId={game.id as number} snapshotDiscount={game.discount ?? 0} />}
-        />
+        {items.length === 0 ? (
+          <div
+            data-testid='wishlist-empty'
+            className='flex flex-col items-center justify-center gap-4 rounded-md border border-ink bg-panel-alt px-0 py-12 text-foreground'
+          >
+            <p className='font-mono text-muted-foreground'>No games in your wishlist yet.</p>
+            <Button onClick={() => push('/')}>Browse games</Button>
+          </div>
+        ) : (
+          <GamesList
+            gamesList={games}
+            onAddToCart={onAddToCart}
+            renderExtra={(game) => <PriceDropBadge gameId={game.id as number} snapshotDiscount={game.discount ?? 0} />}
+          />
+        )}
       </div>
     </div>
   )
