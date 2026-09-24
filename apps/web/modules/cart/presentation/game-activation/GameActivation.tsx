@@ -4,8 +4,8 @@ import { Skeleton } from '@repo/ui'
 
 import { useCartOrderId, useSetCartOrderId, useSetCartStep } from '../../core/facade'
 import { useGetOrder } from '../../integration/repository'
-import { ActivationRow } from '../activation-row'
-import { ShippingRow } from '../shipping-row'
+import { ActivationRow } from '../activation-row/ActivationRow'
+import { ShippingRow } from '../shipping-row/ShippingRow'
 
 export const GameActivation = () => {
   const orderId = useCartOrderId()

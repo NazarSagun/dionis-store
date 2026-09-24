@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { Input, useToast } from '@repo/ui'
 
-import { useSetAuthUserName } from '@/modules/auth'
+import { useSetAuthUserName } from '@/modules/auth/core/facade'
 
 import { useChangePassword, useUpdateName } from '../../integration/repository'
 

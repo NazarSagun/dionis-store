@@ -2,10 +2,10 @@ import { MouseEvent, ReactNode, useState } from 'react'
 import Image from 'next/image'
 import { GameObject } from '@repo/dionis-api/src/model'
 
-import { useIsInWishlist, useToggleWishlistItem } from '@/modules/wishlist'
+import { useIsInWishlist, useToggleWishlistItem } from '@/modules/wishlist/core/facade'
 
 import { calculateDiscountedPrice } from '../../domain/pricing'
-import { RatingBadge } from '../rating-badge'
+import { RatingBadge } from '../rating-badge/RatingBadge'
 
 export type GameCardProps = Pick<GameObject, 'title' | 'rating' | 'price' | 'platform'> & {
   id?: number

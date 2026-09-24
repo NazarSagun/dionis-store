@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { Skeleton } from '@repo/ui'
 
-import { ActivationRow } from '@/modules/cart'
+import { ActivationRow } from '@/modules/cart/presentation/activation-row/ActivationRow'
 
 import { formatCentsToEuros, formatOrderDate } from '../../domain/formatting'
 import { useGetOrders } from '../../integration/repository'

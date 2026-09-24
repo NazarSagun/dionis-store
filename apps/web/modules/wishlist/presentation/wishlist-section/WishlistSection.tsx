@@ -1,10 +1,10 @@
 'use client'
 
-import { useAddCartItem } from '@/modules/cart'
-import { GamesList } from '@/modules/games'
+import { useAddCartItem } from '@/modules/cart/core/facade'
+import { GamesList } from '@/modules/games/presentation/games-list/GamesList'
 
 import { useWishlistItems } from '../../core/facade'
-import { PriceDropBadge } from '../price-drop-badge'
+import { PriceDropBadge } from '../price-drop-badge/PriceDropBadge'
 
 export const WishlistSection = () => {
   const items = useWishlistItems()

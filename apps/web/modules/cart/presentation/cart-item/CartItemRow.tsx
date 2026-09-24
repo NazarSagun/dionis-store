@@ -1,11 +1,11 @@
 import Image from 'next/image'
 
 import { cn } from '@/lib/utils'
-import { calculateDiscountedPrice } from '@/modules/games'
+import { calculateDiscountedPrice } from '@/modules/games/domain/pricing'
 
 import { useRemoveCartItem, useUpdateCartItemQuantity } from '../../core/facade'
 import { CartItem as CartItemProps } from '../../domain/models'
-import { QuantitySelect } from '../quantity-select'
+import { QuantitySelect } from '../quantity-select/QuantitySelect'
 
 const dividerAfter =
   "relative after:absolute after:left-[23%] after:top-1/2 after:h-[80%] after:w-px after:-translate-y-1/2 after:bg-muted-foreground/40 after:content-[''] after:pointer-events-none"

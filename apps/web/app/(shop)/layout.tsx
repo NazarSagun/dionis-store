@@ -2,8 +2,8 @@
 
 import type { ReactNode } from 'react'
 
-import { Footer } from '@/components/footer'
-import { MainNavigation } from '@/components/main-navigation'
+import { Footer } from '@/components/footer/Footer'
+import { MainNavigation } from '@/components/main-navigation/MainNavigation'
 
 export default function ShopLayout({
   children,

@@ -4,13 +4,15 @@ This file extends the root `CLAUDE.md`. It holds rules specific to the Next.js s
 
 ## Module folder shape
 
-Each module lives under `modules/<name>` (`account`, `auth`, `cart`, `games`, `wishlist`). This follows `.claude/rules/frontennd-architecture.md`. A module can have four folders. `domain/` holds types and pure business logic. `core/` holds `store.ts` for the zustand store and `facade.ts` for the selector and trigger hooks that components use. `integration/` holds `repository.ts`, a thin re-export seam around `packages/dionis-api` hooks and DTO types. `presentation/` holds one folder per component, each with its own `index.ts` that re-exports it.
+Each module lives under `modules/<name>` (`account`, `auth`, `cart`, `games`, `wishlist`). This follows `.claude/rules/frontennd-architecture.md`. A module can have four folders. `domain/` holds types and pure business logic. `core/` holds `store.ts` for the zustand store and `facade.ts` for the selector and trigger hooks that components use. `integration/` holds `repository.ts`, a thin re-export seam around `packages/dionis-api` hooks and DTO types. `presentation/` holds one folder per component.
 
-A module with no client state, such as `games`, has no `core/` folder. Each module has its own `index.ts` at its root. This root file re-exports the module's presentation components, facade, and domain types.
+A module with no client state, such as `games`, has no `core/` folder.
 
-Import a module's state through its facade (`core/facade.ts`). Use hooks such as `useCartItems` or `useIsAuthenticated`. Do not call the store's selector directly from a component. Import a module's API calls through its own `integration/repository.ts`. Do not import `@repo/dionis-api` directly from a component. This way, a component reaches only one level into another module.
+There are no barrel files in `apps/web`. No folder has an `index.ts` that re-exports its contents, at the module root or inside `presentation/`. Import each piece from the file that defines it, such as `@/modules/cart/core/facade` or `@/modules/cart/presentation/summary/Summary`. This applies inside a module's own `presentation/` folder too. `ShoppingCart.tsx` imports `Summary` from `../summary/Summary`, not from `../summary` or from `..`.
 
-One case is an exception to this rule. Test setup sometimes needs to reset a whole store. That code can import the store itself, such as `useCartStore` or `useAuthStore`. Import it from the module's root `index.ts`.
+Import a module's state through its facade (`core/facade.ts`). Use hooks such as `useCartItems` or `useIsAuthenticated`. Do not call the store's selector directly from a component. Import a module's API calls through its own `integration/repository.ts`. Do not import `@repo/dionis-api` directly from a component. This way, a component reaches only one file deep into another module.
+
+One case is an exception to this rule. Test setup sometimes needs to reset a whole store. That code can import the store itself, such as `useCartStore` or `useAuthStore`. Import it from the module's own `core/store.ts`.
 
 ## Client state
 

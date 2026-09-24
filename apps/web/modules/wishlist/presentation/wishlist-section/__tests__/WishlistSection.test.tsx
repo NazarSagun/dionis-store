@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 
-import { useWishlistStore, WishlistItem } from '@/modules/wishlist'
+import { useWishlistStore } from '@/modules/wishlist/core/store'
+import { WishlistItem } from '@/modules/wishlist/domain/models'
 import { render } from '@/test-utils/utils'
 
 import { WishlistSection } from '../WishlistSection'

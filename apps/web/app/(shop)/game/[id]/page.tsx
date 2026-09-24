@@ -2,7 +2,7 @@
 
 import { useParams } from 'next/navigation'
 
-import { GameDetails } from '@/modules/games'
+import { GameDetails } from '@/modules/games/presentation/game-details/GameDetails'
 
 export default function GamePage() {
   const { id } = useParams()

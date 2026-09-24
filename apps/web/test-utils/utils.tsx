@@ -4,9 +4,9 @@ import * as matchers from '@testing-library/jest-dom/matchers'
 import { cleanup, render, RenderOptions } from '@testing-library/react'
 import { afterAll, afterEach, beforeAll, expect } from 'vitest'
 
-import { useRecentlyViewedStore } from '@/modules/account'
-import { useAuthStore } from '@/modules/auth'
-import { useCartStore } from '@/modules/cart'
+import { useRecentlyViewedStore } from '@/modules/account/core/store'
+import { useAuthStore } from '@/modules/auth/core/store'
+import { useCartStore } from '@/modules/cart/core/store'
 
 import { serviceWorker } from './mock-server'
 

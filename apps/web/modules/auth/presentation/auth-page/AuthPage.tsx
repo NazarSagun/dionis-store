@@ -1,8 +1,8 @@
 'use client'
 
-import { AuthForm, FormVariant, UserData } from '../auth-form'
+import { AuthForm, FormVariant, UserData } from '../auth-form/AuthForm'
 
-import { LeftContentBlock } from './left-content-block'
+import { LeftContentBlock } from './left-content-block/LeftContentBlock'
 
 interface AuthPageProps {
   variant: FormVariant

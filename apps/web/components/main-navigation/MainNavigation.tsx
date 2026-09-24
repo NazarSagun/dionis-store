@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { useLogout } from '@repo/dionis-api/src/dionis/default/default'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@repo/ui'
 
-import { useAuthLogout, useAuthUser, useIsAuthenticated } from '@/modules/auth'
+import { useAuthLogout, useAuthUser, useIsAuthenticated } from '@/modules/auth/core/facade'
 
 const menuItemStyles =
   'cursor-pointer rounded-sm px-3 py-2 font-mono text-sm uppercase tracking-wide text-foreground focus:bg-neon-cyan focus:text-ink'

@@ -6,7 +6,7 @@ import { Toaster } from '@repo/ui'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 import { cn } from '@/lib/utils'
-import { AuthInitializer } from '@/modules/auth'
+import { AuthInitializer } from '@/modules/auth/presentation/auth-initializer/AuthInitializer'
 
 import './globals.css'
 

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button, DialogTrigger } from '@repo/ui'
 
-import { useIsAuthenticated } from '@/modules/auth'
+import { useIsAuthenticated } from '@/modules/auth/core/facade'
 
 import { useCartItems, useSetCartStep } from '../../core/facade'
 import { calculateCartSummary } from '../../domain/pricing'

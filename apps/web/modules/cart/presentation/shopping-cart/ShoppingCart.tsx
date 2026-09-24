@@ -1,5 +1,7 @@
 import { useCartItems } from '../../core/facade'
-import { CartItemsList, EmptyState, Summary } from '..'
+import { CartItemsList } from '../cart-items-list/CartItemsList'
+import { EmptyState } from '../empty-state/EmptyState'
+import { Summary } from '../summary/Summary'
 
 export const ShoppingCart = () => {
   const items = useCartItems()

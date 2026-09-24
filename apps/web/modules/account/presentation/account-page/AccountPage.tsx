@@ -3,13 +3,13 @@
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 
-import { useAuthUser, useIsAuthenticated } from '@/modules/auth'
-import { WishlistSection } from '@/modules/wishlist'
+import { useAuthUser, useIsAuthenticated } from '@/modules/auth/core/facade'
+import { WishlistSection } from '@/modules/wishlist/presentation/wishlist-section/WishlistSection'
 
-import { LibrarySection } from '../library-section'
-import { OrderHistorySection } from '../order-history-section'
-import { RecentlyViewedSection } from '../recently-viewed-section'
-import { SettingsSection } from '../settings-section'
+import { LibrarySection } from '../library-section/LibrarySection'
+import { OrderHistorySection } from '../order-history-section/OrderHistorySection'
+import { RecentlyViewedSection } from '../recently-viewed-section/RecentlyViewedSection'
+import { SettingsSection } from '../settings-section/SettingsSection'
 
 const tabStyles =
   'rounded-md border-2 border-ink px-6 py-3 font-display text-xs shadow-retro-sm transition-transform duration-200 active:scale-95'

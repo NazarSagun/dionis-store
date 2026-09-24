@@ -1,7 +1,0 @@
-export * from './game-card'
-export * from './games-list'
-export * from './games-pagination'
-export * from './games-toolbar'
-export * from './top-deals'
-export * from './game-details'
-export * from './rating-badge'

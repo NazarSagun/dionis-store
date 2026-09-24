@@ -5,9 +5,10 @@ import Image from 'next/image'
 import { Skeleton, useToast } from '@repo/ui'
 
 import { cn } from '@/lib/utils'
-import { useRecordView } from '@/modules/account'
-import { CartItem, useAddCartItem, useCartItems, useUpdateCartItemQuantity } from '@/modules/cart'
-import { useIsInWishlist, useToggleWishlistItem } from '@/modules/wishlist'
+import { useRecordView } from '@/modules/account/core/facade'
+import { useAddCartItem, useCartItems, useUpdateCartItemQuantity } from '@/modules/cart/core/facade'
+import { CartItem } from '@/modules/cart/domain/models'
+import { useIsInWishlist, useToggleWishlistItem } from '@/modules/wishlist/core/facade'
 
 import { calculateDiscountedPrice } from '../../domain/pricing'
 import { useGetGame } from '../../integration/repository'

@@ -4,8 +4,12 @@ import { useState } from 'react'
 import { useLogin, useRegister } from '@repo/dionis-api/src/dionis/default/default'
 import { Dialog, DialogContent, toast } from '@repo/ui'
 
-import { AuthForm, FormVariant, useAuthLogin, UserData } from '@/modules/auth'
-import { GameActivation, Payment, ShoppingCart, useCartStep, useSetCartStep } from '@/modules/cart'
+import { useAuthLogin } from '@/modules/auth/core/facade'
+import { AuthForm, FormVariant, UserData } from '@/modules/auth/presentation/auth-form/AuthForm'
+import { useCartStep, useSetCartStep } from '@/modules/cart/core/facade'
+import { GameActivation } from '@/modules/cart/presentation/game-activation/GameActivation'
+import { Payment } from '@/modules/cart/presentation/payment/Payment'
+import { ShoppingCart } from '@/modules/cart/presentation/shopping-cart/ShoppingCart'
 
 const Page = () => {
   const [isOpen, setIsOpen] = useState(false)

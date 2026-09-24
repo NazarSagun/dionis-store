@@ -2,7 +2,7 @@ import type { ReactNode } from 'react'
 import { http, HttpResponse } from 'msw'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { useCartStore } from '@/modules/cart'
+import { useCartStore } from '@/modules/cart/core/store'
 import { serviceWorker } from '@/test-utils/mock-server'
 import { render, screen, waitFor } from '@/test-utils/utils'
 

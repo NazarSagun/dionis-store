@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { useWishlistStore } from '@/modules/wishlist'
+import { useWishlistStore } from '@/modules/wishlist/core/store'
 import { cleanup, fireEvent, render } from '@/test-utils/utils'
 
 import { GameCard, GameCardProps } from '../GameCard'

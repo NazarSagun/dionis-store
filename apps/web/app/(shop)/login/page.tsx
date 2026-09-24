@@ -5,7 +5,9 @@ import { useRouter } from 'next/navigation'
 import { useLogin } from '@repo/dionis-api/src/dionis/default/default'
 import { useToast } from '@repo/ui'
 
-import { AuthPage, FormVariant, useAuthLogin, useIsAuthenticated } from '@/modules/auth'
+import { useAuthLogin, useIsAuthenticated } from '@/modules/auth/core/facade'
+import { FormVariant } from '@/modules/auth/presentation/auth-form/AuthForm'
+import { AuthPage } from '@/modules/auth/presentation/auth-page/AuthPage'
 
 const LoginPage = () => {
   const isAuthenticated = useIsAuthenticated()

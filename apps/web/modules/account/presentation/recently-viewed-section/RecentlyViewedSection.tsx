@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 
-import { GameCard } from '@/modules/games'
+import { GameCard } from '@/modules/games/presentation/game-card/GameCard'
 
 import { useRecentlyViewedGameIds } from '../../core/facade'
 import { useGetGame } from '../../integration/repository'

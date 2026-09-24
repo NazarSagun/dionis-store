@@ -2,7 +2,7 @@ import { ReactNode } from 'react'
 import Link from 'next/link'
 import { GameObject } from '@repo/dionis-api/src/model'
 
-import { GameCard } from '../game-card'
+import { GameCard } from '../game-card/GameCard'
 
 export type GamesListGame = Pick<
   GameObject,

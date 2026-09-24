@@ -2,8 +2,9 @@
 
 import type { ReactNode } from 'react'
 
-import { Footer } from '@/components/footer'
-import { CartNavigation, useCartStep, useSetCartStep } from '@/modules/cart'
+import { Footer } from '@/components/footer/Footer'
+import { useCartStep, useSetCartStep } from '@/modules/cart/core/facade'
+import { CartNavigation } from '@/modules/cart/presentation/cart-navigation/CartNavigation'
 
 export default function ShopLayout({
   children,

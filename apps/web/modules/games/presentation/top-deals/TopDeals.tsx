@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { GameObject } from '@repo/dionis-api/src/model'
 
 import { calculateDiscountedPrice } from '../../domain/pricing'
-import { RatingBadge } from '../rating-badge'
+import { RatingBadge } from '../rating-badge/RatingBadge'
 
 interface TopDealsProps {
   games: GameObject[]
