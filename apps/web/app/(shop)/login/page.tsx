@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useLogin } from '@repo/dionis-api/src/dionis/default/default'
 import { useToast } from '@repo/ui'
 
@@ -13,6 +13,7 @@ const LoginPage = () => {
   const isAuthenticated = useIsAuthenticated()
   const login = useAuthLogin()
   const router = useRouter()
+  const searchParams = useSearchParams()
   const { toast } = useToast()
 
   const { mutate, isPending } = useLogin({
@@ -33,6 +34,17 @@ const LoginPage = () => {
   useEffect(() => {
     if (isAuthenticated) {
       router.push('/')
+    }
+  }, [])
+
+  useEffect(() => {
+    if (searchParams.get('sessionExpired') === '1') {
+      toast({
+        variant: 'destructive',
+        title: 'Your session has expired',
+        description: 'Please log in again to continue.',
+      })
+      router.replace('/login')
     }
   }, [])
 

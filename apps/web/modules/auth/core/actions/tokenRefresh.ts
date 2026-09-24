@@ -13,7 +13,23 @@ export function refreshAccessToken(): Promise<string | null> {
         useAuthStore.getState().login(accessToken, name)
         return accessToken
       })
-      .catch(() => null)
+      .catch(() => {
+        // An anonymous visitor also hits this catch on every page load (no
+        // refresh cookie yet), so only a session that WAS authenticated
+        // counts as an expiry worth logging out for and telling the user
+        // about. Read localStorage directly rather than the store's
+        // isAuthenticated flag: on mount, this runs (via useRefreshToken's
+        // effect) before AuthInitializer's own hydrate() effect has set that
+        // flag, so the store would still read as logged-out here even when
+        // a token exists. Redirecting here (not via a component effect)
+        // guarantees it fires from both call sites: this mount-time refresh
+        // and the response interceptor below.
+        if (localStorage.getItem('token')) {
+          useAuthStore.getState().logout()
+          window.location.href = '/login?sessionExpired=1'
+        }
+        return null
+      })
       .finally(() => {
         refreshPromise = null
       })
@@ -42,14 +58,20 @@ export function setupAuthInterceptors() {
     (response) => response,
     async (error) => {
       const originalRequest = error.config
-      if (error.response?.status === 401 && originalRequest && !originalRequest._retry) {
+      // A 401 on /refresh itself must never re-enter refreshAccessToken():
+      // that call is already the in-flight promise this branch would await,
+      // so retrying here deadlocks it forever and its own .catch() (which
+      // logs the user out) never runs. Let it reject straight through.
+      const isRefreshRequest = originalRequest?.url === '/refresh'
+      if (error.response?.status === 401 && originalRequest && !originalRequest._retry && !isRefreshRequest) {
         originalRequest._retry = true
         const newAccessToken = await refreshAccessToken()
         if (newAccessToken) {
           originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`
           return AXIOS_INSTANCE(originalRequest)
         }
-        useAuthStore.getState().logout()
+        // refreshAccessToken() already logged out and redirected above when
+        // this request had actually been authenticated.
       }
       return Promise.reject(error)
     },
