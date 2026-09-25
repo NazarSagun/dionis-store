@@ -114,7 +114,7 @@ async function runInBatches<T, R>(items: T[], size: number, fn: (item: T) => Pro
 }
 
 async function main() {
-  const games: GameFixture[] = JSON.parse(fs.readFileSync(path.join(__dirname, '../mock/games/games.json'), 'utf8'))
+  const games: GameFixture[] = JSON.parse(fs.readFileSync(path.join(__dirname, 'games/games.json'), 'utf8'))
 
   console.log(`Seeding ${games.length} games into ${API_URL} via real API calls...`)
 
