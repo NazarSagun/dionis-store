@@ -2,6 +2,7 @@ import * as fs from 'fs'
 import * as path from 'path'
 import { PrismaClient } from '@prisma/client'
 import dotenv from 'dotenv'
+import { insertGameEditionsData } from './games/insertGameEditions'
 
 dotenv.config()
 
@@ -128,6 +129,12 @@ async function main() {
   const skipped = results.filter((result) => result === 'skipped').length
 
   console.log(`Done. Created ${created}, skipped ${skipped} (already existed).`)
+
+  // The API has no route for editions (physical-editions-spec.md seeds them
+  // directly), and insertGameEditionsData does not check for existing rows.
+  if ((await prisma.gameEdition.count()) === 0) {
+    await insertGameEditionsData(prisma)
+  }
 }
 
 main()
