@@ -145,7 +145,8 @@ test.describe('Account area', () => {
       await settings.getByTestId('settings-new-password').fill('newpassword456')
       await settings.getByTestId('settings-password-save').click()
 
-      await page.getByRole('button', { name: 'Logout' }).click()
+      await page.getByTestId('account-menu-trigger').click()
+      await page.getByRole('menuitem', { name: 'Logout' }).click()
       await page.goto('/login')
       await page.getByTestId('email').fill(currentEmail)
       await page.getByTestId('password').fill('newpassword456')

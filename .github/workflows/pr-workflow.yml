@@ -53,7 +53,9 @@ jobs:
         image: postgres:16
         env:
           POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
+          # No password: the database exists only inside this job and only
+          # listens on the runner.
+          POSTGRES_HOST_AUTH_METHOD: trust
           POSTGRES_DB: dionis_store_e2e
         ports:
           - 5432:5432
@@ -63,12 +65,10 @@ jobs:
           --health-timeout 5s
           --health-retries 10
 
-    # Values for a database that exists only for this job. The two Stripe keys
-    # come from repository secrets and must be test-mode keys.
+    # The two Stripe keys come from repository secrets and must be test-mode
+    # keys. The JWT signing keys are generated per run in a step below.
     env:
-      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/dionis_store_e2e
-      ACCESS_TOKEN: ci-access-token-secret
-      REFRESH_TOKEN: ci-refresh-token-secret
+      DATABASE_URL: postgresql://postgres@localhost:5432/dionis_store_e2e
       CLIENT_URL: http://localhost:3000
       STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
       NEXT_PUBLIC_BASE_URL: http://localhost:3500
@@ -92,6 +92,14 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+
+      - name: Generate JWT signing keys
+        run: |
+          for name in ACCESS_TOKEN REFRESH_TOKEN; do
+            value=$(openssl rand -hex 32)
+            echo "::add-mask::$value"
+            echo "$name=$value" >> "$GITHUB_ENV"
+          done
 
       - name: Generate Prisma client
         run: pnpm --filter api exec prisma generate
