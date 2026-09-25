@@ -16,6 +16,9 @@
     "test": {},
     "test:e2e": {
       "cache": false
+    },
+    "typecheck": {
+      "dependsOn": ["^build"]
     }
   }
 }

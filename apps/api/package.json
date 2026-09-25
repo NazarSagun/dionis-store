@@ -11,7 +11,10 @@
     "migrate": "npx prisma migrate dev",
     "build:mock": "tsc ./src/db-seed/insertAllData.ts",
     "insert:mock": "node ./src/db-seed/insertAllData.js",
-    "seed:api": "ts-node src/db-seed/populate-via-api.ts"
+    "seed:api": "ts-node src/db-seed/populate-via-api.ts",
+    "lint": "eslint src --ext .ts --max-warnings 0",
+    "typecheck": "tsc --noEmit",
+    "migrate:deploy": "prisma migrate deploy"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.4.5",
@@ -26,6 +29,7 @@
     "@types/jest": "^29.5.13",
     "@types/jsonwebtoken": "^9.0.7",
     "@types/node": "^20.16.5",
+    "eslint": "^8.57.0",
     "jest": "^29.7.0",
     "prettier": "^3.1.1",
     "prisma": "^5.7.1",

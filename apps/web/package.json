@@ -12,7 +12,8 @@
     "build-storybook": "storybook build",
     "test:coverage": "vitest run --coverage",
     "test:dev": "vitest --watch",
-    "test": "vitest run"
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.2",

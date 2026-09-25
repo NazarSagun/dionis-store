@@ -9,7 +9,7 @@ front end and local back end. They do not start or mock either one.
 Start the app stack yourself first, from the repo root:
 
 ```sh
-pnpm dev:api   # apps/api on http://localhost:8080 (needs its DB running, see apps/api/docker-compose.yml)
+pnpm dev:api   # apps/api on http://localhost:3500 (needs its DB running, see apps/api/docker-compose.yml)
 pnpm dev:web   # apps/web on http://localhost:3000
 ```
 
@@ -29,7 +29,7 @@ cp .env.example .env
 ```
 
 - `E2E_BASE_URL`: the running web app. Default value: `http://localhost:3000`.
-- `E2E_API_URL`: the running API. Default value: `http://localhost:8080`. Specs that call the API directly can use this value.
+- `E2E_API_URL`: the running API. Default value: `http://localhost:3500`. Specs that call the API directly can use this value.
 
 ## Running
 
