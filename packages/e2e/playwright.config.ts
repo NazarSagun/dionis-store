@@ -12,7 +12,9 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
-  reporter: 'html',
+  // CI: one line per test in the log, failure annotations on the PR, and the
+  // HTML report for the uploaded artifact. Locally: the HTML report only.
+  reporter: process.env.CI ? [['list'], ['github'], ['html', { open: 'never' }]] : 'html',
   timeout: 30_000,
   use: {
     baseURL,
