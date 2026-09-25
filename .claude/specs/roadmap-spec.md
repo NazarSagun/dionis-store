@@ -17,7 +17,6 @@ This section records the facts that the plans below depend on.
 - `GameEdition.stock` exists and `confirmOrder` reduces it inside a transaction.
 - The wishlist and recently-viewed lists live only in `localStorage`, through zustand `persist`.
 - `GET /api/games/:page` already pages the catalog. `GET /api/orders` returns every order in one response.
-- `apps/api/src/main.ts` hardcodes `ALLOWED_ORIGINS = ['http://localhost:3000']`. This breaks the repo rule against hardcoded hostnames.
 - CI runs only `pnpm install`, `pnpm build`, and `pnpm test --filter web`.
 
 ## Phase 0: Engineering foundations
@@ -32,7 +31,7 @@ Done when a pull request with a lint error, a type error, or a failing API test 
 
 ### 0.2 CORS origin from the environment
 
-Replace `ALLOWED_ORIGINS` in `apps/api/src/main.ts` with a `CORS_ORIGINS` environment variable. The value is a comma-separated list. Add the default `http://localhost:3000` to `apps/api/.env.example` and the root `.env.example` in the same commit.
+Replace `ALLOWED_ORIGINS` in `apps/api/src/main.ts` with the existing `CLIENT_URL` environment variable. `CLIENT_URL` was already in both `.env.example` files, but nothing read it. The value is a comma-separated list. The API refuses to start if the value is empty. Add the default `http://localhost:3000` to `apps/api/.env.example` and the root `.env.example` in the same commit.
 
 ### 0.3 Config cleanup
 
