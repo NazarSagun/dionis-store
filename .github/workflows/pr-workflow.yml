@@ -69,11 +69,10 @@ jobs:
       DATABASE_URL: postgresql://postgres:postgres@localhost:5432/dionis_store_e2e
       ACCESS_TOKEN: ci-access-token-secret
       REFRESH_TOKEN: ci-refresh-token-secret
-      PORT: 3500
       CLIENT_URL: http://localhost:3000
       STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
       NEXT_PUBLIC_BASE_URL: http://localhost:3500
-      NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: ${{ secrets.STRIPE_PUBLISHABLE_KEY }}
+      NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY }}
       SEED_API_URL: http://localhost:3500/api
       E2E_BASE_URL: http://localhost:3000
       E2E_API_URL: http://localhost:3500
@@ -105,8 +104,10 @@ jobs:
 
       - name: Start API and web app
         run: |
-          pnpm --filter api start > api.log 2>&1 &
-          pnpm --filter web start > web.log 2>&1 &
+          # PORT is set per process: `next start` reads PORT too, so a
+          # job-level value would put both apps on the same port.
+          PORT=3500 pnpm --filter api start > api.log 2>&1 &
+          PORT=3000 pnpm --filter web start > web.log 2>&1 &
           for url in "$E2E_API_URL" "$E2E_BASE_URL"; do
             for i in $(seq 1 60); do
               curl -sf "$url" > /dev/null && break

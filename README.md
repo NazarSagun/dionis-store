@@ -99,4 +99,4 @@ The workflow at `.github/workflows/pr-workflow.yml` runs on every pull request i
 - `checks`: runs lint, the typecheck, the build, and the unit tests for `apps/web` and `apps/api`.
 - `e2e`: starts a Postgres container, applies the migrations, starts the API and the web app, seeds the games, and runs the Playwright suite.
 
-The `e2e` job needs two repository secrets: `STRIPE_SECRET_KEY` and `STRIPE_PUBLISHABLE_KEY`. Use Stripe test-mode keys only. If a test fails, the job uploads the Playwright report and the server logs as an artifact.
+The `e2e` job needs two repository secrets: `STRIPE_SECRET_KEY` and `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`. Use Stripe test-mode keys only. If a test fails, the job uploads the Playwright report and the server logs as an artifact.
