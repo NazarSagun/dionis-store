@@ -5,7 +5,17 @@ import { NestFactory } from '@nestjs/core'
 import { AppModule } from './app.module'
 import { AllExceptionsFilter } from './common/filters/all-exceptions.filter'
 
-const ALLOWED_ORIGINS = ['http://localhost:3000']
+// Comma-separated list, so a deployment can allow more than one web origin.
+function getAllowedOrigins(): string[] {
+  const origins = (process.env.CLIENT_URL ?? '')
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean)
+  if (origins.length === 0) {
+    throw new Error('CLIENT_URL is not set. Set it to the web app origin, e.g. http://localhost:3000')
+  }
+  return origins
+}
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
@@ -19,7 +29,7 @@ async function bootstrap() {
     })
 
   app.setGlobalPrefix('api')
-  app.enableCors({ origin: ALLOWED_ORIGINS, credentials: true })
+  app.enableCors({ origin: getAllowedOrigins(), credentials: true })
   app.use(cookieParser())
 
   app.useGlobalPipes(
