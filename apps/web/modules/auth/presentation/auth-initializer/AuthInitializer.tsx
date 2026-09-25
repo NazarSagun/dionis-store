@@ -3,21 +3,23 @@
 import { ReactNode, useEffect, useState } from 'react'
 import { Skeleton } from '@repo/ui'
 
-import { useAuthHydrate, useRefreshToken } from '../../core/facade'
+import { useRefreshToken } from '../../core/facade'
 
 interface AuthInitializerProps {
   children: ReactNode
 }
 
 export const AuthInitializer = ({ children }: AuthInitializerProps) => {
-  const hydrate = useAuthHydrate()
   const [isHydrated, setIsHydrated] = useState(false)
   useRefreshToken()
 
+  // useAuthStore restores its persisted state as soon as the store is created
+  // in the browser. The server has no localStorage, so wait for the mount
+  // before rendering auth-dependent children, to keep the first client
+  // render identical to the server HTML.
   useEffect(() => {
-    hydrate()
     setIsHydrated(true)
-  }, [hydrate])
+  }, [])
 
   if (!isHydrated) {
     return (

@@ -24,9 +24,9 @@ If your change touches the UI, also run the affected Playwright specs in `packag
 
 If you need typed API calls from the web app, use the generated `packages/dionis-api` client. It exposes React Query hooks such as `useGetGames`. Do not call `fetch` or axios directly from `apps/web` code. No file in the app does this today. Keep it that way.
 
-If you need persisted client state, follow the pattern in `useCartStore` and `useWishlistStore` under `apps/web/features/*/store`. Both combine `zustand`'s `create` with the `persist` middleware and a `partialize` option. Do not write your own `localStorage.getItem` and `setItem` calls inside a store. `useAuthStore` does this today. Treat it as a known inconsistency, not a pattern to copy.
+If you need persisted client state, follow the pattern in `useCartStore`, `useWishlistStore`, and `useAuthStore` under `apps/web/modules/*/core/store.ts`. Each one combines `zustand`'s `create` with the `persist` middleware and a `partialize` option. Do not write your own `localStorage.getItem` and `setItem` calls inside a store.
 
-If you need a shared lint, Prettier, or TypeScript configuration, point the app's configuration at `packages/eslint-config`, `packages/prettier-config`, or `packages/typescript-config`. Do not inline a duplicate copy of these rules. Today, `apps/web` and `apps/api` each inline their own `tsconfig.json` configuration instead of extending `packages/typescript-config/base.json`. Do not add a third inline copy. If you touch either tsconfig, wire it to the shared configuration instead.
+If you need a shared lint, Prettier, or TypeScript configuration, point the app's configuration at `packages/eslint-config`, `packages/prettier-config`, or `packages/typescript-config`. Do not inline a duplicate copy of these rules. `apps/web/tsconfig.json` extends `nextjs.json` and `apps/api/tsconfig.json` extends `nestjs.json`. An app keeps only the options that must be relative to its own folder, such as `outDir`, `rootDir`, `include`, and `paths`. A new app extends the shared file that matches its framework, or `base.json` if none matches.
 
 ## Configuration
 

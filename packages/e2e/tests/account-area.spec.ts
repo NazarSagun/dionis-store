@@ -221,9 +221,11 @@ test.describe('Account area', () => {
       }
 
       await page.goto('/account')
-      const recentTitles = await page.getByTestId('recently-viewed').getByTestId('card').locator('h3').allInnerTexts()
-
-      expect(recentTitles).toEqual([titles[2], titles[1]])
+      // toHaveText retries until each card has fetched its game, unlike allInnerTexts.
+      await expect(page.getByTestId('recently-viewed').getByTestId('card').locator('h3')).toHaveText([
+        titles[2],
+        titles[1],
+      ])
     })
   })
 
