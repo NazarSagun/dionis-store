@@ -30,6 +30,7 @@ import type {
   OrderObject,
   OrdersArray,
   PaymentIntentResponse,
+  ShippingAddressInput,
   SuccessMessage,
   UpdateNameInput,
   UpdateNameResponse,
@@ -758,6 +759,64 @@ export const useConfirmOrder = <TError = ErrorType<ErrorMessage>,
       > => {
 
       const mutationOptions = getConfirmOrderMutationOptions(options);
+
+      return useMutation(mutationOptions);
+    }
+    /**
+ * @summary Store the shipping address on an unpaid PaymentIntent, so the order can be created from it later
+ */
+export const setShippingAddress = (
+    paymentIntentId: string,
+    shippingAddressInput: BodyType<ShippingAddressInput>,
+ options?: SecondParameter<typeof customInstance>,) => {
+      
+      
+      return customInstance<void>(
+      {url: `/orders/payment-intent/${paymentIntentId}/shipping`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: shippingAddressInput
+    },
+      options);
+    }
+  
+
+
+export const getSetShippingAddressMutationOptions = <TError = ErrorType<ErrorMessage>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof setShippingAddress>>, TError,{paymentIntentId: string;data: BodyType<ShippingAddressInput>}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof setShippingAddress>>, TError,{paymentIntentId: string;data: BodyType<ShippingAddressInput>}, TContext> => {
+const {mutation: mutationOptions, request: requestOptions} = options ?? {};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof setShippingAddress>>, {paymentIntentId: string;data: BodyType<ShippingAddressInput>}> = (props) => {
+          const {paymentIntentId,data} = props ?? {};
+
+          return  setShippingAddress(paymentIntentId,data,requestOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type SetShippingAddressMutationResult = NonNullable<Awaited<ReturnType<typeof setShippingAddress>>>
+    export type SetShippingAddressMutationBody = BodyType<ShippingAddressInput>
+    export type SetShippingAddressMutationError = ErrorType<ErrorMessage>
+
+    /**
+ * @summary Store the shipping address on an unpaid PaymentIntent, so the order can be created from it later
+ */
+export const useSetShippingAddress = <TError = ErrorType<ErrorMessage>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof setShippingAddress>>, TError,{paymentIntentId: string;data: BodyType<ShippingAddressInput>}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationResult<
+        Awaited<ReturnType<typeof setShippingAddress>>,
+        TError,
+        {paymentIntentId: string;data: BodyType<ShippingAddressInput>},
+        TContext
+      > => {
+
+      const mutationOptions = getSetShippingAddressMutationOptions(options);
 
       return useMutation(mutationOptions);
     }

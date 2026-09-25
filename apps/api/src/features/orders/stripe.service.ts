@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import Stripe from 'stripe'
+import { CustomError } from '../../common/errors/custom-error'
 
 /**
  * Single shared Stripe client for the whole app, handed out via DI, the same
@@ -32,5 +33,23 @@ export class StripeService {
 
   retrievePaymentIntent(paymentIntentId: string) {
     return this.client.paymentIntents.retrieve(paymentIntentId)
+  }
+
+  updatePaymentIntentMetadata(paymentIntentId: string, metadata: Record<string, string>) {
+    return this.client.paymentIntents.update(paymentIntentId, { metadata })
+  }
+
+  /**
+   * Verifies Stripe's signature over the raw request body and returns the
+   * parsed event. Throws Stripe's own signature error for a forged or
+   * malformed request. Read at call time, not in the constructor, so the API
+   * still starts on a machine that has no webhook secret yet.
+   */
+  constructWebhookEvent(rawBody: Buffer, signature: string) {
+    const secret = this.configService.get<string>('STRIPE_WEBHOOK_SECRET')
+    if (!secret) {
+      throw new CustomError('Stripe webhook is not configured', 500)
+    }
+    return this.client.webhooks.constructEvent(rawBody, signature, secret)
   }
 }

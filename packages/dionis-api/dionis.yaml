@@ -401,8 +401,6 @@ paths:
               properties:
                 paymentIntentId:
                   type: string
-                shippingAddress:
-                  $ref: '#/components/schemas/shippingAddressInput'
       responses:
         '201':
           description: The created (or already-existing) order
@@ -418,6 +416,51 @@ paths:
                 $ref: '#/components/schemas/errorMessage'
         '401':
           description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+      security:
+        - bearerHttpAuthentication: []
+  /orders/payment-intent/{paymentIntentId}/shipping:
+    post:
+      summary: Store the shipping address on an unpaid PaymentIntent, so the order can be created from it later
+      operationId: setShippingAddress
+      parameters:
+        - name: paymentIntentId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/shippingAddressInput'
+      responses:
+        '204':
+          description: The address was stored
+        '400':
+          description: A required field is missing or too long
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+        '404':
+          description: The PaymentIntent does not belong to this user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+        '409':
+          description: The PaymentIntent is already paid
           content:
             application/json:
               schema:
@@ -699,6 +742,8 @@ components:
     paymentIntentResponse:
       type: object
       properties:
+        paymentIntentId:
+          type: string
         clientSecret:
           type: string
         amount:
