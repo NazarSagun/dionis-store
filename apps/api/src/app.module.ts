@@ -7,13 +7,6 @@ import { GamesModule } from './features/games/games.module'
 import { OrdersModule } from './features/orders/orders.module'
 
 @Module({
-  imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
-    PrismaModule,
-    AuthModule,
-    UsersModule,
-    GamesModule,
-    OrdersModule,
-  ],
+  imports: [ConfigModule.forRoot({ isGlobal: true }), PrismaModule, AuthModule, UsersModule, GamesModule, OrdersModule],
 })
 export class AppModule {}

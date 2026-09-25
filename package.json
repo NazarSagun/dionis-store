@@ -8,7 +8,8 @@
     "dev": "turbo dev",
     "lint": "turbo lint",
     "dev:api": "turbo dev --filter api",
-    "dev:web": "turbo dev --filter web"
+    "dev:web": "turbo dev --filter web",
+    "typecheck": "turbo typecheck"
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",

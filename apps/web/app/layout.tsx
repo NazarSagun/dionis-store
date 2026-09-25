@@ -1,7 +1,7 @@
 'use client'
 
 import type { ReactNode } from 'react'
-import { Inter, JetBrains_Mono, Space_Grotesk } from 'next/font/google'
+import localFont from 'next/font/local'
 import { Toaster } from '@repo/ui'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
@@ -12,23 +12,26 @@ import './globals.css'
 
 const queryClient = new QueryClient()
 
-const fontSans = Inter({
-  subsets: ['latin'],
+// Self-hosted: next/font/google downloads at build time, and next@14.2.13
+// fails when Google returns a font URL without a file extension.
+const fontSans = localFont({
+  src: './fonts/Inter-Variable.woff2',
   variable: '--font-sans',
+  weight: '100 900',
   display: 'swap',
 })
 
-const fontMono = JetBrains_Mono({
-  subsets: ['latin'],
+const fontMono = localFont({
+  src: './fonts/JetBrainsMono-Variable.woff2',
   variable: '--font-mono',
-  weight: ['400', '500', '700'],
+  weight: '100 800',
   display: 'swap',
 })
 
-const fontDisplay = Space_Grotesk({
-  subsets: ['latin'],
+const fontDisplay = localFont({
+  src: './fonts/SpaceGrotesk-Variable.woff2',
   variable: '--font-display',
-  weight: ['500', '700'],
+  weight: '300 700',
   display: 'swap',
 })
 

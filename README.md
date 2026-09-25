@@ -39,7 +39,7 @@ Run the following command from the repository root to start both the web app and
 pnpm dev
 ```
 
-The API listens on the port set in `apps/api/.env` (`8080` in the example files) and serves routes under `/api`. The web app listens on port 3000.
+The API listens on the port set in `apps/api/.env` (`3500` if `PORT` is not set) and serves routes under `/api`. The web app listens on port 3000.
 
 To start only one app, run one of the following commands instead.
 
@@ -85,3 +85,18 @@ Run the following command from the repository root to lint all apps and packages
 ```sh
 pnpm lint
 ```
+
+Run the following command from the repository root to typecheck all apps.
+
+```sh
+pnpm typecheck
+```
+
+## Continuous integration
+
+The workflow at `.github/workflows/pr-workflow.yml` runs on every pull request into `main`. It has two jobs.
+
+- `checks`: runs lint, the typecheck, the build, and the unit tests for `apps/web` and `apps/api`.
+- `e2e`: starts a Postgres container, applies the migrations, starts the API and the web app, seeds the games, and runs the Playwright suite.
+
+The `e2e` job needs two repository secrets: `STRIPE_SECRET_KEY` and `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`. Use Stripe test-mode keys only. If a test fails, the job uploads the Playwright report and the server logs as an artifact.

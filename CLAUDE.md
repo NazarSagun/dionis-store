@@ -4,14 +4,15 @@ Dionis Store is a pnpm and Turborepo monorepo. It has two apps and several share
 
 Package-specific rules live in `apps/web/CLAUDE.md` and `apps/api/CLAUDE.md`. This file holds the rules that apply everywhere.
 
-## CI does not gate everything
+## CI gates
 
-The workflow at `.github/workflows/pr-workflow.yml` runs on every pull request into `main`. It runs `pnpm install`, `pnpm build`, and `pnpm test --filter web`. It does not run lint. It does not run a typecheck. It does not run the `apps/api` test suite. It does not run the Playwright suite in `packages/e2e`.
+The workflow at `.github/workflows/pr-workflow.yml` runs on every pull request into `main`. The `checks` job runs lint, the typecheck, the build, and the unit tests for `apps/web` and `apps/api`. The `e2e` job runs the Playwright suite in `packages/e2e` against a Postgres container, a built API, and a built web app.
 
-A green pull request does not prove that lint, the typecheck, or the API tests pass. Before you call a change done, run these checks yourself.
+Run the same checks locally before you push, because a CI run is slow feedback.
 
 ```sh
 pnpm lint
+pnpm typecheck
 pnpm build
 pnpm test --filter web
 pnpm test --filter api

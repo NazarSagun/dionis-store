@@ -2,6 +2,7 @@ import * as fs from 'fs'
 import * as path from 'path'
 import { PrismaClient } from '@prisma/client'
 import dotenv from 'dotenv'
+import { insertGameEditionsData } from './games/insertGameEditions'
 
 dotenv.config()
 
@@ -114,7 +115,7 @@ async function runInBatches<T, R>(items: T[], size: number, fn: (item: T) => Pro
 }
 
 async function main() {
-  const games: GameFixture[] = JSON.parse(fs.readFileSync(path.join(__dirname, '../mock/games/games.json'), 'utf8'))
+  const games: GameFixture[] = JSON.parse(fs.readFileSync(path.join(__dirname, 'games/games.json'), 'utf8'))
 
   console.log(`Seeding ${games.length} games into ${API_URL} via real API calls...`)
 
@@ -128,6 +129,12 @@ async function main() {
   const skipped = results.filter((result) => result === 'skipped').length
 
   console.log(`Done. Created ${created}, skipped ${skipped} (already existed).`)
+
+  // The API has no route for editions (physical-editions-spec.md seeds them
+  // directly), and insertGameEditionsData does not check for existing rows.
+  if ((await prisma.gameEdition.count()) === 0) {
+    await insertGameEditionsData(prisma)
+  }
 }
 
 main()

@@ -11,9 +11,12 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule)
 
   // Kept as a plain liveness route outside the /api prefix, same as before.
-  app.getHttpAdapter().getInstance().get('/', (_req: unknown, res: { send: (body: string) => void }) => {
-    res.send('API is alive!')
-  })
+  app
+    .getHttpAdapter()
+    .getInstance()
+    .get('/', (_req: unknown, res: { send: (body: string) => void }) => {
+      res.send('API is alive!')
+    })
 
   app.setGlobalPrefix('api')
   app.enableCors({ origin: ALLOWED_ORIGINS, credentials: true })

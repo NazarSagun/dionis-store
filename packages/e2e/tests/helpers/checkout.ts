@@ -48,6 +48,11 @@ export async function fillStripeTestCard(page: Page, number: string, expiry = '1
   await frame.locator('[name="number"]').fill(number)
   await frame.locator('[name="expiry"]').fill(expiry)
   await frame.locator('[name="cvc"]').fill(cvc)
+  // Stripe preselects the billing country from the visitor's IP, and some
+  // countries (the US, where CI runs) add a required postal code field. Pin
+  // the country so the form is the same on every machine.
+  await frame.locator('[name="country"]').selectOption('US')
+  await frame.locator('[name="postalCode"]').fill('42424')
 }
 
 export async function completePayment(page: Page) {
