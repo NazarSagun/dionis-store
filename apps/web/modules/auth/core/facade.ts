@@ -10,7 +10,6 @@ export const useAuthUser = () => useAuthStore((state) => state.user)
 
 export const useAuthLogin = () => useAuthStore((state) => state.login)
 export const useAuthLogout = () => useAuthStore((state) => state.logout)
-export const useAuthHydrate = () => useAuthStore((state) => state.hydrate)
 export const useSetAuthUserName = () => useAuthStore((state) => state.setUserName)
 
 export const useRefreshToken = () => {

@@ -20,7 +20,10 @@ describe('useAuthStore', () => {
       accessToken: '123',
       user: { name: 'test' },
     })
-    expect(localStorage.getItem('token')).toBe('123')
+    expect(JSON.parse(localStorage.getItem('auth-storage') ?? '{}').state).toEqual({
+      isAuthenticated: true,
+      accessToken: '123',
+    })
   })
 
   it('Should log out and clear state correctly', () => {
@@ -32,13 +35,19 @@ describe('useAuthStore', () => {
       accessToken: null,
       user: null,
     })
-    expect(localStorage.getItem('token')).toBeNull()
+    expect(JSON.parse(localStorage.getItem('auth-storage') ?? '{}').state).toEqual({
+      isAuthenticated: false,
+      accessToken: null,
+    })
   })
 
-  it('Should hydrate isAuthenticated and accessToken from a stored token', () => {
-    localStorage.setItem('token', 'stored-token')
+  it('Should restore isAuthenticated and accessToken from storage', async () => {
+    localStorage.setItem(
+      'auth-storage',
+      JSON.stringify({ state: { isAuthenticated: true, accessToken: 'stored-token' }, version: 0 }),
+    )
 
-    useAuthStore.getState().hydrate()
+    await useAuthStore.persist.rehydrate()
 
     expect(useAuthStore.getState()).toMatchObject({
       isAuthenticated: true,
@@ -46,8 +55,8 @@ describe('useAuthStore', () => {
     })
   })
 
-  it('Should not authenticate on hydrate when no token is stored', () => {
-    useAuthStore.getState().hydrate()
+  it('Should not authenticate on rehydrate when nothing is stored', async () => {
+    await useAuthStore.persist.rehydrate()
 
     expect(useAuthStore.getState().isAuthenticated).toBe(false)
   })

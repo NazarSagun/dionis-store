@@ -16,9 +16,7 @@ One case is an exception to this rule. Test setup sometimes needs to reset a who
 
 ## Client state
 
-A store that must survive a page reload uses `zustand`'s `create` together with the `persist` middleware and a `partialize` option. `useCartStore` and `useWishlistStore` follow this pattern. Use them as the template for a new store.
-
-`useAuthStore` breaks this pattern. It calls `localStorage.getItem`, `setItem`, and `removeItem` by hand instead of using `persist`. Do not copy this. If you touch `useAuthStore`, prefer migrating it to `persist` over adding more hand-rolled storage calls.
+A store that must survive a page reload uses `zustand`'s `create` together with the `persist` middleware and a `partialize` option. `useCartStore`, `useWishlistStore`, and `useAuthStore` follow this pattern. Use them as the template for a new store.
 
 ## Data fetching
 

@@ -17,14 +17,11 @@ export function refreshAccessToken(): Promise<string | null> {
         // An anonymous visitor also hits this catch on every page load (no
         // refresh cookie yet), so only a session that WAS authenticated
         // counts as an expiry worth logging out for and telling the user
-        // about. Read localStorage directly rather than the store's
-        // isAuthenticated flag: on mount, this runs (via useRefreshToken's
-        // effect) before AuthInitializer's own hydrate() effect has set that
-        // flag, so the store would still read as logged-out here even when
-        // a token exists. Redirecting here (not via a component effect)
-        // guarantees it fires from both call sites: this mount-time refresh
-        // and the response interceptor below.
-        if (localStorage.getItem('token')) {
+        // about. useAuthStore's persist middleware has already restored
+        // isAuthenticated by the time this runs. Redirecting here (not via a
+        // component effect) guarantees it fires from both call sites: this
+        // mount-time refresh and the response interceptor below.
+        if (useAuthStore.getState().isAuthenticated) {
           useAuthStore.getState().logout()
           window.location.href = '/login?sessionExpired=1'
         }
