@@ -5,14 +5,16 @@ import { GamesService } from './games.service'
 
 describe('GamesService', () => {
   let service: GamesService
-  let prisma: { game_pc: { findMany: jest.Mock; count: jest.Mock } }
+  let prisma: { game_pc: { findMany: jest.Mock; count: jest.Mock; groupBy: jest.Mock }; $queryRaw: jest.Mock }
 
   beforeEach(async () => {
     prisma = {
       game_pc: {
         findMany: jest.fn().mockResolvedValue([{ id: 1, title: 'Some Game' }]),
         count: jest.fn().mockResolvedValue(1),
+        groupBy: jest.fn(),
       },
+      $queryRaw: jest.fn().mockResolvedValue([{ id: 4 }, { id: 9 }]),
     }
 
     const module = await Test.createTestingModule({
@@ -106,6 +108,55 @@ describe('GamesService', () => {
       prisma.game_pc.count.mockResolvedValue(40)
 
       await expect(service.fetchGames({ page: 5 })).rejects.toThrow(CustomError)
+    })
+  })
+
+  describe('genre and price filters', () => {
+    it('matches the genre exactly', async () => {
+      await service.fetchGames({ page: 1, genre: 'Shooter' })
+
+      expect(prisma.game_pc.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({ where: expect.objectContaining({ genre: 'Shooter' }) }),
+      )
+    })
+
+    it('narrows the query to the ids whose discounted price is in range', async () => {
+      await service.fetchGames({ page: 1, minPrice: 15, maxPrice: 30 })
+
+      const [sql, ...values] = prisma.$queryRaw.mock.calls[0]
+      expect(sql.join('?')).toContain('ROUND(price * (100 - discount) / 100.0, 2)')
+      expect(values).toEqual([15, 30])
+      expect(prisma.game_pc.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({ where: expect.objectContaining({ id: { in: [4, 9] } }) }),
+      )
+    })
+
+    it('leaves the missing end of a price range open', async () => {
+      await service.fetchGames({ page: 1, maxPrice: 20 })
+
+      const [, min, max] = prisma.$queryRaw.mock.calls[0]
+      expect([min, max]).toEqual([0, 20])
+    })
+
+    it('runs no price query when no price is given', async () => {
+      await service.fetchGames({ page: 1, genre: 'Shooter' })
+
+      expect(prisma.$queryRaw).not.toHaveBeenCalled()
+      const [args] = prisma.game_pc.findMany.mock.calls[0]
+      expect(args.where.id).toBeUndefined()
+    })
+
+    it('lists the genres with their game counts, alphabetically', async () => {
+      prisma.game_pc.groupBy.mockResolvedValue([
+        { genre: 'MOBA', _count: { _all: 18 } },
+        { genre: 'Shooter', _count: { _all: 94 } },
+      ])
+
+      await expect(service.fetchGenres()).resolves.toEqual([
+        { genre: 'MOBA', count: 18 },
+        { genre: 'Shooter', count: 94 },
+      ])
+      expect(prisma.game_pc.groupBy).toHaveBeenCalledWith(expect.objectContaining({ orderBy: { genre: 'asc' } }))
     })
   })
 

@@ -25,4 +25,16 @@ sort?: GetGamesSort;
  * Edition to filter by. Digital matches every game; standard/collector match games with a physical edition whose name contains that word.
  */
 edition?: GetGamesEdition;
+/**
+ * Exact genre, one of the values from /games/genres
+ */
+genre?: string;
+/**
+ * Lowest discounted price in whole euros, inclusive
+ */
+minPrice?: number;
+/**
+ * Highest discounted price in whole euros, inclusive
+ */
+maxPrice?: number;
 };

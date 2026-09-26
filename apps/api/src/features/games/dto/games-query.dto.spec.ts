@@ -1,3 +1,4 @@
+import 'reflect-metadata'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
 import { GamesQueryDto } from './games-query.dto'
@@ -60,5 +61,18 @@ describe('GamesQueryDto (security: input whitelisting)', () => {
 
   it('accepts SQL-metacharacter search text as plain text (no format restriction to bypass)', async () => {
     expect(await validateQuery({ search: "' OR '1'='1' --" })).toHaveLength(0)
+  })
+
+  it('accepts whole-euro price bounds sent as query strings', async () => {
+    expect(await validateQuery({ minPrice: '15', maxPrice: '30' })).toHaveLength(0)
+  })
+
+  it('rejects a negative or non-numeric price', async () => {
+    expect((await validateQuery({ maxPrice: '-1' }))[0].property).toBe('maxPrice')
+    expect((await validateQuery({ minPrice: 'cheap' }))[0].property).toBe('minPrice')
+  })
+
+  it('rejects a genre longer than 50 characters', async () => {
+    expect((await validateQuery({ genre: 'a'.repeat(51) }))[0].property).toBe('genre')
   })
 })

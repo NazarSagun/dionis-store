@@ -101,14 +101,19 @@ The catalog search, filters, and sort live in the URL query string. A user can s
 #### Acceptance criteria
 
 - If a user opens `/?genre=Shooter&maxPrice=20`, the page loads with those filters applied.
-- A filter change updates the URL without a full page reload.
+- A filter change updates the URL without a full page reload, and Back restores the earlier filters.
+- The price filter compares the discounted price that a card shows, not the list price.
+- An unknown value in the URL is ignored, and the page still shows games.
 - The "Clear filters" button also clears the URL.
 
 #### Implementation plan
 
-1. Add `genre`, `minPrice`, and `maxPrice` to `GamesQueryDto` and to the `where` clause in `GamesService.fetchGames`.
-2. Add `GET /api/games/genres`, which returns the distinct genre values.
-3. In the games module, read and write the filter state with `useSearchParams` and `router.replace`. Do not add a second copy of the state in the store.
+1. Add `genre` (exact match), `minPrice`, and `maxPrice` (whole euros) to `GamesQueryDto` and `GamesService.fetchGames`. Prisma cannot filter on a computed value, so one raw query finds the ids whose discounted price is in range first.
+2. Add `GET /api/games/genres`, which returns each genre with its game count. Declare it before `games/:page`.
+3. In the games module, read and write the filter state from the URL through `useGamesFilters` (`core/facade.ts`). A dropdown or page change pushes a history entry. Search replaces the current one. Do not add a second copy of the state in the store.
+4. The price dropdown offers fixed ranges. The URL holds the numbers, so a hand-written range also works.
+
+The genre values are not clean: "Card" and "Card Game", "MMO" and "MMORPG" are separate values. The dropdown lists them as they are, and the admin panel (2.1) can merge them later.
 
 #### Out of scope
 

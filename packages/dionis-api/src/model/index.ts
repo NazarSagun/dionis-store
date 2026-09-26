@@ -15,6 +15,7 @@ export * from './errorMessage';
 export * from './gameEditionObject';
 export * from './gameObject';
 export * from './gamesArray';
+export * from './genreCount';
 export * from './getGamesEdition';
 export * from './getGamesParams';
 export * from './getGamesPlatform';

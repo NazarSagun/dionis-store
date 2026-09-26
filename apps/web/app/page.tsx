@@ -1,13 +1,14 @@
 'use client'
 
-import { useState } from 'react'
-import { useGetGames, useGetGamesTopDeals } from '@repo/dionis-api/src/dionis/default/default'
-import { GameObject, GetGamesEdition, GetGamesPlatform, GetGamesSort } from '@repo/dionis-api/src/model'
+import { Suspense } from 'react'
+import { GameObject } from '@repo/dionis-api/src/model'
 import { Skeleton } from '@repo/ui'
 
 import { Footer } from '@/components/footer/Footer'
 import { MainNavigation } from '@/components/main-navigation/MainNavigation'
 import { CartDrawer } from '@/modules/cart/presentation/cart-drawer/CartDrawer'
+import { useGamesFilters } from '@/modules/games/core/facade'
+import { useGetGames, useGetGamesGenres, useGetGamesTopDeals } from '@/modules/games/integration/repository'
 import { GamesList } from '@/modules/games/presentation/games-list/GamesList'
 import { GamesPagination } from '@/modules/games/presentation/games-pagination/GamesPagination'
 import { GamesToolbar } from '@/modules/games/presentation/games-toolbar/GamesToolbar'
@@ -16,30 +17,23 @@ import { TopDeals } from '@/modules/games/presentation/top-deals/TopDeals'
 const containerStyles =
   'flex flex-1 min-h-[75vh] flex-col items-center justify-center px-4 sm:px-8 lg:px-[35px] pb-20 bg-[image:var(--light-background-color)]'
 
+// useSearchParams needs a Suspense boundary, or `next build` fails to
+// prerender the page.
 export default function Home() {
-  const [page, setPage] = useState(1)
-  const [search, setSearch] = useState<string>()
-  const [platform, setPlatform] = useState<GetGamesPlatform>()
-  const [sort, setSort] = useState<GetGamesSort>()
-  const [edition, setEdition] = useState<GetGamesEdition>()
+  return (
+    <Suspense>
+      <HomeContent />
+    </Suspense>
+  )
+}
 
-  const { data, isLoading, isError } = useGetGames(page, { search, platform, sort, edition })
+function HomeContent() {
+  const { filters, setFilters, setSearch, setPage, clearFilters } = useGamesFilters()
+  const { page, ...query } = filters
+
+  const { data, isLoading, isError } = useGetGames(page, query)
   const { data: topDeals } = useGetGamesTopDeals()
-
-  const resetToFirstPage =
-    <T,>(setter: (value: T) => void) =>
-    (value: T) => {
-      setPage(1)
-      setter(value)
-    }
-
-  const handleClearFilters = () => {
-    setPage(1)
-    setSearch(undefined)
-    setPlatform(undefined)
-    setSort(undefined)
-    setEdition(undefined)
-  }
+  const { data: genres } = useGetGamesGenres()
 
   return (
     <>
@@ -53,14 +47,21 @@ export default function Home() {
             <h1 className='mt-2 font-display text-4xl font-bold text-foreground'>Find your next game.</h1>
           </div>
           <GamesToolbar
-            platform={platform}
-            sort={sort}
-            edition={edition}
-            onSearchChange={resetToFirstPage(setSearch)}
-            onPlatformChange={resetToFirstPage(setPlatform)}
-            onSortChange={resetToFirstPage(setSort)}
-            onEditionChange={resetToFirstPage(setEdition)}
-            onClearFilters={handleClearFilters}
+            search={filters.search}
+            platform={filters.platform}
+            genre={filters.genre}
+            genres={genres ?? []}
+            minPrice={filters.minPrice}
+            maxPrice={filters.maxPrice}
+            sort={filters.sort}
+            edition={filters.edition}
+            onSearchChange={setSearch}
+            onPlatformChange={(platform) => setFilters({ platform })}
+            onGenreChange={(genre) => setFilters({ genre })}
+            onPriceChange={(range) => setFilters({ minPrice: range?.minPrice, maxPrice: range?.maxPrice })}
+            onSortChange={(sort) => setFilters({ sort })}
+            onEditionChange={(edition) => setFilters({ edition })}
+            onClearFilters={clearFilters}
           />
           <TopDeals games={topDeals ?? []} />
           {isLoading && (
