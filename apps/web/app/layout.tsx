@@ -7,6 +7,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 import { cn } from '@/lib/utils'
 import { AuthInitializer } from '@/modules/auth/presentation/auth-initializer/AuthInitializer'
+import { WishlistSync } from '@/modules/wishlist/presentation/wishlist-sync/WishlistSync'
 
 import './globals.css'
 
@@ -63,6 +64,7 @@ export default function RootLayout({
               never appear.
             */}
             <Toaster />
+            <WishlistSync />
             {children}
           </AuthInitializer>
         </QueryClientProvider>

@@ -26,6 +26,7 @@ import type {
   GameObject,
   GamesArray,
   GetGamesParams,
+  MergeWishlistBody,
   OrderItemObject,
   OrderObject,
   OrdersArray,
@@ -36,7 +37,8 @@ import type {
   UpdateNameResponse,
   UserCredentials,
   UserObject,
-  UsersArray
+  UsersArray,
+  WishlistArray
 } from '../../model'
 import { customInstance } from '../../../instance';
 import type { ErrorType, BodyType } from '../../../instance';
@@ -934,6 +936,289 @@ export const useActivateOrderItem = <TError = ErrorType<ErrorMessage>,
       > => {
 
       const mutationOptions = getActivateOrderItemMutationOptions(options);
+
+      return useMutation(mutationOptions);
+    }
+    /**
+ * @summary List the signed-in player's wishlist, newest first, with current game data
+ */
+export const getWishlist = (
+    
+ options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<WishlistArray>(
+      {url: `/wishlist`, method: 'GET', signal
+    },
+      options);
+    }
+  
+
+export const getGetWishlistQueryKey = () => {
+    return [`/wishlist`] as const;
+    }
+
+    
+export const getGetWishlistQueryOptions = <TData = Awaited<ReturnType<typeof getWishlist>>, TError = ErrorType<ErrorMessage>>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getWishlist>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetWishlistQueryKey();
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getWishlist>>> = ({ signal }) => getWishlist(requestOptions, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getWishlist>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetWishlistQueryResult = NonNullable<Awaited<ReturnType<typeof getWishlist>>>
+export type GetWishlistQueryError = ErrorType<ErrorMessage>
+
+/**
+ * @summary List the signed-in player's wishlist, newest first, with current game data
+ */
+export const useGetWishlist = <TData = Awaited<ReturnType<typeof getWishlist>>, TError = ErrorType<ErrorMessage>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getWishlist>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+
+  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } => {
+
+  const queryOptions = getGetWishlistQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+/**
+ * @summary Add a guest wishlist to the account, keeping the account's entry for games already on it
+ */
+export const mergeWishlist = (
+    mergeWishlistBody: BodyType<MergeWishlistBody>,
+ options?: SecondParameter<typeof customInstance>,) => {
+      
+      
+      return customInstance<WishlistArray>(
+      {url: `/wishlist/merge`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: mergeWishlistBody
+    },
+      options);
+    }
+  
+
+
+export const getMergeWishlistMutationOptions = <TError = ErrorType<ErrorMessage>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof mergeWishlist>>, TError,{data: BodyType<MergeWishlistBody>}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof mergeWishlist>>, TError,{data: BodyType<MergeWishlistBody>}, TContext> => {
+const {mutation: mutationOptions, request: requestOptions} = options ?? {};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof mergeWishlist>>, {data: BodyType<MergeWishlistBody>}> = (props) => {
+          const {data} = props ?? {};
+
+          return  mergeWishlist(data,requestOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type MergeWishlistMutationResult = NonNullable<Awaited<ReturnType<typeof mergeWishlist>>>
+    export type MergeWishlistMutationBody = BodyType<MergeWishlistBody>
+    export type MergeWishlistMutationError = ErrorType<ErrorMessage>
+
+    /**
+ * @summary Add a guest wishlist to the account, keeping the account's entry for games already on it
+ */
+export const useMergeWishlist = <TError = ErrorType<ErrorMessage>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof mergeWishlist>>, TError,{data: BodyType<MergeWishlistBody>}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationResult<
+        Awaited<ReturnType<typeof mergeWishlist>>,
+        TError,
+        {data: BodyType<MergeWishlistBody>},
+        TContext
+      > => {
+
+      const mutationOptions = getMergeWishlistMutationOptions(options);
+
+      return useMutation(mutationOptions);
+    }
+    /**
+ * @summary Add a game to the wishlist; the discount snapshot is the game's current discount
+ */
+export const addWishlistItem = (
+    gameId: number,
+ options?: SecondParameter<typeof customInstance>,) => {
+      
+      
+      return customInstance<WishlistArray>(
+      {url: `/wishlist/${gameId}`, method: 'PUT'
+    },
+      options);
+    }
+  
+
+
+export const getAddWishlistItemMutationOptions = <TError = ErrorType<ErrorMessage>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof addWishlistItem>>, TError,{gameId: number}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof addWishlistItem>>, TError,{gameId: number}, TContext> => {
+const {mutation: mutationOptions, request: requestOptions} = options ?? {};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof addWishlistItem>>, {gameId: number}> = (props) => {
+          const {gameId} = props ?? {};
+
+          return  addWishlistItem(gameId,requestOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type AddWishlistItemMutationResult = NonNullable<Awaited<ReturnType<typeof addWishlistItem>>>
+    
+    export type AddWishlistItemMutationError = ErrorType<ErrorMessage>
+
+    /**
+ * @summary Add a game to the wishlist; the discount snapshot is the game's current discount
+ */
+export const useAddWishlistItem = <TError = ErrorType<ErrorMessage>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof addWishlistItem>>, TError,{gameId: number}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationResult<
+        Awaited<ReturnType<typeof addWishlistItem>>,
+        TError,
+        {gameId: number},
+        TContext
+      > => {
+
+      const mutationOptions = getAddWishlistItemMutationOptions(options);
+
+      return useMutation(mutationOptions);
+    }
+    /**
+ * @summary Remove a game from the wishlist
+ */
+export const removeWishlistItem = (
+    gameId: number,
+ options?: SecondParameter<typeof customInstance>,) => {
+      
+      
+      return customInstance<WishlistArray>(
+      {url: `/wishlist/${gameId}`, method: 'DELETE'
+    },
+      options);
+    }
+  
+
+
+export const getRemoveWishlistItemMutationOptions = <TError = ErrorType<ErrorMessage>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof removeWishlistItem>>, TError,{gameId: number}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof removeWishlistItem>>, TError,{gameId: number}, TContext> => {
+const {mutation: mutationOptions, request: requestOptions} = options ?? {};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof removeWishlistItem>>, {gameId: number}> = (props) => {
+          const {gameId} = props ?? {};
+
+          return  removeWishlistItem(gameId,requestOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type RemoveWishlistItemMutationResult = NonNullable<Awaited<ReturnType<typeof removeWishlistItem>>>
+    
+    export type RemoveWishlistItemMutationError = ErrorType<ErrorMessage>
+
+    /**
+ * @summary Remove a game from the wishlist
+ */
+export const useRemoveWishlistItem = <TError = ErrorType<ErrorMessage>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof removeWishlistItem>>, TError,{gameId: number}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationResult<
+        Awaited<ReturnType<typeof removeWishlistItem>>,
+        TError,
+        {gameId: number},
+        TContext
+      > => {
+
+      const mutationOptions = getRemoveWishlistItemMutationOptions(options);
+
+      return useMutation(mutationOptions);
+    }
+    /**
+ * @summary Move a wishlist item's discount snapshot to the game's current discount, after the price-drop badge showed
+ */
+export const acknowledgeWishlistDiscount = (
+    gameId: number,
+ options?: SecondParameter<typeof customInstance>,) => {
+      
+      
+      return customInstance<WishlistArray>(
+      {url: `/wishlist/${gameId}`, method: 'PATCH'
+    },
+      options);
+    }
+  
+
+
+export const getAcknowledgeWishlistDiscountMutationOptions = <TError = ErrorType<ErrorMessage>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof acknowledgeWishlistDiscount>>, TError,{gameId: number}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof acknowledgeWishlistDiscount>>, TError,{gameId: number}, TContext> => {
+const {mutation: mutationOptions, request: requestOptions} = options ?? {};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof acknowledgeWishlistDiscount>>, {gameId: number}> = (props) => {
+          const {gameId} = props ?? {};
+
+          return  acknowledgeWishlistDiscount(gameId,requestOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type AcknowledgeWishlistDiscountMutationResult = NonNullable<Awaited<ReturnType<typeof acknowledgeWishlistDiscount>>>
+    
+    export type AcknowledgeWishlistDiscountMutationError = ErrorType<ErrorMessage>
+
+    /**
+ * @summary Move a wishlist item's discount snapshot to the game's current discount, after the price-drop badge showed
+ */
+export const useAcknowledgeWishlistDiscount = <TError = ErrorType<ErrorMessage>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof acknowledgeWishlistDiscount>>, TError,{gameId: number}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationResult<
+        Awaited<ReturnType<typeof acknowledgeWishlistDiscount>>,
+        TError,
+        {gameId: number},
+        TContext
+      > => {
+
+      const mutationOptions = getAcknowledgeWishlistDiscountMutationOptions(options);
 
       return useMutation(mutationOptions);
     }

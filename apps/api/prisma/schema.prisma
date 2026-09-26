@@ -19,6 +19,7 @@ model User {
   role         Int      @default(101)
   createdAt    DateTime @default(now())
   orders       Order[]
+  wishlist     WishlistItem[]
 }
 
 model Game_pc {
@@ -38,6 +39,7 @@ model Game_pc {
   discount               Int
   orderItems             OrderItem[]
   editions               GameEdition[]
+  wishlistItems          WishlistItem[]
 }
 
 model GameEdition {
@@ -81,4 +83,19 @@ model OrderItem {
   activationCode String?
   activated      Boolean      @default(false)
   activatedAt    DateTime?
+}
+
+// discountSnapshot is the game's discount when it was added, or when the
+// "Price dropped" badge last showed. The badge compares it to the current
+// discount.
+model WishlistItem {
+  id               Int      @id @default(autoincrement())
+  userId           Int
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  gameId           Int
+  game             Game_pc  @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  discountSnapshot Int
+  createdAt        DateTime @default(now())
+
+  @@unique([userId, gameId])
 }
