@@ -26,12 +26,18 @@ export class GamesService {
     platform,
     sort,
     edition,
+    genre,
+    minPrice,
+    maxPrice,
   }: {
     page: number
     search?: string
     platform?: AllowedPlatform
     sort?: AllowedSort
     edition?: AllowedEdition
+    genre?: string
+    minPrice?: number
+    maxPrice?: number
   }) {
     const limit = 20
     const currentPage = page || 1
@@ -42,7 +48,12 @@ export class GamesService {
     // with no edition row at all, so `edition=digital` matches everything -
     // upgrade path if that stops being true: an explicit GameEdition.kind
     // enum column plus a migration backfilling it from the existing names.
+    const priceMatchIds =
+      minPrice !== undefined || maxPrice !== undefined ? await this.findIdsInPriceRange(minPrice, maxPrice) : undefined
+
     const where: Prisma.Game_pcWhereInput = {
+      ...(priceMatchIds && { id: { in: priceMatchIds } }),
+      ...(genre && { genre }),
       ...(search && { title: { contains: search, mode: 'insensitive' } }),
       ...(platform && { platform: { contains: platform, mode: 'insensitive' } }),
       ...(edition === 'standard' && { editions: { some: { name: { contains: 'standard', mode: 'insensitive' } } } }),
@@ -67,6 +78,30 @@ export class GamesService {
     }
 
     return { totalPages, games }
+  }
+
+  async fetchGenres() {
+    const genres = await this.prisma.game_pc.groupBy({
+      by: ['genre'],
+      _count: { _all: true },
+      orderBy: { genre: 'asc' },
+    })
+    return genres.map(({ genre, _count }) => ({ genre, count: _count._all }))
+  }
+
+  // ponytail: Prisma cannot filter on a computed value, so this finds the ids
+  // whose discounted price is in range with one raw query, and fetchGames
+  // narrows its normal query to them. Fine for a catalog of a few hundred
+  // games. Upgrade path if it grows: a stored final-price column kept up to
+  // date on every price or discount change, with an index.
+  // Rounded to cents the same way the cards display it (pricing.ts).
+  private async findIdsInPriceRange(minPrice?: number, maxPrice?: number) {
+    const rows = await this.prisma.$queryRaw<{ id: number }[]>`
+      SELECT id FROM "Game_pc"
+      WHERE ROUND(price * (100 - discount) / 100.0, 2) >= ${minPrice ?? 0}
+        AND ROUND(price * (100 - discount) / 100.0, 2) <= ${maxPrice ?? Number.MAX_SAFE_INTEGER}
+    `
+    return rows.map((row) => row.id)
   }
 
   async fetchTopDeals() {

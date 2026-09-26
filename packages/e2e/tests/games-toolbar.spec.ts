@@ -71,9 +71,8 @@ test.describe('Search, filter, and sort toolbar', () => {
     const { games } = await response.json()
     const expectedTitles = games.map((game: { title: string }) => game.title)
 
-    const renderedTitles = await libraryCards(page).locator('h3').allInnerTexts()
-
-    expect(renderedTitles).toEqual(expectedTitles)
+    // toHaveText retries until the sorted page has loaded, unlike allInnerTexts.
+    await expect(libraryCards(page).locator('h3')).toHaveText(expectedTitles)
   })
 
   test('combines a search term and a platform filter', async ({ page }) => {
@@ -113,5 +112,84 @@ test.describe('Search, filter, and sort toolbar', () => {
     await expect(page.getByTestId('platform-filter')).toHaveText(/platform/i)
     await expect(page.getByTestId('sort-select')).toHaveText(/sort/i)
     await expect(libraryCards(page).first()).toBeVisible()
+  })
+})
+
+// roadmap-spec.md Feature 1.3: every filter lives in the URL, genre and price
+// filters exist, and price means the discounted price a card shows.
+test.describe('Filters in the URL', () => {
+  const discounted = (game: { price: number; discount: number }) => (game.price * (100 - game.discount)) / 100
+
+  test('a link with filters opens the grid already filtered', async ({ page, request }) => {
+    await page.goto('/?genre=Shooter&maxPrice=20')
+
+    await expect(page.getByTestId('genre-filter')).toHaveText(/Shooter/)
+    await expect(page.getByTestId('price-filter')).toHaveText(/Up to €20/)
+
+    const response = await request.get(`${apiUrl}/api/games/1?genre=Shooter&maxPrice=20`)
+    const { games } = await response.json()
+    expect(games.length).toBeGreaterThan(0)
+    for (const game of games) {
+      expect(game.genre).toBe('Shooter')
+      expect(discounted(game)).toBeLessThanOrEqual(20)
+    }
+    await expect(libraryCards(page).locator('h3')).toHaveText(games.map((game: { title: string }) => game.title))
+  })
+
+  test('the price filter uses the discounted price, not the list price', async ({ page, request }) => {
+    const topDeals = await (await request.get(`${apiUrl}/api/games/top-deals`)).json()
+    const deal = topDeals[0]
+    const maxPrice = Math.ceil(discounted(deal))
+    expect(deal.price).toBeGreaterThan(maxPrice)
+
+    await page.goto(`/?search=${encodeURIComponent(deal.title)}&maxPrice=${maxPrice}`)
+
+    await expect(libraryCards(page).locator('h3')).toHaveText([deal.title])
+  })
+
+  test('changing a filter updates the URL, and Back restores the earlier filters', async ({ page }) => {
+    await page.goto('/')
+    await expect(libraryCards(page).first()).toBeVisible()
+
+    await selectFromDropdown(page, 'platform-filter', 'platform-option-PS5')
+    await expect(page).toHaveURL(/[?&]platform=PS5/)
+    await selectFromDropdown(page, 'genre-filter', 'genre-option-Shooter')
+    await expect(page).toHaveURL(/[?&]genre=Shooter/)
+
+    await page.goBack()
+    await expect(page).not.toHaveURL(/genre=/)
+    await expect(page).toHaveURL(/[?&]platform=PS5/)
+    await expect(page.getByTestId('genre-filter')).toHaveText(/All/)
+
+    await page.goBack()
+    await expect(page.getByTestId('platform-filter')).toHaveText(/All/)
+  })
+
+  test('the page number is in the URL and survives a reload', async ({ page, request }) => {
+    await page.goto('/?page=2')
+
+    const { games } = await (await request.get(`${apiUrl}/api/games/2`)).json()
+    await expect(libraryCards(page).first().locator('h3')).toHaveText(games[0].title)
+
+    await page.reload()
+    await expect(libraryCards(page).first().locator('h3')).toHaveText(games[0].title)
+  })
+
+  test('clear filters also clears the URL', async ({ page }) => {
+    await page.goto('/?platform=PS5&genre=Shooter&sort=price_asc&maxPrice=30')
+
+    await page.getByTestId('clear-filters').click()
+
+    await expect(page).toHaveURL(/\/$/)
+    await expect(page.getByTestId('genre-filter')).toHaveText(/All/)
+    await expect(page.getByTestId('price-filter')).toHaveText(/Any/)
+  })
+
+  test('an unknown filter value in the URL is ignored', async ({ page }) => {
+    await page.goto('/?platform=Commodore64&sort=random&maxPrice=cheap')
+
+    await expect(libraryCards(page).first()).toBeVisible()
+    await expect(page.getByTestId('platform-filter')).toHaveText(/All/)
+    await expect(page.getByTestId('price-filter')).toHaveText(/Any/)
   })
 })

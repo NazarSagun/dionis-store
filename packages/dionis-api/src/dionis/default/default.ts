@@ -25,6 +25,7 @@ import type {
   ErrorMessage,
   GameObject,
   GamesArray,
+  GenreCount,
   GetGamesParams,
   MergeWishlistBody,
   OrderItemObject,
@@ -277,6 +278,67 @@ export const useGetGamesTopDeals = <TData = Awaited<ReturnType<typeof getGamesTo
   ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } => {
 
   const queryOptions = getGetGamesTopDealsQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+/**
+ * @summary List every genre with its number of games, alphabetically
+ */
+export const getGamesGenres = (
+    
+ options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<GenreCount[]>(
+      {url: `/games/genres`, method: 'GET', signal
+    },
+      options);
+    }
+  
+
+export const getGetGamesGenresQueryKey = () => {
+    return [`/games/genres`] as const;
+    }
+
+    
+export const getGetGamesGenresQueryOptions = <TData = Awaited<ReturnType<typeof getGamesGenres>>, TError = ErrorType<unknown>>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getGamesGenres>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetGamesGenresQueryKey();
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getGamesGenres>>> = ({ signal }) => getGamesGenres(requestOptions, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getGamesGenres>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetGamesGenresQueryResult = NonNullable<Awaited<ReturnType<typeof getGamesGenres>>>
+export type GetGamesGenresQueryError = ErrorType<unknown>
+
+/**
+ * @summary List every genre with its number of games, alphabetically
+ */
+export const useGetGamesGenres = <TData = Awaited<ReturnType<typeof getGamesGenres>>, TError = ErrorType<unknown>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getGamesGenres>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+
+  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } => {
+
+  const queryOptions = getGetGamesGenresQueryOptions(options)
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 

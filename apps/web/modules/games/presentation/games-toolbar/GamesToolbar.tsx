@@ -15,12 +15,21 @@ import { Check, ChevronDown, SlidersHorizontal } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
 
+import { findPriceRange, PRICE_RANGES, PriceRange, priceRangeLabel } from '../../domain/filters'
+
 interface GamesToolbarProps {
+  search?: string
   platform?: GetGamesPlatform
+  genre?: string
+  genres: { genre: string; count: number }[]
+  minPrice?: number
+  maxPrice?: number
   sort?: GetGamesSort
   edition?: GetGamesEdition
   onSearchChange: (search: string) => void
   onPlatformChange: (platform?: GetGamesPlatform) => void
+  onGenreChange: (genre?: string) => void
+  onPriceChange: (range?: PriceRange) => void
   onSortChange: (sort?: GetGamesSort) => void
   onEditionChange: (edition?: GetGamesEdition) => void
   onClearFilters: () => void
@@ -50,17 +59,33 @@ const menuItemStyles =
   'flex cursor-pointer items-center gap-2 rounded-sm px-2 py-1.5 font-mono text-sm text-foreground outline-none focus:bg-neon-cyan focus:text-primary-foreground data-[state=checked]:font-bold'
 
 export const GamesToolbar = ({
+  search,
   platform,
+  genre,
+  genres,
+  minPrice,
+  maxPrice,
   sort,
   edition,
   onSearchChange,
   onPlatformChange,
+  onGenreChange,
+  onPriceChange,
   onSortChange,
   onEditionChange,
   onClearFilters,
 }: GamesToolbarProps) => {
   const debounceTimer = useRef<ReturnType<typeof setTimeout>>()
   const [searchResetKey, setSearchResetKey] = useState(0)
+  const lastTypedSearch = useRef(search ?? '')
+
+  // The input keeps its own text. Remount it with the URL's search only when
+  // that search changed from outside, e.g. after Back, never while typing.
+  useEffect(() => {
+    if ((search ?? '') === lastTypedSearch.current) return
+    lastTypedSearch.current = search ?? ''
+    setSearchResetKey((key) => key + 1)
+  }, [search])
 
   useEffect(() => {
     return () => {
@@ -70,7 +95,10 @@ export const GamesToolbar = ({
 
   const handleSearchInput = (value: string) => {
     if (debounceTimer.current) clearTimeout(debounceTimer.current)
-    debounceTimer.current = setTimeout(() => onSearchChange(value), SEARCH_DEBOUNCE_MS)
+    debounceTimer.current = setTimeout(() => {
+      lastTypedSearch.current = value
+      onSearchChange(value)
+    }, SEARCH_DEBOUNCE_MS)
   }
 
   const handleClearFilters = () => {
@@ -100,6 +128,56 @@ export const GamesToolbar = ({
         >
           {platform === option && <Check className='h-4 w-4' />}
           {option}
+        </DropdownMenuRadioItem>
+      ))}
+    </DropdownMenuRadioGroup>
+  )
+
+  const genreRadioGroup = (
+    <DropdownMenuRadioGroup
+      value={genre ?? ALL_VALUE}
+      onValueChange={(value) => onGenreChange(value === ALL_VALUE ? undefined : value)}
+    >
+      <DropdownMenuRadioItem value={ALL_VALUE} data-testid='genre-option-all' className={menuItemStyles}>
+        {genre === undefined && <Check className='h-4 w-4' />}
+        All genres
+      </DropdownMenuRadioItem>
+      {genres.map((option) => (
+        <DropdownMenuRadioItem
+          key={option.genre}
+          value={option.genre}
+          data-testid={`genre-option-${option.genre}`}
+          className={menuItemStyles}
+        >
+          {genre === option.genre && <Check className='h-4 w-4' />}
+          {option.genre}
+          <span className='ml-auto text-muted-foreground'>{option.count}</span>
+        </DropdownMenuRadioItem>
+      ))}
+    </DropdownMenuRadioGroup>
+  )
+
+  const hasPrice = minPrice !== undefined || maxPrice !== undefined
+  const selectedPriceKey = findPriceRange(minPrice, maxPrice)?.key
+
+  const priceRadioGroup = (
+    <DropdownMenuRadioGroup
+      value={hasPrice ? (selectedPriceKey ?? 'custom') : ALL_VALUE}
+      onValueChange={(value) => onPriceChange(PRICE_RANGES.find((range) => range.key === value))}
+    >
+      <DropdownMenuRadioItem value={ALL_VALUE} data-testid='price-option-any' className={menuItemStyles}>
+        {!hasPrice && <Check className='h-4 w-4' />}
+        Any price
+      </DropdownMenuRadioItem>
+      {PRICE_RANGES.map((range) => (
+        <DropdownMenuRadioItem
+          key={range.key}
+          value={range.key}
+          data-testid={`price-option-${range.key}`}
+          className={menuItemStyles}
+        >
+          {selectedPriceKey === range.key && <Check className='h-4 w-4' />}
+          {range.label}
         </DropdownMenuRadioItem>
       ))}
     </DropdownMenuRadioGroup>
@@ -157,6 +235,7 @@ export const GamesToolbar = ({
         key={searchResetKey}
         name='search'
         type='text'
+        defaultValue={search}
         placeholder='Search by title...'
         data-testid='search-input'
         onInputChange={handleSearchInput}
@@ -172,6 +251,12 @@ export const GamesToolbar = ({
         <DropdownMenuContent align='end' className='w-64 border-ink bg-panel-alt'>
           <DropdownMenuLabel>Platform</DropdownMenuLabel>
           {platformRadioGroup}
+          <DropdownMenuSeparator className='bg-ink' />
+          <DropdownMenuLabel>Genre</DropdownMenuLabel>
+          {genreRadioGroup}
+          <DropdownMenuSeparator className='bg-ink' />
+          <DropdownMenuLabel>Price</DropdownMenuLabel>
+          {priceRadioGroup}
           <DropdownMenuSeparator className='bg-ink' />
           <DropdownMenuLabel>Sort</DropdownMenuLabel>
           {sortRadioGroup}
@@ -195,6 +280,30 @@ export const GamesToolbar = ({
           </DropdownMenuTrigger>
           <DropdownMenuContent align='center' className='border-ink bg-panel-alt'>
             {platformRadioGroup}
+          </DropdownMenuContent>
+        </DropdownMenu>
+
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button type='button' data-testid='genre-filter' className={triggerStyles}>
+              Genre: {genre ?? 'All'}
+              <ChevronDown className='h-4 w-4' />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align='center' className='max-h-80 overflow-y-auto border-ink bg-panel-alt'>
+            {genreRadioGroup}
+          </DropdownMenuContent>
+        </DropdownMenu>
+
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button type='button' data-testid='price-filter' className={triggerStyles}>
+              Price: {priceRangeLabel(minPrice, maxPrice)}
+              <ChevronDown className='h-4 w-4' />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align='center' className='border-ink bg-panel-alt'>
+            {priceRadioGroup}
           </DropdownMenuContent>
         </DropdownMenu>
 

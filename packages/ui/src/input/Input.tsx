@@ -8,8 +8,8 @@ export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> 
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, type, name, onInputChange, ...props }, ref) => {
-    const [value, setValue] = useState('')
+  ({ className, type, name, onInputChange, defaultValue, ...props }, ref) => {
+    const [value, setValue] = useState(defaultValue === undefined ? '' : String(defaultValue))
 
     const inputChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
       const value = e.currentTarget.value

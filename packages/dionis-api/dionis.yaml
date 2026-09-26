@@ -113,6 +113,19 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/errorMessage'
+  /games/genres:
+    get:
+      summary: List every genre with its number of games, alphabetically
+      operationId: getGamesGenres
+      responses:
+        '200':
+          description: Genres with counts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/genreCount'
   /games/{page}:
     get:
       summary: List games in paged format from db
@@ -153,6 +166,27 @@ paths:
             type: string
             enum: [digital, standard, collector]
           description: Edition to filter by. Digital matches every game; standard/collector match games with a physical edition whose name contains that word.
+        - name: genre
+          in: query
+          required: false
+          schema:
+            type: string
+            maxLength: 50
+          description: Exact genre, one of the values from /games/genres
+        - name: minPrice
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 0
+          description: Lowest discounted price in whole euros, inclusive
+        - name: maxPrice
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 0
+          description: Highest discounted price in whole euros, inclusive
       responses:
         '200':
           description: Array of games
@@ -1065,6 +1099,16 @@ components:
         addedAt:
           type: integer
           description: Milliseconds since the epoch
+    genreCount:
+      type: object
+      required:
+        - genre
+        - count
+      properties:
+        genre:
+          type: string
+        count:
+          type: integer
     userCredentials:
       type: object
       properties:

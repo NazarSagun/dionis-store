@@ -22,6 +22,16 @@ export class GamesController {
     }
   }
 
+  // Declared before games/:page, so "genres" is not read as a page number.
+  @Get('games/genres')
+  async getGenres() {
+    try {
+      return await this.gamesService.fetchGenres()
+    } catch (error) {
+      throw toHttpException(error)
+    }
+  }
+
   @Get('games/:page')
   async getGames(@Param('page') pageParam: string, @Query() query: GamesQueryDto) {
     const page = parseInt(pageParam, 10)
@@ -30,7 +40,12 @@ export class GamesController {
     }
 
     try {
-      return await this.gamesService.fetchGames({ page, ...query })
+      return await this.gamesService.fetchGames({
+        page,
+        ...query,
+        minPrice: query.minPrice === undefined ? undefined : Number(query.minPrice),
+        maxPrice: query.maxPrice === undefined ? undefined : Number(query.maxPrice),
+      })
     } catch (error) {
       throw toHttpException(error)
     }
