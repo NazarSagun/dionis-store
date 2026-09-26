@@ -172,7 +172,10 @@ export class OrdersService {
       throw new CustomError('A shipping address is required for a physical edition', 400)
     }
 
-    const { pricedItems, totalPrice } = await this.priceOrderItems(items)
+    // Re-priced only for the per-item prices. The order total is what Stripe
+    // actually charged: a discount can change between the Payment step
+    // opening (when the amount was fixed) and this call.
+    const { pricedItems } = await this.priceOrderItems(items)
 
     const orderItemsData = pricedItems.map((item) => ({
       gameId: item.gameId,
@@ -204,7 +207,7 @@ export class OrdersService {
         return tx.order.create({
           data: {
             userId: user.id,
-            totalPrice,
+            totalPrice: paymentIntent.amount,
             stripePaymentIntentId: paymentIntent.id,
             ...(hasPhysicalItem && shippingAddress ? shippingAddress : {}),
             items: { create: orderItemsData },

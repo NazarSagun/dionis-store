@@ -150,10 +150,11 @@ describe('OrdersService', () => {
     shippingCountry: 'Germany',
   }
 
-  function paymentIntent(overrides: { status?: string; metadata?: Record<string, string> } = {}) {
+  function paymentIntent(overrides: { status?: string; amount?: number; metadata?: Record<string, string> } = {}) {
     return {
       id: 'pi_123',
       status: overrides.status ?? 'succeeded',
+      amount: overrides.amount ?? 5000,
       metadata: { userEmail: user.email, items: digitalItems, ...overrides.metadata },
     }
   }
@@ -190,6 +191,18 @@ describe('OrdersService', () => {
         expect.objectContaining({
           data: expect.objectContaining({ userId: user.id, stripePaymentIntentId: 'pi_123' }),
         }),
+      )
+    })
+
+    it('stores the amount Stripe charged as the total, even when the price changed since', async () => {
+      // Charged at 50€; the game went on sale to 40€ before the order was created.
+      stripe.retrievePaymentIntent.mockResolvedValue(paymentIntent({ amount: 5000 }))
+      prisma.game_pc.findMany.mockResolvedValue([{ id: 1, price: 50, discount: 20 }])
+
+      await service.confirmOrder(user.email, 'pi_123')
+
+      expect(prisma.order.create).toHaveBeenCalledWith(
+        expect.objectContaining({ data: expect.objectContaining({ totalPrice: 5000 }) }),
       )
     })
 
