@@ -9,6 +9,7 @@ import { MainNavigation } from '@/components/main-navigation/MainNavigation'
 import { CartDrawer } from '@/modules/cart/presentation/cart-drawer/CartDrawer'
 import { useGamesFilters } from '@/modules/games/core/facade'
 import { useGetGames, useGetGamesGenres, useGetGamesTopDeals } from '@/modules/games/integration/repository'
+import { GamesEmpty } from '@/modules/games/presentation/games-empty/GamesEmpty'
 import { GamesList } from '@/modules/games/presentation/games-list/GamesList'
 import { GamesPagination } from '@/modules/games/presentation/games-pagination/GamesPagination'
 import { GamesToolbar } from '@/modules/games/presentation/games-toolbar/GamesToolbar'
@@ -79,9 +80,15 @@ function HomeContent() {
               <div data-testid='game-library' className='w-full'>
                 <h2 className='w-full pt-16 font-display text-2xl font-bold text-foreground'>All Games</h2>
                 <div className='w-full pt-10'>
-                  <GamesList gamesList={data.games as GameObject[]} />
+                  {data.games?.length ? (
+                    <GamesList gamesList={data.games as GameObject[]} />
+                  ) : (
+                    <GamesEmpty search={filters.search} onClearFilters={clearFilters} />
+                  )}
                 </div>
-                <GamesPagination currentPage={page} totalPages={data.totalPages as number} onChange={setPage} />
+                {data.games?.length ? (
+                  <GamesPagination currentPage={page} totalPages={data.totalPages as number} onChange={setPage} />
+                ) : null}
               </div>
             </>
           )}
