@@ -15,8 +15,8 @@ export const LibrarySection = () => {
 
   return (
     <div data-testid='account-library' className='w-full'>
-      <h2 className='w-full pt-16 text-left font-display text-xl uppercase text-neon-magenta'>My Games</h2>
-      <div className='w-full pt-10'>
+      <h2 className='sr-only'>My Games</h2>
+      <div className='w-full'>
         {isLoading && (
           <div className='flex flex-col gap-4'>
             {Array.from({ length: 2 }).map((_, index) => (
@@ -41,14 +41,18 @@ export const LibrarySection = () => {
         )}
 
         {!isLoading && !isError && orders && orders.length > 0 && (
-          <div className='flex flex-col gap-8'>
+          <div className='flex flex-col gap-6'>
             {orders.map((order) => (
               <div key={order.id} className='flex flex-col gap-3'>
-                <span className='font-mono text-sm font-bold text-muted-foreground'>
-                  Order #{order.id} · {formatOrderDate(order.createdAt as string)} · €
-                  {formatCentsToEuros(order.totalPrice as number)}
-                </span>
-                <div className='flex flex-col gap-4'>
+                <div className='flex items-baseline justify-between gap-4'>
+                  <span className='font-display text-base font-medium text-foreground'>
+                    Order #{order.id} · {formatOrderDate(order.createdAt as string)}
+                  </span>
+                  <span className='font-mono text-sm text-muted-foreground'>
+                    €{formatCentsToEuros(order.totalPrice as number)}
+                  </span>
+                </div>
+                <div className='flex flex-col gap-px'>
                   {(order.items ?? []).map((item) =>
                     item.editionId != null ? (
                       <ShippingRow key={item.id} item={item} order={order} />
