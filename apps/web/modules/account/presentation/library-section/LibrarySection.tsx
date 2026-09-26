@@ -7,10 +7,11 @@ import { ActivationRow } from '@/modules/cart/presentation/activation-row/Activa
 import { ShippingRow } from '@/modules/cart/presentation/shipping-row/ShippingRow'
 
 import { formatCentsToEuros, formatOrderDate } from '../../domain/formatting'
-import { useGetOrders } from '../../integration/repository'
+import { useOrderPages } from '../../integration/repository'
+import { LoadMoreButton } from '../load-more-button/LoadMoreButton'
 
 export const LibrarySection = () => {
-  const { data: orders, isLoading, isError } = useGetOrders()
+  const { orders, isLoading, isError, hasNextPage, isFetchingNextPage, fetchNextPage } = useOrderPages()
 
   return (
     <div data-testid='account-library' className='w-full'>
@@ -60,6 +61,12 @@ export const LibrarySection = () => {
             ))}
           </div>
         )}
+
+        <LoadMoreButton
+          hasNextPage={hasNextPage}
+          isFetchingNextPage={isFetchingNextPage}
+          onLoadMore={() => fetchNextPage()}
+        />
       </div>
     </div>
   )

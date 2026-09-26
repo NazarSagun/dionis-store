@@ -1,8 +1,7 @@
-import { OrderObject } from '@repo/dionis-api/src/model'
+import { OwnedItem } from '@repo/dionis-api/src/model'
 
-export function isGameOwned(orders: OrderObject[] | undefined, gameId: number, editionId: number | null): boolean {
-  if (!orders) return false
-  return orders.some((order) =>
-    (order.items ?? []).some((item) => item.gameId === gameId && (item.editionId ?? null) === editionId),
-  )
+// editionId is null for a digital purchase.
+export function isGameOwned(owned: OwnedItem[] | undefined, gameId: number, editionId: number | null): boolean {
+  if (!owned) return false
+  return owned.some((item) => item.gameId === gameId && (item.editionId ?? null) === editionId)
 }

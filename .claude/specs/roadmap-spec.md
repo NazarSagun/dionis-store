@@ -17,7 +17,7 @@ This section records the facts that the plans below depend on.
 - `GameEdition.stock` exists and `confirmOrder` reduces it inside a transaction.
 - The recently-viewed list lives only in `localStorage`, through zustand `persist`. Since Feature 1.2, a signed-in user's wishlist is stored on the account.
 - `User.refreshToken` is one column, so a login ends the user's session in any other browser on its next page load. A user can be signed in on one browser at a time.
-- `GET /api/games/:page` already pages the catalog. `GET /api/orders` returns every order in one response.
+- `GET /api/games/:page` already pages the catalog. Since Feature 1.4, `GET /api/orders` returns one page of orders, and `GET /api/orders/owned` answers the ownership check.
 - CI runs only `pnpm install`, `pnpm build`, and `pnpm test --filter web`.
 
 ## Phase 0: Engineering foundations
@@ -119,9 +119,13 @@ The genre values are not clean: "Card" and "Card Game", "MMO" and "MMORPG" are s
 
 - Saved searches.
 
-### 1.4 Order history pagination
+### 1.4 Order pagination
 
-`GET /api/orders` accepts `page` and `pageSize` and returns `{ items, total }`. The Order History section shows a "Load more" button. The catalog already has paging, so this item covers orders only.
+`GET /api/orders` was read by three places: Order History, Library (every activation code), and the game page's ownership check. Paginating Order History alone would still load every order, so all three change:
+
+- `GET /api/orders?page=&pageSize=` returns `{ items, total, page, pageSize }`, newest first, 5 per page by default and 50 at most.
+- `GET /api/orders/owned` returns each distinct `(gameId, editionId)` the user bought, for "Already in Library". It is declared before `orders/:orderId`.
+- Library and Order History share one infinite query (the account page shows them as tabs), each with a "Load more" button.
 
 ## Phase 2: Store operations
 

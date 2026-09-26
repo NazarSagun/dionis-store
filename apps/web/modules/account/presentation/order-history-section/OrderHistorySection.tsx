@@ -6,7 +6,8 @@ import { useRouter } from 'next/navigation'
 import { Button, Skeleton } from '@repo/ui'
 
 import { formatCentsToEuros, formatOrderDate } from '../../domain/formatting'
-import { OrderObject, useGetOrders } from '../../integration/repository'
+import { OrderObject, useOrderPages } from '../../integration/repository'
+import { LoadMoreButton } from '../load-more-button/LoadMoreButton'
 
 const OrderHistoryRow = ({ order }: { order: OrderObject }) => {
   const [isExpanded, setIsExpanded] = useState(false)
@@ -54,7 +55,7 @@ const OrderHistoryRow = ({ order }: { order: OrderObject }) => {
 }
 
 export const OrderHistorySection = () => {
-  const { data: orders, isLoading, isError } = useGetOrders()
+  const { orders, isLoading, isError, hasNextPage, isFetchingNextPage, fetchNextPage } = useOrderPages()
   const { push } = useRouter()
 
   return (
@@ -92,6 +93,12 @@ export const OrderHistorySection = () => {
             ))}
           </div>
         )}
+
+        <LoadMoreButton
+          hasNextPage={hasNextPage}
+          isFetchingNextPage={isFetchingNextPage}
+          onLoadMore={() => fetchNextPage()}
+        />
       </div>
     </div>
   )

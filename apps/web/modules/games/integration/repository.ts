@@ -3,5 +3,5 @@ export {
   useGetGames,
   useGetGamesGenres,
   useGetGamesTopDeals,
-  useGetOrders,
+  useGetOwnedItems,
 } from '@repo/dionis-api/src/dionis/default/default'

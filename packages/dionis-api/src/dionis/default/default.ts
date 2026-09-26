@@ -27,10 +27,12 @@ import type {
   GamesArray,
   GenreCount,
   GetGamesParams,
+  GetOrdersParams,
   MergeWishlistBody,
   OrderItemObject,
   OrderObject,
-  OrdersArray,
+  OrdersPage,
+  OwnedItem,
   PaymentIntentResponse,
   ShippingAddressInput,
   SuccessMessage,
@@ -652,36 +654,37 @@ export const useLogout = <TData = Awaited<ReturnType<typeof logout>>, TError = E
 
 
 /**
- * @summary List every order placed by the current user, newest first
+ * @summary List one page of the current user's orders, newest first
  */
 export const getOrders = (
-    
+    params?: GetOrdersParams,
  options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
 ) => {
       
       
-      return customInstance<OrdersArray>(
-      {url: `/orders`, method: 'GET', signal
+      return customInstance<OrdersPage>(
+      {url: `/orders`, method: 'GET',
+        params, signal
     },
       options);
     }
   
 
-export const getGetOrdersQueryKey = () => {
-    return [`/orders`] as const;
+export const getGetOrdersQueryKey = (params?: GetOrdersParams,) => {
+    return [`/orders`, ...(params ? [params]: [])] as const;
     }
 
     
-export const getGetOrdersQueryOptions = <TData = Awaited<ReturnType<typeof getOrders>>, TError = ErrorType<ErrorMessage>>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getOrders>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+export const getGetOrdersQueryOptions = <TData = Awaited<ReturnType<typeof getOrders>>, TError = ErrorType<ErrorMessage>>(params?: GetOrdersParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getOrders>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getGetOrdersQueryKey();
+  const queryKey =  queryOptions?.queryKey ?? getGetOrdersQueryKey(params);
 
   
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getOrders>>> = ({ signal }) => getOrders(requestOptions, signal);
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getOrders>>> = ({ signal }) => getOrders(params, requestOptions, signal);
 
       
 
@@ -694,14 +697,75 @@ export type GetOrdersQueryResult = NonNullable<Awaited<ReturnType<typeof getOrde
 export type GetOrdersQueryError = ErrorType<ErrorMessage>
 
 /**
- * @summary List every order placed by the current user, newest first
+ * @summary List one page of the current user's orders, newest first
  */
 export const useGetOrders = <TData = Awaited<ReturnType<typeof getOrders>>, TError = ErrorType<ErrorMessage>>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getOrders>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+ params?: GetOrdersParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getOrders>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
 
   ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } => {
 
-  const queryOptions = getGetOrdersQueryOptions(options)
+  const queryOptions = getGetOrdersQueryOptions(params,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+/**
+ * @summary List each distinct game and edition the current user has bought; editionId is null for a digital copy
+ */
+export const getOwnedItems = (
+    
+ options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<OwnedItem[]>(
+      {url: `/orders/owned`, method: 'GET', signal
+    },
+      options);
+    }
+  
+
+export const getGetOwnedItemsQueryKey = () => {
+    return [`/orders/owned`] as const;
+    }
+
+    
+export const getGetOwnedItemsQueryOptions = <TData = Awaited<ReturnType<typeof getOwnedItems>>, TError = ErrorType<ErrorMessage>>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getOwnedItems>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetOwnedItemsQueryKey();
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getOwnedItems>>> = ({ signal }) => getOwnedItems(requestOptions, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getOwnedItems>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetOwnedItemsQueryResult = NonNullable<Awaited<ReturnType<typeof getOwnedItems>>>
+export type GetOwnedItemsQueryError = ErrorType<ErrorMessage>
+
+/**
+ * @summary List each distinct game and edition the current user has bought; editionId is null for a digital copy
+ */
+export const useGetOwnedItems = <TData = Awaited<ReturnType<typeof getOwnedItems>>, TError = ErrorType<ErrorMessage>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getOwnedItems>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+
+  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } => {
+
+  const queryOptions = getGetOwnedItemsQueryOptions(options)
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 

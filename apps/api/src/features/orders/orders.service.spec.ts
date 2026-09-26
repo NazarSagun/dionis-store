@@ -10,8 +10,8 @@ describe('OrdersService', () => {
     user: { findUnique: jest.Mock }
     game_pc: { findMany: jest.Mock }
     gameEdition: { findMany: jest.Mock; updateMany: jest.Mock }
-    order: { findUnique: jest.Mock; findFirst: jest.Mock; findMany: jest.Mock; create: jest.Mock }
-    orderItem: { update: jest.Mock; findFirst: jest.Mock }
+    order: { findUnique: jest.Mock; findFirst: jest.Mock; findMany: jest.Mock; create: jest.Mock; count: jest.Mock }
+    orderItem: { update: jest.Mock; findFirst: jest.Mock; findMany: jest.Mock }
     $transaction: jest.Mock
   }
   let stripe: {
@@ -27,8 +27,8 @@ describe('OrdersService', () => {
       user: { findUnique: jest.fn().mockResolvedValue(user) },
       game_pc: { findMany: jest.fn() },
       gameEdition: { findMany: jest.fn().mockResolvedValue([]), updateMany: jest.fn().mockResolvedValue({ count: 1 }) },
-      order: { findUnique: jest.fn(), findFirst: jest.fn(), findMany: jest.fn(), create: jest.fn() },
-      orderItem: { update: jest.fn(), findFirst: jest.fn().mockResolvedValue(null) },
+      order: { findUnique: jest.fn(), findFirst: jest.fn(), findMany: jest.fn(), create: jest.fn(), count: jest.fn() },
+      orderItem: { update: jest.fn(), findFirst: jest.fn().mockResolvedValue(null), findMany: jest.fn() },
       // A transparent pass-through: the callback runs against the same mock
       // `prisma`, so every other test can keep asserting on
       // `prisma.order.create` etc. without knowing a transaction wraps it.
@@ -356,22 +356,29 @@ describe('OrdersService', () => {
   })
 
   describe('getOrders', () => {
-    it('lists every order for the user, newest first', async () => {
-      const orders = [{ id: 2 }, { id: 1 }]
+    it('returns one page of the user’s orders, newest first, with the total', async () => {
+      const orders = [{ id: 7 }, { id: 6 }]
       prisma.order.findMany.mockResolvedValue(orders)
+      prisma.order.count.mockResolvedValue(12)
 
-      const result = await service.getOrders(user.email)
+      const result = await service.getOrders(user.email, 2, 5)
 
-      expect(result).toBe(orders)
+      expect(result).toEqual({ items: orders, total: 12, page: 2, pageSize: 5 })
       expect(prisma.order.findMany).toHaveBeenCalledWith(
-        expect.objectContaining({ where: { userId: user.id }, orderBy: { createdAt: 'desc' } }),
+        expect.objectContaining({
+          where: { userId: user.id },
+          orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
+          skip: 5,
+          take: 5,
+        }),
       )
+      expect(prisma.order.count).toHaveBeenCalledWith({ where: { userId: user.id } })
     })
 
     it('orders each order’s items by id, since Postgres gives no default row order for a to-many include', async () => {
       prisma.order.findMany.mockResolvedValue([])
 
-      await service.getOrders(user.email)
+      await service.getOrders(user.email, 1, 5)
 
       const [args] = prisma.order.findMany.mock.calls[0]
       expect(args.include.items.orderBy).toEqual({ id: 'asc' })
@@ -380,8 +387,25 @@ describe('OrdersService', () => {
     it('rejects a user that does not exist', async () => {
       prisma.user.findUnique.mockResolvedValue(null)
 
-      await expect(service.getOrders(user.email)).rejects.toThrow('User does not exist')
+      await expect(service.getOrders(user.email, 1, 5)).rejects.toThrow('User does not exist')
       expect(prisma.order.findMany).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('getOwnedItems', () => {
+    it('returns each distinct game and edition the user bought, across every order', async () => {
+      const owned = [
+        { gameId: 1, editionId: null },
+        { gameId: 1, editionId: 10 },
+      ]
+      prisma.orderItem.findMany.mockResolvedValue(owned)
+
+      await expect(service.getOwnedItems(user.email)).resolves.toBe(owned)
+      expect(prisma.orderItem.findMany).toHaveBeenCalledWith({
+        where: { order: { user: { email: user.email } } },
+        select: { gameId: true, editionId: true },
+        distinct: ['gameId', 'editionId'],
+      })
     })
   })
 

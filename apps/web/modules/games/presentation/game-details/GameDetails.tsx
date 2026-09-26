@@ -6,13 +6,14 @@ import { Skeleton, useToast } from '@repo/ui'
 
 import { cn } from '@/lib/utils'
 import { useRecordView } from '@/modules/account/core/facade'
+import { useIsAuthenticated } from '@/modules/auth/core/facade'
 import { useAddCartItem, useCartItems, useUpdateCartItemQuantity } from '@/modules/cart/core/facade'
 import { CartItem } from '@/modules/cart/domain/models'
 import { useIsInWishlist, useToggleWishlistItem } from '@/modules/wishlist/core/facade'
 
 import { isGameOwned } from '../../domain/ownership'
 import { calculateDiscountedPrice } from '../../domain/pricing'
-import { useGetGame, useGetOrders } from '../../integration/repository'
+import { useGetGame, useGetOwnedItems } from '../../integration/repository'
 
 const buttonStyles =
   'flex items-center gap-2 rounded-md border border-ink px-[30px] py-[15px] text-primary-foreground shadow-retro transition-transform duration-200 select-none touch-manipulation active:scale-95'
@@ -37,7 +38,9 @@ export const GameDetails = ({ gameId }: GameDetailsProps) => {
   const { toast } = useToast()
 
   const { data, isLoading } = useGetGame(gameId)
-  const { data: orders } = useGetOrders()
+  const isAuthenticated = useIsAuthenticated()
+  // A guest owns nothing, so skip the request instead of letting it 401.
+  const { data: owned } = useGetOwnedItems({ query: { enabled: isAuthenticated } })
 
   const addGameHandler = (cartItem: CartItem) => {
     const gameInCart = items.find((item) => item.id === cartItem.id && item.editionId === cartItem.editionId)
@@ -94,7 +97,7 @@ export const GameDetails = ({ gameId }: GameDetailsProps) => {
 
     const cartItem = buildCartItem(data)
     const editions = data.editions ?? []
-    const isDigitalOwned = isGameOwned(orders, data.id, null)
+    const isDigitalOwned = isGameOwned(owned, data.id, null)
 
     return (
       <div className='flex min-h-[75vh] flex-col gap-16 px-4 py-12 sm:px-8 lg:px-40'>
@@ -169,7 +172,7 @@ export const GameDetails = ({ gameId }: GameDetailsProps) => {
                 </button>
                 {editions.map((edition) => {
                   const outOfStock = edition.stock <= 0
-                  const isOwned = isGameOwned(orders, data.id, edition.id)
+                  const isOwned = isGameOwned(owned, data.id, edition.id)
                   return (
                     <button
                       key={edition.id}
