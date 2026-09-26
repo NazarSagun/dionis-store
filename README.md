@@ -48,6 +48,16 @@ pnpm dev:api
 pnpm dev:web
 ```
 
+## Stripe webhook
+
+The API creates an order when Stripe reports a successful payment, even if the browser closes before checkout finishes. Stripe delivers that event to `POST /api/orders/webhook`. To receive it locally, install the Stripe CLI and run the following command while the API runs.
+
+```sh
+stripe listen --events payment_intent.succeeded --forward-to localhost:3500/api/orders/webhook
+```
+
+The command prints a signing secret that starts with `whsec_`. Put it in `apps/api/.env` as `STRIPE_WEBHOOK_SECRET`, then restart the API. Without it, checkout still works through the browser, but the webhook route returns `500`.
+
 ## Seed data
 
 To seed sample games into a running API, run the following command from `apps/api`.

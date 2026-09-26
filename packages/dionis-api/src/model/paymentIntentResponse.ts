@@ -9,4 +9,5 @@ export interface PaymentIntentResponse {
   /** Amount in cents, matching what Stripe charges */
   amount?: number;
   clientSecret?: string;
+  paymentIntentId?: string;
 }

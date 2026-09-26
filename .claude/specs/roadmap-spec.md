@@ -10,8 +10,8 @@ The features are in three phases. Each phase depends on the phase before it. Ins
 
 This section records the facts that the plans below depend on.
 
-- The web app calls `POST /api/orders/confirm` after `stripe.confirmPayment` succeeds. The order row is created only by that call. The API has no Stripe webhook. If the browser closes after the payment and before the confirm call, Stripe charges the card and no order exists.
-- The shipping address travels only in the body of the confirm call. It is not stored on the PaymentIntent.
+- The web app calls `POST /api/orders/confirm` after `stripe.confirmPayment` succeeds. Since Feature 1.1, the Stripe webhook also creates the order, so a closed tab no longer loses a paid order.
+- The PaymentIntent is created when the Payment step mounts, before the shipping form is filled.
 - `confirmOrder` is idempotent (safe to run twice) on `stripePaymentIntentId`, because that column is `@unique`.
 - `Roles` has `User = 101`, `Editor = 233`, and `Admin = 500`. `RolesGuard` and `@Roles` exist. The only write route for the catalog is `POST /api/games`.
 - `GameEdition.stock` exists and `confirmOrder` reduces it inside a transaction.
@@ -54,7 +54,7 @@ The API creates the order when Stripe reports a successful payment, even if the 
 
 #### Implementation plan
 
-1. Send the shipping address to `POST /api/orders/payment-intent` and store it on the PaymentIntent. Use the Stripe `shipping` field, not `metadata`. `confirmOrder` then reads the address from the PaymentIntent instead of the request body. Keep the body field for one release, then remove it.
+1. Store the shipping address on the PaymentIntent through `POST /api/orders/payment-intent/:id/shipping`, called just before `stripe.confirmPayment`. The intent already exists when the form is filled, so the address cannot go with `payment-intent`. Use one `metadata` key per field, not the Stripe `shipping` field: `shipping` requires an ISO country code, and the form takes free text. `confirmOrder` reads the address from the PaymentIntent and no longer accepts it in the body.
 2. Add `constructWebhookEvent(rawBody, signature)` to `StripeService`. It calls `stripe.webhooks.constructEvent` with a new `STRIPE_WEBHOOK_SECRET` environment variable. Add the variable to both `.env.example` files.
 3. Create the app with `NestFactory.create(AppModule, { rawBody: true })` so that the signature check gets the raw body.
 4. Add `POST /api/orders/webhook` with no JWT guard. It handles `payment_intent.succeeded` only. It reads the user email from `metadata.userEmail` and calls the same order-creation code as `confirmOrder`.

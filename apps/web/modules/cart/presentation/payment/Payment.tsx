@@ -64,6 +64,7 @@ export const Payment = () => {
   const items = useCartItems()
   const { mutateAsync: createPaymentIntent } = useCreatePaymentIntent()
   const [clientSecret, setClientSecret] = useState<string>()
+  const [paymentIntentId, setPaymentIntentId] = useState<string>()
   const [error, setError] = useState<string>()
   const [shippingAddress, setShippingAddress] = useState<ShippingAddress>(EMPTY_ADDRESS)
   const hasRequestedIntent = useRef(false)
@@ -78,6 +79,7 @@ export const Payment = () => {
           items: items.map((item) => ({ gameId: item.id, quantity: item.quantity, editionId: item.editionId })),
         },
       })
+      setPaymentIntentId(result.paymentIntentId as string)
       setClientSecret(result.clientSecret as string)
     } catch {
       setError('Could not start payment. Please try again.')
@@ -195,7 +197,12 @@ export const Payment = () => {
           </div>
         ) : clientSecret ? (
           <Elements stripe={stripePromise} options={{ clientSecret, appearance: stripeAppearance, fonts: stripeFonts }}>
-            <PaymentForm finalPrice={total} hasPhysicalItem={hasPhysicalItem} shippingAddress={shippingAddress} />
+            <PaymentForm
+              finalPrice={total}
+              paymentIntentId={paymentIntentId as string}
+              hasPhysicalItem={hasPhysicalItem}
+              shippingAddress={shippingAddress}
+            />
           </Elements>
         ) : (
           <div data-testid='payment-skeleton' className='flex w-full flex-col gap-6'>

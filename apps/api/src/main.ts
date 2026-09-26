@@ -18,7 +18,9 @@ function getAllowedOrigins(): string[] {
 }
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule)
+  // rawBody keeps the unparsed request body on req.rawBody, which the Stripe
+  // webhook's signature check needs.
+  const app = await NestFactory.create(AppModule, { rawBody: true })
 
   // Kept as a plain liveness route outside the /api prefix, same as before.
   app

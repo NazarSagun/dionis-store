@@ -3,7 +3,7 @@ import { useToast } from '@repo/ui'
 import type { StripeError } from '@stripe/stripe-js'
 
 import { useCartItems, useRemoveCartItem, useSetCartOrderId, useSetCartStep } from '../../core/facade'
-import { useConfirmOrder } from '../../integration/repository'
+import { useConfirmOrder, useSetShippingAddress } from '../../integration/repository'
 
 import { PaymentElement, useElements, useStripe } from './stripe-elements'
 
@@ -29,11 +29,12 @@ const REQUIRED_ADDRESS_FIELDS = [
 
 interface PaymentFormProps {
   finalPrice: number
+  paymentIntentId: string
   hasPhysicalItem: boolean
   shippingAddress: ShippingAddress
 }
 
-export const PaymentForm = ({ finalPrice, hasPhysicalItem, shippingAddress }: PaymentFormProps) => {
+export const PaymentForm = ({ finalPrice, paymentIntentId, hasPhysicalItem, shippingAddress }: PaymentFormProps) => {
   const stripe = useStripe()
   const elements = useElements()
   const items = useCartItems()
@@ -41,6 +42,7 @@ export const PaymentForm = ({ finalPrice, hasPhysicalItem, shippingAddress }: Pa
   const setStep = useSetCartStep()
   const setOrderId = useSetCartOrderId()
   const { mutateAsync: confirmOrder } = useConfirmOrder()
+  const { mutateAsync: saveShippingAddress } = useSetShippingAddress()
   const { toast } = useToast()
 
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -66,6 +68,19 @@ export const PaymentForm = ({ finalPrice, hasPhysicalItem, shippingAddress }: Pa
 
     setIsSubmitting(true)
 
+    // Stored on the PaymentIntent before the charge, so the API's Stripe
+    // webhook can still create the physical order if this tab closes
+    // between the charge and the confirmOrder call below.
+    if (hasPhysicalItem) {
+      try {
+        await saveShippingAddress({ paymentIntentId, data: shippingAddress })
+      } catch {
+        setError('Could not save your shipping address. Please try again.')
+        setIsSubmitting(false)
+        return
+      }
+    }
+
     const { error: stripeError, paymentIntent } = await stripe.confirmPayment({
       elements,
       redirect: 'if_required',
@@ -79,10 +94,7 @@ export const PaymentForm = ({ finalPrice, hasPhysicalItem, shippingAddress }: Pa
 
     try {
       const order = await confirmOrder({
-        data: {
-          paymentIntentId: paymentIntent.id,
-          ...(hasPhysicalItem ? { shippingAddress } : {}),
-        },
+        data: { paymentIntentId: paymentIntent.id },
       })
       setOrderId(order.id as number)
       items.forEach((item) => removeItem(item.id, item.editionId))

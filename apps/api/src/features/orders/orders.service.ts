@@ -1,5 +1,7 @@
 import { randomBytes } from 'crypto'
 import { Injectable } from '@nestjs/common'
+import { Prisma } from '@prisma/client'
+import Stripe from 'stripe'
 import { PrismaService } from '../../common/prisma/prisma.service'
 import { CustomError } from '../../common/errors/custom-error'
 import { ShippingAddressDto } from './dto/shipping-address.dto'
@@ -23,6 +25,30 @@ function calculateUnitPriceCents(price: number, discount: number): number {
 function generateActivationCode(): string {
   const segment = () => randomBytes(2).toString('hex').toUpperCase()
   return `${segment()}-${segment()}-${segment()}`
+}
+
+const SHIPPING_FIELDS = [
+  'shippingName',
+  'shippingLine1',
+  'shippingLine2',
+  'shippingCity',
+  'shippingPostalCode',
+  'shippingCountry',
+] as const
+
+// setShippingAddress writes each field as its own metadata key, since one
+// Stripe metadata value holds at most 500 characters.
+function readShippingAddress(metadata: Stripe.Metadata): ShippingAddressDto | null {
+  if (!metadata.shippingName) return null
+
+  return {
+    shippingName: metadata.shippingName,
+    shippingLine1: metadata.shippingLine1 ?? '',
+    shippingLine2: metadata.shippingLine2 || undefined,
+    shippingCity: metadata.shippingCity ?? '',
+    shippingPostalCode: metadata.shippingPostalCode ?? '',
+    shippingCountry: metadata.shippingCountry ?? '',
+  }
 }
 
 function assertValidItems(items: unknown): asserts items is OrderItemInput[] {
@@ -68,23 +94,65 @@ export class OrdersService {
       items: JSON.stringify(items),
     })
 
-    return { clientSecret: paymentIntent.client_secret, amount: totalPrice }
+    return { paymentIntentId: paymentIntent.id, clientSecret: paymentIntent.client_secret, amount: totalPrice }
   }
 
-  async confirmOrder(email: string, paymentIntentId: string, shippingAddress?: ShippingAddressDto) {
-    const existingOrder = await this.prisma.order.findUnique({
-      where: { stripePaymentIntentId: paymentIntentId },
-      include: ORDER_ITEMS_INCLUDE,
-    })
+  // The browser calls this right after stripe.confirmPayment succeeds. The
+  // webhook (handlePaymentIntentSucceeded) creates the same order when the
+  // browser never gets that far. Whichever runs second gets the first's order.
+  async confirmOrder(email: string, paymentIntentId: string) {
+    const existingOrder = await this.findOrderByPaymentIntent(paymentIntentId)
     if (existingOrder) {
       return existingOrder
     }
 
     const paymentIntent = await this.stripe.retrievePaymentIntent(paymentIntentId)
+    if (paymentIntent.metadata.userEmail !== email) {
+      throw new CustomError('Payment not found', 404)
+    }
     if (paymentIntent.status !== 'succeeded') {
       throw new CustomError('Payment was not completed', 400)
     }
 
+    return this.createOrderFromPaymentIntent(paymentIntent)
+  }
+
+  async handlePaymentIntentSucceeded(paymentIntent: Stripe.PaymentIntent) {
+    const existingOrder = await this.findOrderByPaymentIntent(paymentIntent.id)
+    if (existingOrder) {
+      return existingOrder
+    }
+
+    return this.createOrderFromPaymentIntent(paymentIntent)
+  }
+
+  // Stored on the PaymentIntent, not sent with /confirm, so the webhook can
+  // build a physical order even when the browser never calls /confirm. The
+  // intent is created before the address form is filled, so this runs at
+  // submit time, just before stripe.confirmPayment.
+  async setShippingAddress(email: string, paymentIntentId: string, shippingAddress: ShippingAddressDto) {
+    const paymentIntent = await this.stripe.retrievePaymentIntent(paymentIntentId)
+    if (paymentIntent.metadata.userEmail !== email) {
+      throw new CustomError('Payment not found', 404)
+    }
+    if (paymentIntent.status === 'succeeded') {
+      throw new CustomError('Payment is already completed', 409)
+    }
+
+    await this.stripe.updatePaymentIntentMetadata(paymentIntentId, {
+      ...Object.fromEntries(SHIPPING_FIELDS.map((field) => [field, ''])),
+      ...shippingAddress,
+    })
+  }
+
+  private findOrderByPaymentIntent(paymentIntentId: string) {
+    return this.prisma.order.findUnique({
+      where: { stripePaymentIntentId: paymentIntentId },
+      include: ORDER_ITEMS_INCLUDE,
+    })
+  }
+
+  private async createOrderFromPaymentIntent(paymentIntent: Stripe.PaymentIntent) {
     let items: unknown
     try {
       items = JSON.parse(paymentIntent.metadata.items ?? '[]')
@@ -93,17 +161,21 @@ export class OrdersService {
     }
     assertValidItems(items)
 
-    const user = await this.prisma.user.findUnique({ where: { email } })
+    const user = await this.prisma.user.findUnique({ where: { email: paymentIntent.metadata.userEmail } })
     if (!user) {
       throw new CustomError('User does not exist', 400)
     }
 
+    const shippingAddress = readShippingAddress(paymentIntent.metadata)
     const hasPhysicalItem = items.some((item) => item.editionId != null)
     if (hasPhysicalItem && !shippingAddress) {
       throw new CustomError('A shipping address is required for a physical edition', 400)
     }
 
-    const { pricedItems, totalPrice } = await this.priceOrderItems(items)
+    // Re-priced only for the per-item prices. The order total is what Stripe
+    // actually charged: a discount can change between the Payment step
+    // opening (when the amount was fixed) and this call.
+    const { pricedItems } = await this.priceOrderItems(items)
 
     const orderItemsData = pricedItems.map((item) => ({
       gameId: item.gameId,
@@ -114,34 +186,45 @@ export class OrdersService {
       activationCode: item.editionId == null ? generateActivationCode() : null,
     }))
 
-    return this.prisma.$transaction(async (tx) => {
-      for (const item of pricedItems) {
-        if (item.editionId == null) continue
+    try {
+      return await this.prisma.$transaction(async (tx) => {
+        for (const item of pricedItems) {
+          if (item.editionId == null) continue
 
-        // A single conditional UPDATE, not a read then a write: Postgres
-        // locks the row for the statement's own duration, so two concurrent
-        // transactions racing for the last unit can't both read "enough
-        // stock" before either writes. Exactly one `count` comes back 1.
-        const result = await tx.gameEdition.updateMany({
-          where: { id: item.editionId, stock: { gte: item.quantity } },
-          data: { stock: { decrement: item.quantity } },
-        })
-        if (result.count === 0) {
-          throw new CustomError(`Edition ${item.editionId} is out of stock`, 409)
+          // A single conditional UPDATE, not a read then a write: Postgres
+          // locks the row for the statement's own duration, so two concurrent
+          // transactions racing for the last unit can't both read "enough
+          // stock" before either writes. Exactly one `count` comes back 1.
+          const result = await tx.gameEdition.updateMany({
+            where: { id: item.editionId, stock: { gte: item.quantity } },
+            data: { stock: { decrement: item.quantity } },
+          })
+          if (result.count === 0) {
+            throw new CustomError(`Edition ${item.editionId} is out of stock`, 409)
+          }
         }
-      }
 
-      return tx.order.create({
-        data: {
-          userId: user.id,
-          totalPrice,
-          stripePaymentIntentId: paymentIntentId,
-          ...(hasPhysicalItem && shippingAddress ? shippingAddress : {}),
-          items: { create: orderItemsData },
-        },
-        include: ORDER_ITEMS_INCLUDE,
+        return tx.order.create({
+          data: {
+            userId: user.id,
+            totalPrice: paymentIntent.amount,
+            stripePaymentIntentId: paymentIntent.id,
+            ...(hasPhysicalItem && shippingAddress ? shippingAddress : {}),
+            items: { create: orderItemsData },
+          },
+          include: ORDER_ITEMS_INCLUDE,
+        })
       })
-    })
+    } catch (error) {
+      // /confirm and the webhook raced, and the other one committed first.
+      // The unique index on stripePaymentIntentId rejected this insert and
+      // rolled back this transaction's stock decrement with it.
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+        const existingOrder = await this.findOrderByPaymentIntent(paymentIntent.id)
+        if (existingOrder) return existingOrder
+      }
+      throw error
+    }
   }
 
   async getOrders(email: string) {
