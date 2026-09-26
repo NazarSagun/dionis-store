@@ -53,7 +53,7 @@ export const QuantitySelect = ({ onChange, selectedOption }: QuantitySelectProps
         <div className='absolute left-0 top-[110%] z-10 flex w-full flex-col gap-[5px] rounded border border-ink bg-panel-alt p-[5px]'>
           {options.map((option) => (
             <div
-              data-testid={`option-${option}`}
+              data-testid='quantity-option'
               key={option}
               className={cn(
                 'cursor-pointer rounded-[5px] px-[5px] font-mono text-sm text-foreground transition-colors duration-200 ease-in-out hover:bg-muted',

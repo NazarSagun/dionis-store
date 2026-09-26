@@ -6,21 +6,21 @@ import { QuantitySelect } from '../QuantitySelect'
 
 describe('<QuantitySelect />', () => {
   test('Should open options after click', () => {
-    const { getByTestId } = render(<QuantitySelect onChange={() => {}} selectedOption={1} />)
+    const { getByTestId, getAllByTestId } = render(<QuantitySelect onChange={() => {}} selectedOption={1} />)
 
     const select = getByTestId('select')
     fireEvent.click(select)
 
-    expect(getByTestId('option-1')).toBeInTheDocument()
+    expect(getAllByTestId('quantity-option')[0]).toBeInTheDocument()
   })
 
   test('Should display selected option and close option', () => {
-    const { getByTestId, getByText } = render(<QuantitySelect onChange={() => {}} selectedOption={1} />)
+    const { getByTestId, getAllByTestId, getByText } = render(<QuantitySelect onChange={() => {}} selectedOption={1} />)
 
     const select = getByTestId('select')
     fireEvent.click(select)
 
-    const option = getByTestId('option-2')
+    const option = getAllByTestId('quantity-option')[1]
 
     fireEvent.click(option)
 
