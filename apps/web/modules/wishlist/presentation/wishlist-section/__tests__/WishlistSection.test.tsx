@@ -35,7 +35,7 @@ describe('<WishlistSection />', () => {
     expect(getByText('Browse games')).toBeInTheDocument()
   })
 
-  it('renders the heading and a card per saved game', () => {
+  it('renders the heading and a row per saved game', () => {
     useWishlistStore.setState({
       items: [buildItem({ id: 1, title: 'Saved One' }), buildItem({ id: 2, title: 'Saved Two' })],
     })
@@ -43,6 +43,6 @@ describe('<WishlistSection />', () => {
     const { getByText, getAllByTestId } = render(<WishlistSection />)
 
     expect(getByText('Wishlist')).toBeInTheDocument()
-    expect(getAllByTestId('card')).toHaveLength(2)
+    expect(getAllByTestId('wishlist-row')).toHaveLength(2)
   })
 })

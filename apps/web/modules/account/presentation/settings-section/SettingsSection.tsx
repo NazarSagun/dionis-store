@@ -46,8 +46,8 @@ export const SettingsSection = () => {
 
   return (
     <div data-testid='account-settings' className='w-full'>
-      <h2 className='w-full pt-16 text-left font-display text-xl uppercase text-neon-magenta'>Settings</h2>
-      <div className='flex w-full flex-col gap-10 pt-10 sm:flex-row sm:justify-center'>
+      <h2 className='sr-only'>Settings</h2>
+      <div className='flex w-full flex-col gap-10 sm:flex-row'>
         <form
           className='flex w-full max-w-[320px] flex-col gap-3'
           onSubmit={(event) => {
