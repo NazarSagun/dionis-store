@@ -131,7 +131,16 @@ export class GamesService {
 
   async createGame(data: CreateGameDto) {
     try {
-      return await this.prisma.game_pc.create({ data })
+      const game = await this.prisma.game_pc.create({ data })
+      // Postgres does not advance a sequence for an explicit id. The seed
+      // inserts FreeToGame ids after the migration created the sequence, so
+      // without this the next id-less create would collide with game 1.
+      if (data.id !== undefined) {
+        await this.prisma.$executeRaw`
+          SELECT setval('game_pc_id_seq', GREATEST((SELECT MAX(id) FROM "Game_pc"), 1))
+        `
+      }
+      return game
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
         throw new CustomError('A game with this id or title already exists', 409)

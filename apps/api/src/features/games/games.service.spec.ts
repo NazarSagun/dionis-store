@@ -12,6 +12,7 @@ describe('GamesService', () => {
       count: jest.Mock
       groupBy: jest.Mock
       findUnique: jest.Mock
+      create: jest.Mock
       update: jest.Mock
       delete: jest.Mock
     }
@@ -24,6 +25,7 @@ describe('GamesService', () => {
     }
     order: { count: jest.Mock }
     $queryRaw: jest.Mock
+    $executeRaw: jest.Mock
     $transaction: jest.Mock
   }
 
@@ -34,6 +36,7 @@ describe('GamesService', () => {
         count: jest.fn().mockResolvedValue(1),
         groupBy: jest.fn(),
         findUnique: jest.fn().mockResolvedValue({ id: 1, editions: [] }),
+        create: jest.fn(),
         update: jest.fn(),
         delete: jest.fn().mockReturnValue('delete-game'),
       },
@@ -46,6 +49,7 @@ describe('GamesService', () => {
       },
       order: { count: jest.fn().mockResolvedValue(0) },
       $transaction: jest.fn(),
+      $executeRaw: jest.fn(),
       $queryRaw: jest.fn().mockResolvedValue([{ id: 4 }, { id: 9 }]),
     }
 
@@ -205,6 +209,17 @@ describe('GamesService', () => {
       )
 
       await expect(service.updateGame(1, { title: 'Taken' })).rejects.toMatchObject({ statusCode: 409 })
+    })
+
+    it('moves the id sequence past an explicit id, so the next id-less game does not collide', async () => {
+      prisma.game_pc.create.mockResolvedValue({ id: 900005 })
+
+      await service.createGame({ id: 900005 } as never)
+      expect(prisma.$executeRaw).toHaveBeenCalledTimes(1)
+      expect(prisma.$executeRaw.mock.calls[0][0].join('')).toContain("setval('game_pc_id_seq'")
+
+      await service.createGame({ title: 'No id' } as never)
+      expect(prisma.$executeRaw).toHaveBeenCalledTimes(1)
     })
 
     it('refuses to delete a game that is in an order, naming the count', async () => {
