@@ -115,7 +115,7 @@ export const GamesToolbar = ({
       value={platform ?? ALL_VALUE}
       onValueChange={(value) => onPlatformChange(value === ALL_VALUE ? undefined : (value as GetGamesPlatform))}
     >
-      <DropdownMenuRadioItem value={ALL_VALUE} data-testid='platform-option-all' className={menuItemStyles}>
+      <DropdownMenuRadioItem value={ALL_VALUE} data-testid='platform-filter-option' className={menuItemStyles}>
         {platform === undefined && <Check className='h-4 w-4' />}
         All platforms
       </DropdownMenuRadioItem>
@@ -123,11 +123,11 @@ export const GamesToolbar = ({
         <DropdownMenuRadioItem
           key={option}
           value={option}
-          data-testid={`platform-option-${option}`}
+          data-testid='platform-filter-option'
           className={menuItemStyles}
         >
           {platform === option && <Check className='h-4 w-4' />}
-          {option}
+          <span>{option}</span>
         </DropdownMenuRadioItem>
       ))}
     </DropdownMenuRadioGroup>
@@ -138,7 +138,7 @@ export const GamesToolbar = ({
       value={genre ?? ALL_VALUE}
       onValueChange={(value) => onGenreChange(value === ALL_VALUE ? undefined : value)}
     >
-      <DropdownMenuRadioItem value={ALL_VALUE} data-testid='genre-option-all' className={menuItemStyles}>
+      <DropdownMenuRadioItem value={ALL_VALUE} data-testid='genre-filter-option' className={menuItemStyles}>
         {genre === undefined && <Check className='h-4 w-4' />}
         All genres
       </DropdownMenuRadioItem>
@@ -146,11 +146,11 @@ export const GamesToolbar = ({
         <DropdownMenuRadioItem
           key={option.genre}
           value={option.genre}
-          data-testid={`genre-option-${option.genre}`}
+          data-testid='genre-filter-option'
           className={menuItemStyles}
         >
           {genre === option.genre && <Check className='h-4 w-4' />}
-          {option.genre}
+          <span>{option.genre}</span>
           <span className='ml-auto text-muted-foreground'>{option.count}</span>
         </DropdownMenuRadioItem>
       ))}
@@ -165,7 +165,7 @@ export const GamesToolbar = ({
       value={hasPrice ? (selectedPriceKey ?? 'custom') : ALL_VALUE}
       onValueChange={(value) => onPriceChange(PRICE_RANGES.find((range) => range.key === value))}
     >
-      <DropdownMenuRadioItem value={ALL_VALUE} data-testid='price-option-any' className={menuItemStyles}>
+      <DropdownMenuRadioItem value={ALL_VALUE} data-testid='price-filter-option' className={menuItemStyles}>
         {!hasPrice && <Check className='h-4 w-4' />}
         Any price
       </DropdownMenuRadioItem>
@@ -173,11 +173,11 @@ export const GamesToolbar = ({
         <DropdownMenuRadioItem
           key={range.key}
           value={range.key}
-          data-testid={`price-option-${range.key}`}
+          data-testid='price-filter-option'
           className={menuItemStyles}
         >
           {selectedPriceKey === range.key && <Check className='h-4 w-4' />}
-          {range.label}
+          <span>{range.label}</span>
         </DropdownMenuRadioItem>
       ))}
     </DropdownMenuRadioGroup>
@@ -188,7 +188,7 @@ export const GamesToolbar = ({
       value={sort ?? ALL_VALUE}
       onValueChange={(value) => onSortChange(value === ALL_VALUE ? undefined : (value as GetGamesSort))}
     >
-      <DropdownMenuRadioItem value={ALL_VALUE} data-testid='sort-option-default' className={menuItemStyles}>
+      <DropdownMenuRadioItem value={ALL_VALUE} data-testid='sort-option' className={menuItemStyles}>
         {sort === undefined && <Check className='h-4 w-4' />}
         Default
       </DropdownMenuRadioItem>
@@ -196,11 +196,11 @@ export const GamesToolbar = ({
         <DropdownMenuRadioItem
           key={option.value}
           value={option.value}
-          data-testid={`sort-option-${option.value}`}
+          data-testid='sort-option'
           className={menuItemStyles}
         >
           {sort === option.value && <Check className='h-4 w-4' />}
-          {option.label}
+          <span>{option.label}</span>
         </DropdownMenuRadioItem>
       ))}
     </DropdownMenuRadioGroup>
@@ -211,7 +211,7 @@ export const GamesToolbar = ({
       value={edition ?? ALL_VALUE}
       onValueChange={(value) => onEditionChange(value === ALL_VALUE ? undefined : (value as GetGamesEdition))}
     >
-      <DropdownMenuRadioItem value={ALL_VALUE} data-testid='edition-option-all' className={menuItemStyles}>
+      <DropdownMenuRadioItem value={ALL_VALUE} data-testid='edition-filter-option' className={menuItemStyles}>
         {edition === undefined && <Check className='h-4 w-4' />}
         All editions
       </DropdownMenuRadioItem>
@@ -219,11 +219,11 @@ export const GamesToolbar = ({
         <DropdownMenuRadioItem
           key={option.value}
           value={option.value}
-          data-testid={`edition-option-${option.value}`}
+          data-testid='edition-filter-option'
           className={menuItemStyles}
         >
           {edition === option.value && <Check className='h-4 w-4' />}
-          {option.label}
+          <span>{option.label}</span>
         </DropdownMenuRadioItem>
       ))}
     </DropdownMenuRadioGroup>

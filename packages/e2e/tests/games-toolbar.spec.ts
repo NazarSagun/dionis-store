@@ -8,9 +8,13 @@ import { expect, Page, test } from '@playwright/test'
 // these toolbar filters, so an unscoped `page.getByTestId('card')` would
 // double-count.
 
-async function selectFromDropdown(page: Page, triggerTestId: string, optionTestId: string) {
+// Options share one test id per dropdown, so pick one by its exact label.
+async function selectFromDropdown(page: Page, triggerTestId: string, optionTestId: string, label: string) {
   await page.getByTestId(triggerTestId).click()
-  await page.getByTestId(optionTestId).click()
+  await page
+    .getByTestId(optionTestId)
+    .filter({ has: page.getByText(label, { exact: true }) })
+    .click()
 }
 
 const libraryCards = (page: Page) => page.getByTestId('game-library').getByTestId('card')
@@ -50,7 +54,7 @@ test.describe('Search, filter, and sort toolbar', () => {
   test('filters the grid by platform', async ({ page }) => {
     await page.goto('/')
 
-    await selectFromDropdown(page, 'platform-filter', 'platform-option-PS5')
+    await selectFromDropdown(page, 'platform-filter', 'platform-filter-option', 'PS5')
 
     const cards = libraryCards(page)
     await expect(cards).toHaveCount(2)
@@ -61,7 +65,7 @@ test.describe('Search, filter, and sort toolbar', () => {
   test('sorts the grid by price low to high', async ({ page, request }) => {
     await page.goto('/')
 
-    await selectFromDropdown(page, 'sort-select', 'sort-option-price_asc')
+    await selectFromDropdown(page, 'sort-select', 'sort-option', 'Price (low to high)')
 
     // price_asc sorts by list price (games.service.ts), not the discounted
     // price a card may display, so the two can disagree on any discounted
@@ -78,7 +82,7 @@ test.describe('Search, filter, and sort toolbar', () => {
   test('combines a search term and a platform filter', async ({ page }) => {
     await page.goto('/')
 
-    await selectFromDropdown(page, 'platform-filter', 'platform-option-PS5')
+    await selectFromDropdown(page, 'platform-filter', 'platform-filter-option', 'PS5')
     const cards = libraryCards(page)
     await expect(cards).toHaveCount(2)
     const ps5Title = await cards.first().locator('h3').innerText()
@@ -92,7 +96,7 @@ test.describe('Search, filter, and sort toolbar', () => {
   test('updates pagination when the filtered result set shrinks', async ({ page }) => {
     await page.goto('/')
 
-    await selectFromDropdown(page, 'platform-filter', 'platform-option-Switch')
+    await selectFromDropdown(page, 'platform-filter', 'platform-filter-option', 'Switch')
 
     await expect(libraryCards(page)).toHaveCount(1)
     await expect(page.getByRole('navigation', { name: 'pagination' })).not.toContainText('2')
@@ -102,8 +106,8 @@ test.describe('Search, filter, and sort toolbar', () => {
     await page.goto('/')
 
     await page.getByTestId('search-input').fill('zzz-no-such-game-zzz')
-    await selectFromDropdown(page, 'platform-filter', 'platform-option-PS5')
-    await selectFromDropdown(page, 'sort-select', 'sort-option-price_asc')
+    await selectFromDropdown(page, 'platform-filter', 'platform-filter-option', 'PS5')
+    await selectFromDropdown(page, 'sort-select', 'sort-option', 'Price (low to high)')
     await expect(libraryCards(page)).toHaveCount(0)
 
     await page.getByTestId('clear-filters').click()
@@ -151,9 +155,9 @@ test.describe('Filters in the URL', () => {
     await page.goto('/')
     await expect(libraryCards(page).first()).toBeVisible()
 
-    await selectFromDropdown(page, 'platform-filter', 'platform-option-PS5')
+    await selectFromDropdown(page, 'platform-filter', 'platform-filter-option', 'PS5')
     await expect(page).toHaveURL(/[?&]platform=PS5/)
-    await selectFromDropdown(page, 'genre-filter', 'genre-option-Shooter')
+    await selectFromDropdown(page, 'genre-filter', 'genre-filter-option', 'Shooter')
     await expect(page).toHaveURL(/[?&]genre=Shooter/)
 
     await page.goBack()
