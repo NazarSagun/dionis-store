@@ -227,16 +227,36 @@ export class OrdersService {
     }
   }
 
-  async getOrders(email: string) {
+  // Newest first. Library and Order History both page through this.
+  async getOrders(email: string, page: number, pageSize: number) {
     const user = await this.prisma.user.findUnique({ where: { email } })
     if (!user) {
       throw new CustomError('User does not exist', 400)
     }
 
-    return this.prisma.order.findMany({
-      where: { userId: user.id },
-      include: ORDER_ITEMS_INCLUDE,
-      orderBy: { createdAt: 'desc' },
+    const [items, total] = await Promise.all([
+      this.prisma.order.findMany({
+        where: { userId: user.id },
+        include: ORDER_ITEMS_INCLUDE,
+        // id breaks ties between orders created in the same millisecond, so
+        // no order appears on two pages or on none.
+        orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
+        skip: (page - 1) * pageSize,
+        take: pageSize,
+      }),
+      this.prisma.order.count({ where: { userId: user.id } }),
+    ])
+
+    return { items, total, page, pageSize }
+  }
+
+  // What a game page needs to show "Already in Library", without loading
+  // every order. editionId is null for a digital purchase.
+  async getOwnedItems(email: string) {
+    return this.prisma.orderItem.findMany({
+      where: { order: { user: { email } } },
+      select: { gameId: true, editionId: true },
+      distinct: ['gameId', 'editionId'],
     })
   }
 

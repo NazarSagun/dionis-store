@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, Param, Patch, Post, Req, UseGuards } from '@nestjs/common'
+import { Body, Controller, Get, HttpCode, Param, Patch, Post, Query, Req, UseGuards } from '@nestjs/common'
 import { AuthenticatedRequest, JwtAuthGuard } from '../../common/guards/jwt-auth.guard'
 import { CustomError } from '../../common/errors/custom-error'
 import { toHttpException } from '../../common/errors/to-http-exception'
@@ -6,6 +6,7 @@ import { OrdersService } from './orders.service'
 import { CreatePaymentIntentDto } from './dto/create-payment-intent.dto'
 import { ConfirmOrderDto } from './dto/confirm-order.dto'
 import { ShippingAddressDto } from './dto/shipping-address.dto'
+import { DEFAULT_ORDERS_PAGE_SIZE, OrdersPageQueryDto } from './dto/orders-page-query.dto'
 
 @Controller('orders')
 @UseGuards(JwtAuthGuard)
@@ -45,9 +46,23 @@ export class OrdersController {
   }
 
   @Get()
-  async getOrders(@Req() req: AuthenticatedRequest) {
+  async getOrders(@Req() req: AuthenticatedRequest, @Query() query: OrdersPageQueryDto) {
     try {
-      return await this.ordersService.getOrders(req.user.email)
+      return await this.ordersService.getOrders(
+        req.user.email,
+        query.page === undefined ? 1 : Number(query.page),
+        query.pageSize === undefined ? DEFAULT_ORDERS_PAGE_SIZE : Number(query.pageSize),
+      )
+    } catch (error) {
+      throw toHttpException(error)
+    }
+  }
+
+  // Declared before :orderId, so "owned" is not read as an order id.
+  @Get('owned')
+  async getOwnedItems(@Req() req: AuthenticatedRequest) {
+    try {
+      return await this.ordersService.getOwnedItems(req.user.email)
     } catch (error) {
       throw toHttpException(error)
     }

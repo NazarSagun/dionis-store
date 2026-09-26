@@ -365,15 +365,58 @@ paths:
         - bearerHttpAuthentication: []
   /orders:
     get:
-      summary: List every order placed by the current user, newest first
+      summary: List one page of the current user's orders, newest first
       operationId: getOrders
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: pageSize
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+            default: 5
       responses:
         '200':
-          description: Array of orders
+          description: One page of orders and the total count
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ordersArray'
+                $ref: '#/components/schemas/ordersPage'
+        '400':
+          description: Invalid page or pageSize
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+      security:
+        - bearerHttpAuthentication: []
+  /orders/owned:
+    get:
+      summary: List each distinct game and edition the current user has bought; editionId is null for a digital copy
+      operationId: getOwnedItems
+      responses:
+        '200':
+          description: Owned game and edition pairs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ownedItem'
         '401':
           description: Unauthorized
           content:
@@ -955,10 +998,35 @@ components:
         edition:
           $ref: '#/components/schemas/gameEditionObject'
           nullable: true
-    ordersArray:
-      type: array
-      items:
-        $ref: '#/components/schemas/orderObject'
+    ordersPage:
+      type: object
+      required:
+        - items
+        - total
+        - page
+        - pageSize
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/orderObject'
+        total:
+          type: integer
+        page:
+          type: integer
+        pageSize:
+          type: integer
+    ownedItem:
+      type: object
+      required:
+        - gameId
+        - editionId
+      properties:
+        gameId:
+          type: integer
+        editionId:
+          type: integer
+          nullable: true
     updateNameInput:
       type: object
       required:

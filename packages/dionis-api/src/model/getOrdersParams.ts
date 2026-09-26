@@ -4,6 +4,8 @@
  * Swagger Dionis
  * OpenAPI spec version: 1.0.0
  */
-import type { OrderObject } from './orderObject';
 
-export type OrdersArray = OrderObject[];
+export type GetOrdersParams = {
+page?: number;
+pageSize?: number;
+};
