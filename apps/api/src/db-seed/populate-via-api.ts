@@ -99,7 +99,7 @@ async function createGameWithReauth(game: GameFixture, accessToken: { current: s
   try {
     return await createGame(game, accessToken.current)
   } catch (error) {
-    // The access token expires after 30s. If a batch of games takes longer than that, re-login once and retry.
+    // The access token expires after 15 minutes. If seeding takes longer than that, re-login once and retry.
     accessToken.current = await login()
     return createGame(game, accessToken.current)
   }

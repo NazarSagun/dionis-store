@@ -12,7 +12,7 @@ export function getDecodedDto(email: string, role: Role): DecodedToken {
 }
 
 export function createAccessToken(payload: DecodedToken, secret: string) {
-  return jwt.sign(payload, secret, { expiresIn: '30s' })
+  return jwt.sign(payload, secret, { expiresIn: '15m' })
 }
 
 export function createRefreshToken(payload: DecodedToken, secret: string) {
