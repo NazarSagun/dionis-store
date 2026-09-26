@@ -19,7 +19,7 @@ const LoginPage = () => {
   const { mutate, isPending } = useLogin({
     mutation: {
       onSuccess: (data) => {
-        login(data.user?.accessToken as string, data.user?.name as string)
+        login(data.user?.accessToken as string, data.user?.name as string, data.user?.role)
         router.push('/')
       },
       onError: (error) => {

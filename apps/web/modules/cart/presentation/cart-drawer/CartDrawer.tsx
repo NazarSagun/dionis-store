@@ -24,7 +24,7 @@ export const CartDrawer = () => {
   const { mutate, isPending } = useLogin({
     mutation: {
       onSuccess: (data) => {
-        login(data.user?.accessToken as string, data.user?.name as string)
+        login(data.user?.accessToken as string, data.user?.name as string, data.user?.role)
         setIsAuthOpen(false)
       },
       onError: (error) => {
@@ -36,7 +36,7 @@ export const CartDrawer = () => {
   const { mutate: mutateRegister, isPending: isRegisterPending } = useRegister({
     mutation: {
       onSuccess: (data) => {
-        login(data.user?.accessToken as string, data.user?.name as string)
+        login(data.user?.accessToken as string, data.user?.name as string, data.user?.role)
         setStep(2)
         setIsAuthOpen(false)
         closeDrawer()

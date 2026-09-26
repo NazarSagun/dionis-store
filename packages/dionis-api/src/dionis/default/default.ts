@@ -18,14 +18,21 @@ import type {
   UseQueryResult
 } from '@tanstack/react-query'
 import type {
+  AdminOrdersPage,
   AuthErrorMessage,
   ChangePasswordInput,
   ConfirmOrderBody,
   CreatePaymentIntentBody,
+  EditionInput,
+  EditionUpdateInput,
   ErrorMessage,
+  GameEditionObject,
+  GameInput,
   GameObject,
+  GameUpdateInput,
   GamesArray,
   GenreCount,
+  GetAdminOrdersParams,
   GetGamesParams,
   GetOrdersParams,
   MergeWishlistBody,
@@ -230,6 +237,409 @@ export const useChangePassword = <TError = ErrorType<ErrorMessage>,
       return useMutation(mutationOptions);
     }
     /**
+ * @summary Create a game (admin). Leave out id and the database assigns the next one
+ */
+export const createGame = (
+    gameInput: BodyType<GameInput>,
+ options?: SecondParameter<typeof customInstance>,) => {
+      
+      
+      return customInstance<GameObject>(
+      {url: `/games`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: gameInput
+    },
+      options);
+    }
+  
+
+
+export const getCreateGameMutationOptions = <TError = ErrorType<ErrorMessage>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createGame>>, TError,{data: BodyType<GameInput>}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof createGame>>, TError,{data: BodyType<GameInput>}, TContext> => {
+const {mutation: mutationOptions, request: requestOptions} = options ?? {};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createGame>>, {data: BodyType<GameInput>}> = (props) => {
+          const {data} = props ?? {};
+
+          return  createGame(data,requestOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CreateGameMutationResult = NonNullable<Awaited<ReturnType<typeof createGame>>>
+    export type CreateGameMutationBody = BodyType<GameInput>
+    export type CreateGameMutationError = ErrorType<ErrorMessage>
+
+    /**
+ * @summary Create a game (admin). Leave out id and the database assigns the next one
+ */
+export const useCreateGame = <TError = ErrorType<ErrorMessage>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createGame>>, TError,{data: BodyType<GameInput>}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationResult<
+        Awaited<ReturnType<typeof createGame>>,
+        TError,
+        {data: BodyType<GameInput>},
+        TContext
+      > => {
+
+      const mutationOptions = getCreateGameMutationOptions(options);
+
+      return useMutation(mutationOptions);
+    }
+    /**
+ * @summary Update any subset of a game's fields (admin)
+ */
+export const updateGame = (
+    id: number,
+    gameUpdateInput: BodyType<GameUpdateInput>,
+ options?: SecondParameter<typeof customInstance>,) => {
+      
+      
+      return customInstance<GameObject>(
+      {url: `/games/${id}`, method: 'PATCH',
+      headers: {'Content-Type': 'application/json', },
+      data: gameUpdateInput
+    },
+      options);
+    }
+  
+
+
+export const getUpdateGameMutationOptions = <TError = ErrorType<ErrorMessage>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateGame>>, TError,{id: number;data: BodyType<GameUpdateInput>}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof updateGame>>, TError,{id: number;data: BodyType<GameUpdateInput>}, TContext> => {
+const {mutation: mutationOptions, request: requestOptions} = options ?? {};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateGame>>, {id: number;data: BodyType<GameUpdateInput>}> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  updateGame(id,data,requestOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type UpdateGameMutationResult = NonNullable<Awaited<ReturnType<typeof updateGame>>>
+    export type UpdateGameMutationBody = BodyType<GameUpdateInput>
+    export type UpdateGameMutationError = ErrorType<ErrorMessage>
+
+    /**
+ * @summary Update any subset of a game's fields (admin)
+ */
+export const useUpdateGame = <TError = ErrorType<ErrorMessage>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateGame>>, TError,{id: number;data: BodyType<GameUpdateInput>}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationResult<
+        Awaited<ReturnType<typeof updateGame>>,
+        TError,
+        {id: number;data: BodyType<GameUpdateInput>},
+        TContext
+      > => {
+
+      const mutationOptions = getUpdateGameMutationOptions(options);
+
+      return useMutation(mutationOptions);
+    }
+    /**
+ * @summary Delete a game nobody bought, with its editions and wishlist rows (admin)
+ */
+export const deleteGame = (
+    id: number,
+ options?: SecondParameter<typeof customInstance>,) => {
+      
+      
+      return customInstance<void>(
+      {url: `/games/${id}`, method: 'DELETE'
+    },
+      options);
+    }
+  
+
+
+export const getDeleteGameMutationOptions = <TError = ErrorType<ErrorMessage>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteGame>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof deleteGame>>, TError,{id: number}, TContext> => {
+const {mutation: mutationOptions, request: requestOptions} = options ?? {};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteGame>>, {id: number}> = (props) => {
+          const {id} = props ?? {};
+
+          return  deleteGame(id,requestOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type DeleteGameMutationResult = NonNullable<Awaited<ReturnType<typeof deleteGame>>>
+    
+    export type DeleteGameMutationError = ErrorType<ErrorMessage>
+
+    /**
+ * @summary Delete a game nobody bought, with its editions and wishlist rows (admin)
+ */
+export const useDeleteGame = <TError = ErrorType<ErrorMessage>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteGame>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationResult<
+        Awaited<ReturnType<typeof deleteGame>>,
+        TError,
+        {id: number},
+        TContext
+      > => {
+
+      const mutationOptions = getDeleteGameMutationOptions(options);
+
+      return useMutation(mutationOptions);
+    }
+    /**
+ * @summary Add a physical edition to a game (admin)
+ */
+export const createEdition = (
+    id: number,
+    editionInput: BodyType<EditionInput>,
+ options?: SecondParameter<typeof customInstance>,) => {
+      
+      
+      return customInstance<GameEditionObject>(
+      {url: `/games/${id}/editions`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: editionInput
+    },
+      options);
+    }
+  
+
+
+export const getCreateEditionMutationOptions = <TError = ErrorType<ErrorMessage>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createEdition>>, TError,{id: number;data: BodyType<EditionInput>}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof createEdition>>, TError,{id: number;data: BodyType<EditionInput>}, TContext> => {
+const {mutation: mutationOptions, request: requestOptions} = options ?? {};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createEdition>>, {id: number;data: BodyType<EditionInput>}> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  createEdition(id,data,requestOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CreateEditionMutationResult = NonNullable<Awaited<ReturnType<typeof createEdition>>>
+    export type CreateEditionMutationBody = BodyType<EditionInput>
+    export type CreateEditionMutationError = ErrorType<ErrorMessage>
+
+    /**
+ * @summary Add a physical edition to a game (admin)
+ */
+export const useCreateEdition = <TError = ErrorType<ErrorMessage>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createEdition>>, TError,{id: number;data: BodyType<EditionInput>}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationResult<
+        Awaited<ReturnType<typeof createEdition>>,
+        TError,
+        {id: number;data: BodyType<EditionInput>},
+        TContext
+      > => {
+
+      const mutationOptions = getCreateEditionMutationOptions(options);
+
+      return useMutation(mutationOptions);
+    }
+    /**
+ * @summary Update any subset of an edition's fields (admin)
+ */
+export const updateEdition = (
+    id: number,
+    editionUpdateInput: BodyType<EditionUpdateInput>,
+ options?: SecondParameter<typeof customInstance>,) => {
+      
+      
+      return customInstance<GameEditionObject>(
+      {url: `/editions/${id}`, method: 'PATCH',
+      headers: {'Content-Type': 'application/json', },
+      data: editionUpdateInput
+    },
+      options);
+    }
+  
+
+
+export const getUpdateEditionMutationOptions = <TError = ErrorType<ErrorMessage>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateEdition>>, TError,{id: number;data: BodyType<EditionUpdateInput>}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof updateEdition>>, TError,{id: number;data: BodyType<EditionUpdateInput>}, TContext> => {
+const {mutation: mutationOptions, request: requestOptions} = options ?? {};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateEdition>>, {id: number;data: BodyType<EditionUpdateInput>}> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  updateEdition(id,data,requestOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type UpdateEditionMutationResult = NonNullable<Awaited<ReturnType<typeof updateEdition>>>
+    export type UpdateEditionMutationBody = BodyType<EditionUpdateInput>
+    export type UpdateEditionMutationError = ErrorType<ErrorMessage>
+
+    /**
+ * @summary Update any subset of an edition's fields (admin)
+ */
+export const useUpdateEdition = <TError = ErrorType<ErrorMessage>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateEdition>>, TError,{id: number;data: BodyType<EditionUpdateInput>}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationResult<
+        Awaited<ReturnType<typeof updateEdition>>,
+        TError,
+        {id: number;data: BodyType<EditionUpdateInput>},
+        TContext
+      > => {
+
+      const mutationOptions = getUpdateEditionMutationOptions(options);
+
+      return useMutation(mutationOptions);
+    }
+    /**
+ * @summary Delete an edition nobody bought (admin)
+ */
+export const deleteEdition = (
+    id: number,
+ options?: SecondParameter<typeof customInstance>,) => {
+      
+      
+      return customInstance<void>(
+      {url: `/editions/${id}`, method: 'DELETE'
+    },
+      options);
+    }
+  
+
+
+export const getDeleteEditionMutationOptions = <TError = ErrorType<ErrorMessage>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteEdition>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof deleteEdition>>, TError,{id: number}, TContext> => {
+const {mutation: mutationOptions, request: requestOptions} = options ?? {};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteEdition>>, {id: number}> = (props) => {
+          const {id} = props ?? {};
+
+          return  deleteEdition(id,requestOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type DeleteEditionMutationResult = NonNullable<Awaited<ReturnType<typeof deleteEdition>>>
+    
+    export type DeleteEditionMutationError = ErrorType<ErrorMessage>
+
+    /**
+ * @summary Delete an edition nobody bought (admin)
+ */
+export const useDeleteEdition = <TError = ErrorType<ErrorMessage>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteEdition>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationResult<
+        Awaited<ReturnType<typeof deleteEdition>>,
+        TError,
+        {id: number},
+        TContext
+      > => {
+
+      const mutationOptions = getDeleteEditionMutationOptions(options);
+
+      return useMutation(mutationOptions);
+    }
+    /**
+ * @summary List every customer's orders, newest first (admin)
+ */
+export const getAdminOrders = (
+    params?: GetAdminOrdersParams,
+ options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<AdminOrdersPage>(
+      {url: `/admin/orders`, method: 'GET',
+        params, signal
+    },
+      options);
+    }
+  
+
+export const getGetAdminOrdersQueryKey = (params?: GetAdminOrdersParams,) => {
+    return [`/admin/orders`, ...(params ? [params]: [])] as const;
+    }
+
+    
+export const getGetAdminOrdersQueryOptions = <TData = Awaited<ReturnType<typeof getAdminOrders>>, TError = ErrorType<ErrorMessage>>(params?: GetAdminOrdersParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAdminOrders>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetAdminOrdersQueryKey(params);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getAdminOrders>>> = ({ signal }) => getAdminOrders(params, requestOptions, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getAdminOrders>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetAdminOrdersQueryResult = NonNullable<Awaited<ReturnType<typeof getAdminOrders>>>
+export type GetAdminOrdersQueryError = ErrorType<ErrorMessage>
+
+/**
+ * @summary List every customer's orders, newest first (admin)
+ */
+export const useGetAdminOrders = <TData = Awaited<ReturnType<typeof getAdminOrders>>, TError = ErrorType<ErrorMessage>>(
+ params?: GetAdminOrdersParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAdminOrders>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+
+  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } => {
+
+  const queryOptions = getGetAdminOrdersQueryOptions(params,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+/**
  * @summary List up to 10 games with the highest discount, discount > 0, highest first
  */
 export const getGamesTopDeals = (

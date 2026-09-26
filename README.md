@@ -58,6 +58,10 @@ stripe listen --events payment_intent.succeeded --forward-to localhost:3500/api/
 
 The command prints a signing secret that starts with `whsec_`. Put it in `apps/api/.env` as `STRIPE_WEBHOOK_SECRET`, then restart the API. Without it, checkout still works through the browser, but the webhook route returns `500`.
 
+## Admin panel
+
+A user with the Admin role (`500`) can open `/admin` from the account menu. There, the user manages games and their physical editions and sees every customer's order. `pnpm seed:api` creates an admin with `SEED_ADMIN_EMAIL` and `SEED_ADMIN_PASSWORD`, so after seeding you can log in with those values. The admin panel E2E tests log in with `E2E_ADMIN_EMAIL` and `E2E_ADMIN_PASSWORD`, which default to the same account.
+
 ## Seed data
 
 To seed sample games into a running API, run the following command from `apps/api`.

@@ -1,11 +1,16 @@
-import { IsInt, IsNotEmpty, IsString } from 'class-validator'
+import { IsInt, IsNotEmpty, IsOptional, IsString, Max, MaxLength, Min } from 'class-validator'
 
 export class CreateGameDto {
+  // Only the seed script sends an id, to keep the FreeToGame ids. The admin
+  // panel leaves it out and the database assigns the next one.
+  @IsOptional()
   @IsInt()
-  id: number
+  @Min(1)
+  id?: number
 
   @IsString()
   @IsNotEmpty()
+  @MaxLength(200)
   title: string
 
   @IsString()
@@ -22,6 +27,7 @@ export class CreateGameDto {
 
   @IsString()
   @IsNotEmpty()
+  @MaxLength(50)
   genre: string
 
   @IsString()
@@ -45,6 +51,7 @@ export class CreateGameDto {
   freetogame_profile_url: string
 
   @IsInt()
+  @Min(0)
   price: number
 
   @IsString()
@@ -52,5 +59,7 @@ export class CreateGameDto {
   rating: string
 
   @IsInt()
+  @Min(0)
+  @Max(100)
   discount: number
 }

@@ -94,6 +94,307 @@ paths:
                 $ref: '#/components/schemas/errorMessage'
       security:
         - bearerHttpAuthentication: []
+  /games:
+    post:
+      summary: Create a game (admin). Leave out id and the database assigns the next one
+      operationId: createGame
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/gameInput'
+      responses:
+        '201':
+          description: The created game
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/gameObject'
+        '400':
+          description: Invalid field
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+        '409':
+          description: A game with this id or title already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+        '403':
+          description: Not an admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+      security:
+        - bearerHttpAuthentication: []
+  /games/{id}:
+    patch:
+      summary: Update any subset of a game's fields (admin)
+      operationId: updateGame
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/gameUpdateInput'
+      responses:
+        '200':
+          description: The updated game
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/gameObject'
+        '400':
+          description: Invalid field or no such game
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+        '409':
+          description: Title already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+        '403':
+          description: Not an admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+      security:
+        - bearerHttpAuthentication: []
+    delete:
+      summary: Delete a game nobody bought, with its editions and wishlist rows (admin)
+      operationId: deleteGame
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Deleted
+        '409':
+          description: The game is in an order
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+        '403':
+          description: Not an admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+      security:
+        - bearerHttpAuthentication: []
+  /games/{id}/editions:
+    post:
+      summary: Add a physical edition to a game (admin)
+      operationId: createEdition
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/editionInput'
+      responses:
+        '201':
+          description: The created edition
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/gameEditionObject'
+        '400':
+          description: Invalid field or no such game
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+        '403':
+          description: Not an admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+      security:
+        - bearerHttpAuthentication: []
+  /editions/{id}:
+    patch:
+      summary: Update any subset of an edition's fields (admin)
+      operationId: updateEdition
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/editionUpdateInput'
+      responses:
+        '200':
+          description: The updated edition
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/gameEditionObject'
+        '404':
+          description: No such edition
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+        '403':
+          description: Not an admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+      security:
+        - bearerHttpAuthentication: []
+    delete:
+      summary: Delete an edition nobody bought (admin)
+      operationId: deleteEdition
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Deleted
+        '404':
+          description: No such edition
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+        '409':
+          description: The edition is in an order
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+        '403':
+          description: Not an admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+      security:
+        - bearerHttpAuthentication: []
+  /admin/orders:
+    get:
+      summary: List every customer's orders, newest first (admin)
+      operationId: getAdminOrders
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+        - name: pageSize
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+            default: 20
+        - name: email
+          in: query
+          required: false
+          schema:
+            type: string
+            maxLength: 100
+          description: Case-insensitive fragment of the customer email
+      responses:
+        '200':
+          description: One page of orders and the total count
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/adminOrdersPage'
+        '400':
+          description: Invalid query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+        '403':
+          description: Not an admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+      security:
+        - bearerHttpAuthentication: []
   /games/top-deals:
     get:
       summary: List up to 10 games with the highest discount, discount > 0, highest first
@@ -922,6 +1223,9 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/gameEditionObject'
+        editionCount:
+          type: integer
+          description: Number of physical editions. Present on the paged games list.
     gameEditionObject:
       type: object
       required:
@@ -1176,6 +1480,159 @@ components:
         genre:
           type: string
         count:
+          type: integer
+    gameInput:
+      type: object
+      required:
+        - title
+        - thumbnail
+        - short_description
+        - game_url
+        - genre
+        - platform
+        - publisher
+        - developer
+        - release_date
+        - freetogame_profile_url
+        - price
+        - rating
+        - discount
+      properties:
+        id:
+          type: integer
+          description: Only the seed script sends one
+        title:
+          type: string
+        thumbnail:
+          type: string
+        short_description:
+          type: string
+        game_url:
+          type: string
+        genre:
+          type: string
+        platform:
+          type: string
+        publisher:
+          type: string
+        developer:
+          type: string
+        release_date:
+          type: string
+        freetogame_profile_url:
+          type: string
+        price:
+          type: integer
+          minimum: 0
+        rating:
+          type: string
+        discount:
+          type: integer
+          minimum: 0
+          maximum: 100
+    gameUpdateInput:
+      type: object
+      properties:
+        title:
+          type: string
+        thumbnail:
+          type: string
+        short_description:
+          type: string
+        game_url:
+          type: string
+        genre:
+          type: string
+        platform:
+          type: string
+        publisher:
+          type: string
+        developer:
+          type: string
+        release_date:
+          type: string
+        freetogame_profile_url:
+          type: string
+        price:
+          type: integer
+          minimum: 0
+        rating:
+          type: string
+        discount:
+          type: integer
+          minimum: 0
+          maximum: 100
+    editionInput:
+      type: object
+      required:
+        - name
+        - price
+        - discount
+        - stock
+        - description
+      properties:
+        name:
+          type: string
+        price:
+          type: integer
+          minimum: 0
+        discount:
+          type: integer
+          minimum: 0
+          maximum: 100
+        stock:
+          type: integer
+          minimum: 0
+        description:
+          type: string
+    editionUpdateInput:
+      type: object
+      properties:
+        name:
+          type: string
+        price:
+          type: integer
+          minimum: 0
+        discount:
+          type: integer
+          minimum: 0
+          maximum: 100
+        stock:
+          type: integer
+          minimum: 0
+        description:
+          type: string
+    adminOrderObject:
+      allOf:
+        - $ref: '#/components/schemas/orderObject'
+        - type: object
+          required:
+            - user
+          properties:
+            user:
+              type: object
+              required:
+                - email
+              properties:
+                email:
+                  type: string
+    adminOrdersPage:
+      type: object
+      required:
+        - items
+        - total
+        - page
+        - pageSize
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/adminOrderObject'
+        total:
+          type: integer
+        page:
+          type: integer
+        pageSize:
           type: integer
     userCredentials:
       type: object

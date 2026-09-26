@@ -1,19 +1,51 @@
 import { Test } from '@nestjs/testing'
+import { Prisma } from '@prisma/client'
 import { PrismaService } from '../../common/prisma/prisma.service'
 import { CustomError } from '../../common/errors/custom-error'
 import { GamesService } from './games.service'
 
 describe('GamesService', () => {
   let service: GamesService
-  let prisma: { game_pc: { findMany: jest.Mock; count: jest.Mock; groupBy: jest.Mock }; $queryRaw: jest.Mock }
+  let prisma: {
+    game_pc: {
+      findMany: jest.Mock
+      count: jest.Mock
+      groupBy: jest.Mock
+      findUnique: jest.Mock
+      update: jest.Mock
+      delete: jest.Mock
+    }
+    gameEdition: {
+      findUnique: jest.Mock
+      create: jest.Mock
+      update: jest.Mock
+      delete: jest.Mock
+      deleteMany: jest.Mock
+    }
+    order: { count: jest.Mock }
+    $queryRaw: jest.Mock
+    $transaction: jest.Mock
+  }
 
   beforeEach(async () => {
     prisma = {
       game_pc: {
-        findMany: jest.fn().mockResolvedValue([{ id: 1, title: 'Some Game' }]),
+        findMany: jest.fn().mockResolvedValue([{ id: 1, title: 'Some Game', _count: { editions: 2 } }]),
         count: jest.fn().mockResolvedValue(1),
         groupBy: jest.fn(),
+        findUnique: jest.fn().mockResolvedValue({ id: 1, editions: [] }),
+        update: jest.fn(),
+        delete: jest.fn().mockReturnValue('delete-game'),
       },
+      gameEdition: {
+        findUnique: jest.fn().mockResolvedValue({ id: 10, gameId: 1 }),
+        create: jest.fn(),
+        update: jest.fn(),
+        delete: jest.fn(),
+        deleteMany: jest.fn().mockReturnValue('delete-editions'),
+      },
+      order: { count: jest.fn().mockResolvedValue(0) },
+      $transaction: jest.fn(),
       $queryRaw: jest.fn().mockResolvedValue([{ id: 4 }, { id: 9 }]),
     }
 
@@ -157,6 +189,62 @@ describe('GamesService', () => {
         { genre: 'Shooter', count: 94 },
       ])
       expect(prisma.game_pc.groupBy).toHaveBeenCalledWith(expect.objectContaining({ orderBy: { genre: 'asc' } }))
+    })
+  })
+
+  describe('admin catalog changes', () => {
+    it('adds each game\u2019s edition count to the list', async () => {
+      const { games } = await service.fetchGames({ page: 1 })
+
+      expect(games).toEqual([{ id: 1, title: 'Some Game', editionCount: 2 }])
+    })
+
+    it('maps a duplicate title on update to a 409', async () => {
+      prisma.game_pc.update.mockRejectedValue(
+        new Prisma.PrismaClientKnownRequestError('Unique constraint failed', { code: 'P2002', clientVersion: 'test' }),
+      )
+
+      await expect(service.updateGame(1, { title: 'Taken' })).rejects.toMatchObject({ statusCode: 409 })
+    })
+
+    it('refuses to delete a game that is in an order, naming the count', async () => {
+      prisma.order.count.mockResolvedValue(1)
+
+      await expect(service.deleteGame(1)).rejects.toThrow('This game is in 1 order and cannot be deleted.')
+      prisma.order.count.mockResolvedValue(3)
+      await expect(service.deleteGame(1)).rejects.toThrow('This game is in 3 orders and cannot be deleted.')
+      expect(prisma.$transaction).not.toHaveBeenCalled()
+    })
+
+    it('deletes an unbought game together with its editions, in one transaction', async () => {
+      await service.deleteGame(1)
+
+      expect(prisma.order.count).toHaveBeenCalledWith({ where: { items: { some: { gameId: 1 } } } })
+      expect(prisma.gameEdition.deleteMany).toHaveBeenCalledWith({ where: { gameId: 1 } })
+      expect(prisma.$transaction).toHaveBeenCalledWith(['delete-editions', 'delete-game'])
+    })
+
+    it('creates an edition on an existing game only', async () => {
+      prisma.game_pc.findUnique.mockResolvedValue(null)
+
+      await expect(
+        service.createEdition(999, { name: 'Deluxe', price: 45, discount: 0, stock: 3, description: 'Box' }),
+      ).rejects.toThrow('There is no such game')
+      expect(prisma.gameEdition.create).not.toHaveBeenCalled()
+    })
+
+    it('refuses to delete an edition that is in an order', async () => {
+      prisma.order.count.mockResolvedValue(2)
+
+      await expect(service.deleteEdition(10)).rejects.toThrow('This edition is in 2 orders and cannot be deleted.')
+      expect(prisma.order.count).toHaveBeenCalledWith({ where: { items: { some: { editionId: 10 } } } })
+      expect(prisma.gameEdition.delete).not.toHaveBeenCalled()
+    })
+
+    it('returns 404 for an unknown edition', async () => {
+      prisma.gameEdition.findUnique.mockResolvedValue(null)
+
+      await expect(service.updateEdition(404, { stock: 1 })).rejects.toMatchObject({ statusCode: 404 })
     })
   })
 

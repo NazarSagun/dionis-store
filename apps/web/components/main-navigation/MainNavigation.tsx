@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { useLogout } from '@repo/dionis-api/src/dionis/default/default'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@repo/ui'
 
-import { useAuthLogout, useAuthUser, useIsAuthenticated } from '@/modules/auth/core/facade'
+import { useAuthLogout, useAuthUser, useIsAdmin, useIsAuthenticated } from '@/modules/auth/core/facade'
 import { useCartItems, useOpenCartDrawer } from '@/modules/cart/core/facade'
 
 const menuItemStyles =
@@ -16,6 +16,7 @@ export const MainNavigation = () => {
   const isUserAuth = useIsAuthenticated()
   const user = useAuthUser()
   const clearAuth = useAuthLogout()
+  const isAdmin = useIsAdmin()
   const cartItems = useCartItems()
   const openCartDrawer = useOpenCartDrawer()
 
@@ -44,6 +45,13 @@ export const MainNavigation = () => {
                 <DropdownMenuItem asChild className={menuItemStyles}>
                   <Link href='/account#wishlist'>Wishlist</Link>
                 </DropdownMenuItem>
+                {isAdmin && (
+                  <DropdownMenuItem asChild className={menuItemStyles}>
+                    <Link href='/admin/games' data-testid='account-menu-admin'>
+                      Admin
+                    </Link>
+                  </DropdownMenuItem>
+                )}
                 <DropdownMenuItem
                   className={menuItemStyles}
                   onClick={() => {

@@ -9,7 +9,8 @@ interface AuthState {
   isAuthenticated: boolean
   accessToken: string | null
   user: AuthUser | null
-  login: (token: string, name: string) => void
+  role: number | null
+  login: (token: string, name: string, role?: number) => void
   logout: () => void
   setUserName: (name: string) => void
 }
@@ -20,13 +21,20 @@ export const useAuthStore = create<AuthState>()(
       isAuthenticated: false,
       accessToken: null,
       user: null,
-      login: (token, name) => set({ isAuthenticated: true, accessToken: token, user: { name } }),
-      logout: () => set({ isAuthenticated: false, accessToken: null, user: null }),
+      role: null,
+      login: (token, name, role) =>
+        set({ isAuthenticated: true, accessToken: token, user: { name }, role: role ?? null }),
+      logout: () => set({ isAuthenticated: false, accessToken: null, user: null, role: null }),
       setUserName: (name) => set((state) => ({ user: state.user ? { ...state.user, name } : state.user })),
     }),
     {
       name: 'auth-storage',
-      partialize: (state) => ({ isAuthenticated: state.isAuthenticated, accessToken: state.accessToken }),
+      // role only hides or shows admin UI. The API checks the role on every admin route.
+      partialize: (state) => ({
+        isAuthenticated: state.isAuthenticated,
+        accessToken: state.accessToken,
+        role: state.role,
+      }),
     },
   ),
 )

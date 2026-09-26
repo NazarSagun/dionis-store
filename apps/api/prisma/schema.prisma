@@ -23,7 +23,7 @@ model User {
 }
 
 model Game_pc {
-  id                     Int           @id
+  id                     Int           @id @default(autoincrement())
   title                  String        @unique
   thumbnail              String
   short_description      String

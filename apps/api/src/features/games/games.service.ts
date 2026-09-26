@@ -3,6 +3,8 @@ import { Prisma } from '@prisma/client'
 import { PrismaService } from '../../common/prisma/prisma.service'
 import { CustomError } from '../../common/errors/custom-error'
 import { CreateGameDto } from './dto/create-game.dto'
+import { CreateEditionDto, UpdateEditionDto } from './dto/edition.dto'
+import { UpdateGameDto } from './dto/update-game.dto'
 import { AllowedEdition, AllowedPlatform, AllowedSort } from './dto/games-query.dto'
 
 const SORT_TO_ORDER_BY: Record<AllowedSort, Prisma.Game_pcOrderByWithRelationInput> = {
@@ -63,12 +65,15 @@ export class GamesService {
     }
     const orderBy = sort ? SORT_TO_ORDER_BY[sort] : { id: 'asc' as const }
 
-    const games = await this.prisma.game_pc.findMany({
+    const rows = await this.prisma.game_pc.findMany({
       where,
       orderBy,
       skip: (currentPage - 1) * limit,
       take: limit,
+      include: { _count: { select: { editions: true } } },
     })
+    // The admin games table shows it without a request per row.
+    const games = rows.map(({ _count, ...game }) => ({ ...game, editionCount: _count.editions }))
 
     const totalGames = await this.prisma.game_pc.count({ where })
     const totalPages = Math.ceil(totalGames / limit)
@@ -134,4 +139,62 @@ export class GamesService {
       throw error
     }
   }
+
+  async updateGame(id: number, data: UpdateGameDto) {
+    await this.fetchGameById({ gameId: id })
+    try {
+      return await this.prisma.game_pc.update({ where: { id }, data })
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+        throw new CustomError('A game with this id or title already exists', 409)
+      }
+      throw error
+    }
+  }
+
+  // A game someone bought stays: its OrderItem rows point at it. Otherwise
+  // its editions and wishlist rows go with it (WishlistItem cascades).
+  async deleteGame(id: number) {
+    await this.fetchGameById({ gameId: id })
+    const orders = await this.prisma.order.count({ where: { items: { some: { gameId: id } } } })
+    if (orders > 0) {
+      throw new CustomError(`This game is in ${pluralOrders(orders)} and cannot be deleted.`, 409)
+    }
+
+    await this.prisma.$transaction([
+      this.prisma.gameEdition.deleteMany({ where: { gameId: id } }),
+      this.prisma.game_pc.delete({ where: { id } }),
+    ])
+  }
+
+  async createEdition(gameId: number, data: CreateEditionDto) {
+    await this.fetchGameById({ gameId })
+    return this.prisma.gameEdition.create({ data: { ...data, gameId } })
+  }
+
+  async updateEdition(id: number, data: UpdateEditionDto) {
+    await this.getEdition(id)
+    return this.prisma.gameEdition.update({ where: { id }, data })
+  }
+
+  async deleteEdition(id: number) {
+    await this.getEdition(id)
+    const orders = await this.prisma.order.count({ where: { items: { some: { editionId: id } } } })
+    if (orders > 0) {
+      throw new CustomError(`This edition is in ${pluralOrders(orders)} and cannot be deleted.`, 409)
+    }
+    await this.prisma.gameEdition.delete({ where: { id } })
+  }
+
+  private async getEdition(id: number) {
+    const edition = await this.prisma.gameEdition.findUnique({ where: { id } })
+    if (!edition) {
+      throw new CustomError('There is no such edition', 404)
+    }
+    return edition
+  }
+}
+
+function pluralOrders(count: number) {
+  return count === 1 ? '1 order' : `${count} orders`
 }
