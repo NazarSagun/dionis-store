@@ -193,3 +193,28 @@ test.describe('Filters in the URL', () => {
     await expect(page.getByTestId('price-filter')).toHaveText(/Any/)
   })
 })
+
+test.describe('No matching games', () => {
+  test('a search with no results shows an empty state that names the search', async ({ page }) => {
+    await page.goto('/')
+    await page.getByTestId('search-input').fill('zzz-no-such-game-zzz')
+
+    const empty = page.getByTestId('games-empty')
+    await expect(empty).toBeVisible()
+    await expect(empty).toContainText('No games match "zzz-no-such-game-zzz"')
+    await expect(page.getByRole('navigation', { name: 'pagination' })).toHaveCount(0)
+  })
+
+  test('filters with no results show the empty state, and its button clears them', async ({ page }) => {
+    await page.goto('/?genre=Shooter&minPrice=1000')
+
+    const empty = page.getByTestId('games-empty')
+    await expect(empty).toContainText('No games match these filters')
+
+    await empty.getByRole('button', { name: 'Clear filters' }).click()
+
+    await expect(page).toHaveURL(/\/$/)
+    await expect(empty).toHaveCount(0)
+    await expect(libraryCards(page).first()).toBeVisible()
+  })
+})
