@@ -15,7 +15,8 @@ This section records the facts that the plans below depend on.
 - `confirmOrder` is idempotent (safe to run twice) on `stripePaymentIntentId`, because that column is `@unique`.
 - `Roles` has `User = 101`, `Editor = 233`, and `Admin = 500`. `RolesGuard` and `@Roles` exist. The only write route for the catalog is `POST /api/games`.
 - `GameEdition.stock` exists and `confirmOrder` reduces it inside a transaction.
-- The wishlist and recently-viewed lists live only in `localStorage`, through zustand `persist`.
+- The recently-viewed list lives only in `localStorage`, through zustand `persist`. Since Feature 1.2, a signed-in user's wishlist is stored on the account.
+- `User.refreshToken` is one column, so a login ends the user's session in any other browser on its next page load. A user can be signed in on one browser at a time.
 - `GET /api/games/:page` already pages the catalog. `GET /api/orders` returns every order in one response.
 - CI runs only `pnpm install`, `pnpm build`, and `pnpm test --filter web`.
 
@@ -76,15 +77,20 @@ A signed-in user's wishlist is stored on the server and is the same on every dev
 
 - A game added on one browser shows in the wishlist on a second browser after sign-in.
 - When a guest signs in, the API merges the guest wishlist into the account wishlist and removes duplicates.
+- Logout clears the wishlist from the browser. The next login loads it from the account.
 - The price-drop alerts from `account-area-spec.md` Feature 8 still work.
 
 #### Implementation plan
 
-1. Add the model `WishlistItem { userId, gameId, priceAtAdd, createdAt }` with `@@unique([userId, gameId])`. Run a migration.
-2. Add a `wishlist` feature in `apps/api/src/features`: `GET /api/wishlist`, `PUT /api/wishlist/:gameId`, `DELETE /api/wishlist/:gameId`, and `POST /api/wishlist/merge`. All routes use the JWT guard.
+1. Add the model `WishlistItem { userId, gameId, discountSnapshot, createdAt }` with `@@unique([userId, gameId])` and cascade deletes. `discountSnapshot` is what Feature 8's badge compares against. Run a migration.
+2. Add a `wishlist` feature in `apps/api/src/features`. All routes use the JWT guard and return the whole list:
+   - `GET /api/wishlist` lists the items, newest first, joined with current game data.
+   - `PUT /api/wishlist/:gameId` adds a game. The server takes the snapshot from the game's current discount.
+   - `DELETE /api/wishlist/:gameId` removes a game.
+   - `PATCH /api/wishlist/:gameId` moves the snapshot to the current discount, after the badge showed.
+   - `POST /api/wishlist/merge` adds guest items with their snapshots and skips games already on the account.
 3. Regenerate `packages/dionis-api` with Orval.
-4. In `apps/web/modules/wishlist`, keep the zustand store as a local cache. Put the server calls in `integration/repository.ts` and call them from the facade when the user is signed in. Call `merge` once after login.
-5. Keep `priceAtAdd` on the server, because Feature 8 of the account spec compares against it.
+4. In `apps/web/modules/wishlist`, keep the zustand store as the one thing the UI reads. The facade applies each change to the store, then calls the server when the user is signed in, and undoes the change if the call fails. A `WishlistSync` component loads the account list on a signed-in page load, merges the guest list on login, and clears the list on logout.
 
 ### 1.3 Filters in the URL and more filters
 

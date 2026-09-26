@@ -544,6 +544,148 @@ paths:
                 $ref: '#/components/schemas/errorMessage'
       security:
         - bearerHttpAuthentication: []
+  /wishlist:
+    get:
+      summary: List the signed-in player's wishlist, newest first, with current game data
+      operationId: getWishlist
+      responses:
+        '200':
+          description: The wishlist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/wishlistArray'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+      security:
+        - bearerHttpAuthentication: []
+  /wishlist/merge:
+    post:
+      summary: Add a guest wishlist to the account, keeping the account's entry for games already on it
+      operationId: mergeWishlist
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - items
+              properties:
+                items:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/guestWishlistItemInput'
+      responses:
+        '200':
+          description: The merged wishlist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/wishlistArray'
+        '400':
+          description: Invalid items
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+      security:
+        - bearerHttpAuthentication: []
+  /wishlist/{gameId}:
+    put:
+      summary: Add a game to the wishlist; the discount snapshot is the game's current discount
+      operationId: addWishlistItem
+      parameters:
+        - name: gameId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: The wishlist after adding
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/wishlistArray'
+        '404':
+          description: Game does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+      security:
+        - bearerHttpAuthentication: []
+    delete:
+      summary: Remove a game from the wishlist
+      operationId: removeWishlistItem
+      parameters:
+        - name: gameId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: The wishlist after removing
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/wishlistArray'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+      security:
+        - bearerHttpAuthentication: []
+    patch:
+      summary: Move a wishlist item's discount snapshot to the game's current discount, after the price-drop badge showed
+      operationId: acknowledgeWishlistDiscount
+      parameters:
+        - name: gameId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: The wishlist after the update
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/wishlistArray'
+        '404':
+          description: Game is not on the wishlist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+      security:
+        - bearerHttpAuthentication: []
   /refresh:
     get:
       summary: Refresh token
@@ -863,6 +1005,66 @@ components:
           type: string
         shippingCountry:
           type: string
+    wishlistItemObject:
+      type: object
+      required:
+        - gameId
+        - discountSnapshot
+        - createdAt
+        - game
+      properties:
+        gameId:
+          type: integer
+        discountSnapshot:
+          type: integer
+          description: The game's discount when it was added, or when the price-drop badge last showed
+        createdAt:
+          type: string
+          format: date-time
+        game:
+          type: object
+          required:
+            - id
+            - title
+            - thumbnail
+            - price
+            - platform
+            - rating
+            - discount
+          properties:
+            id:
+              type: integer
+            title:
+              type: string
+            thumbnail:
+              type: string
+            price:
+              type: integer
+            platform:
+              type: string
+            rating:
+              type: string
+            discount:
+              type: integer
+    wishlistArray:
+      type: array
+      items:
+        $ref: '#/components/schemas/wishlistItemObject'
+    guestWishlistItemInput:
+      type: object
+      required:
+        - gameId
+        - discount
+      properties:
+        gameId:
+          type: integer
+        discount:
+          type: integer
+          minimum: 0
+          maximum: 100
+        addedAt:
+          type: integer
+          description: Milliseconds since the epoch
     userCredentials:
       type: object
       properties:

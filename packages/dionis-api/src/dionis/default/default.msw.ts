@@ -22,7 +22,8 @@ import type {
   SuccessMessage,
   UpdateNameResponse,
   UserObject,
-  UsersArray
+  UsersArray,
+  WishlistArray
 } from '../../model'
 
 export const getGetUsersResponseMock = (): UsersArray => (Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({createdAt: faker.helpers.arrayElement([faker.date.past().toISOString().split('T')[0], undefined]), email: faker.helpers.arrayElement([faker.internet.email(), undefined]), id: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), name: faker.helpers.arrayElement([faker.word.sample(), undefined]), password: faker.helpers.arrayElement([faker.word.sample(), undefined]), refreshToken: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.word.sample(), null]), undefined]), role: faker.helpers.arrayElement([faker.helpers.arrayElement([101,500,233] as const), undefined])})))
@@ -52,6 +53,16 @@ export const getConfirmOrderResponseMock = (overrideResponse: Partial< OrderObje
 export const getGetOrderResponseMock = (overrideResponse: Partial< OrderObject > = {}): OrderObject => ({createdAt: faker.helpers.arrayElement([`${faker.date.past().toISOString().split('.')[0]}Z`, undefined]), id: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), items: faker.helpers.arrayElement([Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({activated: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]), activatedAt: faker.helpers.arrayElement([faker.helpers.arrayElement([`${faker.date.past().toISOString().split('.')[0]}Z`, null]), undefined]), activationCode: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.word.sample(), null]), undefined]), edition: faker.helpers.arrayElement([{description: faker.word.sample(), discount: faker.number.int({min: undefined, max: undefined}), id: faker.number.int({min: undefined, max: undefined}), name: faker.word.sample(), price: faker.number.int({min: undefined, max: undefined}), stock: faker.number.int({min: undefined, max: undefined})}, undefined]), editionId: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), null]), undefined]), game: faker.helpers.arrayElement([{developer: faker.word.sample(), discount: faker.number.int({min: undefined, max: undefined}), editions: faker.helpers.arrayElement([Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({description: faker.word.sample(), discount: faker.number.int({min: undefined, max: undefined}), id: faker.number.int({min: undefined, max: undefined}), name: faker.word.sample(), price: faker.number.int({min: undefined, max: undefined}), stock: faker.number.int({min: undefined, max: undefined})})), undefined]), freetogame_profile_url: faker.word.sample(), game_url: faker.word.sample(), genre: faker.word.sample(), id: faker.number.int({min: undefined, max: undefined}), platform: faker.word.sample(), price: faker.number.int({min: undefined, max: undefined}), publisher: faker.word.sample(), rating: faker.word.sample(), release_date: faker.word.sample(), short_description: faker.word.sample(), thumbnail: faker.word.sample(), title: faker.word.sample()}, undefined]), gameId: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), id: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), price: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), quantity: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined])})), undefined]), shippingCity: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.word.sample(), null]), undefined]), shippingCountry: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.word.sample(), null]), undefined]), shippingLine1: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.word.sample(), null]), undefined]), shippingLine2: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.word.sample(), null]), undefined]), shippingName: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.word.sample(), null]), undefined]), shippingPostalCode: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.word.sample(), null]), undefined]), stripePaymentIntentId: faker.helpers.arrayElement([faker.word.sample(), undefined]), totalPrice: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), userId: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), ...overrideResponse})
 
 export const getActivateOrderItemResponseMock = (overrideResponse: Partial< OrderItemObject > = {}): OrderItemObject => ({activated: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]), activatedAt: faker.helpers.arrayElement([faker.helpers.arrayElement([`${faker.date.past().toISOString().split('.')[0]}Z`, null]), undefined]), activationCode: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.word.sample(), null]), undefined]), edition: faker.helpers.arrayElement([{description: faker.word.sample(), discount: faker.number.int({min: undefined, max: undefined}), id: faker.number.int({min: undefined, max: undefined}), name: faker.word.sample(), price: faker.number.int({min: undefined, max: undefined}), stock: faker.number.int({min: undefined, max: undefined})}, undefined]), editionId: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), null]), undefined]), game: faker.helpers.arrayElement([{developer: faker.word.sample(), discount: faker.number.int({min: undefined, max: undefined}), editions: faker.helpers.arrayElement([Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({description: faker.word.sample(), discount: faker.number.int({min: undefined, max: undefined}), id: faker.number.int({min: undefined, max: undefined}), name: faker.word.sample(), price: faker.number.int({min: undefined, max: undefined}), stock: faker.number.int({min: undefined, max: undefined})})), undefined]), freetogame_profile_url: faker.word.sample(), game_url: faker.word.sample(), genre: faker.word.sample(), id: faker.number.int({min: undefined, max: undefined}), platform: faker.word.sample(), price: faker.number.int({min: undefined, max: undefined}), publisher: faker.word.sample(), rating: faker.word.sample(), release_date: faker.word.sample(), short_description: faker.word.sample(), thumbnail: faker.word.sample(), title: faker.word.sample()}, undefined]), gameId: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), id: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), price: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), quantity: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), ...overrideResponse})
+
+export const getGetWishlistResponseMock = (): WishlistArray => (Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({createdAt: `${faker.date.past().toISOString().split('.')[0]}Z`, discountSnapshot: faker.number.int({min: undefined, max: undefined}), game: {discount: faker.number.int({min: undefined, max: undefined}), id: faker.number.int({min: undefined, max: undefined}), platform: faker.word.sample(), price: faker.number.int({min: undefined, max: undefined}), rating: faker.word.sample(), thumbnail: faker.word.sample(), title: faker.word.sample()}, gameId: faker.number.int({min: undefined, max: undefined})})))
+
+export const getMergeWishlistResponseMock = (): WishlistArray => (Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({createdAt: `${faker.date.past().toISOString().split('.')[0]}Z`, discountSnapshot: faker.number.int({min: undefined, max: undefined}), game: {discount: faker.number.int({min: undefined, max: undefined}), id: faker.number.int({min: undefined, max: undefined}), platform: faker.word.sample(), price: faker.number.int({min: undefined, max: undefined}), rating: faker.word.sample(), thumbnail: faker.word.sample(), title: faker.word.sample()}, gameId: faker.number.int({min: undefined, max: undefined})})))
+
+export const getAddWishlistItemResponseMock = (): WishlistArray => (Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({createdAt: `${faker.date.past().toISOString().split('.')[0]}Z`, discountSnapshot: faker.number.int({min: undefined, max: undefined}), game: {discount: faker.number.int({min: undefined, max: undefined}), id: faker.number.int({min: undefined, max: undefined}), platform: faker.word.sample(), price: faker.number.int({min: undefined, max: undefined}), rating: faker.word.sample(), thumbnail: faker.word.sample(), title: faker.word.sample()}, gameId: faker.number.int({min: undefined, max: undefined})})))
+
+export const getRemoveWishlistItemResponseMock = (): WishlistArray => (Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({createdAt: `${faker.date.past().toISOString().split('.')[0]}Z`, discountSnapshot: faker.number.int({min: undefined, max: undefined}), game: {discount: faker.number.int({min: undefined, max: undefined}), id: faker.number.int({min: undefined, max: undefined}), platform: faker.word.sample(), price: faker.number.int({min: undefined, max: undefined}), rating: faker.word.sample(), thumbnail: faker.word.sample(), title: faker.word.sample()}, gameId: faker.number.int({min: undefined, max: undefined})})))
+
+export const getAcknowledgeWishlistDiscountResponseMock = (): WishlistArray => (Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({createdAt: `${faker.date.past().toISOString().split('.')[0]}Z`, discountSnapshot: faker.number.int({min: undefined, max: undefined}), game: {discount: faker.number.int({min: undefined, max: undefined}), id: faker.number.int({min: undefined, max: undefined}), platform: faker.word.sample(), price: faker.number.int({min: undefined, max: undefined}), rating: faker.word.sample(), thumbnail: faker.word.sample(), title: faker.word.sample()}, gameId: faker.number.int({min: undefined, max: undefined})})))
 
 export const getRefreshResponseMock = (overrideResponse: Partial< UserObject > = {}): UserObject => ({message: faker.helpers.arrayElement([faker.word.sample(), undefined]), user: faker.helpers.arrayElement([{accessToken: faker.helpers.arrayElement([faker.word.sample(), undefined]), email: faker.helpers.arrayElement([faker.word.sample(), undefined]), name: faker.helpers.arrayElement([faker.word.sample(), undefined]), role: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined])}, undefined]), ...overrideResponse})
 
@@ -279,6 +290,81 @@ export const getActivateOrderItemMockHandler = (overrideResponse?: OrderItemObje
   })
 }
 
+export const getGetWishlistMockHandler = (overrideResponse?: WishlistArray | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<WishlistArray> | WishlistArray)) => {
+  return http.get('*/wishlist', async (info) => {await delay(1000);
+    return new HttpResponse(JSON.stringify(overrideResponse !== undefined 
+            ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse) 
+            : getGetWishlistResponseMock()),
+      {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      }
+    )
+  })
+}
+
+export const getMergeWishlistMockHandler = (overrideResponse?: WishlistArray | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<WishlistArray> | WishlistArray)) => {
+  return http.post('*/wishlist/merge', async (info) => {await delay(1000);
+    return new HttpResponse(JSON.stringify(overrideResponse !== undefined 
+            ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse) 
+            : getMergeWishlistResponseMock()),
+      {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      }
+    )
+  })
+}
+
+export const getAddWishlistItemMockHandler = (overrideResponse?: WishlistArray | ((info: Parameters<Parameters<typeof http.put>[1]>[0]) => Promise<WishlistArray> | WishlistArray)) => {
+  return http.put('*/wishlist/:gameId', async (info) => {await delay(1000);
+    return new HttpResponse(JSON.stringify(overrideResponse !== undefined 
+            ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse) 
+            : getAddWishlistItemResponseMock()),
+      {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      }
+    )
+  })
+}
+
+export const getRemoveWishlistItemMockHandler = (overrideResponse?: WishlistArray | ((info: Parameters<Parameters<typeof http.delete>[1]>[0]) => Promise<WishlistArray> | WishlistArray)) => {
+  return http.delete('*/wishlist/:gameId', async (info) => {await delay(1000);
+    return new HttpResponse(JSON.stringify(overrideResponse !== undefined 
+            ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse) 
+            : getRemoveWishlistItemResponseMock()),
+      {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      }
+    )
+  })
+}
+
+export const getAcknowledgeWishlistDiscountMockHandler = (overrideResponse?: WishlistArray | ((info: Parameters<Parameters<typeof http.patch>[1]>[0]) => Promise<WishlistArray> | WishlistArray)) => {
+  return http.patch('*/wishlist/:gameId', async (info) => {await delay(1000);
+    return new HttpResponse(JSON.stringify(overrideResponse !== undefined 
+            ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse) 
+            : getAcknowledgeWishlistDiscountResponseMock()),
+      {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      }
+    )
+  })
+}
+
 export const getRefreshMockHandler = (overrideResponse?: UserObject | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<UserObject> | UserObject)) => {
   return http.get('*/refresh', async (info) => {await delay(1000);
     return new HttpResponse(JSON.stringify(overrideResponse !== undefined 
@@ -309,5 +395,10 @@ export const getDefaultMock = () => [
   getSetShippingAddressMockHandler(),
   getGetOrderMockHandler(),
   getActivateOrderItemMockHandler(),
+  getGetWishlistMockHandler(),
+  getMergeWishlistMockHandler(),
+  getAddWishlistItemMockHandler(),
+  getRemoveWishlistItemMockHandler(),
+  getAcknowledgeWishlistDiscountMockHandler(),
   getRefreshMockHandler()
 ]
