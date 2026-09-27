@@ -46,8 +46,6 @@ export const newGameFields = (title: string) => ({
   Publisher: 'E2E Publisher',
   Developer: 'E2E Developer',
   'Release date': '2026-09-26',
-  'Game URL': 'https://www.freetogame.com/open/e2e',
-  'FreeToGame profile URL': 'https://www.freetogame.com/e2e',
   'List price (€)': '30',
   Rating: '4.10',
   'Discount (%)': '0',
