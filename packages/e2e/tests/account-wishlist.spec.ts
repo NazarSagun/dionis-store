@@ -46,7 +46,7 @@ async function wishlistFromHome(page: Page, index: number) {
 }
 
 function accountWishlistTitles(page: Page) {
-  return page.getByTestId('wishlist').getByTestId('card').locator('h3')
+  return page.getByTestId('wishlist').getByTestId('wishlist-row').locator('h3')
 }
 
 async function openAccountWishlist(page: Page) {

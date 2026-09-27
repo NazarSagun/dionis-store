@@ -11,7 +11,7 @@ import { OrderHistorySection } from '../order-history-section/OrderHistorySectio
 import { RecentlyViewedSection } from '../recently-viewed-section/RecentlyViewedSection'
 import { SettingsSection } from '../settings-section/SettingsSection'
 
-const tabStyles = 'whitespace-nowrap border-b-2 pb-3 font-display text-sm uppercase tracking-wide'
+const tabStyles = 'whitespace-nowrap border-b-2 px-4 py-3 font-sans text-sm font-semibold'
 const activeTabStyles = 'border-primary text-foreground'
 const inactiveTabStyles = 'border-transparent text-muted-foreground hover:text-foreground'
 
@@ -52,15 +52,13 @@ export const AccountPage = () => {
   const ActiveContent = TABS.find((tab) => tab.testId === activeTab)?.Content ?? LibrarySection
 
   return (
-    <div data-testid='account-page' className='flex w-full flex-col items-start px-4 pb-20 sm:px-8 lg:px-[35px]'>
-      <div className='flex w-full max-w-[1200px] flex-col items-start gap-2 pt-12 sm:pt-16'>
-        <span className='rounded-full border border-ink px-4 py-1 font-mono text-xs text-neon-cyan'>
-          Player account
-        </span>
-        {user && <h1 className='font-display text-xl text-foreground'>Hi, {user.name}</h1>}
-      </div>
+    <div
+      data-testid='account-page'
+      className='flex w-full flex-col items-start gap-8 px-4 pb-16 pt-12 sm:px-8 lg:px-16'
+    >
+      {user && <h1 className='font-display text-[32px] font-bold leading-tight text-foreground'>Hi, {user.name}</h1>}
 
-      <div className='flex w-full max-w-[1200px] flex-nowrap items-center gap-6 overflow-x-auto border-b border-ink pt-10 sm:gap-8'>
+      <div className='flex max-w-full flex-nowrap gap-2 overflow-x-auto shadow-[inset_0_-1px_0_var(--border)]'>
         {TABS.map((tab) => (
           <button
             key={tab.testId}
@@ -74,11 +72,11 @@ export const AccountPage = () => {
         ))}
       </div>
 
-      <div className='w-full max-w-[1200px]'>
+      {/* Per the Account frames, Recently Viewed sits above the Library on My Games only. */}
+      {activeTab === 'account-tab-library' && <RecentlyViewedSection />}
+
+      <div className='w-full max-w-[900px]'>
         <ActiveContent />
-      </div>
-      <div className='w-full max-w-[1200px]'>
-        <RecentlyViewedSection />
       </div>
     </div>
   )

@@ -75,7 +75,7 @@ test.describe('Account area', () => {
 
     test('Wishlist shows the same game wishlisted from the home page', async ({ page }) => {
       await page.getByTestId('account-tab-wishlist').click()
-      await expect(page.getByTestId('wishlist').getByTestId('card')).toHaveCount(1)
+      await expect(page.getByTestId('wishlist').getByTestId('wishlist-row')).toHaveCount(1)
     })
 
     test('removing a game from the account Wishlist removes it from the list', async ({ page }) => {
@@ -87,7 +87,7 @@ test.describe('Account area', () => {
 
     test('Wishlist "Add to cart" adds the game without removing it from the wishlist', async ({ page }) => {
       await page.getByTestId('account-tab-wishlist').click()
-      const wishlistCard = page.getByTestId('wishlist').getByTestId('card').first()
+      const wishlistCard = page.getByTestId('wishlist').getByTestId('wishlist-row').first()
 
       await wishlistCard.getByTestId('wishlist-add-to-cart').click()
 
@@ -95,7 +95,7 @@ test.describe('Account area', () => {
       await expect(page.getByText('Your cart is empty')).not.toBeVisible()
       await page.goto('/account')
       await page.getByTestId('account-tab-wishlist').click()
-      await expect(page.getByTestId('wishlist').getByTestId('card')).toHaveCount(1)
+      await expect(page.getByTestId('wishlist').getByTestId('wishlist-row')).toHaveCount(1)
     })
 
     test('Order History lists the order with its date, item count, and total', async ({ page }) => {

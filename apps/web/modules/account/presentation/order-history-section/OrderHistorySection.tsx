@@ -60,8 +60,8 @@ export const OrderHistorySection = () => {
 
   return (
     <div data-testid='account-order-history' className='w-full'>
-      <h2 className='w-full pt-16 text-left font-display text-xl uppercase text-neon-magenta'>Order History</h2>
-      <div className='w-full pt-10'>
+      <h2 className='sr-only'>Order History</h2>
+      <div className='w-full'>
         {isLoading && (
           <div className='flex flex-col gap-4'>
             {Array.from({ length: 2 }).map((_, index) => (

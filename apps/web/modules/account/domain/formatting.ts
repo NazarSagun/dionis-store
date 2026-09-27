@@ -7,5 +7,5 @@ export function formatCentsToEuros(cents: number): string {
 }
 
 export function formatOrderDate(isoDate: string): string {
-  return new Date(isoDate).toLocaleDateString('en-GB', { year: 'numeric', month: 'short', day: 'numeric' })
+  return new Date(isoDate).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
 }

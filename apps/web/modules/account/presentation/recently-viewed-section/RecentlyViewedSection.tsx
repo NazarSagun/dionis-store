@@ -35,9 +35,9 @@ export const RecentlyViewedSection = () => {
   }
 
   return (
-    <div data-testid='recently-viewed' className='w-full'>
-      <h2 className='w-full pt-16 text-left font-display text-xl uppercase text-neon-magenta'>Recently Viewed</h2>
-      <div className='grid w-full grid-cols-2 gap-6 pt-10 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5'>
+    <div data-testid='recently-viewed' className='flex w-full flex-col gap-4'>
+      <h2 className='font-display text-lg font-medium text-foreground'>Recently Viewed</h2>
+      <div className='grid w-full grid-cols-2 gap-4 sm:grid-cols-[repeat(auto-fill,minmax(200px,248px))]'>
         {gameIds.map((gameId) => (
           <RecentlyViewedCard key={gameId} gameId={gameId} />
         ))}
