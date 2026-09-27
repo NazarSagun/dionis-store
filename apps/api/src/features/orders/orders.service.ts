@@ -250,6 +250,22 @@ export class OrdersService {
     return { items, total, page, pageSize }
   }
 
+  // Every customer's orders, for the admin panel. Newest first; id breaks ties.
+  async listAllOrders(page: number, pageSize: number, email?: string) {
+    const where: Prisma.OrderWhereInput = email ? { user: { email: { contains: email, mode: 'insensitive' } } } : {}
+    const [items, total] = await Promise.all([
+      this.prisma.order.findMany({
+        where,
+        include: { ...ORDER_ITEMS_INCLUDE, user: { select: { email: true } } },
+        orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
+        skip: (page - 1) * pageSize,
+        take: pageSize,
+      }),
+      this.prisma.order.count({ where }),
+    ])
+    return { items, total, page, pageSize }
+  }
+
   // What a game page needs to show "Already in Library", without loading
   // every order. editionId is null for a digital purchase.
   async getOwnedItems(email: string) {

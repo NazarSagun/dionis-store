@@ -5,17 +5,26 @@
  * OpenAPI spec version: 1.0.0
  */
 
+export * from './adminOrderObject';
+export * from './adminOrderObjectAllOf';
+export * from './adminOrderObjectAllOfUser';
+export * from './adminOrdersPage';
 export * from './authErrorMessage';
 export * from './authErrorMessageUser';
 export * from './changePasswordInput';
 export * from './confirmOrderBody';
 export * from './createPaymentIntentBody';
 export * from './deleteUserBody';
+export * from './editionInput';
+export * from './editionUpdateInput';
 export * from './errorMessage';
 export * from './gameEditionObject';
+export * from './gameInput';
 export * from './gameObject';
+export * from './gameUpdateInput';
 export * from './gamesArray';
 export * from './genreCount';
+export * from './getAdminOrdersParams';
 export * from './getGamesEdition';
 export * from './getGamesParams';
 export * from './getGamesPlatform';

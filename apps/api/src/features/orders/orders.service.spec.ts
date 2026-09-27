@@ -392,6 +392,34 @@ describe('OrdersService', () => {
     })
   })
 
+  describe('listAllOrders', () => {
+    it('pages through every customer\u2019s orders, newest first, with each email', async () => {
+      prisma.order.findMany.mockResolvedValue([{ id: 9 }])
+      prisma.order.count.mockResolvedValue(41)
+
+      await expect(service.listAllOrders(3, 20)).resolves.toEqual({
+        items: [{ id: 9 }],
+        total: 41,
+        page: 3,
+        pageSize: 20,
+      })
+      const [args] = prisma.order.findMany.mock.calls[0]
+      expect(args).toMatchObject({ where: {}, skip: 40, take: 20, orderBy: [{ createdAt: 'desc' }, { id: 'desc' }] })
+      expect(args.include.user).toEqual({ select: { email: true } })
+    })
+
+    it('filters by a case-insensitive fragment of the customer email', async () => {
+      prisma.order.findMany.mockResolvedValue([])
+      prisma.order.count.mockResolvedValue(0)
+
+      await service.listAllOrders(1, 20, 'ALEX@')
+
+      const where = { user: { email: { contains: 'ALEX@', mode: 'insensitive' } } }
+      expect(prisma.order.findMany).toHaveBeenCalledWith(expect.objectContaining({ where }))
+      expect(prisma.order.count).toHaveBeenCalledWith({ where })
+    })
+  })
+
   describe('getOwnedItems', () => {
     it('returns each distinct game and edition the user bought, across every order', async () => {
       const owned = [

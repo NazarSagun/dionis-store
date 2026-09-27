@@ -8,9 +8,9 @@ export function refreshAccessToken(): Promise<string | null> {
   if (!refreshPromise) {
     refreshPromise = refresh()
       .then((result) => {
-        const { accessToken, name } = result.user ?? {}
+        const { accessToken, name, role } = result.user ?? {}
         if (!accessToken || !name) return null
-        useAuthStore.getState().login(accessToken, name)
+        useAuthStore.getState().login(accessToken, name, role)
         return accessToken
       })
       .catch(() => {

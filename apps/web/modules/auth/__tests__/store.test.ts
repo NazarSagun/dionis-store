@@ -23,7 +23,16 @@ describe('useAuthStore', () => {
     expect(JSON.parse(localStorage.getItem('auth-storage') ?? '{}').state).toEqual({
       isAuthenticated: true,
       accessToken: '123',
+      role: null,
     })
+  })
+
+  it('Should keep the role from login so admin UI can show, and clear it on logout', () => {
+    useAuthStore.getState().login('123', 'admin', 500)
+    expect(useAuthStore.getState().role).toBe(500)
+
+    useAuthStore.getState().logout()
+    expect(useAuthStore.getState().role).toBeNull()
   })
 
   it('Should log out and clear state correctly', () => {
@@ -38,6 +47,7 @@ describe('useAuthStore', () => {
     expect(JSON.parse(localStorage.getItem('auth-storage') ?? '{}').state).toEqual({
       isAuthenticated: false,
       accessToken: null,
+      role: null,
     })
   })
 

@@ -15,7 +15,7 @@ expect.extend(matchers)
 afterEach(() => {
   cleanup()
   localStorage.clear()
-  useAuthStore.setState({ isAuthenticated: false, accessToken: null, user: null })
+  useAuthStore.setState({ isAuthenticated: false, accessToken: null, user: null, role: null })
   useCartStore.setState({ items: [], currentStep: 1, orderId: null, isDrawerOpen: false })
   useRecentlyViewedStore.setState({ gameIds: [] })
 })

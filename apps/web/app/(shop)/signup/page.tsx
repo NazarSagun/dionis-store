@@ -18,7 +18,7 @@ const SignUpPage = () => {
   const { mutate, isPending } = useRegister({
     mutation: {
       onSuccess: (data) => {
-        login(data.user?.accessToken as string, data.user?.name as string)
+        login(data.user?.accessToken as string, data.user?.name as string, data.user?.role)
         router.push('/')
       },
       onError: (error) => {

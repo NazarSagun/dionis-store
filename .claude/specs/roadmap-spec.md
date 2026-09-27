@@ -131,28 +131,13 @@ The genre values are not clean: "Card" and "Card Game", "MMO" and "MMORPG" are s
 
 ### 2.1 Admin panel
 
-#### Description
+Built from `.claude/specs/app/admin-panel-spec.md`, which is the source of truth for this feature. In short:
 
-A user with the `Admin` or `Editor` role manages the catalog from the storefront. Today, only the seed script and `POST /api/games` change the catalog.
-
-#### Acceptance criteria
-
-- An admin can create, edit, and delete a game, and can set its price and discount.
-- An admin can create and edit editions, including stock.
-- An admin can see all orders and filter them by status.
-- A user with the `User` role gets `403` on every admin route and cannot open `/admin`.
-
-#### Implementation plan
-
-1. API: add `PATCH /api/games/:id`, `DELETE /api/games/:id`, `POST /api/games/:id/editions`, `PATCH /api/editions/:id`, and `GET /api/admin/orders`. Use `@Roles(Roles.Admin, Roles.Editor)` for the catalog routes and `@Roles(Roles.Admin)` for orders.
-2. A game with orders cannot be deleted, because `OrderItem` references it. Add an `archived Boolean @default(false)` field to `Game_pc` and exclude archived games from the storefront queries.
-3. Web: add an `app/admin` route group and a new `modules/admin` module. Guard the route group in its layout with the role from the auth store. Use tables and forms from `@repo/ui`.
-4. The web role check is a convenience only. The API guard is the real check.
-
-#### Out of scope
-
-- Image upload. Admins enter a thumbnail URL, as the seed does.
-- Audit logs.
+- Admin role only (`500`). `Editor` stays unused.
+- `/admin/games`: a paged table with title search, one form to create and edit a game, and its physical editions on the edit page.
+- Deleting a game or an edition is blocked with `409` if any order references it. There is no archive flag.
+- `Game_pc.id` auto-increments. The migration starts the sequence after the highest FreeToGame id.
+- `/admin/orders`: a read-only list of every order, with search by customer email.
 
 ### 2.2 Email receipts and activation codes
 

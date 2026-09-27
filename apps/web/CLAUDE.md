@@ -4,7 +4,7 @@ This file extends the root `CLAUDE.md`. It holds rules specific to the Next.js s
 
 ## Module folder shape
 
-Each module lives under `modules/<name>` (`account`, `auth`, `cart`, `games`, `wishlist`). This follows `.claude/rules/frontennd-architecture.md`. A module can have four folders. `domain/` holds types and pure business logic. `core/` holds `store.ts` for the zustand store and `facade.ts` for the selector and trigger hooks that components use. `integration/` holds `repository.ts`, a thin re-export seam around `packages/dionis-api` hooks and DTO types. `presentation/` holds one folder per component.
+Each module lives under `modules/<name>` (`account`, `admin`, `auth`, `cart`, `games`, `wishlist`). This follows `.claude/rules/frontennd-architecture.md`. A module can have four folders. `domain/` holds types and pure business logic. `core/` holds `store.ts` for the zustand store and `facade.ts` for the selector and trigger hooks that components use. `integration/` holds `repository.ts`, a thin re-export seam around `packages/dionis-api` hooks and DTO types. `presentation/` holds one folder per component.
 
 A module with no client state, such as `games`, has no `core/` folder.
 
