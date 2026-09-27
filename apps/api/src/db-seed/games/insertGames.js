@@ -51,7 +51,7 @@ exports.insertGamesData = void 0;
 var fs = require("fs");
 var path = require("path");
 var insertGamesData = function (prismaClient) { return __awaiter(void 0, void 0, void 0, function () {
-    var data, upadtedData, _i, upadtedData_1, item, id, title, thumbnail, short_description, game_url, genre, platform, publisher, developer, release_date, freetogame_profile_url, price, rating, discount, error_1;
+    var data, upadtedData, _i, upadtedData_1, item, id, title, thumbnail, short_description, genre, platform, publisher, developer, release_date, price, rating, discount, error_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -65,20 +65,18 @@ var insertGamesData = function (prismaClient) { return __awaiter(void 0, void 0,
             case 1:
                 if (!(_i < upadtedData_1.length)) return [3 /*break*/, 4];
                 item = upadtedData_1[_i];
-                id = item.id, title = item.title, thumbnail = item.thumbnail, short_description = item.short_description, game_url = item.game_url, genre = item.genre, platform = item.platform, publisher = item.publisher, developer = item.developer, release_date = item.release_date, freetogame_profile_url = item.freetogame_profile_url, price = item.price, rating = item.rating, discount = item.discount;
+                id = item.id, title = item.title, thumbnail = item.thumbnail, short_description = item.short_description, genre = item.genre, platform = item.platform, publisher = item.publisher, developer = item.developer, release_date = item.release_date, price = item.price, rating = item.rating, discount = item.discount;
                 return [4 /*yield*/, prismaClient.game_pc.create({
                         data: {
                             id: id,
                             title: title,
                             thumbnail: thumbnail,
                             short_description: short_description,
-                            game_url: game_url,
                             genre: genre,
                             platform: platform,
                             publisher: publisher,
                             developer: developer,
                             release_date: release_date,
-                            freetogame_profile_url: freetogame_profile_url,
                             price: price,
                             rating: rating,
                             discount: discount,

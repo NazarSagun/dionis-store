@@ -12,8 +12,6 @@ export interface GameInput {
    * @maximum 100
    */
   discount: number;
-  freetogame_profile_url: string;
-  game_url: string;
   genre: string;
   /** Only the seed script sends one */
   id?: number;

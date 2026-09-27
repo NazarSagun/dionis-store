@@ -12,8 +12,6 @@ export interface GameObject {
   /** Number of physical editions. Present on the paged games list. */
   editionCount?: number;
   editions?: GameEditionObject[];
-  freetogame_profile_url: string;
-  game_url: string;
   genre: string;
   id: number;
   platform: string;

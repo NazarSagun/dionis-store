@@ -21,11 +21,6 @@ export class UpdateGameDto {
   @IsOptional()
   @IsString()
   @IsNotEmpty()
-  game_url?: string
-
-  @IsOptional()
-  @IsString()
-  @IsNotEmpty()
   @MaxLength(50)
   genre?: string
 
@@ -48,11 +43,6 @@ export class UpdateGameDto {
   @IsString()
   @IsNotEmpty()
   release_date?: string
-
-  @IsOptional()
-  @IsString()
-  @IsNotEmpty()
-  freetogame_profile_url?: string
 
   @IsOptional()
   @IsInt()

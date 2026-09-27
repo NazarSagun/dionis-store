@@ -33,8 +33,6 @@ const FIELDS: { key: FieldKey; label: string; wide?: boolean; multiline?: boolea
   { key: 'price', label: 'List price (€)', numeric: true },
   { key: 'discount', label: 'Discount (%)', numeric: true },
   { key: 'thumbnail', label: 'Thumbnail URL', wide: true },
-  { key: 'game_url', label: 'Game URL' },
-  { key: 'freetogame_profile_url', label: 'FreeToGame profile URL' },
 ]
 
 type Values = Record<FieldKey, string>

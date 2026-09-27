@@ -23,10 +23,6 @@ export class CreateGameDto {
 
   @IsString()
   @IsNotEmpty()
-  game_url: string
-
-  @IsString()
-  @IsNotEmpty()
   @MaxLength(50)
   genre: string
 
@@ -45,10 +41,6 @@ export class CreateGameDto {
   @IsString()
   @IsNotEmpty()
   release_date: string
-
-  @IsString()
-  @IsNotEmpty()
-  freetogame_profile_url: string
 
   @IsInt()
   @Min(0)

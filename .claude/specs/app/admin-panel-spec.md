@@ -102,7 +102,7 @@ One form, used both to create a game and to edit one.
 
 ### Requirements
 
-1. The fields are: title, thumbnail URL, short description, genre, platform, publisher, developer, release date, game URL, FreeToGame profile URL, list price, rating, and discount. Every field is required, as it is in `CreateGameDto`.
+1. The fields are: title, thumbnail URL, short description, genre, platform, publisher, developer, release date, list price, rating, and discount. Every field is required, as it is in `CreateGameDto`.
 2. Each field has a visible `<label>`, so a field can be found by its label.
 3. Price is a whole number of euros, 0 or more. Discount is a whole number from 0 to 100. Rating is text, such as `4.42`, as it is stored today.
 4. The API validates every field. The form shows the API's message for an invalid field or a duplicate title (`409`) above the Save button, and stays open.
