@@ -102,7 +102,7 @@ test.describe('Cart support for editions', () => {
     const digitalRow = page.getByTestId('cart-item').filter({ hasNot: page.getByTestId('cart-item-edition') })
 
     await physicalRow.getByTestId('select').click()
-    await page.getByTestId('option-2').click()
+    await page.getByTestId('quantity-option').filter({ hasText: /^2$/ }).click()
 
     await expect(physicalRow.getByTestId('select')).toHaveText('2')
     await expect(digitalRow.getByTestId('select')).toHaveText('1')
