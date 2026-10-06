@@ -8,8 +8,11 @@ module.exports = {
   // usual.
   distDir: process.env.NEXT_BUILD_DIR || '.next',
   transpilePackages: ['@repo/ui'],
-  env: {
-    base_url: 'http://localhost:3000'
+  // Self-contained server bundle for the Docker image. The tracing root is the
+  // monorepo root so the workspace packages are copied into the bundle too.
+  output: 'standalone',
+  experimental: {
+    outputFileTracingRoot: require('path').join(__dirname, '../../'),
   },
   images: {
     remotePatterns: [
