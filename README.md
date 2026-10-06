@@ -106,6 +106,15 @@ Run the following command from the repository root to typecheck all apps.
 pnpm typecheck
 ```
 
+## Single-host deployment
+
+`docker-compose.prod.yml` runs Postgres, the API, and the web app on one machine, for example one EC2 instance. Copy the variables listed under `docker-compose.prod.yml` in `.env.example` into `.env.prod`. Set `NEXT_PUBLIC_BASE_URL` to the public API origin and `CLIENT_URL` to the public web origin.
+
+```sh
+docker compose -f docker-compose.prod.yml --env-file .env.prod up -d --build
+docker compose -f docker-compose.prod.yml --env-file .env.prod run --rm api pnpm exec prisma migrate deploy
+```
+
 ## Continuous integration
 
 The workflow at `.github/workflows/pr-workflow.yml` runs on every pull request into `main`. It has two jobs.
