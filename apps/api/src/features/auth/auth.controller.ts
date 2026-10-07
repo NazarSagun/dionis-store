@@ -1,3 +1,5 @@
+import { Throttle } from '@nestjs/throttler'
+import { AUTH_THROTTLE } from '../../common/throttle/auth-throttle'
 import { Body, Controller, Get, HttpCode, Post, Req, Res } from '@nestjs/common'
 import { Request, Response } from 'express'
 import { AuthService } from './auth.service'
@@ -12,6 +14,7 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('register')
+  @Throttle(AUTH_THROTTLE)
   @HttpCode(201)
   async register(@Body() dto: RegisterDto, @Res({ passthrough: true }) res: Response) {
     try {
@@ -28,6 +31,7 @@ export class AuthController {
   }
 
   @Post('login')
+  @Throttle(AUTH_THROTTLE)
   @HttpCode(201)
   async login(@Body() dto: LoginDto, @Res({ passthrough: true }) res: Response) {
     try {

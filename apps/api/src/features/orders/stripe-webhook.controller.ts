@@ -1,3 +1,4 @@
+import { SkipThrottle } from '@nestjs/throttler'
 import { Controller, Headers, HttpCode, Logger, Post, RawBodyRequest, Req } from '@nestjs/common'
 import { Request } from 'express'
 import Stripe from 'stripe'
@@ -8,6 +9,7 @@ import { StripeService } from './stripe.service'
 
 // Its own controller because OrdersController guards every route with a JWT.
 // Stripe authenticates with a signature over the raw body instead.
+@SkipThrottle()
 @Controller('orders/webhook')
 export class StripeWebhookController {
   private readonly logger = new Logger(StripeWebhookController.name)
