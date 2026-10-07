@@ -19,13 +19,7 @@ const steps = [
   },
 ]
 
-export const CartNavigation = ({
-  activeStep,
-  onStepClick,
-}: {
-  activeStep: number
-  onStepClick: (step: number) => void
-}) => {
+export const CartNavigation = ({ activeStep }: { activeStep: number }) => {
   return (
     <nav className='flex min-h-[10vh] flex-wrap items-center justify-between gap-y-3 border-b border-ink bg-background px-4 py-3 sm:px-8 lg:px-[35px]'>
       <div>
@@ -38,15 +32,8 @@ export const CartNavigation = ({
           const isActive = activeStep === item.number
           return (
             <Fragment key={item.number}>
-              <button
-                type='button'
-                disabled={activeStep <= item.number}
-                onClick={() => onStepClick(item.number)}
-                className={cn(
-                  'flex items-center opacity-50 pointer-events-none',
-                  activeStep > item.number && 'pointer-events-auto cursor-pointer',
-                  isActive && 'opacity-100',
-                )}
+              <div
+                className={cn('flex items-center opacity-50', isActive && 'opacity-100')}
                 aria-label={`${isActive ? 'active' : 'inactive'} step`}
                 data-testid='cart-navigation-step'
               >
@@ -67,7 +54,7 @@ export const CartNavigation = ({
                   {item.number}
                 </span>
                 <span className='hidden text-base text-foreground sm:inline'>{item.title}</span>
-              </button>
+              </div>
             </Fragment>
           )
         })}
