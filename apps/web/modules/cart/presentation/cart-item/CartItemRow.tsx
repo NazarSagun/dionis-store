@@ -44,15 +44,13 @@ export const CartItemRow = ({
         </div>
         <div className='flex items-center gap-4'>
           <button
+            type='button'
             className={cn(dividerAfter, 'font-mono text-[0.8rem] text-foreground')}
             onClick={() => removeItem(id, editionId)}
           >
             <Image width={24} height={24} alt='delete item' src='/icons/trash-can.svg' />
           </button>
-          <button
-            className={cn(dividerAfter, 'font-mono text-[0.8rem] text-foreground')}
-            onClick={() => console.log(id)}
-          >
+          <button type='button' className={cn(dividerAfter, 'font-mono text-[0.8rem] text-foreground')}>
             Move to Wishlist
           </button>
         </div>

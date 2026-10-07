@@ -23,7 +23,7 @@ export const ActivationRow = ({ orderId, item }: ActivationRowProps) => {
   const { mutate: activate, isPending } = useActivateOrderItem()
 
   const onCopy = () => {
-    navigator.clipboard.writeText(item.activationCode as string)
+    void navigator.clipboard.writeText(item.activationCode as string)
   }
 
   const onMarkActivated = () => {
@@ -36,8 +36,8 @@ export const ActivationRow = ({ orderId, item }: ActivationRowProps) => {
           // every order at once, its own key). Invalidate both: whichever one
           // isn't mounted right now is simply not being watched, so this is a
           // no-op there, not an extra request.
-          queryClient.invalidateQueries({ queryKey: getGetOrderQueryKey(orderId) })
-          queryClient.invalidateQueries({ queryKey: getGetOrdersQueryKey() })
+          void queryClient.invalidateQueries({ queryKey: getGetOrderQueryKey(orderId) })
+          void queryClient.invalidateQueries({ queryKey: getGetOrdersQueryKey() })
         },
       },
     )

@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { Button, Skeleton } from '@repo/ui'
 
 import { adminButtonText, adminInput, adminLabel, adminPanel } from '../../domain/styles'
-import { GameObject, useGetGames } from '../../integration/repository'
+import { useGetGames } from '../../integration/repository'
 
 const SEARCH_DEBOUNCE_MS = 300
 const headerCell = 'px-6 py-3 text-left font-sans text-xs font-semibold uppercase tracking-wide text-muted-foreground'
@@ -27,7 +27,7 @@ export const GamesTable = () => {
   }, [typed])
 
   const { data, isLoading, isError } = useGetGames(page, { search })
-  const games = (data?.games ?? []) as GameObject[]
+  const games = data?.games ?? []
   const totalPages = data?.totalPages ?? 1
 
   return (
@@ -78,7 +78,7 @@ export const GamesTable = () => {
         </table>
         {isLoading && (
           <div className='flex flex-col gap-2 p-4'>
-            {Array.from({ length: 6 }).map((_, index) => (
+            {Array.from({ length: 6 }, (_, index) => index).map((index) => (
               <Skeleton key={index} className='h-10 w-full' />
             ))}
           </div>

@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
+import { fn } from '@storybook/test'
 
 import { AuthForm, FormVariant } from './AuthForm'
 
@@ -12,9 +13,7 @@ const meta = {
   args: {
     isLoading: false,
     variant: FormVariant.LOGIN,
-    onSubmitForm(userData) {
-      console.log(userData)
-    },
+    onSubmitForm: fn(),
   },
   argTypes: {
     variant: {

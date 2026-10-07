@@ -19,7 +19,7 @@ export const LibrarySection = () => {
       <div className='w-full'>
         {isLoading && (
           <div className='flex flex-col gap-4'>
-            {Array.from({ length: 2 }).map((_, index) => (
+            {Array.from({ length: 2 }, (_, index) => index).map((index) => (
               <Skeleton key={index} className='h-[88px] w-full' />
             ))}
           </div>

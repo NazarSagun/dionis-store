@@ -35,7 +35,7 @@ const SignUpPage = () => {
     if (isAuthenticated) {
       router.push('/')
     }
-  }, [])
+  }, [isAuthenticated, router])
 
   return (
     <div className='min-h-[75vh]'>

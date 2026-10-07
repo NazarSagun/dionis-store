@@ -1,4 +1,5 @@
 const { resolve } = require("node:path");
+const { base, typescript, noHardcodedHost } = require("./shared-rules");
 
 const project = resolve(process.cwd(), "tsconfig.json");
 
@@ -14,8 +15,22 @@ const project = resolve(process.cwd(), "tsconfig.json");
 
 /** @type {import("eslint").Linter.Config} */
 module.exports = {
-  extends: ["eslint:recommended", "prettier", "eslint-config-turbo"],
+  extends: [
+    "eslint:recommended",
+    "prettier",
+    require.resolve("@vercel/style-guide/eslint/react"),
+    "eslint-config-turbo",
+  ],
   plugins: ["only-warn"],
+  rules: {
+    ...base,
+    // Style-only rules from the Vercel React preset. See next.js.
+    "react/jsx-sort-props": "off",
+    "react/function-component-definition": "off",
+    "react/jsx-no-leaked-render": "off",
+    "react/no-danger": "error",
+    "no-restricted-syntax": ["error", noHardcodedHost],
+  },
   env: {
     browser: true,
   },
@@ -38,10 +53,7 @@ module.exports = {
     {
       files: ["*.ts", "*.tsx"],
       plugins: ["@typescript-eslint"],
-      rules: {
-        "no-unused-vars": "off",
-        "@typescript-eslint/no-unused-vars": "warn",
-      },
+      rules: typescript,
     },
   ],
 };

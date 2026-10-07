@@ -1,7 +1,6 @@
 'use client'
 
 import { Suspense } from 'react'
-import { GameObject } from '@repo/dionis-api/src/model'
 import { Skeleton } from '@repo/ui'
 
 import { Footer } from '@/components/footer/Footer'
@@ -70,27 +69,25 @@ function HomeContent() {
               data-testid='games-skeleton'
               className='grid w-full grid-cols-2 gap-6 pt-16 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5'
             >
-              {Array.from({ length: 10 }).map((_, index) => (
+              {Array.from({ length: 10 }, (_, index) => index).map((index) => (
                 <Skeleton key={index} className='aspect-[3/4] w-full' />
               ))}
             </div>
           )}
           {!isLoading && data && (
-            <>
-              <div data-testid='game-library' className='w-full'>
-                <h2 className='w-full pt-16 font-display text-2xl font-bold text-foreground'>All Games</h2>
-                <div className='w-full pt-10'>
-                  {data.games?.length ? (
-                    <GamesList gamesList={data.games as GameObject[]} />
-                  ) : (
-                    <GamesEmpty search={filters.search} onClearFilters={clearFilters} />
-                  )}
-                </div>
+            <div data-testid='game-library' className='w-full'>
+              <h2 className='w-full pt-16 font-display text-2xl font-bold text-foreground'>All Games</h2>
+              <div className='w-full pt-10'>
                 {data.games?.length ? (
-                  <GamesPagination currentPage={page} totalPages={data.totalPages as number} onChange={setPage} />
-                ) : null}
+                  <GamesList gamesList={data.games} />
+                ) : (
+                  <GamesEmpty search={filters.search} onClearFilters={clearFilters} />
+                )}
               </div>
-            </>
+              {data.games?.length ? (
+                <GamesPagination currentPage={page} totalPages={data.totalPages as number} onChange={setPage} />
+              ) : null}
+            </div>
           )}
           {!isLoading && isError && <p className='pt-20'>Something went wrong loading games. Please try again.</p>}
         </div>

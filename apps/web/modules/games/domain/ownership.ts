@@ -1,4 +1,4 @@
-import { OwnedItem } from '@repo/dionis-api/src/model'
+import { OwnedItem } from '../integration/repository'
 
 // editionId is null for a digital purchase.
 export function isGameOwned(owned: OwnedItem[] | undefined, gameId: number, editionId: number | null): boolean {

@@ -1,8 +1,8 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import { GameObject } from '@repo/dionis-api/src/model'
 
 import { calculateDiscountedPrice } from '../../domain/pricing'
+import { GameObject } from '../../integration/repository'
 import { RatingBadge } from '../rating-badge/RatingBadge'
 
 interface TopDealsProps {

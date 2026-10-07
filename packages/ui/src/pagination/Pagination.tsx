@@ -41,6 +41,7 @@ type PaginationLinkProps = {
 
 const PaginationLink = ({ className, isActive, size = 'icon', ...props }: PaginationLinkProps) => (
   <button
+    type='button'
     aria-current={isActive ? 'page' : undefined}
     className={cn(
       'cursor-pointer font-display text-xs',

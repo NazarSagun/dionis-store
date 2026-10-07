@@ -2,10 +2,10 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { useLogout } from '@repo/dionis-api/src/dionis/default/default'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@repo/ui'
 
 import { useAuthLogout, useAuthUser, useIsAdmin, useIsAuthenticated } from '@/modules/auth/core/facade'
+import { useLogout } from '@/modules/auth/integration/repository'
 import { useCartItems, useOpenCartDrawer } from '@/modules/cart/core/facade'
 
 const menuItemStyles =
@@ -34,7 +34,7 @@ export const MainNavigation = () => {
         </button>
         <DropdownMenu>
           <DropdownMenuTrigger data-testid='account-menu-trigger' aria-label='Account menu'>
-            <Image priority={true} width={32} height={32} alt='logo' src={`/icons/account.svg`} />
+            <Image priority width={32} height={32} alt='logo' src='/icons/account.svg' />
           </DropdownMenuTrigger>
           <DropdownMenuContent align='end' className='border-ink bg-panel-alt'>
             {isUserAuth ? (
@@ -55,7 +55,7 @@ export const MainNavigation = () => {
                 <DropdownMenuItem
                   className={menuItemStyles}
                   onClick={() => {
-                    logout()
+                    void logout()
                     clearAuth()
                   }}
                 >

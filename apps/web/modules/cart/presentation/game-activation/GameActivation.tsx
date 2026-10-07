@@ -22,7 +22,7 @@ export const GameActivation = () => {
       >
         <Skeleton className='h-8 w-64' />
         <div className='flex w-full max-w-[900px] flex-col gap-4'>
-          {Array.from({ length: 3 }).map((_, index) => (
+          {Array.from({ length: 3 }, (_, index) => index).map((index) => (
             <Skeleton key={index} className='h-[88px] w-full' />
           ))}
         </div>

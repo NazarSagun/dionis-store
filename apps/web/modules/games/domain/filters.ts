@@ -1,4 +1,4 @@
-import { GetGamesEdition, GetGamesPlatform, GetGamesSort } from '@repo/dionis-api/src/model'
+import { GetGamesEdition, GetGamesPlatform, GetGamesSort } from '../integration/repository'
 
 // The home page's filters, as they live in the URL query string. A value the
 // API would reject (an unknown platform, a non-numeric price) is dropped
@@ -60,7 +60,7 @@ export function parseGamesFilters(params: URLSearchParams): GamesFilters {
 // Page 1 and empty values are left out, so the plain home page is "/".
 export function toQueryString(filters: GamesFilters) {
   const params = new URLSearchParams()
-  const entries: [string, string | number | undefined][] = [
+  const entries: Array<[string, string | number | undefined]> = [
     ['search', filters.search],
     ['platform', filters.platform],
     ['genre', filters.genre],

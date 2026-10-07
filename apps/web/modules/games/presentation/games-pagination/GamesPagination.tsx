@@ -85,9 +85,9 @@ export const GamesPagination = ({ totalPages, onChange, currentPage }: Paginatio
             disabled={currentPage === 1}
           />
         </PaginationItem>
-        {pageNumbers.map((page, index) =>
+        {pageNumbers.map((page) =>
           typeof page === 'number' ? (
-            <PaginationItem onClick={() => handlePageChange(page)} key={index}>
+            <PaginationItem onClick={() => handlePageChange(page)} key={page}>
               <PaginationLink isActive={currentPage === page}>{page}</PaginationLink>
             </PaginationItem>
           ) : (

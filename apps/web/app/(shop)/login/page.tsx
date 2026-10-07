@@ -35,7 +35,7 @@ const LoginPage = () => {
     if (isAuthenticated) {
       router.push('/')
     }
-  }, [])
+  }, [isAuthenticated, router])
 
   useEffect(() => {
     if (searchParams.get('sessionExpired') === '1') {
@@ -46,7 +46,7 @@ const LoginPage = () => {
       })
       router.replace('/login')
     }
-  }, [])
+  }, [searchParams, router, toast])
 
   return (
     <div className='min-h-[75vh]'>

@@ -1,4 +1,4 @@
-export type AuthUser = {
+export interface AuthUser {
   name: string
 }
 

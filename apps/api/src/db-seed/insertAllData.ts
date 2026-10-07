@@ -15,4 +15,4 @@ async function insertAllData() {
   }
 }
 
-insertAllData()
+void insertAllData()

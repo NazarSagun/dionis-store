@@ -1,6 +1,5 @@
 import { FormEvent, useState } from 'react'
 import { useToast } from '@repo/ui'
-import type { StripeError } from '@stripe/stripe-js'
 
 import { useCartItems, useRemoveCartItem, useSetCartOrderId, useSetCartStep } from '../../core/facade'
 import { useConfirmOrder, useSetShippingAddress } from '../../integration/repository'
@@ -87,7 +86,7 @@ export const PaymentForm = ({ finalPrice, paymentIntentId, hasPhysicalItem, ship
     })
 
     if (stripeError || paymentIntent?.status !== 'succeeded') {
-      setError((stripeError as StripeError | undefined)?.message ?? 'Payment could not be completed. Please try again.')
+      setError(stripeError?.message ?? 'Payment could not be completed. Please try again.')
       setIsSubmitting(false)
       return
     }

@@ -38,7 +38,9 @@ export const CartNavigation = ({
           const isActive = activeStep === item.number
           return (
             <Fragment key={item.number}>
-              <div
+              <button
+                type='button'
+                disabled={activeStep <= item.number}
                 onClick={() => onStepClick(item.number)}
                 className={cn(
                   'flex items-center opacity-50 pointer-events-none',
@@ -65,13 +67,13 @@ export const CartNavigation = ({
                   {item.number}
                 </span>
                 <span className='hidden text-base text-foreground sm:inline'>{item.title}</span>
-              </div>
+              </button>
             </Fragment>
           )
         })}
       </div>
       <div className='hidden items-center gap-[1.2rem] sm:flex'>
-        <Image priority={true} width={32} height={32} alt='logo' src={`/icons/lock.svg`} />
+        <Image priority width={32} height={32} alt='logo' src='/icons/lock.svg' />
         <div className="relative flex flex-col justify-start after:absolute after:left-[-0.8rem] after:top-1/2 after:h-[2.3rem] after:w-px after:-translate-y-1/2 after:bg-white/[0.137] after:content-['']">
           <span className='text-base text-white'>Secure payment</span>
           <span className='text-xs text-muted-foreground'>256-bit SSL Secured</span>

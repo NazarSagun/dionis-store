@@ -54,7 +54,7 @@ describe('<AuthForm />', () => {
   })
 
   it('Should disable submit button if loading', async () => {
-    const { getByRole } = render(<AuthForm {...formProps} variant={FormVariant.SIGNUP} isLoading={true} />)
+    const { getByRole } = render(<AuthForm {...formProps} variant={FormVariant.SIGNUP} isLoading />)
     const button = getByRole('button')
 
     expect(button).toBeDisabled()
@@ -90,7 +90,7 @@ describe('<AuthForm />', () => {
     expect(password.value).toBe('')
     expect(name.value).toBe('')
 
-    let expectedFormData = { email: 'test@mail.com', password: 'test', name: 'Adam' }
+    const expectedFormData = { email: 'test@mail.com', password: 'test', name: 'Adam' }
 
     expect(submittedFormData).toStrictEqual(expectedFormData)
   })

@@ -15,7 +15,13 @@ import {
 } from '../../integration/repository'
 import { ConfirmDialog } from '../confirm-dialog/ConfirmDialog'
 
-type EditionValues = { name: string; price: string; discount: string; stock: string; description: string }
+interface EditionValues {
+  name: string
+  price: string
+  discount: string
+  stock: string
+  description: string
+}
 
 const EMPTY: EditionValues = { name: '', price: '', discount: '0', stock: '0', description: '' }
 
@@ -138,10 +144,11 @@ export const EditionsSection = ({ gameId, editions }: EditionsSectionProps) => {
     deleteEdition(
       { id: deleting.id },
       {
-        onSuccess: async () => {
-          await refresh()
-          toast({ title: 'Edition deleted' })
-          setDeleting(null)
+        onSuccess: () => {
+          void refresh().then(() => {
+            toast({ title: 'Edition deleted' })
+            setDeleting(null)
+          })
         },
         onError: (error) => {
           setDeleting(null)
