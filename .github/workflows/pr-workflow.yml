@@ -6,6 +6,10 @@ on:
     branches:
       - main
 
+# The jobs only read the code. Nothing here pushes, comments, or deploys.
+permissions:
+  contents: read
+
 jobs:
   checks:
     runs-on: ubuntu-latest
@@ -21,7 +25,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '21.7.3'
+          node-version: '20.19.5'
           cache: 'pnpm'
 
       - name: Install dependencies
@@ -91,6 +95,8 @@ jobs:
       E2E_API_URL: http://localhost:3500
       E2E_ADMIN_EMAIL: seed-admin@dionis-store.local
       E2E_ADMIN_PASSWORD: seed-admin-password
+      SEED_ADMIN_EMAIL: seed-admin@dionis-store.local
+      SEED_ADMIN_PASSWORD: seed-admin-password
 
     steps:
       - name: Checkout code
@@ -102,7 +108,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '21.7.3'
+          node-version: '20.19.5'
           cache: 'pnpm'
 
       - name: Install dependencies

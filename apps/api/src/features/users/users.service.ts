@@ -1,14 +1,22 @@
 import { Injectable } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
 import * as bcrypt from 'bcrypt'
 import { PrismaService } from '../../common/prisma/prisma.service'
 import { CustomError } from '../../common/errors/custom-error'
+import { Role } from '../../common/types/roles'
+import { createRefreshToken, getDecodedDto } from '../auth/auth-token.util'
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly configService: ConfigService,
+  ) {}
 
   async findAll() {
-    return this.prisma.user.findMany()
+    return this.prisma.user.findMany({
+      select: { id: true, name: true, email: true, role: true, createdAt: true },
+    })
   }
 
   async updateName(email: string, name: string) {
@@ -32,8 +40,15 @@ export class UsersService {
       throw new CustomError('Current password is incorrect', 400)
     }
 
+    // A new refresh token replaces the stored one, so a token stolen before
+    // the change stops working. The caller sets it as this session's cookie.
     const hashedPassword = await bcrypt.hash(newPassword, 10)
-    await this.prisma.user.update({ where: { email }, data: { password: hashedPassword } })
+    const refreshToken = createRefreshToken(
+      getDecodedDto(email, user.role as Role),
+      this.configService.getOrThrow<string>('REFRESH_TOKEN'),
+    )
+    await this.prisma.user.update({ where: { email }, data: { password: hashedPassword, refreshToken } })
+    return { refreshToken }
   }
 
   async remove(id: number) {

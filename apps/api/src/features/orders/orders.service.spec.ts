@@ -99,7 +99,7 @@ describe('OrdersService', () => {
 
     it('adds the flat shipping fee once when the cart holds a physical edition', async () => {
       prisma.game_pc.findMany.mockResolvedValue([{ id: 1, price: 50, discount: 0 }])
-      prisma.gameEdition.findMany.mockResolvedValue([{ id: 10, price: 69, discount: 0 }])
+      prisma.gameEdition.findMany.mockResolvedValue([{ id: 10, gameId: 1, price: 69, discount: 0 }])
       stripe.createPaymentIntent.mockResolvedValue({ client_secret: 'secret_789' })
 
       await service.createPaymentIntent(user.email, [
@@ -109,6 +109,16 @@ describe('OrdersService', () => {
 
       // 50*100 digital + 69*100 physical + the 500-cent flat fee = 12400
       expect(stripe.createPaymentIntent).toHaveBeenCalledWith(12400, expect.any(Object))
+    })
+
+    it("rejects an edition bought under another game's id", async () => {
+      prisma.game_pc.findMany.mockResolvedValue([{ id: 2, price: 200, discount: 0 }])
+      prisma.gameEdition.findMany.mockResolvedValue([{ id: 10, gameId: 1, price: 5, discount: 0 }])
+
+      await expect(
+        service.createPaymentIntent(user.email, [{ gameId: 2, quantity: 1, editionId: 10 }]),
+      ).rejects.toThrow('Edition 10 does not exist for game 2')
+      expect(stripe.createPaymentIntent).not.toHaveBeenCalled()
     })
 
     it('charges no shipping fee for a digital-only cart', async () => {
@@ -139,7 +149,7 @@ describe('OrdersService', () => {
 
     it('looks up ownership by the exact (gameId, editionId) pair for every cart line', async () => {
       prisma.game_pc.findMany.mockResolvedValue([{ id: 1, price: 50, discount: 0 }])
-      prisma.gameEdition.findMany.mockResolvedValue([{ id: 10, price: 69, discount: 0 }])
+      prisma.gameEdition.findMany.mockResolvedValue([{ id: 10, gameId: 1, price: 69, discount: 0 }])
       stripe.createPaymentIntent.mockResolvedValue({ client_secret: 'secret_ok' })
 
       await service.createPaymentIntent(user.email, [
@@ -228,7 +238,7 @@ describe('OrdersService', () => {
     })
 
     it('returns the existing order instead of creating a duplicate for the same PaymentIntent', async () => {
-      const existingOrder = { id: 1, items: [] }
+      const existingOrder = { id: 1, userId: user.id, items: [] }
       prisma.order.findUnique.mockResolvedValue(existingOrder)
 
       const result = await service.confirmOrder(user.email, 'pi_123')
@@ -238,8 +248,14 @@ describe('OrdersService', () => {
       expect(prisma.order.create).not.toHaveBeenCalled()
     })
 
+    it("does not return another user's existing order", async () => {
+      prisma.order.findUnique.mockResolvedValue({ id: 1, userId: 2, items: [] })
+
+      await expect(service.confirmOrder(user.email, 'pi_123')).rejects.toThrow('Payment not found')
+    })
+
     it('orders the items by id when reading back an already-confirmed order', async () => {
-      prisma.order.findUnique.mockResolvedValue({ id: 1, items: [] })
+      prisma.order.findUnique.mockResolvedValue({ id: 1, userId: user.id, items: [] })
 
       await service.confirmOrder(user.email, 'pi_123')
 
@@ -294,7 +310,7 @@ describe('OrdersService', () => {
     })
 
     it('sends nothing for an order that already existed', async () => {
-      prisma.order.findUnique.mockResolvedValue({ id: 7, items: [] })
+      prisma.order.findUnique.mockResolvedValue({ id: 7, userId: user.id, items: [] })
 
       await service.confirmOrder(user.email, 'pi_123')
 
@@ -356,7 +372,7 @@ describe('OrdersService', () => {
     })
 
     it('creates no second order when /confirm already created one', async () => {
-      const confirmedOrder = { id: 3, items: [] }
+      const confirmedOrder = { id: 3, userId: user.id, items: [] }
       prisma.order.findUnique.mockResolvedValue(confirmedOrder)
 
       await expect(service.handlePaymentIntentSucceeded(paymentIntent() as never)).resolves.toBe(confirmedOrder)
@@ -368,7 +384,7 @@ describe('OrdersService', () => {
     beforeEach(() => {
       prisma.order.findUnique.mockResolvedValue(null)
       prisma.game_pc.findMany.mockResolvedValue([])
-      prisma.gameEdition.findMany.mockResolvedValue([{ id: 10, price: 69, discount: 0 }])
+      prisma.gameEdition.findMany.mockResolvedValue([{ id: 10, gameId: 1, price: 69, discount: 0 }])
       prisma.order.create.mockResolvedValue({ id: 1, items: [] })
     })
 
@@ -424,6 +440,23 @@ describe('OrdersService', () => {
         ...shippingAddress,
         shippingLine2: '',
       })
+    })
+
+    it('never writes a key outside the six shipping fields, such as items', async () => {
+      stripe.retrievePaymentIntent.mockResolvedValue(paymentIntent({ status: 'requires_payment_method' }))
+      const tampered = { ...shippingAddress, items: JSON.stringify([{ gameId: 99, quantity: 50 }]) }
+
+      await service.setShippingAddress(user.email, 'pi_123', tampered)
+
+      const [, metadata] = stripe.updatePaymentIntentMetadata.mock.calls[0]
+      expect(Object.keys(metadata).sort()).toEqual([
+        'shippingCity',
+        'shippingCountry',
+        'shippingLine1',
+        'shippingLine2',
+        'shippingName',
+        'shippingPostalCode',
+      ])
     })
 
     it('rejects a PaymentIntent that belongs to another user', async () => {

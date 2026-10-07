@@ -6,3 +6,7 @@ dist
 .git
 .turbo
 **/.turbo
+# Secrets stay out of every image layer. The containers get them at runtime.
+**/.env
+**/.env.*
+!**/.env.example

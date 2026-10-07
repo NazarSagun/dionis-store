@@ -84,7 +84,7 @@ To seed sample games into a running API, run the following command from `apps/ap
 pnpm seed:api
 ```
 
-This command reads `SEED_API_URL`, `SEED_ADMIN_NAME`, `SEED_ADMIN_EMAIL`, and `SEED_ADMIN_PASSWORD` from `apps/api/.env`.
+This command reads `SEED_API_URL`, `SEED_ADMIN_NAME`, `SEED_ADMIN_EMAIL`, and `SEED_ADMIN_PASSWORD` from `apps/api/.env`. `SEED_ADMIN_PASSWORD` has no default, and the seed stops if it is not set. The seed creates the admin account directly in the database. If an account with `SEED_ADMIN_EMAIL` already exists without the admin role, the seed stops and does not promote it. On a public deployment, set a long random password.
 
 ## Testing
 

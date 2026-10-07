@@ -15,7 +15,7 @@ services:
     tmpfs:
       - /var/lib/postgresql/data
     ports:
-      - "5433:5432"
+      - "127.0.0.1:5433:5432"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d dionis_store_e2e"]
       interval: 2s
@@ -26,5 +26,5 @@ services:
   mailpit:
     image: axllent/mailpit
     ports:
-      - "1026:1025"
-      - "8026:8025"
+      - "127.0.0.1:1026:1025"
+      - "127.0.0.1:8026:8025"

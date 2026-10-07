@@ -1,3 +1,4 @@
+import { ConfigService } from '@nestjs/config'
 import { Test } from '@nestjs/testing'
 import * as bcrypt from 'bcrypt'
 import { PrismaService } from '../../common/prisma/prisma.service'
@@ -17,7 +18,11 @@ describe('UsersService', () => {
     }
 
     const module = await Test.createTestingModule({
-      providers: [UsersService, { provide: PrismaService, useValue: prisma }],
+      providers: [
+        UsersService,
+        { provide: PrismaService, useValue: prisma },
+        { provide: ConfigService, useValue: { getOrThrow: () => 'test-refresh-secret' } },
+      ],
     }).compile()
 
     service = module.get(UsersService)
@@ -57,6 +62,27 @@ describe('UsersService', () => {
       expect(where).toEqual({ email: user.email })
       expect(data.password).not.toBe('newpassword456')
       expect(bcrypt.compareSync('newpassword456', data.password)).toBe(true)
+    })
+
+    it('replaces the stored refresh token, so a token stolen earlier stops working', async () => {
+      const result = await service.changePassword(user.email, 'password123', 'newpassword456')
+
+      const [[{ data }]] = prisma.user.update.mock.calls
+      expect(data.refreshToken).toEqual(expect.any(String))
+      expect(result).toEqual({ refreshToken: data.refreshToken })
+    })
+  })
+
+  describe('findAll', () => {
+    it('never selects the password hash or the refresh token', async () => {
+      const findMany = jest.fn().mockResolvedValue([])
+      Object.assign(prisma.user, { findMany })
+
+      await service.findAll()
+
+      const [[{ select }]] = findMany.mock.calls
+      expect(select.password).toBeUndefined()
+      expect(select.refreshToken).toBeUndefined()
     })
   })
 })
