@@ -18,7 +18,7 @@ pnpm test --filter web
 pnpm test --filter api
 ```
 
-If your change touches the UI, also run the affected Playwright specs in `packages/e2e`. Do this while the local API and web app both run.
+If your change touches the UI, also run the affected Playwright specs in `packages/e2e` with `pnpm test:e2e:local <spec path>`. That command starts its own database, API, and web app, so your dev servers and dev database stay untouched.
 
 ## Reuse the shared package instead of writing it again
 

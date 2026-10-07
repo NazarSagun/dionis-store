@@ -5,6 +5,8 @@
     "build": "turbo build",
     "test": "turbo test",
     "test:e2e": "turbo test:e2e",
+    "test:e2e:local": "pnpm --filter @repo/e2e test:e2e:local",
+    "e2e:down": "pnpm --filter @repo/e2e e2e:down",
     "dev": "turbo dev",
     "lint": "turbo lint",
     "dev:api": "turbo dev --filter api",

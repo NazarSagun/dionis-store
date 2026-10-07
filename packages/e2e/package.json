@@ -4,6 +4,8 @@
   "private": true,
   "scripts": {
     "test:e2e": "playwright test",
+    "test:e2e:local": "docker compose -f ../../docker-compose.e2e.yml up -d --wait && E2E_LOCAL=1 playwright test",
+    "e2e:down": "docker compose -f ../../docker-compose.e2e.yml down -v",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:headed": "playwright test --headed",
     "test:e2e:report": "playwright show-report"

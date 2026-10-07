@@ -90,11 +90,21 @@ Run the following command from the repository root to run unit tests across all 
 pnpm test
 ```
 
-Run the following command from the repository root to run the Playwright end-to-end tests. Before you run it, start the web app and the API.
+Run the following command from the repository root to run the Playwright end-to-end tests on their own stack. It needs Docker and the Stripe test keys in `apps/api/.env` and `apps/web/.env`. It does not use your dev servers or your dev database.
 
 ```sh
-pnpm test:e2e
+pnpm test:e2e:local
 ```
+
+The command starts a Postgres database on port 5433 (kept in RAM) and Mailpit on ports 1026 and 8026. Then it resets the database, applies the migrations, and starts its own API on port 3501 and web app on port 3001. After the servers are up, it seeds the games. The database stays up after the run, so you can inspect it, and the next run resets it. To remove it, run the following command.
+
+```sh
+pnpm e2e:down
+```
+
+To run one spec, add its path to the command, for example `pnpm test:e2e:local tests/payment.spec.ts`. The command runs the specs one at a time, because some account specs are not stable in parallel. To try parallel runs, add `--workers=4`.
+
+`pnpm test:e2e` runs the same tests against the web app and API that you start yourself. CI uses it.
 
 ## Build and lint
 

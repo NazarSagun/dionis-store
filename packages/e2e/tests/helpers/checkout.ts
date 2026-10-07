@@ -5,7 +5,7 @@ import { expect, Page } from '@playwright/test'
 // feature spec these two steps implement.
 
 export async function signUpAndAddGamesToCart(page: Page, count = 1) {
-  const uniqueEmail = `e2e-checkout-${Date.now()}@dionis-store.test`
+  const uniqueEmail = `e2e-checkout-${Date.now()}-${Math.random().toString(36).slice(2, 8)}@dionis-store.test`
 
   await page.goto('/signup')
   await page.getByTestId('name').fill('E2E Checkout Player')
@@ -58,7 +58,9 @@ export async function fillStripeTestCard(page: Page, number: string, expiry = '1
 export async function completePayment(page: Page) {
   await fillStripeTestCard(page, '4242424242424242')
   await page.getByTestId('payment-submit').click()
-  await expect(page.getByTestId('game-activation')).toBeVisible()
+  // The payment goes to Stripe's test API and back, which can take longer than
+  // the 5 second default when several workers pay at once.
+  await expect(page.getByTestId('game-activation')).toBeVisible({ timeout: 15_000 })
 }
 
 // Shared setup for the Physical Editions TDD spec. See

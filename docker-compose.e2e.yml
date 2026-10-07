@@ -1,0 +1,30 @@
+# Isolated services for the local E2E run, started by `pnpm test:e2e:local`
+# (packages/e2e). They share nothing with the dev stack: another port, another
+# database, and another mail inbox. The database lives in RAM, so it never
+# writes to a volume and `pnpm e2e:down` leaves nothing behind.
+name: dionis-e2e
+
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: postgres
+      # No password: the database only listens on localhost and holds test data.
+      POSTGRES_HOST_AUTH_METHOD: trust
+      POSTGRES_DB: dionis_store_e2e
+    tmpfs:
+      - /var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d dionis_store_e2e"]
+      interval: 2s
+      timeout: 5s
+      retries: 15
+
+  # Catches the receipt emails of the E2E run. SMTP on 1026, inbox on 8026.
+  mailpit:
+    image: axllent/mailpit
+    ports:
+      - "1026:1025"
+      - "8026:8025"
