@@ -1,0 +1,21 @@
+# Reverse proxy for the single-host deployment (docker-compose.prod.yml). It
+# serves https://{$DOMAIN}, gets and renews the Let's Encrypt certificate by
+# itself, and redirects HTTP to HTTPS. The API already uses the /api prefix, so
+# one origin carries both apps and the browser needs no CORS.
+{
+	# Set ACME_CA to the Let's Encrypt staging address for a first test run.
+	# Staging has no rate limit for failed attempts, but its certificate is not trusted.
+	acme_ca {$ACME_CA:https://acme-v02.api.letsencrypt.org/directory}
+}
+
+{$DOMAIN} {
+	encode gzip
+
+	handle /api/* {
+		reverse_proxy api:3500
+	}
+
+	handle {
+		reverse_proxy web:3000
+	}
+}
