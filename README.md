@@ -128,7 +128,7 @@ pnpm typecheck
 
 ## Single-host deployment
 
-`docker-compose.prod.yml` runs Postgres, the API, and the web app on one machine, for example one EC2 instance. Copy the variables listed under `docker-compose.prod.yml` in `.env.example` into `.env.prod`. Set `DOMAIN` to your host name, with a DNS A record that points to the server and ports 80 and 443 open. Caddy then serves the site on `https://<DOMAIN>` and gets its certificate. Set `CLIENT_URL` and `NEXT_PUBLIC_BASE_URL` to that `https://` address. Only if the site has no HTTPS, set `COOKIE_SECURE=false`. Without it, browsers drop the refresh cookie and every page load logs the user out. Set `NEXT_PUBLIC_BASE_URL` to the public API origin and `CLIENT_URL` to the public web origin.
+`docker-compose.prod.yml` runs Postgres, the API, and the web app on one machine, for example one EC2 instance. Copy the variables listed under `docker-compose.prod.yml` in `.env.example` into `.env.prod`. Set `DOMAIN` to your host name, with a DNS A record that points to the server and ports 80 and 443 open. Caddy then serves the site on `https://<DOMAIN>` and gets its certificate. Only Caddy publishes ports (80 and 443). The web app and the API are reachable only inside the Docker network, and they run as a non-root user. Caddy adds the security headers. Set `CLIENT_URL` and `NEXT_PUBLIC_BASE_URL` to that `https://` address. Only if the site has no HTTPS, set `COOKIE_SECURE=false`. Without it, browsers drop the refresh cookie and every page load logs the user out. Set `NEXT_PUBLIC_BASE_URL` to the public API origin and `CLIENT_URL` to the public web origin.
 
 ```sh
 docker compose -f docker-compose.prod.yml --env-file .env.prod up -d --build
