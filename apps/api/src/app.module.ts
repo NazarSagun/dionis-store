@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
+import { MailModule } from './common/mail/mail.module'
 import { PrismaModule } from './common/prisma/prisma.module'
 import { AuthModule } from './features/auth/auth.module'
 import { UsersModule } from './features/users/users.module'
@@ -11,6 +12,7 @@ import { WishlistModule } from './features/wishlist/wishlist.module'
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     PrismaModule,
+    MailModule,
     AuthModule,
     UsersModule,
     GamesModule,

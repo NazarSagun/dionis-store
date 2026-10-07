@@ -64,6 +64,9 @@ model Order {
   shippingCity          String?
   shippingPostalCode    String?
   shippingCountry       String?
+  // Set when the receipt email is claimed. Null means no email went out, so a
+  // later job can retry it.
+  receiptSentAt         DateTime?
   createdAt             DateTime    @default(now())
   items                 OrderItem[]
 }

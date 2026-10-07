@@ -65,11 +65,22 @@ jobs:
           --health-timeout 5s
           --health-retries 10
 
+      # Catches the receipt emails. SMTP on 1025, HTTP API on 8025.
+      mailpit:
+        image: axllent/mailpit
+        ports:
+          - 1025:1025
+          - 8025:8025
+
     # The two Stripe keys come from repository secrets and must be test-mode
     # keys. The JWT signing keys are generated per run in a step below.
     env:
       DATABASE_URL: postgresql://postgres@localhost:5432/dionis_store_e2e
       CLIENT_URL: http://localhost:3000
+      SMTP_HOST: localhost
+      SMTP_PORT: 1025
+      MAIL_FROM: Dionis Store <no-reply@dionis-store.local>
+      E2E_MAIL_API_URL: http://localhost:8025
       STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
       NEXT_PUBLIC_BASE_URL: http://localhost:3500
       NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY }}

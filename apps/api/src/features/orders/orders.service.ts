@@ -1,7 +1,8 @@
 import { randomBytes } from 'crypto'
-import { Injectable } from '@nestjs/common'
+import { Injectable, Logger } from '@nestjs/common'
 import { Prisma } from '@prisma/client'
 import Stripe from 'stripe'
+import { MailService } from '../../common/mail/mail.service'
 import { PrismaService } from '../../common/prisma/prisma.service'
 import { CustomError } from '../../common/errors/custom-error'
 import { ShippingAddressDto } from './dto/shipping-address.dto'
@@ -16,6 +17,8 @@ interface OrderItemInput {
 }
 
 const ORDER_ITEMS_INCLUDE = { items: { include: { game: true, edition: true }, orderBy: { id: 'asc' as const } } }
+
+type OrderWithItems = Prisma.OrderGetPayload<{ include: typeof ORDER_ITEMS_INCLUDE }>
 
 function calculateUnitPriceCents(price: number, discount: number): number {
   const discounted = discount > 0 ? price - (price * discount) / 100 : price
@@ -72,9 +75,12 @@ function assertValidItems(items: unknown): asserts items is OrderItemInput[] {
 
 @Injectable()
 export class OrdersService {
+  private readonly logger = new Logger(OrdersService.name)
+
   constructor(
     private readonly prisma: PrismaService,
     private readonly stripe: StripeService,
+    private readonly mail: MailService,
   ) {}
 
   async createPaymentIntent(email: string, items: unknown) {
@@ -186,8 +192,9 @@ export class OrdersService {
       activationCode: item.editionId == null ? generateActivationCode() : null,
     }))
 
+    let order: OrderWithItems
     try {
-      return await this.prisma.$transaction(async (tx) => {
+      order = await this.prisma.$transaction(async (tx) => {
         for (const item of pricedItems) {
           if (item.editionId == null) continue
 
@@ -224,6 +231,35 @@ export class OrdersService {
         if (existingOrder) return existingOrder
       }
       throw error
+    }
+
+    await this.sendReceipt(order, user.email)
+    return order
+  }
+
+  // Claim, send, release on failure. The conditional UPDATE is the claim: only
+  // one caller sees count 1, so a second run for the same order never sends a
+  // second email. A failed or skipped send releases the claim, so
+  // `receiptSentAt` is null exactly when no email went out.
+  private async sendReceipt(order: OrderWithItems, email: string) {
+    const claim = await this.prisma.order.updateMany({
+      where: { id: order.id, receiptSentAt: null },
+      data: { receiptSentAt: new Date() },
+    })
+    if (claim.count === 0) return
+
+    let sent = false
+    try {
+      sent = await this.mail.sendOrderReceipt(email, order)
+    } catch (error) {
+      this.logger.error(`Receipt for order ${order.id} was not sent: ${error instanceof Error ? error.message : error}`)
+    }
+    if (sent) return
+
+    try {
+      await this.prisma.order.update({ where: { id: order.id }, data: { receiptSentAt: null } })
+    } catch (error) {
+      this.logger.error(`Could not release the receipt claim for order ${order.id}: ${error}`)
     }
   }
 
