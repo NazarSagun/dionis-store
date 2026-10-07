@@ -11,6 +11,18 @@
 {$DOMAIN} {
 	encode gzip
 
+	# Browser-side protections for every response. No includeSubDomains in HSTS:
+	# the mail subdomains point at a mail provider, not at this server.
+	header {
+		Strict-Transport-Security "max-age=31536000"
+		X-Content-Type-Options nosniff
+		X-Frame-Options DENY
+		Referrer-Policy strict-origin-when-cross-origin
+		Permissions-Policy "camera=(), microphone=(), geolocation=()"
+		-Server
+		-X-Powered-By
+	}
+
 	handle /api/* {
 		reverse_proxy api:3500
 	}

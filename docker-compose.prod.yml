@@ -14,6 +14,8 @@ services:
       test: ["CMD-SHELL", "pg_isready -U dionis -d dionis_db"]
       interval: 5s
       retries: 10
+    security_opt:
+      - no-new-privileges:true
     restart: unless-stopped
 
   api:
@@ -38,11 +40,13 @@ services:
       SMTP_USER: ${SMTP_USER:-}
       SMTP_PASS: ${SMTP_PASS:-}
       MAIL_FROM: ${MAIL_FROM:-Dionis Store <no-reply@dionis-store.local>}
-    ports:
-      - "3500:3500"
     depends_on:
       db:
         condition: service_healthy
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
     restart: unless-stopped
 
   # HTTPS in front of both apps. Needs DOMAIN, with a DNS A record that points
@@ -62,6 +66,12 @@ services:
     depends_on:
       - api
       - web
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_BIND_SERVICE
     restart: unless-stopped
 
   web:
@@ -71,8 +81,10 @@ services:
       args:
         NEXT_PUBLIC_BASE_URL: ${NEXT_PUBLIC_BASE_URL:?set NEXT_PUBLIC_BASE_URL}
         NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: ${NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY:-}
-    ports:
-      - "3000:3000"
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
     restart: unless-stopped
 
 volumes:

@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 module.exports = {
+  poweredByHeader: false,
   // `next build` writes to the same .next/ that a running `next dev` reads
   // from, and clobbering it out from under a live dev server produces stale
   // chunk 404s until the dev server restarts. Set NEXT_BUILD_DIR to build
