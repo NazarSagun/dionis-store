@@ -128,7 +128,7 @@ pnpm typecheck
 
 ## Single-host deployment
 
-`docker-compose.prod.yml` runs Postgres, the API, and the web app on one machine, for example one EC2 instance. Copy the variables listed under `docker-compose.prod.yml` in `.env.example` into `.env.prod`. Set `NEXT_PUBLIC_BASE_URL` to the public API origin and `CLIENT_URL` to the public web origin.
+`docker-compose.prod.yml` runs Postgres, the API, and the web app on one machine, for example one EC2 instance. Copy the variables listed under `docker-compose.prod.yml` in `.env.example` into `.env.prod`. If the site has no HTTPS, set `COOKIE_SECURE=false`. Without it, browsers drop the refresh cookie and every page load logs the user out. Set `NEXT_PUBLIC_BASE_URL` to the public API origin and `CLIENT_URL` to the public web origin.
 
 ```sh
 docker compose -f docker-compose.prod.yml --env-file .env.prod up -d --build
