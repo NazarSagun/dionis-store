@@ -8,13 +8,13 @@ describe('<CartNavigation />', () => {
   beforeEach(() => cleanup())
 
   it('Should render footer', () => {
-    const { container } = render(<CartNavigation activeStep={1} onStepClick={() => {}} />)
+    const { container } = render(<CartNavigation activeStep={1} />)
 
     expect(container).toBeInTheDocument()
   })
 
   it('Should have first step to be active by default', () => {
-    const { getAllByTestId } = render(<CartNavigation activeStep={1} onStepClick={() => {}} />)
+    const { getAllByTestId } = render(<CartNavigation activeStep={1} />)
 
     const step = getAllByTestId('cart-navigation-step')
 
@@ -24,7 +24,7 @@ describe('<CartNavigation />', () => {
   })
 
   it('Should have second step to be active', () => {
-    const { getAllByTestId } = render(<CartNavigation activeStep={2} onStepClick={() => {}} />)
+    const { getAllByTestId } = render(<CartNavigation activeStep={2} />)
 
     const step = getAllByTestId('cart-navigation-step')
 

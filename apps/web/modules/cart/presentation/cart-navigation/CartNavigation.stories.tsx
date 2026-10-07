@@ -11,7 +11,6 @@ const meta = {
   tags: ['autodocs'],
   args: {
     activeStep: 1,
-    onStepClick: () => {},
   },
   argTypes: {
     activeStep: {
