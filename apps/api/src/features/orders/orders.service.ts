@@ -109,6 +109,10 @@ export class OrdersService {
   async confirmOrder(email: string, paymentIntentId: string) {
     const existingOrder = await this.findOrderByPaymentIntent(paymentIntentId)
     if (existingOrder) {
+      const user = await this.prisma.user.findUnique({ where: { email } })
+      if (existingOrder.userId !== user?.id) {
+        throw new CustomError('Payment not found', 404)
+      }
       return existingOrder
     }
 
@@ -145,10 +149,12 @@ export class OrdersService {
       throw new CustomError('Payment is already completed', 409)
     }
 
-    await this.stripe.updatePaymentIntentMetadata(paymentIntentId, {
-      ...Object.fromEntries(SHIPPING_FIELDS.map((field) => [field, ''])),
-      ...shippingAddress,
-    })
+    // Built field by field, never by spreading the body: any other key here
+    // (such as `items`) would overwrite what the order is later built from.
+    await this.stripe.updatePaymentIntentMetadata(
+      paymentIntentId,
+      Object.fromEntries(SHIPPING_FIELDS.map((field) => [field, shippingAddress[field] ?? ''])),
+    )
   }
 
   private findOrderByPaymentIntent(paymentIntentId: string) {
@@ -367,8 +373,8 @@ export class OrdersService {
     const pricedItems = items.map((item) => {
       if (item.editionId != null) {
         const edition = editions.find((candidate) => candidate.id === item.editionId)
-        if (!edition) {
-          throw new CustomError(`Edition ${item.editionId} does not exist`, 400)
+        if (edition?.gameId !== item.gameId) {
+          throw new CustomError(`Edition ${item.editionId} does not exist for game ${item.gameId}`, 400)
         }
         return { ...item, unitPriceCents: calculateUnitPriceCents(edition.price, edition.discount) }
       }

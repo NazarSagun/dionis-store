@@ -9,7 +9,7 @@ services:
     volumes:
       - dionis_data:/var/lib/postgresql/data
     ports:
-      - "5432:5432"
+      - "127.0.0.1:5432:5432"
     networks:
       - dionis_network
     restart: unless-stopped
@@ -19,8 +19,8 @@ services:
     image: axllent/mailpit
     container_name: dionis_mailpit
     ports:
-      - "1025:1025"
-      - "8025:8025"
+      - "127.0.0.1:1025:1025"
+      - "127.0.0.1:8025:8025"
     networks:
       - dionis_network
     restart: unless-stopped
@@ -37,7 +37,7 @@ services:
       SMTP_HOST: mailpit
       SMTP_PORT: 1025
     ports:
-      - "3500:3500"
+      - "127.0.0.1:3500:3500"
     depends_on:
       - dionis
     networks:

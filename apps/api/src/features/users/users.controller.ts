@@ -1,12 +1,14 @@
 import { Throttle } from '@nestjs/throttler'
 import { AUTH_THROTTLE } from '../../common/throttle/auth-throttle'
-import { Body, Controller, Get, Patch, Post, Req, UseGuards } from '@nestjs/common'
+import { Body, Controller, Get, Patch, Post, Req, Res, UseGuards } from '@nestjs/common'
+import { Response } from 'express'
 import { AuthenticatedRequest, JwtAuthGuard } from '../../common/guards/jwt-auth.guard'
 import { RolesGuard } from '../../common/guards/roles.guard'
 import { RequireRole } from '../../common/decorators/roles.decorator'
 import { Roles } from '../../common/types/roles'
 import { toHttpException } from '../../common/errors/to-http-exception'
 import { UsersService } from './users.service'
+import { setRefreshTokenCookie } from '../auth/auth-token.util'
 import { DeleteUserDto } from './dto/delete-user.dto'
 import { UpdateNameDto } from './dto/update-name.dto'
 import { ChangePasswordDto } from './dto/change-password.dto'
@@ -51,9 +53,18 @@ export class UsersController {
   @Patch('users/me/password')
   @Throttle(AUTH_THROTTLE)
   @UseGuards(JwtAuthGuard)
-  async changePassword(@Req() req: AuthenticatedRequest, @Body() dto: ChangePasswordDto) {
+  async changePassword(
+    @Req() req: AuthenticatedRequest,
+    @Body() dto: ChangePasswordDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
     try {
-      await this.usersService.changePassword(req.user.email, dto.currentPassword, dto.newPassword)
+      const { refreshToken } = await this.usersService.changePassword(
+        req.user.email,
+        dto.currentPassword,
+        dto.newPassword,
+      )
+      setRefreshTokenCookie(res, refreshToken)
       return { message: 'Password updated' }
     } catch (error) {
       throw toHttpException(error)

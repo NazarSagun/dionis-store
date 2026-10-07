@@ -42,3 +42,4 @@ yarn-error.log*
 
 # Local progress notes, not for the repo
 progress.md
+apps/api/prisma/dev.db

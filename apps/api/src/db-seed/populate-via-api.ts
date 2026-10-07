@@ -1,6 +1,7 @@
 import * as fs from 'fs'
 import * as path from 'path'
 import { PrismaClient } from '@prisma/client'
+import * as bcrypt from 'bcrypt'
 import dotenv from 'dotenv'
 import { insertGameEditionsData } from './games/insertGameEditions'
 
@@ -9,7 +10,9 @@ dotenv.config()
 const API_URL = process.env.SEED_API_URL || 'http://localhost:3500/api'
 const SEED_ADMIN_NAME = process.env.SEED_ADMIN_NAME || 'Seed Admin'
 const SEED_ADMIN_EMAIL = process.env.SEED_ADMIN_EMAIL || 'seed-admin@dionis-store.local'
-const SEED_ADMIN_PASSWORD = process.env.SEED_ADMIN_PASSWORD || 'seed-admin-password'
+// No default: a known default password on a public deployment is an open admin account.
+const SEED_ADMIN_PASSWORD = process.env.SEED_ADMIN_PASSWORD ?? ''
+const ADMIN_ROLE = 500
 const CONCURRENCY = 10
 
 const prisma = new PrismaClient()
@@ -32,28 +35,27 @@ function getRandomDiscount(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1)) + min
 }
 
+// The API has no self-serve way to become an Admin (register always assigns
+// the User role), and POST /games is Admin-gated. So this is the one step that
+// writes to the database directly, to bootstrap that role. It creates the admin
+// itself and never promotes an account that already exists: anyone can
+// register an email first, and promoting it would hand them the admin role.
 async function ensureSeedAdminExists() {
-  const response = await fetch(`${API_URL}/register`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ name: SEED_ADMIN_NAME, email: SEED_ADMIN_EMAIL, password: SEED_ADMIN_PASSWORD }),
-  })
-
-  if (response.ok || response.status === 400) {
-    // 400 here means the seed admin was already registered by a previous run - that is fine.
+  const existing = await prisma.user.findUnique({ where: { email: SEED_ADMIN_EMAIL } })
+  if (existing) {
+    if (existing.role !== ADMIN_ROLE) {
+      throw new Error(`${SEED_ADMIN_EMAIL} already exists without the admin role. Refusing to promote it.`)
+    }
     return
   }
 
-  throw new Error(`Could not register the seed admin user: ${response.status} ${await response.text()}`)
-}
-
-async function promoteSeedAdminToAdminRole() {
-  // The API has no self-serve way to become an Admin (register always assigns the User role),
-  // and POST /games is Admin-gated like the other write endpoints. This is the one step in the
-  // whole pipeline that talks to the DB directly instead of the API, purely to bootstrap that role.
-  await prisma.user.update({
-    where: { email: SEED_ADMIN_EMAIL },
-    data: { role: 500 },
+  await prisma.user.create({
+    data: {
+      name: SEED_ADMIN_NAME,
+      email: SEED_ADMIN_EMAIL,
+      password: await bcrypt.hash(SEED_ADMIN_PASSWORD, 10),
+      role: ADMIN_ROLE,
+    },
   })
 }
 
@@ -117,8 +119,11 @@ async function main() {
 
   console.log(`Seeding ${games.length} games into ${API_URL} via real API calls...`)
 
+  if (!SEED_ADMIN_PASSWORD) {
+    throw new Error('Set SEED_ADMIN_PASSWORD before seeding.')
+  }
+
   await ensureSeedAdminExists()
-  await promoteSeedAdminToAdminRole()
   const accessToken = { current: await login() }
 
   const results = await runInBatches(games, CONCURRENCY, (game) => createGameWithReauth(game, accessToken))
