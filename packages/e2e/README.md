@@ -13,6 +13,8 @@ pnpm dev:api   # apps/api on http://localhost:3500 (needs its DB running, see ap
 pnpm dev:web   # apps/web on http://localhost:3000
 ```
 
+The receipt email tests also need Mailpit, and the API must send to it. See "Receipt emails" in the root `README.md`.
+
 The game-library tests also need games in the database. Seed the database once:
 
 ```sh

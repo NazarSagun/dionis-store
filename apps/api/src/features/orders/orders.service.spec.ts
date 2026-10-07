@@ -1,5 +1,6 @@
 import { Test } from '@nestjs/testing'
 import { Prisma } from '@prisma/client'
+import { MailService } from '../../common/mail/mail.service'
 import { PrismaService } from '../../common/prisma/prisma.service'
 import { OrdersService } from './orders.service'
 import { StripeService } from './stripe.service'
@@ -10,10 +11,19 @@ describe('OrdersService', () => {
     user: { findUnique: jest.Mock }
     game_pc: { findMany: jest.Mock }
     gameEdition: { findMany: jest.Mock; updateMany: jest.Mock }
-    order: { findUnique: jest.Mock; findFirst: jest.Mock; findMany: jest.Mock; create: jest.Mock; count: jest.Mock }
+    order: {
+      findUnique: jest.Mock
+      findFirst: jest.Mock
+      findMany: jest.Mock
+      create: jest.Mock
+      count: jest.Mock
+      updateMany: jest.Mock
+      update: jest.Mock
+    }
     orderItem: { update: jest.Mock; findFirst: jest.Mock; findMany: jest.Mock }
     $transaction: jest.Mock
   }
+  let mail: { sendOrderReceipt: jest.Mock }
   let stripe: {
     createPaymentIntent: jest.Mock
     retrievePaymentIntent: jest.Mock
@@ -27,7 +37,15 @@ describe('OrdersService', () => {
       user: { findUnique: jest.fn().mockResolvedValue(user) },
       game_pc: { findMany: jest.fn() },
       gameEdition: { findMany: jest.fn().mockResolvedValue([]), updateMany: jest.fn().mockResolvedValue({ count: 1 }) },
-      order: { findUnique: jest.fn(), findFirst: jest.fn(), findMany: jest.fn(), create: jest.fn(), count: jest.fn() },
+      order: {
+        findUnique: jest.fn(),
+        findFirst: jest.fn(),
+        findMany: jest.fn(),
+        create: jest.fn(),
+        count: jest.fn(),
+        updateMany: jest.fn().mockResolvedValue({ count: 1 }),
+        update: jest.fn(),
+      },
       orderItem: { update: jest.fn(), findFirst: jest.fn().mockResolvedValue(null), findMany: jest.fn() },
       // A transparent pass-through: the callback runs against the same mock
       // `prisma`, so every other test can keep asserting on
@@ -40,11 +58,14 @@ describe('OrdersService', () => {
       updatePaymentIntentMetadata: jest.fn(),
     }
 
+    mail = { sendOrderReceipt: jest.fn().mockResolvedValue(true) }
+
     const module = await Test.createTestingModule({
       providers: [
         OrdersService,
         { provide: PrismaService, useValue: prisma },
         { provide: StripeService, useValue: stripe },
+        { provide: MailService, useValue: mail },
       ],
     }).compile()
 
@@ -242,6 +263,77 @@ describe('OrdersService', () => {
       prisma.$transaction.mockRejectedValue(new Error('connection lost'))
 
       await expect(service.confirmOrder(user.email, 'pi_123')).rejects.toThrow('connection lost')
+    })
+  })
+
+  describe('receipt email', () => {
+    beforeEach(() => {
+      prisma.order.findUnique.mockResolvedValue(null)
+      prisma.game_pc.findMany.mockResolvedValue([{ id: 1, price: 50, discount: 0 }])
+      prisma.order.create.mockResolvedValue({ id: 7, items: [] })
+      stripe.retrievePaymentIntent.mockResolvedValue(paymentIntent())
+    })
+
+    it('sends the receipt to the customer after the order is created', async () => {
+      await service.confirmOrder(user.email, 'pi_123')
+
+      expect(prisma.order.updateMany).toHaveBeenCalledWith({
+        where: { id: 7, receiptSentAt: null },
+        data: { receiptSentAt: expect.any(Date) },
+      })
+      expect(mail.sendOrderReceipt).toHaveBeenCalledWith(user.email, expect.objectContaining({ id: 7 }))
+      expect(prisma.order.update).not.toHaveBeenCalled()
+    })
+
+    it('does not send when another call already claimed the receipt', async () => {
+      prisma.order.updateMany.mockResolvedValue({ count: 0 })
+
+      await service.confirmOrder(user.email, 'pi_123')
+
+      expect(mail.sendOrderReceipt).not.toHaveBeenCalled()
+    })
+
+    it('sends nothing for an order that already existed', async () => {
+      prisma.order.findUnique.mockResolvedValue({ id: 7, items: [] })
+
+      await service.confirmOrder(user.email, 'pi_123')
+
+      expect(mail.sendOrderReceipt).not.toHaveBeenCalled()
+      expect(prisma.order.updateMany).not.toHaveBeenCalled()
+    })
+
+    it('sends nothing for the order that the other racing call committed', async () => {
+      prisma.order.create.mockRejectedValue(
+        new Prisma.PrismaClientKnownRequestError('Unique constraint failed', { code: 'P2002', clientVersion: 'test' }),
+      )
+      prisma.order.findUnique.mockResolvedValueOnce(null).mockResolvedValueOnce({ id: 7, items: [] })
+
+      await service.confirmOrder(user.email, 'pi_123')
+
+      expect(mail.sendOrderReceipt).not.toHaveBeenCalled()
+    })
+
+    it('releases the claim and still returns the order when the send fails', async () => {
+      mail.sendOrderReceipt.mockRejectedValue(new Error('SMTP down'))
+
+      await expect(service.confirmOrder(user.email, 'pi_123')).resolves.toEqual(expect.objectContaining({ id: 7 }))
+
+      expect(prisma.order.update).toHaveBeenCalledWith({ where: { id: 7 }, data: { receiptSentAt: null } })
+    })
+
+    it('releases the claim when mail is turned off', async () => {
+      mail.sendOrderReceipt.mockResolvedValue(false)
+
+      await service.confirmOrder(user.email, 'pi_123')
+
+      expect(prisma.order.update).toHaveBeenCalledWith({ where: { id: 7 }, data: { receiptSentAt: null } })
+    })
+
+    it('returns the order even when releasing the claim fails too', async () => {
+      mail.sendOrderReceipt.mockRejectedValue(new Error('SMTP down'))
+      prisma.order.update.mockRejectedValue(new Error('db down'))
+
+      await expect(service.confirmOrder(user.email, 'pi_123')).resolves.toEqual(expect.objectContaining({ id: 7 }))
     })
   })
 
