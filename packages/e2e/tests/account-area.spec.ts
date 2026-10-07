@@ -161,7 +161,10 @@ test.describe('Account area', () => {
       await signUpAndAddGamesToCart(page, 2)
       await goToPaymentStep(page)
       await completePayment(page)
-      await page.getByTestId('activation-row').first().getByTestId('activation-mark-button').click()
+      const firstRow = page.getByTestId('activation-row').first()
+      await firstRow.getByTestId('activation-mark-button').click()
+      // Leaving before the request finishes would race it.
+      await expect(firstRow.getByTestId('activation-status')).toBeVisible()
 
       await page.goto('/account')
 

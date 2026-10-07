@@ -19,7 +19,7 @@ test.describe('Auth', () => {
   })
 
   test('signing up logs the player in and redirects home', async ({ page }) => {
-    const uniqueEmail = `e2e-${Date.now()}@dionis-store.test`
+    const uniqueEmail = `e2e-${Date.now()}-${Math.random().toString(36).slice(2, 8)}@dionis-store.test`
 
     await page.goto('/signup')
     await page.getByTestId('name').fill('E2E Player')
