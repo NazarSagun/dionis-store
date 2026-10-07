@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { useParams } from 'next/navigation'
 import { Skeleton } from '@repo/ui'
 
-import { GameObject, useGetGame } from '@/modules/admin/integration/repository'
+import { useGetGame } from '@/modules/admin/integration/repository'
 import { AdminShell } from '@/modules/admin/presentation/admin-shell/AdminShell'
 import { EditionsSection } from '@/modules/admin/presentation/editions-section/EditionsSection'
 import { GameForm } from '@/modules/admin/presentation/game-form/GameForm'
@@ -13,7 +13,7 @@ export default function AdminEditGamePage() {
   const { id } = useParams<{ id: string }>()
   const gameId = Number(id)
   const { data, isLoading, isError } = useGetGame(gameId)
-  const game = data as GameObject | undefined
+  const game = data
 
   return (
     <AdminShell title='Edit game'>

@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
+import { fn } from '@storybook/test'
 
 import { QuantitySelect } from './QuantitySelect'
 
@@ -10,9 +11,7 @@ const meta = {
   },
   tags: ['autodocs'],
   args: {
-    onChange: (number) => {
-      console.log(number)
-    },
+    onChange: fn(),
     selectedOption: 1,
   },
   argTypes: {

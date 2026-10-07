@@ -1,4 +1,4 @@
-export type CartItem = {
+export interface CartItem {
   id: number
   editionId: number | null
   editionName?: string

@@ -40,7 +40,7 @@ The tokens for general layout are the standard semantic set:
 - `primary`, `secondary`, `destructive`, `muted`, `accent`
 - `popover`, `card`
 
-Do not write a raw hex value in a component's class name. `CartNavigation.tsx` and `GameCard.tsx` each have one raw hex value today. Treat these as debt to clean up, not examples to copy. A raw hex value inside a Storybook `backgrounds` decorator in a `.stories.tsx` file is tooling configuration, not app UI. This rule does not apply to it.
+Do not write a raw hex value in a component's class name. The lint rule `no-restricted-syntax` reports one. A raw hex value inside a Storybook `backgrounds` decorator in a `.stories.tsx` file is tooling configuration, not app UI. This rule does not apply to it.
 
 ## Tests
 
@@ -57,3 +57,5 @@ Give a `data-testid` to each container. Give one to each interactive or verifiab
 ## Lint
 
 Run `pnpm lint` inside `apps/web` before you call a change done. It runs with `--max-warnings 0`, so a warning fails the same way an error does. The `simple-import-sort` rule enforces one fixed import group order. If you see an import-order warning, run `pnpm lint --fix` first, instead of reordering the lines by hand.
+
+Lint also enforces most rules in this file. It reports a `fetch` or axios call, an `@repo/dionis-api` import outside `integration/` and `app/`, a store import outside `core/` and tests, a barrel import, a direct `localStorage` call, and a `data-testid` built from a template string. The shared rules live in `packages/eslint-config/shared-rules.js`.

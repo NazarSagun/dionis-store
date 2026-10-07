@@ -18,6 +18,6 @@ export const useSetAuthUserName = () => useAuthStore((state) => state.setUserNam
 export const useRefreshToken = () => {
   useEffect(() => {
     setupAuthInterceptors()
-    refreshAccessToken()
+    void refreshAccessToken()
   }, [])
 }

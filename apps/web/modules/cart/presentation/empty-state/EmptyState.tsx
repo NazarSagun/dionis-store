@@ -14,7 +14,7 @@ export const EmptyState = () => {
       <Image alt='Shopping cart' width={48} height={48} src='/icons/shopping-cart-green.svg' />
       <h3 className='font-display text-lg text-neon-magenta'>Your cart is empty</h3>
       <h5 className='font-mono text-muted-foreground'>
-        You didn't add any item in your cart yet. Browse the website to find amazing deals!
+        You didn&apos;t add any item in your cart yet. Browse the website to find amazing deals!
       </h5>
       <Button
         onClick={() => {

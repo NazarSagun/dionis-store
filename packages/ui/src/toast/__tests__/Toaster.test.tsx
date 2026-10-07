@@ -10,6 +10,7 @@ function ToastComponent() {
   return (
     <div>
       <button
+        type='button'
         data-testid='open-toast'
         onClick={() =>
           toast({

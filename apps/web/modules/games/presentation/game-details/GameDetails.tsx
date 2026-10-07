@@ -22,6 +22,12 @@ interface GameDetailsProps {
   gameId: number
 }
 
+const editionStockLabel = (isOwned: boolean, outOfStock: boolean, price: string) => {
+  if (isOwned) return 'Already in Library'
+  if (outOfStock) return 'Out of stock'
+  return price
+}
+
 export const GameDetails = ({ gameId }: GameDetailsProps) => {
   const recordView = useRecordView()
   useEffect(() => {
@@ -58,7 +64,7 @@ export const GameDetails = ({ gameId }: GameDetailsProps) => {
         ? `${wishlistItem.title} was removed from your wishlist`
         : `${wishlistItem.title} was added to your wishlist!`,
     })
-    toggleWishlistItem(wishlistItem)
+    void toggleWishlistItem(wishlistItem)
   }
 
   if (isLoading) {
@@ -103,13 +109,7 @@ export const GameDetails = ({ gameId }: GameDetailsProps) => {
       <div className='flex min-h-[75vh] flex-col gap-16 px-4 py-12 sm:px-8 lg:px-40'>
         <div className='flex flex-col gap-12 lg:flex-row lg:justify-between'>
           <div className='w-full max-w-[500px] shrink-0'>
-            <Image
-              className='h-auto w-full'
-              alt={data.title as string}
-              width={500}
-              height={300}
-              src={data.thumbnail as string}
-            />
+            <Image className='h-auto w-full' alt={data.title} width={500} height={300} src={data.thumbnail} />
           </div>
           <div className='flex w-full flex-col justify-between text-foreground lg:w-[50vw]'>
             <div>
@@ -138,6 +138,7 @@ export const GameDetails = ({ gameId }: GameDetailsProps) => {
               </div>
               <div className='flex flex-wrap gap-4'>
                 <button
+                  type='button'
                   className={cn(buttonStyles, isWishlisted ? 'bg-neon-magenta' : 'bg-panel-alt')}
                   data-testid='wishlist-toggle'
                   aria-label={isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
@@ -156,6 +157,7 @@ export const GameDetails = ({ gameId }: GameDetailsProps) => {
                   <Image width={24} height={24} alt='favorite' src='/icons/favorite.svg' />
                 </button>
                 <button
+                  type='button'
                   className={cn(buttonStyles, 'min-w-0 flex-1 justify-center bg-neon-magenta disabled:opacity-50')}
                   data-testid='edition-option'
                   disabled={isDigitalOwned}
@@ -175,6 +177,7 @@ export const GameDetails = ({ gameId }: GameDetailsProps) => {
                   const isOwned = isGameOwned(owned, data.id, edition.id)
                   return (
                     <button
+                      type='button'
                       key={edition.id}
                       className={cn(
                         buttonStyles,
@@ -186,11 +189,11 @@ export const GameDetails = ({ gameId }: GameDetailsProps) => {
                     >
                       <span className='font-display text-xs'>{edition.name}</span>
                       <span data-testid='edition-stock' className='font-mono text-xs'>
-                        {isOwned
-                          ? 'Already in Library'
-                          : outOfStock
-                            ? 'Out of stock'
-                            : `${calculateDiscountedPrice(edition.price, edition.discount)}€`}
+                        {editionStockLabel(
+                          isOwned,
+                          outOfStock,
+                          `${calculateDiscountedPrice(edition.price, edition.discount)}€`,
+                        )}
                       </span>
                     </button>
                   )

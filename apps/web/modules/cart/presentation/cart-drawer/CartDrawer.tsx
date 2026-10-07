@@ -2,10 +2,10 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { useLogin, useRegister } from '@repo/dionis-api/src/dionis/default/default'
 import { Dialog, DialogContent, toast } from '@repo/ui'
 
 import { useAuthLogin } from '@/modules/auth/core/facade'
+import { useLogin, useRegister } from '@/modules/auth/integration/repository'
 import { AuthForm, FormVariant, UserData } from '@/modules/auth/presentation/auth-form/AuthForm'
 
 import { useCartDrawerOpen, useCloseCartDrawer, useSetCartStep } from '../../core/facade'
@@ -60,7 +60,13 @@ export const CartDrawer = () => {
 
   return (
     <Dialog open={isAuthOpen} onOpenChange={setIsAuthOpen}>
-      <div data-testid='cart-drawer-backdrop' className='fixed inset-0 z-40 bg-background/80' onClick={closeDrawer} />
+      <div
+        data-testid='cart-drawer-backdrop'
+        aria-hidden='true'
+        role='presentation'
+        className='fixed inset-0 z-40 bg-background/80'
+        onClick={closeDrawer}
+      />
       <div
         data-testid='cart-drawer'
         className='fixed inset-x-0 bottom-0 z-50 max-h-[85vh] overflow-y-auto rounded-t-lg border-t border-ink bg-background'

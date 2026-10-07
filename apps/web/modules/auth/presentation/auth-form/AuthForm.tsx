@@ -4,7 +4,7 @@ import { FormEvent, useEffect, useState } from 'react'
 import Link from 'next/link'
 import { Button, Input, Label } from '@repo/ui'
 
-export type UserData = {
+export interface UserData {
   email: string
   password: string
   name?: string
@@ -46,7 +46,7 @@ export const AuthForm = ({ onSubmitForm, variant, isLoading, onVariantChange, sw
   const authTitle = formVariant === 'login' ? 'Login into' : 'Create'
   const authPrivacyText = formVariant === 'login' ? 'Logging into' : 'Creating'
 
-  useEffect(() => onVariantChange && onVariantChange(formVariant), [formVariant])
+  useEffect(() => onVariantChange?.(formVariant), [formVariant, onVariantChange])
 
   return (
     <form
@@ -94,7 +94,7 @@ export const AuthForm = ({ onSubmitForm, variant, isLoading, onVariantChange, sw
 
       {formVariant === FormVariant.LOGIN ? (
         <p className='m-0 mt-[15px] text-start text-xs text-balance text-muted-foreground'>
-          Don't have an account?{' '}
+          Don&apos;t have an account?{' '}
           {switchHref ? (
             <Link href={switchHref} className='px-[5px] py-[5px] text-xs text-neon-cyan hover:underline'>
               Register

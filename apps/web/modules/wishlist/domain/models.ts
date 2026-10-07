@@ -1,4 +1,4 @@
-export type WishlistItem = {
+export interface WishlistItem {
   id: number
   thumbnailUrl: string
   title: string

@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { Input, Label, Skeleton } from '@repo/ui'
 
 import { useCartItems } from '../../core/facade'
@@ -71,7 +71,7 @@ export const Payment = () => {
 
   const hasPhysicalItem = items.some((item) => item.editionId !== null)
 
-  const requestClientSecret = async () => {
+  const requestClientSecret = useCallback(async () => {
     setError(undefined)
     try {
       const result = await createPaymentIntent({
@@ -84,7 +84,7 @@ export const Payment = () => {
     } catch {
       setError('Could not start payment. Please try again.')
     }
-  }
+  }, [items, createPaymentIntent])
 
   useEffect(() => {
     // Stripe Elements does not support swapping its clientSecret after
@@ -95,9 +95,10 @@ export const Payment = () => {
     // by the time any address field is filled in.
     if (items.length === 0 || hasRequestedIntent.current) return
     hasRequestedIntent.current = true
-    requestClientSecret()
-    // Only re-run if the cart's item count changes, not on every render.
-  }, [items.length])
+    void requestClientSecret()
+    // hasRequestedIntent guards the request, so a cart change that gives
+    // requestClientSecret a new identity does not send a second one.
+  }, [items.length, requestClientSecret])
 
   const { initialPrice, totalDiscount, finalPrice } = calculateCartSummary(items)
   const shippingFee = hasPhysicalItem ? SHIPPING_FEE_EUR : 0
@@ -184,7 +185,7 @@ export const Payment = () => {
             />
           </div>
         )}
-        {error ? (
+        {error && (
           <div data-testid='payment-intent-error' className='flex flex-col items-center gap-4'>
             <p className='font-mono text-sm text-destructive'>{error}</p>
             <button
@@ -195,7 +196,8 @@ export const Payment = () => {
               Retry
             </button>
           </div>
-        ) : clientSecret ? (
+        )}
+        {!error && clientSecret && (
           <Elements stripe={stripePromise} options={{ clientSecret, appearance: stripeAppearance, fonts: stripeFonts }}>
             <PaymentForm
               finalPrice={total}
@@ -204,7 +206,8 @@ export const Payment = () => {
               shippingAddress={shippingAddress}
             />
           </Elements>
-        ) : (
+        )}
+        {!error && !clientSecret && (
           <div data-testid='payment-skeleton' className='flex w-full flex-col gap-6'>
             <Skeleton className='h-32 w-full' />
             <Skeleton className='h-[52px] w-full' />

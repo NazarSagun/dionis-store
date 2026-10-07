@@ -151,7 +151,7 @@ export const OrdersTable = () => {
         </table>
         {isLoading && (
           <div className='flex flex-col gap-2 p-4'>
-            {Array.from({ length: 5 }).map((_, index) => (
+            {Array.from({ length: 5 }, (_, index) => index).map((index) => (
               <Skeleton key={index} className='h-10 w-full' />
             ))}
           </div>

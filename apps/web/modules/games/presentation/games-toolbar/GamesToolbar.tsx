@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from 'react'
-import { GetGamesEdition, GetGamesPlatform, GetGamesSort } from '@repo/dionis-api/src/model'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,12 +15,13 @@ import { Check, ChevronDown, SlidersHorizontal } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 import { findPriceRange, PRICE_RANGES, PriceRange, priceRangeLabel } from '../../domain/filters'
+import { GetGamesEdition, GetGamesPlatform, GetGamesSort } from '../../integration/repository'
 
 interface GamesToolbarProps {
   search?: string
   platform?: GetGamesPlatform
   genre?: string
-  genres: { genre: string; count: number }[]
+  genres: Array<{ genre: string; count: number }>
   minPrice?: number
   maxPrice?: number
   sort?: GetGamesSort
@@ -37,13 +37,13 @@ interface GamesToolbarProps {
 
 const PLATFORM_OPTIONS = Object.values(GetGamesPlatform)
 
-const SORT_OPTIONS: { value: GetGamesSort; label: string }[] = [
+const SORT_OPTIONS: Array<{ value: GetGamesSort; label: string }> = [
   { value: GetGamesSort.price_asc, label: 'Price (low to high)' },
   { value: GetGamesSort.price_desc, label: 'Price (high to low)' },
   { value: GetGamesSort.rating_desc, label: 'Rating (high to low)' },
 ]
 
-const EDITION_OPTIONS: { value: GetGamesEdition; label: string }[] = [
+const EDITION_OPTIONS: Array<{ value: GetGamesEdition; label: string }> = [
   { value: GetGamesEdition.digital, label: 'Digital' },
   { value: GetGamesEdition.standard, label: 'Standard' },
   { value: GetGamesEdition.collector, label: 'Collector' },

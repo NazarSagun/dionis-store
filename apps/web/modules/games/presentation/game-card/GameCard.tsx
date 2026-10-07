@@ -1,10 +1,10 @@
-import { MouseEvent, ReactNode, useState } from 'react'
+import { KeyboardEvent, MouseEvent, ReactNode, useState } from 'react'
 import Image from 'next/image'
-import { GameObject } from '@repo/dionis-api/src/model'
 
 import { useIsInWishlist, useToggleWishlistItem } from '@/modules/wishlist/core/facade'
 
 import { calculateDiscountedPrice } from '../../domain/pricing'
+import { GameObject } from '../../integration/repository'
 
 export type GameCardProps = Pick<GameObject, 'title' | 'rating' | 'price' | 'platform'> & {
   id?: number
@@ -32,14 +32,22 @@ export const GameCard = ({
   const toggleWishlistItem = useToggleWishlistItem()
 
   const onClickHandler = () => {
-    onClick && onClick()
+    onClick?.()
+  }
+
+  const onKeyDownHandler = (event: KeyboardEvent) => {
+    if (event.target !== event.currentTarget) return
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault()
+      onClickHandler()
+    }
   }
 
   const onWishlistToggle = (event: MouseEvent) => {
     event.preventDefault()
     event.stopPropagation()
     if (id === undefined) return
-    toggleWishlistItem({ id, thumbnailUrl: imageSrc, title, price, platform, rating, discount: discount ?? 0 })
+    void toggleWishlistItem({ id, thumbnailUrl: imageSrc, title, price, platform, rating, discount: discount ?? 0 })
   }
 
   const onAddToCartClick = (event: MouseEvent) => {
@@ -51,13 +59,16 @@ export const GameCard = ({
   return (
     <div
       className='flex w-full cursor-pointer flex-col overflow-hidden rounded-md border border-ink bg-panel-alt text-foreground transition-transform duration-500 hover:-translate-y-[5px]'
+      role='link'
+      tabIndex={0}
       onClick={onClickHandler}
+      onKeyDown={onKeyDownHandler}
       data-testid='card'
     >
       <div className='relative aspect-[4/3] w-full shrink-0'>
         <Image
           onLoad={() => setIsImageLoaded(true)}
-          priority={true}
+          priority
           fill
           sizes='(min-width: 1280px) 20vw, (min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw'
           style={{ objectFit: 'cover' }}
@@ -66,7 +77,7 @@ export const GameCard = ({
           data-testid='image'
         />
         {!isImageLoaded && (
-          <div className='absolute inset-0 animate-shimmer bg-[length:200%_100%] bg-gradient-to-r from-[#313131] from-25% via-[#5a5a5a] via-50% to-[#303030] to-75%' />
+          <div className='absolute inset-0 animate-shimmer bg-[length:200%_100%] bg-gradient-to-r from-muted from-25% via-border via-50% to-muted to-75%' />
         )}
         {!!discount && (
           <span

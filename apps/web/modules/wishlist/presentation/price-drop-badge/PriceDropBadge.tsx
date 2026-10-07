@@ -27,11 +27,12 @@ export const PriceDropBadge = ({ gameId, snapshotDiscount }: PriceDropBadgeProps
     const droppedFurther = data.discount > snapshotDiscount
     setShouldShow(droppedFurther)
     if (droppedFurther) {
-      updateDiscountSnapshot(gameId, data.discount)
+      void updateDiscountSnapshot(gameId, data.discount)
     }
-    // Deliberately excludes snapshotDiscount, gameId, and updateDiscountSnapshot:
-    // this must run only once, off of the first resolved discount value.
-  }, [data?.discount, shouldShow])
+    // Runs once, off of the first resolved discount value: the shouldShow
+    // guard above stops any later run, including the one that the snapshot
+    // update itself triggers.
+  }, [data?.discount, shouldShow, snapshotDiscount, gameId, updateDiscountSnapshot])
 
   if (!shouldShow) return null
 

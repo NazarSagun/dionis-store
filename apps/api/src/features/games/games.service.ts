@@ -101,7 +101,7 @@ export class GamesService {
   // date on every price or discount change, with an index.
   // Rounded to cents the same way the cards display it (pricing.ts).
   private async findIdsInPriceRange(minPrice?: number, maxPrice?: number) {
-    const rows = await this.prisma.$queryRaw<{ id: number }[]>`
+    const rows = await this.prisma.$queryRaw<Array<{ id: number }>>`
       SELECT id FROM "Game_pc"
       WHERE ROUND(price * (100 - discount) / 100.0, 2) >= ${minPrice ?? 0}
         AND ROUND(price * (100 - discount) / 100.0, 2) <= ${maxPrice ?? Number.MAX_SAFE_INTEGER}

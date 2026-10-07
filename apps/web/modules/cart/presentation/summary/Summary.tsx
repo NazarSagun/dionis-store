@@ -50,18 +50,18 @@ export const Summary = () => {
       </div>
       <div className='flex flex-col items-center'>
         {isAuthenticated ? (
-          <button onClick={goToPayment} disabled={items.length === 0} className={ctaButtonStyles}>
+          <button type='button' onClick={goToPayment} disabled={items.length === 0} className={ctaButtonStyles}>
             Go to payment
           </button>
         ) : (
           <DialogTrigger asChild>
-            <button disabled={items.length === 0} className={ctaButtonStyles}>
+            <button type='button' disabled={items.length === 0} className={ctaButtonStyles}>
               Go to payment
             </button>
           </DialogTrigger>
         )}
 
-        <div className="relative mb-2 mt-4 w-full text-center before:absolute before:left-0 before:top-1/2 before:h-px before:w-[43%] before:-translate-y-1/2 before:bg-[#a3a3a3a8] before:content-[''] after:absolute after:right-0 after:top-1/2 after:h-px after:w-[43%] after:-translate-y-1/2 after:bg-[#a3a3a3a8] after:content-['']">
+        <div className="relative mb-2 mt-4 w-full text-center before:absolute before:left-0 before:top-1/2 before:h-px before:w-[43%] before:-translate-y-1/2 before:bg-muted-foreground/70 before:content-[''] after:absolute after:right-0 after:top-1/2 after:h-px after:w-[43%] after:-translate-y-1/2 after:bg-muted-foreground/70 after:content-['']">
           or
         </div>
 

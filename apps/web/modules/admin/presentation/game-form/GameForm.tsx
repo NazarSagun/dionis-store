@@ -21,7 +21,7 @@ type FieldKey = Exclude<keyof GameInput, 'id'>
 
 // Labels match .claude/specs/app/admin-panel-spec.md Feature 3 and the
 // "Admin — Edit game" frame. `wide` fields span both columns.
-const FIELDS: { key: FieldKey; label: string; wide?: boolean; multiline?: boolean; numeric?: boolean }[] = [
+const FIELDS: Array<{ key: FieldKey; label: string; wide?: boolean; multiline?: boolean; numeric?: boolean }> = [
   { key: 'title', label: 'Title', wide: true },
   { key: 'short_description', label: 'Short description', wide: true, multiline: true },
   { key: 'genre', label: 'Genre' },
@@ -42,12 +42,11 @@ const toValues = (game?: GameObject): Values =>
 
 // Numbers go to the API as numbers, and an empty number stays empty, so the
 // API's own validation message names the field.
+const toNumber = (value: string) => (value.trim() === '' ? undefined : Number(value))
+
 const toPayload = (values: Values) =>
   Object.fromEntries(
-    FIELDS.map(({ key, numeric }) => [
-      key,
-      numeric ? (values[key].trim() === '' ? undefined : Number(values[key])) : values[key],
-    ]),
+    FIELDS.map(({ key, numeric }) => [key, numeric ? toNumber(values[key]) : values[key]]),
   ) as unknown as GameInput
 
 interface GameFormProps {
@@ -78,7 +77,7 @@ export const GameForm = ({ game }: GameFormProps) => {
         { data },
         {
           onSuccess: (created) => {
-            queryClient.invalidateQueries({ queryKey: getGetGamesQueryKey(1) })
+            void queryClient.invalidateQueries({ queryKey: getGetGamesQueryKey(1) })
             toast({ title: 'Game created' })
             router.push(`/admin/games/${created.id}`)
           },
@@ -92,7 +91,7 @@ export const GameForm = ({ game }: GameFormProps) => {
       { id: game.id, data },
       {
         onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: getGetGameQueryKey(game.id) })
+          void queryClient.invalidateQueries({ queryKey: getGetGameQueryKey(game.id) })
           toast({ title: 'Game saved' })
         },
         onError,
