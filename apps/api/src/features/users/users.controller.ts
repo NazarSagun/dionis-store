@@ -1,3 +1,5 @@
+import { Throttle } from '@nestjs/throttler'
+import { AUTH_THROTTLE } from '../../common/throttle/auth-throttle'
 import { Body, Controller, Get, Patch, Post, Req, UseGuards } from '@nestjs/common'
 import { AuthenticatedRequest, JwtAuthGuard } from '../../common/guards/jwt-auth.guard'
 import { RolesGuard } from '../../common/guards/roles.guard'
@@ -47,6 +49,7 @@ export class UsersController {
   }
 
   @Patch('users/me/password')
+  @Throttle(AUTH_THROTTLE)
   @UseGuards(JwtAuthGuard)
   async changePassword(@Req() req: AuthenticatedRequest, @Body() dto: ChangePasswordDto) {
     try {

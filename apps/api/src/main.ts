@@ -30,12 +30,22 @@ async function bootstrap() {
       res.send('API is alive!')
     })
 
+  const httpServer = app.getHttpAdapter().getInstance()
+  httpServer.disable('x-powered-by')
+  // TRUST_PROXY is the number of reverse proxies in front of the API (1 behind
+  // Caddy). Without it, every request looks like it comes from the proxy, and
+  // the rate limit would count all users together.
+  httpServer.set('trust proxy', Number(process.env.TRUST_PROXY) || 0)
+
   app.setGlobalPrefix('api')
   app.enableCors({ origin: getAllowedOrigins(), credentials: true })
   app.use(cookieParser())
 
   app.useGlobalPipes(
     new ValidationPipe({
+      // Drops every property that has no validation rule, so an extra field in a
+      // body never reaches the database layer.
+      whitelist: true,
       exceptionFactory: (errors) => {
         const message = errors
           .map((error) => Object.values(error.constraints ?? {}).join(', '))

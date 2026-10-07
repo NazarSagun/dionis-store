@@ -77,6 +77,8 @@ jobs:
     env:
       DATABASE_URL: postgresql://postgres@localhost:5432/dionis_store_e2e
       CLIENT_URL: http://localhost:3000
+      # The tests sign up many users from one address, so the rate limit is off.
+      RATE_LIMIT: off
       SMTP_HOST: localhost
       SMTP_PORT: 1025
       MAIL_FROM: Dionis Store <no-reply@dionis-store.local>

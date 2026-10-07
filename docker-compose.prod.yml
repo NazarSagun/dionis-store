@@ -28,6 +28,8 @@ services:
       CLIENT_URL: ${CLIENT_URL:?set CLIENT_URL}
       # Set false in .env.prod while the site is served over plain HTTP.
       COOKIE_SECURE: ${COOKIE_SECURE:-true}
+      # One reverse proxy (Caddy) sits in front of the API.
+      TRUST_PROXY: 1
       STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:?set STRIPE_SECRET_KEY, the API does not start without it}
       STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET:-}
       # Empty SMTP_HOST turns receipt emails off.
