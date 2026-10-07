@@ -1,6 +1,7 @@
 FROM node:20-alpine
 WORKDIR /app
 
+ENV COREPACK_HOME=/opt/corepack
 RUN corepack enable && corepack prepare pnpm@8.9.0 --activate
 
 COPY pnpm-workspace.yaml package.json pnpm-lock.yaml ./
@@ -22,5 +23,8 @@ WORKDIR /app/apps/web
 # Standalone output keeps the monorepo layout, so static files are copied beside server.js.
 RUN cp -r .next/static .next/standalone/apps/web/.next/static \
  && cp -r public .next/standalone/apps/web/public
+# Next writes its image cache under .next at run time. The build ran as root; the app does not need to.
+RUN chown -R node:node .next
+USER node
 EXPOSE 3000
 CMD ["node", ".next/standalone/apps/web/server.js"]

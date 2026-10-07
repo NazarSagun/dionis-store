@@ -628,7 +628,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/userObject'
         '400':
-          description: User does not exist
+          description: Invalid email or password
           content:
             application/json:
               schema:
