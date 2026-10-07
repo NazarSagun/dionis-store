@@ -15,17 +15,17 @@ describe('setRefreshTokenCookie', () => {
     process.env = originalEnv
   })
 
-  it('sets a Secure, SameSite=None cookie by default', () => {
+  it('sets a Secure, SameSite=Strict cookie by default', () => {
     setRefreshTokenCookie(res, 'token')
 
     expect(res.cookie).toHaveBeenCalledWith(
       'refreshToken',
       'token',
-      expect.objectContaining({ httpOnly: true, secure: true, sameSite: 'none', maxAge: 86_400_000 }),
+      expect.objectContaining({ httpOnly: true, secure: true, sameSite: 'strict', maxAge: 86_400_000 }),
     )
   })
 
-  it('sets a non-Secure, SameSite=Lax cookie when COOKIE_SECURE is false, for a deployment without HTTPS', () => {
+  it('sets a non-Secure, SameSite=Strict cookie when COOKIE_SECURE is false, for a deployment without HTTPS', () => {
     process.env.COOKIE_SECURE = 'false'
 
     setRefreshTokenCookie(res, 'token')
@@ -33,7 +33,7 @@ describe('setRefreshTokenCookie', () => {
     expect(res.cookie).toHaveBeenCalledWith(
       'refreshToken',
       'token',
-      expect.objectContaining({ httpOnly: true, secure: false, sameSite: 'lax' }),
+      expect.objectContaining({ httpOnly: true, secure: false, sameSite: 'strict' }),
     )
   })
 })

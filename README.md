@@ -72,6 +72,10 @@ docker compose -f apps/api/docker-compose.yml up -d mailpit
 
 A user with the Admin role (`500`) can open `/admin` from the account menu. There, the user manages games and their physical editions and sees every customer's order. `pnpm seed:api` creates an admin with `SEED_ADMIN_EMAIL` and `SEED_ADMIN_PASSWORD`, so after seeding you can log in with those values. The admin panel E2E tests log in with `E2E_ADMIN_EMAIL` and `E2E_ADMIN_PASSWORD`, which default to the same account.
 
+## Rate limiting
+
+The API allows 300 requests a minute per client IP, and 10 a minute on login, register, and password change. It answers `429` after that. Behind a reverse proxy, set `TRUST_PROXY` to the number of proxies (the production compose file sets it to 1), or all users share one limit. Set `RATE_LIMIT=off` only for tests, because they sign up many users from one address.
+
 ## Seed data
 
 To seed sample games into a running API, run the following command from `apps/api`.

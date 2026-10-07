@@ -18,6 +18,8 @@ interface LoginInput {
   password: string
 }
 
+const DUMMY_PASSWORD_HASH = bcrypt.hashSync('not-a-real-password', 10)
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -39,7 +41,7 @@ export class AuthService {
       throw new CustomError('User already exists!', 400)
     }
 
-    const hashedPassword = bcrypt.hashSync(password, 10)
+    const hashedPassword = await bcrypt.hash(password, 10)
     const role: Role = Roles.User
 
     const accessToken = createAccessToken(getDecodedDto(email, role), this.accessTokenSecret)
@@ -54,13 +56,13 @@ export class AuthService {
 
   async login({ email, password }: LoginInput) {
     const user = await this.prisma.user.findUnique({ where: { email } })
-    if (!user) {
-      throw new CustomError('User does not exist', 400)
-    }
-
-    const isPasswordValid = bcrypt.compareSync(password, user.password)
-    if (!isPasswordValid) {
-      throw new CustomError('Invalid password', 400)
+    // One message for an unknown email and a wrong password, so the response
+    // does not tell a stranger which emails have an account.
+    // Compared against a dummy hash for an unknown email, so both cases take the
+    // same time.
+    const isPasswordValid = await bcrypt.compare(password, user?.password ?? DUMMY_PASSWORD_HASH)
+    if (!user || !isPasswordValid) {
+      throw new CustomError('Invalid email or password', 400)
     }
 
     const role = user.role as Role

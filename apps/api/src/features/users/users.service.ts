@@ -27,12 +27,12 @@ export class UsersService {
       throw new CustomError('User does not exist', 400)
     }
 
-    const isCurrentPasswordValid = bcrypt.compareSync(currentPassword, user.password)
+    const isCurrentPasswordValid = await bcrypt.compare(currentPassword, user.password)
     if (!isCurrentPasswordValid) {
       throw new CustomError('Current password is incorrect', 400)
     }
 
-    const hashedPassword = bcrypt.hashSync(newPassword, 10)
+    const hashedPassword = await bcrypt.hash(newPassword, 10)
     await this.prisma.user.update({ where: { email }, data: { password: hashedPassword } })
   }
 
