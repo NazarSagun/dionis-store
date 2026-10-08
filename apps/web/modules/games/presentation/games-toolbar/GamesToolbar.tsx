@@ -248,7 +248,10 @@ export const GamesToolbar = ({
             Filters
           </button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align='end' className='w-64 border-ink bg-panel-alt'>
+        <DropdownMenuContent
+          align='end'
+          className='max-h-[var(--radix-dropdown-menu-content-available-height)] w-64 overflow-y-auto border-ink bg-panel-alt'
+        >
           <DropdownMenuLabel>Platform</DropdownMenuLabel>
           {platformRadioGroup}
           <DropdownMenuSeparator className='bg-ink' />
