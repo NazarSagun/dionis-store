@@ -91,11 +91,17 @@ const config = {
           '0%': { backgroundPosition: '-100% 0' },
           '100%': { backgroundPosition: '100% 0' },
         },
+        'letter-bounce': {
+          '0%, 100%': { transform: 'translateY(0) rotate(0deg)' },
+          '25%': { transform: 'translateY(-0.25em) rotate(-8deg)' },
+          '75%': { transform: 'translateY(0.1em) rotate(8deg)' },
+        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
         shimmer: 'shimmer 1.5s infinite linear',
+        'letter-bounce': 'letter-bounce 1.2s ease-in-out infinite',
       },
     },
   },

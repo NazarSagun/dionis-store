@@ -1,6 +1,7 @@
 'use client'
 
 import { Suspense } from 'react'
+import Image from 'next/image'
 import { Skeleton } from '@repo/ui'
 
 import { Footer } from '@/components/footer/Footer'
@@ -13,6 +14,9 @@ import { GamesList } from '@/modules/games/presentation/games-list/GamesList'
 import { GamesPagination } from '@/modules/games/presentation/games-pagination/GamesPagination'
 import { GamesToolbar } from '@/modules/games/presentation/games-toolbar/GamesToolbar'
 import { TopDeals } from '@/modules/games/presentation/top-deals/TopDeals'
+
+const GREETING = 'Zdorov Vadym'
+const GREETING_LETTERS = GREETING.split('').map((char, position) => ({ char, id: `letter-${position}`, position }))
 
 const containerStyles =
   'flex flex-1 min-h-[75vh] flex-col items-center justify-center px-4 sm:px-8 lg:px-[35px] pb-20 bg-[image:var(--light-background-color)]'
@@ -40,6 +44,32 @@ function HomeContent() {
       <MainNavigation />
       <main className='flex-1'>
         <div className={containerStyles}>
+          <h2
+            aria-label={GREETING}
+            data-testid='greeting-heading'
+            className='w-full pt-12 font-display text-6xl font-bold text-primary sm:text-8xl'
+          >
+            {GREETING_LETTERS.map(({ char, id, position }) => (
+              <span
+                key={id}
+                aria-hidden='true'
+                className='inline-block whitespace-pre motion-safe:animate-letter-bounce'
+                style={{ animationDelay: `${position * 0.08}s` }}
+              >
+                {char}
+              </span>
+            ))}
+          </h2>
+          <Image
+            src='/images/meme.gif'
+            alt='Meme'
+            width={333}
+            height={374}
+            unoptimized
+            priority
+            data-testid='greeting-meme'
+            className='mt-6 h-auto w-64 rounded-md border border-ink sm:w-80'
+          />
           <div className='w-full pt-12'>
             <p className='font-mono text-xs font-bold uppercase tracking-wide text-primary'>
               Digital + Physical Game Marketplace
