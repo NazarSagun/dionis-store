@@ -17,6 +17,8 @@
 		Strict-Transport-Security "max-age=31536000"
 		X-Content-Type-Options nosniff
 		X-Frame-Options DENY
+		# allow-popups keeps window.open() popups (for example a 3-D Secure window) working.
+		Cross-Origin-Opener-Policy same-origin-allow-popups
 		Referrer-Policy strict-origin-when-cross-origin
 		Permissions-Policy "camera=(), microphone=(), geolocation=()"
 		# Report-only: the browser logs violations in the console and blocks

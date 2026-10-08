@@ -15,7 +15,7 @@ import { GamesToolbar } from '@/modules/games/presentation/games-toolbar/GamesTo
 import { TopDeals } from '@/modules/games/presentation/top-deals/TopDeals'
 
 const containerStyles =
-  'flex flex-1 min-h-[75vh] flex-col items-center justify-center px-4 sm:px-8 lg:px-[35px] pb-20 bg-[image:var(--light-background-color)]'
+  'flex flex-1 min-h-screen flex-col items-center justify-start px-4 sm:px-8 lg:px-[35px] pb-20 bg-[image:var(--light-background-color)]'
 
 // useSearchParams needs a Suspense boundary, or `next build` fails to
 // prerender the page.
