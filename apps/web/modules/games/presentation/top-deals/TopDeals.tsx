@@ -32,6 +32,7 @@ export const TopDeals = ({ games }: TopDealsProps) => {
           <div className='relative aspect-square w-[140px] shrink-0 overflow-hidden rounded bg-ink sm:w-[220px]'>
             <Image
               fill
+              priority
               sizes='220px'
               style={{ objectFit: 'cover' }}
               alt={`${featured.title} thumbnail`}

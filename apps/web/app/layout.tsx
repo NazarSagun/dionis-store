@@ -1,17 +1,17 @@
-'use client'
-
 import type { ReactNode } from 'react'
+import type { Metadata } from 'next'
 import localFont from 'next/font/local'
-import { Toaster } from '@repo/ui'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 import { cn } from '@/lib/utils'
-import { AuthInitializer } from '@/modules/auth/presentation/auth-initializer/AuthInitializer'
-import { WishlistSync } from '@/modules/wishlist/presentation/wishlist-sync/WishlistSync'
 
 import './globals.css'
 
-const queryClient = new QueryClient()
+import { Providers } from './providers'
+
+export const metadata: Metadata = {
+  title: { default: 'Dionis Store', template: '%s | Dionis Store' },
+  description: 'Dionis Store is a marketplace for digital and physical games, with daily deals and platform filters.',
+}
 
 // Self-hosted: next/font/google downloads at build time, and next@14.2.13
 // fails when Google returns a font URL without a file extension.
@@ -53,21 +53,7 @@ export default function RootLayout({
           fontSans.className,
         )}
       >
-        <QueryClientProvider client={queryClient}>
-          <AuthInitializer>
-            {/*
-              Toaster must mount before children: it subscribes its listener
-              in a useEffect, and sibling effects fire in render order. A
-              page's own mount-time effect calling toast() (e.g. the login
-              page's session-expired message) would otherwise dispatch
-              before Toaster is listening, and the toast would silently
-              never appear.
-            */}
-            <Toaster />
-            <WishlistSync />
-            {children}
-          </AuthInitializer>
-        </QueryClientProvider>
+        <Providers>{children}</Providers>
       </body>
     </html>
   )
