@@ -13,6 +13,7 @@ import { GamesList } from '@/modules/games/presentation/games-list/GamesList'
 import { GamesPagination } from '@/modules/games/presentation/games-pagination/GamesPagination'
 import { GamesToolbar } from '@/modules/games/presentation/games-toolbar/GamesToolbar'
 import { TopDeals } from '@/modules/games/presentation/top-deals/TopDeals'
+import { TopDealsSkeleton } from '@/modules/games/presentation/top-deals/TopDealsSkeleton'
 
 const containerStyles =
   'flex flex-1 min-h-screen flex-col items-center justify-start px-4 sm:px-8 lg:px-[35px] pb-20 bg-[image:var(--light-background-color)]'
@@ -32,7 +33,7 @@ function HomeContent() {
   const { page, ...query } = filters
 
   const { data, isLoading, isError } = useGetGames(page, query)
-  const { data: topDeals } = useGetGamesTopDeals()
+  const { data: topDeals, isLoading: isTopDealsLoading } = useGetGamesTopDeals()
   const { data: genres } = useGetGamesGenres()
 
   return (
@@ -63,7 +64,7 @@ function HomeContent() {
             onEditionChange={(edition) => setFilters({ edition })}
             onClearFilters={clearFilters}
           />
-          <TopDeals games={topDeals ?? []} />
+          {isTopDealsLoading ? <TopDealsSkeleton /> : <TopDeals games={topDeals ?? []} />}
           {isLoading && (
             <div
               data-testid='games-skeleton'
