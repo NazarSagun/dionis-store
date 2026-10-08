@@ -16,6 +16,8 @@ model User {
   name         String?
   password     String
   refreshToken String?  @unique
+  previousRefreshToken   String?   @unique
+  previousRefreshTokenAt DateTime?
   role         Int      @default(101)
   createdAt    DateTime @default(now())
   orders       Order[]

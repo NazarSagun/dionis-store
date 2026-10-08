@@ -1,3 +1,4 @@
+import { randomUUID } from 'crypto'
 import { Response } from 'express'
 import * as jwt from 'jsonwebtoken'
 import { Role } from '../../common/types/roles'
@@ -15,8 +16,11 @@ export function createAccessToken(payload: DecodedToken, secret: string) {
   return jwt.sign(payload, secret, { expiresIn: '15m' })
 }
 
+// The random jwtid makes every refresh token unique. Without it, two tokens
+// made for one user in the same second are identical, and the rotation could
+// not tell the old token from the new one.
 export function createRefreshToken(payload: DecodedToken, secret: string) {
-  return jwt.sign(payload, secret, { expiresIn: '1d' })
+  return jwt.sign(payload, secret, { expiresIn: '1d', jwtid: randomUUID() })
 }
 
 // Browsers drop a Secure cookie that comes from a plain-HTTP origin (localhost

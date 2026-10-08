@@ -64,7 +64,7 @@ export class AuthController {
   }
 
   @Get('refresh')
-  async refreshToken(@Req() req: Request) {
+  async refreshToken(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
     const refreshToken = req.cookies?.refreshToken
 
     if (!refreshToken) {
@@ -74,7 +74,8 @@ export class AuthController {
     }
 
     try {
-      const user = await this.authService.refreshToken(refreshToken)
+      const { refreshToken: newRefreshToken, ...user } = await this.authService.refreshToken(refreshToken)
+      setRefreshTokenCookie(res, newRefreshToken)
       return { message: 'Token varified and refreshed successfully', user }
     } catch (error) {
       throw toHttpException(error, { user: null })
