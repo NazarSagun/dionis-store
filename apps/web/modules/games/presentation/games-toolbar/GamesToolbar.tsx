@@ -75,7 +75,7 @@ export const GamesToolbar = ({
   onEditionChange,
   onClearFilters,
 }: GamesToolbarProps) => {
-  const debounceTimer = useRef<ReturnType<typeof setTimeout>>()
+  const debounceTimer = useRef<ReturnType<typeof setTimeout>>(undefined)
   const [searchResetKey, setSearchResetKey] = useState(0)
   const lastTypedSearch = useRef(search ?? '')
 
