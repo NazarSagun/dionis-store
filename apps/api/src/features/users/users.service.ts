@@ -47,7 +47,10 @@ export class UsersService {
       getDecodedDto(email, user.role as Role),
       this.configService.getOrThrow<string>('REFRESH_TOKEN'),
     )
-    await this.prisma.user.update({ where: { email }, data: { password: hashedPassword, refreshToken } })
+    await this.prisma.user.update({
+      where: { email },
+      data: { password: hashedPassword, refreshToken, previousRefreshToken: null, previousRefreshTokenAt: null },
+    })
     return { refreshToken }
   }
 
