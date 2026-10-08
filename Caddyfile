@@ -28,6 +28,28 @@
 		-X-Powered-By
 	}
 
+	# One JSON line per request on stdout, so the container log (and Alloy,
+	# which ships it to Grafana) shows traffic. The app itself logs no requests.
+	# Request and response headers are dropped: they hold cookies and tokens.
+	# The query string is dropped too: Stripe's return URL carries payment
+	# parameters in it.
+	log {
+		output stdout
+		format filter {
+			wrap json
+			fields {
+				request>headers delete
+				resp_headers delete
+				request>uri regexp "\?.*" ""
+			}
+		}
+	}
+
+	# Skip static files: the web app serves dozens per page view, and they say
+	# nothing about what users do.
+	@static path /_next/static/* /images/* /favicon.ico
+	log_skip @static
+
 	handle /api/* {
 		reverse_proxy api:3500
 	}
