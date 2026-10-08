@@ -19,6 +19,11 @@
 		X-Frame-Options DENY
 		Referrer-Policy strict-origin-when-cross-origin
 		Permissions-Policy "camera=(), microphone=(), geolocation=()"
+		# Report-only: the browser logs violations in the console and blocks
+		# nothing. Run a full purchase, then rename the header to
+		# Content-Security-Policy to enforce it. 'unsafe-inline' is for the
+		# inline scripts and styles Next.js writes. Remove it only after adding nonces.
+		Content-Security-Policy-Report-Only "default-src 'self'; script-src 'self' 'unsafe-inline' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://www.freetogame.com https://*.stripe.com; connect-src 'self' https://api.stripe.com; frame-src https://js.stripe.com https://hooks.stripe.com; object-src 'none'; base-uri 'self'; form-action 'self'"
 		-Server
 		-X-Powered-By
 	}

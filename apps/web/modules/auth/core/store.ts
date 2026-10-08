@@ -29,10 +29,18 @@ export const useAuthStore = create<AuthState>()(
     }),
     {
       name: 'auth-storage',
-      // role only hides or shows admin UI. The API checks the role on every admin route.
+      // Version 0 stored the access token. The migration drops it from storage
+      // that older sessions still hold.
+      version: 1,
+      migrate: (persisted) => {
+        const { accessToken: _accessToken, ...rest } = persisted as Record<string, unknown>
+        return rest as unknown as AuthState
+      },
+      // The access token stays in memory, so an XSS bug cannot read it from
+      // localStorage. The refresh cookie restores it after a reload. role only
+      // hides or shows admin UI. The API checks the role on every admin route.
       partialize: (state) => ({
         isAuthenticated: state.isAuthenticated,
-        accessToken: state.accessToken,
         role: state.role,
       }),
     },
