@@ -15,4 +15,6 @@ export interface Review {
    * @maximum 5
    */
   rating: number;
+  /** How many replies the review has */
+  replyCount: number;
 }

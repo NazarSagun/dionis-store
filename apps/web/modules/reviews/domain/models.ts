@@ -16,3 +16,17 @@ export const formatReviewDate = (isoDate: string) =>
 // A review needs a purchase in any form: the digital copy or any edition.
 export const ownsGame = (owned: OwnedItem[] | undefined, gameId: number) =>
   owned?.some((item) => item.gameId === gameId) ?? false
+
+export const REPLY_MAX_LENGTH = 500
+export const REPLIES_PAGE_SIZE = 10
+
+export const formatRepliesToggle = (count: number) => (count > 0 ? `Replies (${count})` : 'Reply')
+
+// The page that holds the newest reply, once one more reply is added.
+export const pageOfNextReply = (replyCount: number) => Math.ceil((replyCount + 1) / REPLIES_PAGE_SIZE)
+
+// The value of ?review= in the page URL. Anything but a positive whole number is ignored.
+export const parseReviewParam = (raw: string | null | undefined): number | null => {
+  if (!raw || !/^[1-9]\d{0,9}$/.test(raw)) return null
+  return Number(raw)
+}

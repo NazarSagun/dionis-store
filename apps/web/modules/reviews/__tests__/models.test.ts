@@ -1,6 +1,15 @@
 import { describe, expect, it } from 'vitest'
 
-import { formatAverageRating, formatReviewCount, formatReviewDate, ownsGame, starsLabel } from '../domain/models'
+import {
+  formatAverageRating,
+  formatRepliesToggle,
+  formatReviewCount,
+  formatReviewDate,
+  ownsGame,
+  pageOfNextReply,
+  parseReviewParam,
+  starsLabel,
+} from '../domain/models'
 
 describe('reviews domain', () => {
   it('formats the average with one decimal', () => {
@@ -27,5 +36,23 @@ describe('reviews domain', () => {
     expect(ownsGame(owned, 3)).toBe(true)
     expect(ownsGame(owned, 4)).toBe(false)
     expect(ownsGame(undefined, 3)).toBe(false)
+  })
+
+  it('labels the replies toggle with the count, or Reply when there is none', () => {
+    expect(formatRepliesToggle(0)).toBe('Reply')
+    expect(formatRepliesToggle(3)).toBe('Replies (3)')
+  })
+
+  it('finds the page of the next reply', () => {
+    expect(pageOfNextReply(0)).toBe(1)
+    expect(pageOfNextReply(9)).toBe(1)
+    expect(pageOfNextReply(10)).toBe(2)
+  })
+
+  it('reads a review id from the URL and ignores anything else', () => {
+    expect(parseReviewParam('42')).toBe(42)
+    for (const raw of [null, undefined, '', '0', '-3', '4.5', 'abc', '12abc', '12345678901']) {
+      expect(parseReviewParam(raw), String(raw)).toBeNull()
+    }
   })
 })

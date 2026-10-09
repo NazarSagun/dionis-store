@@ -654,6 +654,189 @@ paths:
                 $ref: '#/components/schemas/errorMessage'
       security:
         - bearerHttpAuthentication: []
+  /reviews/{reviewId}:
+    get:
+      summary: Fetch one review, for the link in a notification
+      operationId: getReview
+      parameters:
+        - name: reviewId
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 1
+          description: The review id
+      responses:
+        '200':
+          description: The review, with the id of its game
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/linkedReview'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+        '404':
+          description: There is no such review
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+  /reviews/{reviewId}/replies:
+    get:
+      summary: List the replies to a review, oldest first, ten per page
+      operationId: getReviewReplies
+      parameters:
+        - name: reviewId
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 1
+          description: The review id
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+          description: The page number, starting at 1
+      responses:
+        '200':
+          description: One page of replies
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/repliesPage'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+        '404':
+          description: There is no such review
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+    post:
+      summary: Reply to a review of a game the user bought
+      operationId: postReviewReply
+      parameters:
+        - name: reviewId
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 1
+          description: The review id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/replyInput'
+      responses:
+        '201':
+          description: The saved reply
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/reply'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+        '403':
+          description: The user did not buy this game
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+        '404':
+          description: There is no such review
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+      security:
+        - bearerHttpAuthentication: []
+  /notifications:
+    get:
+      summary: List the unread notifications of the signed-in user, newest first, at most 20
+      operationId: getNotifications
+      responses:
+        '200':
+          description: The unread notifications and the total unread count
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/notificationsResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+      security:
+        - bearerHttpAuthentication: []
+  /notifications/{id}/read:
+    post:
+      summary: Mark one notification as read
+      operationId: postNotificationRead
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 1
+          description: The notification id
+      responses:
+        '204':
+          description: The notification is read
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+        '404':
+          description: There is no such notification for this user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+      security:
+        - bearerHttpAuthentication: []
+  /notifications/read-all:
+    post:
+      summary: Mark every unread notification as read
+      operationId: postNotificationsReadAll
+      responses:
+        '204':
+          description: Every notification is read
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+      security:
+        - bearerHttpAuthentication: []
   /user/delete:
     post:
       summary: Delete user
@@ -1455,6 +1638,7 @@ components:
         - body
         - authorName
         - createdAt
+        - replyCount
       properties:
         id:
           type: integer
@@ -1470,6 +1654,102 @@ components:
         createdAt:
           type: string
           format: date-time
+        replyCount:
+          type: integer
+          description: How many replies the review has
+          example: 3
+    linkedReview:
+      description: A review with the id of its game
+      allOf:
+        - $ref: '#/components/schemas/review'
+        - type: object
+          required:
+            - gameId
+          properties:
+            gameId:
+              type: integer
+    reply:
+      type: object
+      required:
+        - id
+        - body
+        - authorName
+        - createdAt
+      properties:
+        id:
+          type: integer
+        body:
+          type: string
+        authorName:
+          type: string
+          example: Tomás R.
+        createdAt:
+          type: string
+          format: date-time
+    repliesPage:
+      type: object
+      required:
+        - totalPages
+        - replies
+      properties:
+        totalPages:
+          type: integer
+        replies:
+          type: array
+          items:
+            $ref: '#/components/schemas/reply'
+    replyInput:
+      type: object
+      required:
+        - body
+      properties:
+        body:
+          type: string
+          minLength: 1
+          maxLength: 500
+    notification:
+      type: object
+      required:
+        - id
+        - type
+        - gameId
+        - gameTitle
+        - reviewId
+        - actorName
+        - createdAt
+      properties:
+        id:
+          type: integer
+        type:
+          type: string
+          enum:
+            - review_reply
+        gameId:
+          type: integer
+        gameTitle:
+          type: string
+          example: Ironclad Siege
+        reviewId:
+          type: integer
+        actorName:
+          type: string
+          example: Vadym
+        createdAt:
+          type: string
+          format: date-time
+    notificationsResponse:
+      type: object
+      required:
+        - unreadCount
+        - notifications
+      properties:
+        unreadCount:
+          type: integer
+          description: The count of all unread notifications, also those beyond the list
+        notifications:
+          type: array
+          items:
+            $ref: '#/components/schemas/notification'
     reviewsPage:
       type: object
       required:

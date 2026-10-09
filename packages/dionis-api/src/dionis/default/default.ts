@@ -37,13 +37,19 @@ import type {
   GetGameReviewsParams,
   GetGamesParams,
   GetOrdersParams,
+  GetReviewRepliesParams,
+  LinkedReview,
   MergeWishlistBody,
+  NotificationsResponse,
   OrderItemObject,
   OrderObject,
   OrdersPage,
   OwnReview,
   OwnedItem,
   PaymentIntentResponse,
+  RepliesPage,
+  Reply,
+  ReplyInput,
   ReviewInput,
   ReviewsPage,
   ShippingAddressInput,
@@ -1075,6 +1081,362 @@ export const usePutGameReview = <TError = ErrorType<ErrorMessage>,
       > => {
 
       const mutationOptions = getPutGameReviewMutationOptions(options);
+
+      return useMutation(mutationOptions);
+    }
+    /**
+ * @summary Fetch one review, for the link in a notification
+ */
+export const getReview = (
+    reviewId: number,
+ options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<LinkedReview>(
+      {url: `/reviews/${reviewId}`, method: 'GET', signal
+    },
+      options);
+    }
+  
+
+export const getGetReviewQueryKey = (reviewId: number,) => {
+    return [`/reviews/${reviewId}`] as const;
+    }
+
+    
+export const getGetReviewQueryOptions = <TData = Awaited<ReturnType<typeof getReview>>, TError = ErrorType<ErrorMessage>>(reviewId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getReview>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetReviewQueryKey(reviewId);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getReview>>> = ({ signal }) => getReview(reviewId, requestOptions, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, enabled: !!(reviewId), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getReview>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetReviewQueryResult = NonNullable<Awaited<ReturnType<typeof getReview>>>
+export type GetReviewQueryError = ErrorType<ErrorMessage>
+
+/**
+ * @summary Fetch one review, for the link in a notification
+ */
+export const useGetReview = <TData = Awaited<ReturnType<typeof getReview>>, TError = ErrorType<ErrorMessage>>(
+ reviewId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getReview>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+
+  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } => {
+
+  const queryOptions = getGetReviewQueryOptions(reviewId,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+/**
+ * @summary List the replies to a review, oldest first, ten per page
+ */
+export const getReviewReplies = (
+    reviewId: number,
+    params?: GetReviewRepliesParams,
+ options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<RepliesPage>(
+      {url: `/reviews/${reviewId}/replies`, method: 'GET',
+        params, signal
+    },
+      options);
+    }
+  
+
+export const getGetReviewRepliesQueryKey = (reviewId: number,
+    params?: GetReviewRepliesParams,) => {
+    return [`/reviews/${reviewId}/replies`, ...(params ? [params]: [])] as const;
+    }
+
+    
+export const getGetReviewRepliesQueryOptions = <TData = Awaited<ReturnType<typeof getReviewReplies>>, TError = ErrorType<ErrorMessage>>(reviewId: number,
+    params?: GetReviewRepliesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getReviewReplies>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetReviewRepliesQueryKey(reviewId,params);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getReviewReplies>>> = ({ signal }) => getReviewReplies(reviewId,params, requestOptions, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, enabled: !!(reviewId), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getReviewReplies>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetReviewRepliesQueryResult = NonNullable<Awaited<ReturnType<typeof getReviewReplies>>>
+export type GetReviewRepliesQueryError = ErrorType<ErrorMessage>
+
+/**
+ * @summary List the replies to a review, oldest first, ten per page
+ */
+export const useGetReviewReplies = <TData = Awaited<ReturnType<typeof getReviewReplies>>, TError = ErrorType<ErrorMessage>>(
+ reviewId: number,
+    params?: GetReviewRepliesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getReviewReplies>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+
+  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } => {
+
+  const queryOptions = getGetReviewRepliesQueryOptions(reviewId,params,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+/**
+ * @summary Reply to a review of a game the user bought
+ */
+export const postReviewReply = (
+    reviewId: number,
+    replyInput: BodyType<ReplyInput>,
+ options?: SecondParameter<typeof customInstance>,) => {
+      
+      
+      return customInstance<Reply>(
+      {url: `/reviews/${reviewId}/replies`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: replyInput
+    },
+      options);
+    }
+  
+
+
+export const getPostReviewReplyMutationOptions = <TError = ErrorType<ErrorMessage>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postReviewReply>>, TError,{reviewId: number;data: BodyType<ReplyInput>}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof postReviewReply>>, TError,{reviewId: number;data: BodyType<ReplyInput>}, TContext> => {
+const {mutation: mutationOptions, request: requestOptions} = options ?? {};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postReviewReply>>, {reviewId: number;data: BodyType<ReplyInput>}> = (props) => {
+          const {reviewId,data} = props ?? {};
+
+          return  postReviewReply(reviewId,data,requestOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PostReviewReplyMutationResult = NonNullable<Awaited<ReturnType<typeof postReviewReply>>>
+    export type PostReviewReplyMutationBody = BodyType<ReplyInput>
+    export type PostReviewReplyMutationError = ErrorType<ErrorMessage>
+
+    /**
+ * @summary Reply to a review of a game the user bought
+ */
+export const usePostReviewReply = <TError = ErrorType<ErrorMessage>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postReviewReply>>, TError,{reviewId: number;data: BodyType<ReplyInput>}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationResult<
+        Awaited<ReturnType<typeof postReviewReply>>,
+        TError,
+        {reviewId: number;data: BodyType<ReplyInput>},
+        TContext
+      > => {
+
+      const mutationOptions = getPostReviewReplyMutationOptions(options);
+
+      return useMutation(mutationOptions);
+    }
+    /**
+ * @summary List the unread notifications of the signed-in user, newest first, at most 20
+ */
+export const getNotifications = (
+    
+ options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<NotificationsResponse>(
+      {url: `/notifications`, method: 'GET', signal
+    },
+      options);
+    }
+  
+
+export const getGetNotificationsQueryKey = () => {
+    return [`/notifications`] as const;
+    }
+
+    
+export const getGetNotificationsQueryOptions = <TData = Awaited<ReturnType<typeof getNotifications>>, TError = ErrorType<ErrorMessage>>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getNotifications>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetNotificationsQueryKey();
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getNotifications>>> = ({ signal }) => getNotifications(requestOptions, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getNotifications>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetNotificationsQueryResult = NonNullable<Awaited<ReturnType<typeof getNotifications>>>
+export type GetNotificationsQueryError = ErrorType<ErrorMessage>
+
+/**
+ * @summary List the unread notifications of the signed-in user, newest first, at most 20
+ */
+export const useGetNotifications = <TData = Awaited<ReturnType<typeof getNotifications>>, TError = ErrorType<ErrorMessage>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getNotifications>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+
+  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } => {
+
+  const queryOptions = getGetNotificationsQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+/**
+ * @summary Mark one notification as read
+ */
+export const postNotificationRead = (
+    id: number,
+ options?: SecondParameter<typeof customInstance>,) => {
+      
+      
+      return customInstance<void>(
+      {url: `/notifications/${id}/read`, method: 'POST'
+    },
+      options);
+    }
+  
+
+
+export const getPostNotificationReadMutationOptions = <TError = ErrorType<ErrorMessage>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postNotificationRead>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof postNotificationRead>>, TError,{id: number}, TContext> => {
+const {mutation: mutationOptions, request: requestOptions} = options ?? {};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postNotificationRead>>, {id: number}> = (props) => {
+          const {id} = props ?? {};
+
+          return  postNotificationRead(id,requestOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PostNotificationReadMutationResult = NonNullable<Awaited<ReturnType<typeof postNotificationRead>>>
+    
+    export type PostNotificationReadMutationError = ErrorType<ErrorMessage>
+
+    /**
+ * @summary Mark one notification as read
+ */
+export const usePostNotificationRead = <TError = ErrorType<ErrorMessage>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postNotificationRead>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationResult<
+        Awaited<ReturnType<typeof postNotificationRead>>,
+        TError,
+        {id: number},
+        TContext
+      > => {
+
+      const mutationOptions = getPostNotificationReadMutationOptions(options);
+
+      return useMutation(mutationOptions);
+    }
+    /**
+ * @summary Mark every unread notification as read
+ */
+export const postNotificationsReadAll = (
+    
+ options?: SecondParameter<typeof customInstance>,) => {
+      
+      
+      return customInstance<void>(
+      {url: `/notifications/read-all`, method: 'POST'
+    },
+      options);
+    }
+  
+
+
+export const getPostNotificationsReadAllMutationOptions = <TError = ErrorType<ErrorMessage>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postNotificationsReadAll>>, TError,void, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof postNotificationsReadAll>>, TError,void, TContext> => {
+const {mutation: mutationOptions, request: requestOptions} = options ?? {};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postNotificationsReadAll>>, void> = () => {
+          
+
+          return  postNotificationsReadAll(requestOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PostNotificationsReadAllMutationResult = NonNullable<Awaited<ReturnType<typeof postNotificationsReadAll>>>
+    
+    export type PostNotificationsReadAllMutationError = ErrorType<ErrorMessage>
+
+    /**
+ * @summary Mark every unread notification as read
+ */
+export const usePostNotificationsReadAll = <TError = ErrorType<ErrorMessage>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postNotificationsReadAll>>, TError,void, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationResult<
+        Awaited<ReturnType<typeof postNotificationsReadAll>>,
+        TError,
+        void,
+        TContext
+      > => {
+
+      const mutationOptions = getPostNotificationsReadAllMutationOptions(options);
 
       return useMutation(mutationOptions);
     }

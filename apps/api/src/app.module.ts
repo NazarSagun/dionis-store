@@ -7,6 +7,7 @@ import { PrismaModule } from './common/prisma/prisma.module'
 import { AuthModule } from './features/auth/auth.module'
 import { UsersModule } from './features/users/users.module'
 import { GamesModule } from './features/games/games.module'
+import { NotificationsModule } from './features/notifications/notifications.module'
 import { OrdersModule } from './features/orders/orders.module'
 import { ReviewsModule } from './features/reviews/reviews.module'
 import { WishlistModule } from './features/wishlist/wishlist.module'
@@ -28,6 +29,7 @@ import { WishlistModule } from './features/wishlist/wishlist.module'
     OrdersModule,
     WishlistModule,
     ReviewsModule,
+    NotificationsModule,
   ],
   providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],
 })
