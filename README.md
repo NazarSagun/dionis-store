@@ -74,7 +74,7 @@ A user with the Admin role (`500`) can open `/admin` from the account menu. Ther
 
 ## Rate limiting
 
-The API allows 300 requests a minute per client IP, and 10 a minute on login, register, and password change. It answers `429` after that. Behind a reverse proxy, set `TRUST_PROXY` to the number of proxies (the production compose file sets it to 1), or all users share one limit. Set `RATE_LIMIT=off` only for tests, because they sign up many users from one address. To exempt chosen client IPs, list them in `RATE_LIMIT_SKIP_IPS`, separated by commas. Those IPs have no limit on any route, login included.
+The API allows 300 requests a minute per client IP, and 10 a minute on login, register, and password change. It answers `429` after that. Behind a reverse proxy, set `TRUST_PROXY` to the number of proxies (the production compose file sets it to 1), or all users share one limit. Set `RATE_LIMIT=off` only for tests, because they sign up many users from one address. For a load test, set `RATE_LIMIT_BYPASS_TOKEN` to a random value of 32 or more characters, and send it in the `X-Load-Test-Token` header. A request with the right value has no limit on any route, login included. Keep the value secret, because anyone who has it can bypass the limit.
 
 ## Seed data
 

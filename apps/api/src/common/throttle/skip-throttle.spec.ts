@@ -1,36 +1,43 @@
 import { ExecutionContext } from '@nestjs/common'
-import { shouldSkipThrottle } from './skip-throttle'
+import { BYPASS_HEADER, shouldSkipThrottle } from './skip-throttle'
 
-const contextFor = (ip: string | undefined) =>
-  ({ switchToHttp: () => ({ getRequest: () => ({ ip }) }) }) as unknown as ExecutionContext
+const TOKEN = 'a'.repeat(32)
+
+const contextFor = (headers: Record<string, string | string[] | undefined>) =>
+  ({ switchToHttp: () => ({ getRequest: () => ({ headers }) }) }) as unknown as ExecutionContext
 
 describe('shouldSkipThrottle', () => {
-  it('limits every client when nothing is set', () => {
-    expect(shouldSkipThrottle(contextFor('3.143.247.187'), {})).toBe(false)
+  it('limits every request when nothing is set', () => {
+    expect(shouldSkipThrottle(contextFor({ [BYPASS_HEADER]: TOKEN }), {})).toBe(false)
   })
 
   it('exempts everyone when RATE_LIMIT is off', () => {
-    expect(shouldSkipThrottle(contextFor('9.9.9.9'), { RATE_LIMIT: 'off' })).toBe(true)
+    expect(shouldSkipThrottle(contextFor({}), { RATE_LIMIT: 'off' })).toBe(true)
   })
 
-  it('exempts only the listed IPs', () => {
-    const env = { RATE_LIMIT_SKIP_IPS: '3.143.247.187, 10.0.0.5' }
-
-    expect(shouldSkipThrottle(contextFor('3.143.247.187'), env)).toBe(true)
-    expect(shouldSkipThrottle(contextFor('10.0.0.5'), env)).toBe(true)
-    expect(shouldSkipThrottle(contextFor('3.143.247.188'), env)).toBe(false)
-    expect(shouldSkipThrottle(contextFor('13.143.247.187'), env)).toBe(false)
+  it('exempts a request that sends the right token', () => {
+    expect(shouldSkipThrottle(contextFor({ [BYPASS_HEADER]: TOKEN }), { RATE_LIMIT_BYPASS_TOKEN: TOKEN })).toBe(true)
   })
 
-  it('matches an IPv4 address that arrives in IPv6 form', () => {
-    const env = { RATE_LIMIT_SKIP_IPS: '3.143.247.187' }
+  it('limits a request with no token, a wrong token, or a token of another length', () => {
+    const env = { RATE_LIMIT_BYPASS_TOKEN: TOKEN }
 
-    expect(shouldSkipThrottle(contextFor('::ffff:3.143.247.187'), env)).toBe(true)
+    expect(shouldSkipThrottle(contextFor({}), env)).toBe(false)
+    expect(shouldSkipThrottle(contextFor({ [BYPASS_HEADER]: 'b'.repeat(32) }), env)).toBe(false)
+    expect(shouldSkipThrottle(contextFor({ [BYPASS_HEADER]: TOKEN.slice(1) }), env)).toBe(false)
+    expect(shouldSkipThrottle(contextFor({ [BYPASS_HEADER]: `${TOKEN}x` }), env)).toBe(false)
   })
 
-  it('limits a request with no IP, and ignores an empty list or empty entries', () => {
-    expect(shouldSkipThrottle(contextFor(undefined), { RATE_LIMIT_SKIP_IPS: '3.143.247.187' })).toBe(false)
-    expect(shouldSkipThrottle(contextFor(''), { RATE_LIMIT_SKIP_IPS: ',,' })).toBe(false)
-    expect(shouldSkipThrottle(contextFor('3.143.247.187'), { RATE_LIMIT_SKIP_IPS: '' })).toBe(false)
+  it('limits a request that sends the header twice', () => {
+    expect(
+      shouldSkipThrottle(contextFor({ [BYPASS_HEADER]: [TOKEN, TOKEN] }), { RATE_LIMIT_BYPASS_TOKEN: TOKEN }),
+    ).toBe(false)
+  })
+
+  it('ignores a secret that is shorter than 32 characters, even when it matches', () => {
+    expect(shouldSkipThrottle(contextFor({ [BYPASS_HEADER]: 'short' }), { RATE_LIMIT_BYPASS_TOKEN: 'short' })).toBe(
+      false,
+    )
+    expect(shouldSkipThrottle(contextFor({ [BYPASS_HEADER]: '' }), { RATE_LIMIT_BYPASS_TOKEN: '' })).toBe(false)
   })
 })

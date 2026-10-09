@@ -18,7 +18,7 @@ import { WishlistModule } from './features/wishlist/wishlist.module'
     ConfigModule.forRoot({ isGlobal: true }),
     // 300 requests a minute per client IP for every route. RATE_LIMIT=off turns it
     // off, for the E2E run, whose tests sign up many users from one address.
-    // RATE_LIMIT_SKIP_IPS exempts the listed client IPs only.
+    // A request with the RATE_LIMIT_BYPASS_TOKEN in X-Load-Test-Token skips it too.
     ThrottlerModule.forRoot({
       throttlers: [{ ttl: 60_000, limit: 300 }],
       skipIf: (context) => shouldSkipThrottle(context),

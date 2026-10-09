@@ -1,18 +1,28 @@
+import { timingSafeEqual } from 'crypto'
 import { ExecutionContext } from '@nestjs/common'
 import { Request } from 'express'
 
-// "::ffff:1.2.3.4" is the IPv4 address 1.2.3.4 as an IPv6 socket reports it.
-const normalize = (ip: string) => ip.trim().replace(/^::ffff:/i, '')
+// Node lower-cases header names.
+export const BYPASS_HEADER = 'x-load-test-token'
+// A shorter secret is too easy to guess, so it is ignored.
+export const BYPASS_TOKEN_MIN_LENGTH = 32
 
-// True when a request is exempt from the rate limit: RATE_LIMIT=off exempts
-// everyone, and RATE_LIMIT_SKIP_IPS (a comma-separated list) exempts those client
-// IPs. `request.ip` follows TRUST_PROXY, so behind Caddy it is the address that
-// Caddy saw, and a client cannot choose it with its own X-Forwarded-For header.
+function sameSecret(given: string, expected: string) {
+  const left = Buffer.from(given)
+  const right = Buffer.from(expected)
+  return left.length === right.length && timingSafeEqual(left, right)
+}
+
+// True when a request is exempt from the rate limit. RATE_LIMIT=off exempts
+// everyone. A request that sends RATE_LIMIT_BYPASS_TOKEN in the X-Load-Test-Token
+// header is exempt too, so a load test needs no IP list. The compare takes the
+// same time for every wrong value of the same length.
 export function shouldSkipThrottle(context: ExecutionContext, env: Record<string, string | undefined> = process.env) {
   if (env.RATE_LIMIT === 'off') return true
 
-  const ip = context.switchToHttp().getRequest<Request>().ip
-  if (!ip) return false
+  const token = env.RATE_LIMIT_BYPASS_TOKEN
+  if (!token || token.length < BYPASS_TOKEN_MIN_LENGTH) return false
 
-  return (env.RATE_LIMIT_SKIP_IPS ?? '').split(',').map(normalize).filter(Boolean).includes(normalize(ip))
+  const given = context.switchToHttp().getRequest<Request>().headers[BYPASS_HEADER]
+  return typeof given === 'string' && sameSecret(given, token)
 }
