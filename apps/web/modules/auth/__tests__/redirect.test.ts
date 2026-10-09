@@ -15,6 +15,8 @@ describe('safeNextPath', () => {
     'https://evil.example',
     '//evil.example',
     '/\\evil.example',
+    '/\t/evil.example',
+    '/\n/evil.example',
     'data:text/html,x',
   ])('falls back to the home page for %p', (value) => {
     expect(safeNextPath(value)).toBe('/')

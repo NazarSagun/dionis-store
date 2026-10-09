@@ -5,7 +5,7 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export type GameDetailObjectAllOf = {
+export type GameWithReviewSummaryAllOf = {
   /**
    * The average review rating rounded to one decimal, or null when the game has no review
    * @nullable

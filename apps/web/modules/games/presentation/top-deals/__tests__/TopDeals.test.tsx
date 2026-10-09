@@ -1,11 +1,11 @@
-import { GameDetailObject } from '@repo/dionis-api/src/model'
+import { GameWithReviewSummary } from '@repo/dionis-api/src/model'
 import { describe, expect, it } from 'vitest'
 
 import { render } from '@/test-utils/utils'
 
 import { TopDeals } from '../TopDeals'
 
-const buildGame = (overrides: Partial<GameDetailObject>): GameDetailObject => ({
+const buildGame = (overrides: Partial<GameWithReviewSummary>): GameWithReviewSummary => ({
   id: 1,
   title: 'Some Game',
   thumbnail: 'https://www.freetogame.com/g/1/thumbnail.jpg',

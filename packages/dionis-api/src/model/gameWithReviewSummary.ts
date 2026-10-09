@@ -5,9 +5,9 @@
  * OpenAPI spec version: 1.0.0
  */
 import type { GameObject } from './gameObject';
-import type { GameDetailObjectAllOf } from './gameDetailObjectAllOf';
+import type { GameWithReviewSummaryAllOf } from './gameWithReviewSummaryAllOf';
 
 /**
  * A game with the average rating and the count of the store's own reviews
  */
-export type GameDetailObject = GameObject & GameDetailObjectAllOf;
+export type GameWithReviewSummary = GameObject & GameWithReviewSummaryAllOf;

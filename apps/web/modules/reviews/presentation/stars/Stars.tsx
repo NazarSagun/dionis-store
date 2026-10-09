@@ -13,7 +13,7 @@ interface StarsProps {
 
 const STAR_PATH = 'M12 2l2.9 6.9 7.1.6-5.4 4.7 1.7 7.3L12 17.8 5.7 21.5l1.7-7.3L2 9.5l7.1-.6z'
 
-const Star = ({ fill, size }: { fill: number; size: number }) => {
+export const Star = ({ fill, size }: { fill: number; size: number }) => {
   const clipId = useId()
 
   return (

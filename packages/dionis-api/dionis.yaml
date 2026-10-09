@@ -407,7 +407,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/gameDetailObject'
+                  $ref: '#/components/schemas/gameWithReviewSummary'
         '500':
           description: Server error
           content:
@@ -525,7 +525,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/gameDetailObject'
+                $ref: '#/components/schemas/gameWithReviewSummary'
         '400':
           description: Bad request
           content:
@@ -1430,7 +1430,7 @@ components:
           type: integer
         pageSize:
           type: integer
-    gameDetailObject:
+    gameWithReviewSummary:
       description: A game with the average rating and the count of the store's own reviews
       allOf:
         - $ref: '#/components/schemas/gameObject'

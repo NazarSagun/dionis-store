@@ -26,11 +26,11 @@ import type {
   EditionInput,
   EditionUpdateInput,
   ErrorMessage,
-  GameDetailObject,
   GameEditionObject,
   GameInput,
   GameObject,
   GameUpdateInput,
+  GameWithReviewSummary,
   GamesArray,
   GenreCount,
   GetAdminOrdersParams,
@@ -653,7 +653,7 @@ export const getGamesTopDeals = (
 ) => {
       
       
-      return customInstance<GameDetailObject[]>(
+      return customInstance<GameWithReviewSummary[]>(
       {url: `/games/top-deals`, method: 'GET', signal
     },
       options);
@@ -841,7 +841,7 @@ export const getGame = (
 ) => {
       
       
-      return customInstance<GameDetailObject>(
+      return customInstance<GameWithReviewSummary>(
       {url: `/game/${gameId}`, method: 'GET', signal
     },
       options);

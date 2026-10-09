@@ -18,6 +18,9 @@ const SORT_TO_ORDER_BY: Record<AllowedSort, Prisma.Game_pcOrderByWithRelationInp
   rating_desc: { rating: 'desc' },
 }
 
+// The store's average review rating to one decimal, or null when there is no review.
+const roundAverage = (average: number | null | undefined) => (average == null ? null : Math.round(average * 10) / 10)
+
 @Injectable()
 export class GamesService {
   constructor(private readonly prisma: PrismaService) {}
@@ -130,7 +133,7 @@ export class GamesService {
       const summary = byGame.get(game.id)
       return {
         ...game,
-        averageRating: summary?._avg.rating == null ? null : Math.round(summary._avg.rating * 10) / 10,
+        averageRating: roundAverage(summary?._avg.rating),
         reviewCount: summary?._count._all ?? 0,
       }
     })
@@ -160,7 +163,7 @@ export class GamesService {
 
     return {
       ...game,
-      averageRating: _avg.rating === null ? null : Math.round(_avg.rating * 10) / 10,
+      averageRating: roundAverage(_avg.rating),
       reviewCount: _count._all,
     }
   }

@@ -5,11 +5,11 @@ import { formatAverageRating, formatReviewCount } from '@/modules/reviews/domain
 import { Stars } from '@/modules/reviews/presentation/stars/Stars'
 
 import { calculateDiscountedPrice } from '../../domain/pricing'
-import { GameDetailObject } from '../../integration/repository'
+import { GameWithReviewSummary } from '../../integration/repository'
 import { RatingBadge } from '../rating-badge/RatingBadge'
 
 interface TopDealsProps {
-  games: GameDetailObject[]
+  games: GameWithReviewSummary[]
 }
 
 export const TopDeals = ({ games }: TopDealsProps) => {

@@ -1,13 +1,11 @@
 'use client'
 
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
 import { Button, Skeleton } from '@repo/ui'
 
-import { loginHref } from '@/modules/auth/domain/redirect'
+import { LoginLink } from '@/modules/auth/presentation/login-link/LoginLink'
 
+import { ReviewAccess } from '../../core/facade'
 import { REVIEW_FORM_ID } from '../review-form/ReviewForm'
-import { ReviewAccess } from '../reviews-section/useReviewAccess'
 
 const focusReviewForm = () => {
   const form = document.getElementById(REVIEW_FORM_ID)
@@ -19,8 +17,6 @@ const focusReviewForm = () => {
 // and an owner get an action. A user who did not buy the game gets the reason
 // only, because the edition buttons are already on the page.
 export const ReviewsEmptyState = ({ access }: { access: ReviewAccess }) => {
-  const pathname = usePathname()
-
   return (
     <div data-testid='reviews-empty' className='flex flex-col gap-3 rounded-md border border-border bg-card p-6'>
       <h3 className='font-display text-lg font-medium text-foreground'>No reviews yet</h3>
@@ -32,9 +28,7 @@ export const ReviewsEmptyState = ({ access }: { access: ReviewAccess }) => {
           <p className='font-sans text-sm text-muted-foreground'>
             Log in to review games you own, and be the first to rate this one.
           </p>
-          <Button asChild variant='secondary'>
-            <Link href={loginHref(pathname)}>Log in</Link>
-          </Button>
+          <LoginLink />
         </div>
       )}
 

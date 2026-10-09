@@ -2,30 +2,15 @@
 
 import { FormEvent, useEffect, useState } from 'react'
 import { Button, cn } from '@repo/ui'
-import { useQueryClient } from '@tanstack/react-query'
 
+import { useSaveReview } from '../../core/facade'
 import { REVIEW_MAX_LENGTH, STAR_COUNT } from '../../domain/models'
-import {
-  getGetGameQueryKey,
-  getGetGameReviewsQueryKey,
-  getGetMyGameReviewQueryKey,
-  useGetMyGameReview,
-  usePutGameReview,
-} from '../../integration/repository'
-
-const StarIcon = ({ filled }: { filled: boolean }) => (
-  <svg width={22} height={22} viewBox='0 0 24 24' aria-hidden='true'>
-    <path
-      d='M12 2l2.9 6.9 7.1.6-5.4 4.7 1.7 7.3L12 17.8 5.7 21.5l1.7-7.3L2 9.5l7.1-.6z'
-      className={filled ? 'fill-foreground' : 'fill-border'}
-    />
-  </svg>
-)
+import { useGetMyGameReview } from '../../integration/repository'
+import { Star } from '../stars/Stars'
 
 export const REVIEW_FORM_ID = 'review-form'
 
 export const ReviewForm = ({ gameId }: { gameId: number }) => {
-  const queryClient = useQueryClient()
   const [rating, setRating] = useState(0)
   const [body, setBody] = useState('')
   const [error, setError] = useState<string | null>(null)
@@ -42,20 +27,7 @@ export const ReviewForm = ({ gameId }: { gameId: number }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [savedId])
 
-  const { mutate, isPending } = usePutGameReview({
-    mutation: {
-      onSuccess: async () => {
-        setError(null)
-        await Promise.all([
-          queryClient.invalidateQueries({ queryKey: getGetGameReviewsQueryKey(gameId) }),
-          queryClient.invalidateQueries({ queryKey: getGetGameQueryKey(gameId) }),
-          queryClient.invalidateQueries({ queryKey: getGetMyGameReviewQueryKey(gameId) }),
-        ])
-      },
-      // The typed text stays, so the user can send it again.
-      onError: (err) => setError(err.response?.data.message ?? 'Could not save your review. Try again.'),
-    },
-  })
+  const { mutate, isPending } = useSaveReview(gameId)
 
   let submitLabel = saved ? 'Update review' : 'Submit review'
   if (isPending) submitLabel = 'Saving…'
@@ -63,7 +35,12 @@ export const ReviewForm = ({ gameId }: { gameId: number }) => {
   const onSubmit = (event: FormEvent) => {
     event.preventDefault()
     if (rating === 0 || isPending) return
-    mutate({ id: gameId, data: { rating, body } })
+    setError(null)
+    mutate(
+      { id: gameId, data: { rating, body } },
+      // The typed text stays, so the user can send it again.
+      { onError: (err) => setError(err.response?.data.message ?? 'Could not save your review. Try again.') },
+    )
   }
 
   return (
@@ -96,7 +73,7 @@ export const ReviewForm = ({ gameId }: { gameId: number }) => {
                   rating === value ? 'border-foreground' : 'border-border',
                 )}
               >
-                <StarIcon filled={value <= rating} />
+                <Star size={22} fill={value <= rating ? 1 : 0} />
               </button>
             )
           })}
