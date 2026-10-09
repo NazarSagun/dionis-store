@@ -1,6 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common'
 import { createTransport, Transporter } from 'nodemailer'
+import { hasReservedTld } from '../../features/auth/email-domain.util'
 import { ReceiptOrder, renderReceipt } from './receipt-template'
+
+// Mailpit and any local catcher never deliver outside the machine.
+const LOCAL_SMTP_HOSTS = ['localhost', '127.0.0.1', '::1', 'mailpit']
 
 @Injectable()
 export class MailService {
@@ -29,6 +33,11 @@ export class MailService {
   // "skipped". A failed send throws.
   async sendOrderReceipt(to: string, order: ReceiptOrder): Promise<boolean> {
     if (!this.transport) return false
+    // A test address must not reach a real SMTP server. A local catcher is fine, so e2e can read the receipt.
+    if (hasReservedTld(to) && !LOCAL_SMTP_HOSTS.includes(process.env.SMTP_HOST ?? '')) {
+      this.logger.log(`Receipt for ${to} skipped: reserved test domain on a real SMTP server.`)
+      return false
+    }
 
     const { subject, html, text } = renderReceipt(order, this.getAccountUrl())
     await this.transport.sendMail({
