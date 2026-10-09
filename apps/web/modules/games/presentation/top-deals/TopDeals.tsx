@@ -1,12 +1,15 @@
 import Image from 'next/image'
 import Link from 'next/link'
 
+import { formatAverageRating, formatReviewCount } from '@/modules/reviews/domain/models'
+import { Stars } from '@/modules/reviews/presentation/stars/Stars'
+
 import { calculateDiscountedPrice } from '../../domain/pricing'
-import { GameObject } from '../../integration/repository'
+import { GameWithReviewSummary } from '../../integration/repository'
 import { RatingBadge } from '../rating-badge/RatingBadge'
 
 interface TopDealsProps {
-  games: GameObject[]
+  games: GameWithReviewSummary[]
 }
 
 export const TopDeals = ({ games }: TopDealsProps) => {
@@ -44,7 +47,27 @@ export const TopDeals = ({ games }: TopDealsProps) => {
             <h3 className='truncate font-mono text-2xl font-bold text-foreground'>{featured.title}</h3>
             <span className='font-mono text-xs text-muted-foreground'>{featured.platform}</span>
             <div className='flex items-center justify-between pt-1'>
-              <RatingBadge rating={featured.rating} />
+              <div className='flex min-w-0 items-center gap-3'>
+                <RatingBadge rating={featured.rating} />
+                {featured.averageRating !== null && (
+                  <span
+                    data-testid='featured-reviews'
+                    title={`Store rating: ${formatAverageRating(featured.averageRating)} from ${formatReviewCount(featured.reviewCount)}`}
+                    className='flex items-center gap-1.5 font-mono text-xs text-muted-foreground'
+                  >
+                    <Stars
+                      rating={featured.averageRating}
+                      size={12}
+                      className='hidden gap-0.5 sm:inline-flex'
+                      data-testid='featured-stars'
+                    />
+                    <span data-testid='featured-average' className='text-foreground'>
+                      {formatAverageRating(featured.averageRating)}
+                    </span>
+                    <span data-testid='featured-count'>({featured.reviewCount})</span>
+                  </span>
+                )}
+              </div>
               {featured.discount ? (
                 <span className='flex items-baseline gap-2'>
                   <span className='font-mono text-sm text-muted-foreground line-through'>€{featured.price}</span>

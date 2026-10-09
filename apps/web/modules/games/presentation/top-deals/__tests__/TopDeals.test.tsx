@@ -1,11 +1,11 @@
-import { GameObject } from '@repo/dionis-api/src/model'
+import { GameWithReviewSummary } from '@repo/dionis-api/src/model'
 import { describe, expect, it } from 'vitest'
 
 import { render } from '@/test-utils/utils'
 
 import { TopDeals } from '../TopDeals'
 
-const buildGame = (overrides: Partial<GameObject>): GameObject => ({
+const buildGame = (overrides: Partial<GameWithReviewSummary>): GameWithReviewSummary => ({
   id: 1,
   title: 'Some Game',
   thumbnail: 'https://www.freetogame.com/g/1/thumbnail.jpg',
@@ -18,6 +18,8 @@ const buildGame = (overrides: Partial<GameObject>): GameObject => ({
   rating: '4.5',
   price: 20,
   discount: 0,
+  averageRating: null,
+  reviewCount: 0,
   ...overrides,
 })
 
@@ -55,5 +57,21 @@ describe('<TopDeals />', () => {
     expect(getByText('Deal Two')).toBeInTheDocument()
     expect(getByText('Deal Three')).toBeInTheDocument()
     expect(getByText('Deal Four')).toBeInTheDocument()
+  })
+
+  it('shows the store average and review count on the featured deal', () => {
+    const games = [buildGame({ id: 1, title: 'Deal One', averageRating: 4.5, reviewCount: 12 })]
+
+    const { getByTestId } = render(<TopDeals games={games} />)
+
+    expect(getByTestId('featured-average')).toHaveTextContent('4.5')
+    expect(getByTestId('featured-count')).toHaveTextContent('(12)')
+    expect(getByTestId('featured-stars')).toHaveAttribute('aria-label', '4.5 out of 5 stars')
+  })
+
+  it('shows no store score when the featured deal has no review', () => {
+    const { queryByTestId } = render(<TopDeals games={[buildGame({ id: 1 })]} />)
+
+    expect(queryByTestId('featured-reviews')).not.toBeInTheDocument()
   })
 })

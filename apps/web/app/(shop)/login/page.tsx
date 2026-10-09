@@ -6,6 +6,7 @@ import { useLogin } from '@repo/dionis-api/src/dionis/default/default'
 import { useToast } from '@repo/ui'
 
 import { useAuthLogin, useIsAuthenticated } from '@/modules/auth/core/facade'
+import { loginHref, safeNextPath } from '@/modules/auth/domain/redirect'
 import { FormVariant } from '@/modules/auth/presentation/auth-form/AuthForm'
 import { AuthPage } from '@/modules/auth/presentation/auth-page/AuthPage'
 
@@ -15,12 +16,14 @@ const LoginPage = () => {
   const router = useRouter()
   const searchParams = useSearchParams()
   const { toast } = useToast()
+  // A page that sent the user here, such as a game, asks to get them back.
+  const nextPath = safeNextPath(searchParams.get('next'))
 
   const { mutate, isPending } = useLogin({
     mutation: {
       onSuccess: (data) => {
         login(data.user?.accessToken as string, data.user?.name as string, data.user?.role)
-        router.push('/')
+        router.push(nextPath)
       },
       onError: (error) => {
         toast({
@@ -33,9 +36,9 @@ const LoginPage = () => {
 
   useEffect(() => {
     if (isAuthenticated) {
-      router.push('/')
+      router.push(nextPath)
     }
-  }, [isAuthenticated, router])
+  }, [isAuthenticated, nextPath, router])
 
   useEffect(() => {
     if (searchParams.get('sessionExpired') === '1') {
@@ -44,7 +47,8 @@ const LoginPage = () => {
         title: 'Your session has expired',
         description: 'Please log in again to continue.',
       })
-      router.replace('/login')
+      // Drop the flag, keep the return path.
+      router.replace(loginHref(searchParams.get('next')))
     }
   }, [searchParams, router, toast])
 

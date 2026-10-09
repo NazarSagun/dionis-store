@@ -397,17 +397,17 @@ paths:
         - bearerHttpAuthentication: []
   /games/top-deals:
     get:
-      summary: List up to 10 games with the highest discount, discount > 0, highest first
+      summary: List up to 5 games with the highest discount, discount > 0, highest first
       operationId: getGamesTopDeals
       responses:
         '200':
-          description: Array of discounted games, highest discount first
+          description: Array of discounted games with their review summary, highest discount first
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/gameObject'
+                  $ref: '#/components/schemas/gameWithReviewSummary'
         '500':
           description: Server error
           content:
@@ -525,7 +525,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/gameObject'
+                $ref: '#/components/schemas/gameWithReviewSummary'
         '400':
           description: Bad request
           content:
@@ -538,6 +538,122 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/errorMessage'
+  /games/{id}/reviews:
+    get:
+      summary: List the reviews of a game, newest first, ten per page
+      operationId: getGameReviews
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 1
+          description: The game id
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+          description: The page number, starting at 1
+      responses:
+        '200':
+          description: One page of reviews
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/reviewsPage'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+  /games/{id}/review:
+    get:
+      summary: Fetch the signed-in user's own review of a game
+      operationId: getMyGameReview
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 1
+          description: The game id
+      responses:
+        '200':
+          description: The review of the current user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ownReview'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+        '404':
+          description: The user has not reviewed this game
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+      security:
+        - bearerHttpAuthentication: []
+    put:
+      summary: Create or replace the signed-in user's review of a game they bought
+      operationId: putGameReview
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 1
+          description: The game id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/reviewInput'
+      responses:
+        '200':
+          description: The saved review
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ownReview'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+        '403':
+          description: The user did not buy this game
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+      security:
+        - bearerHttpAuthentication: []
   /user/delete:
     post:
       summary: Delete user
@@ -1314,6 +1430,93 @@ components:
           type: integer
         pageSize:
           type: integer
+    gameWithReviewSummary:
+      description: A game with the average rating and the count of the store's own reviews
+      allOf:
+        - $ref: '#/components/schemas/gameObject'
+        - type: object
+          required:
+            - averageRating
+            - reviewCount
+          properties:
+            averageRating:
+              type: number
+              nullable: true
+              description: The average review rating rounded to one decimal, or null when the game has no review
+              example: 4.5
+            reviewCount:
+              type: integer
+              example: 12
+    review:
+      type: object
+      required:
+        - id
+        - rating
+        - body
+        - authorName
+        - createdAt
+      properties:
+        id:
+          type: integer
+        rating:
+          type: integer
+          minimum: 1
+          maximum: 5
+        body:
+          type: string
+        authorName:
+          type: string
+          example: Mara K.
+        createdAt:
+          type: string
+          format: date-time
+    reviewsPage:
+      type: object
+      required:
+        - totalPages
+        - reviews
+      properties:
+        totalPages:
+          type: integer
+        reviews:
+          type: array
+          items:
+            $ref: '#/components/schemas/review'
+    ownReview:
+      type: object
+      required:
+        - id
+        - rating
+        - body
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          type: integer
+        rating:
+          type: integer
+          minimum: 1
+          maximum: 5
+        body:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    reviewInput:
+      type: object
+      required:
+        - rating
+      properties:
+        rating:
+          type: integer
+          minimum: 1
+          maximum: 5
+        body:
+          type: string
+          maxLength: 1000
     ownedItem:
       type: object
       required:

@@ -16,13 +16,16 @@ import type {
   AdminOrdersPage,
   GameEditionObject,
   GameObject,
+  GameWithReviewSummary,
   GamesArray,
   GenreCount,
   OrderItemObject,
   OrderObject,
   OrdersPage,
+  OwnReview,
   OwnedItem,
   PaymentIntentResponse,
+  ReviewsPage,
   SuccessMessage,
   UpdateNameResponse,
   UserObject,
@@ -46,13 +49,19 @@ export const getUpdateEditionResponseMock = (overrideResponse: Partial< GameEdit
 
 export const getGetAdminOrdersResponseMock = (overrideResponse: Partial< AdminOrdersPage > = {}): AdminOrdersPage => ({items: Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({createdAt: faker.helpers.arrayElement([`${faker.date.past().toISOString().split('.')[0]}Z`, undefined]), id: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), items: faker.helpers.arrayElement([Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({activated: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]), activatedAt: faker.helpers.arrayElement([faker.helpers.arrayElement([`${faker.date.past().toISOString().split('.')[0]}Z`, null]), undefined]), activationCode: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.word.sample(), null]), undefined]), edition: faker.helpers.arrayElement([{description: faker.word.sample(), discount: faker.number.int({min: undefined, max: undefined}), id: faker.number.int({min: undefined, max: undefined}), name: faker.word.sample(), price: faker.number.int({min: undefined, max: undefined}), stock: faker.number.int({min: undefined, max: undefined})}, undefined]), editionId: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), null]), undefined]), game: faker.helpers.arrayElement([{developer: faker.word.sample(), discount: faker.number.int({min: undefined, max: undefined}), editionCount: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), editions: faker.helpers.arrayElement([Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({description: faker.word.sample(), discount: faker.number.int({min: undefined, max: undefined}), id: faker.number.int({min: undefined, max: undefined}), name: faker.word.sample(), price: faker.number.int({min: undefined, max: undefined}), stock: faker.number.int({min: undefined, max: undefined})})), undefined]), genre: faker.word.sample(), id: faker.number.int({min: undefined, max: undefined}), platform: faker.word.sample(), price: faker.number.int({min: undefined, max: undefined}), publisher: faker.word.sample(), rating: faker.word.sample(), release_date: faker.word.sample(), short_description: faker.word.sample(), thumbnail: faker.word.sample(), title: faker.word.sample()}, undefined]), gameId: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), id: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), price: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), quantity: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined])})), undefined]), shippingCity: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.word.sample(), null]), undefined]), shippingCountry: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.word.sample(), null]), undefined]), shippingLine1: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.word.sample(), null]), undefined]), shippingLine2: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.word.sample(), null]), undefined]), shippingName: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.word.sample(), null]), undefined]), shippingPostalCode: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.word.sample(), null]), undefined]), stripePaymentIntentId: faker.helpers.arrayElement([faker.word.sample(), undefined]), totalPrice: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), userId: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]),user: {email: faker.word.sample()}})), page: faker.number.int({min: undefined, max: undefined}), pageSize: faker.number.int({min: undefined, max: undefined}), total: faker.number.int({min: undefined, max: undefined}), ...overrideResponse})
 
-export const getGetGamesTopDealsResponseMock = (): GameObject[] => (Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({developer: faker.word.sample(), discount: faker.number.int({min: undefined, max: undefined}), editionCount: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), editions: faker.helpers.arrayElement([Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({description: faker.word.sample(), discount: faker.number.int({min: undefined, max: undefined}), id: faker.number.int({min: undefined, max: undefined}), name: faker.word.sample(), price: faker.number.int({min: undefined, max: undefined}), stock: faker.number.int({min: undefined, max: undefined})})), undefined]), genre: faker.word.sample(), id: faker.number.int({min: undefined, max: undefined}), platform: faker.word.sample(), price: faker.number.int({min: undefined, max: undefined}), publisher: faker.word.sample(), rating: faker.word.sample(), release_date: faker.word.sample(), short_description: faker.word.sample(), thumbnail: faker.word.sample(), title: faker.word.sample()})))
+export const getGetGamesTopDealsResponseMock = (): GameWithReviewSummary[] => (Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({developer: faker.word.sample(), discount: faker.number.int({min: undefined, max: undefined}), editionCount: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), editions: faker.helpers.arrayElement([Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({description: faker.word.sample(), discount: faker.number.int({min: undefined, max: undefined}), id: faker.number.int({min: undefined, max: undefined}), name: faker.word.sample(), price: faker.number.int({min: undefined, max: undefined}), stock: faker.number.int({min: undefined, max: undefined})})), undefined]), genre: faker.word.sample(), id: faker.number.int({min: undefined, max: undefined}), platform: faker.word.sample(), price: faker.number.int({min: undefined, max: undefined}), publisher: faker.word.sample(), rating: faker.word.sample(), release_date: faker.word.sample(), short_description: faker.word.sample(), thumbnail: faker.word.sample(), title: faker.word.sample(),averageRating: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), null]), reviewCount: faker.number.int({min: undefined, max: undefined})})))
 
 export const getGetGamesGenresResponseMock = (): GenreCount[] => (Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({count: faker.number.int({min: undefined, max: undefined}), genre: faker.word.sample()})))
 
 export const getGetGamesResponseMock = (overrideResponse: Partial< GamesArray > = {}): GamesArray => ({games: faker.helpers.arrayElement([Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({developer: faker.word.sample(), discount: faker.number.int({min: undefined, max: undefined}), editionCount: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), editions: faker.helpers.arrayElement([Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({description: faker.word.sample(), discount: faker.number.int({min: undefined, max: undefined}), id: faker.number.int({min: undefined, max: undefined}), name: faker.word.sample(), price: faker.number.int({min: undefined, max: undefined}), stock: faker.number.int({min: undefined, max: undefined})})), undefined]), genre: faker.word.sample(), id: faker.number.int({min: undefined, max: undefined}), platform: faker.word.sample(), price: faker.number.int({min: undefined, max: undefined}), publisher: faker.word.sample(), rating: faker.word.sample(), release_date: faker.word.sample(), short_description: faker.word.sample(), thumbnail: faker.word.sample(), title: faker.word.sample()})), undefined]), totalPages: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), ...overrideResponse})
 
-export const getGetGameResponseMock = (overrideResponse: Partial< GameObject > = {}): GameObject => ({developer: faker.word.sample(), discount: faker.number.int({min: undefined, max: undefined}), editionCount: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), editions: faker.helpers.arrayElement([Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({description: faker.word.sample(), discount: faker.number.int({min: undefined, max: undefined}), id: faker.number.int({min: undefined, max: undefined}), name: faker.word.sample(), price: faker.number.int({min: undefined, max: undefined}), stock: faker.number.int({min: undefined, max: undefined})})), undefined]), genre: faker.word.sample(), id: faker.number.int({min: undefined, max: undefined}), platform: faker.word.sample(), price: faker.number.int({min: undefined, max: undefined}), publisher: faker.word.sample(), rating: faker.word.sample(), release_date: faker.word.sample(), short_description: faker.word.sample(), thumbnail: faker.word.sample(), title: faker.word.sample(), ...overrideResponse})
+export const getGetGameResponseMock = (): GameWithReviewSummary => ({developer: faker.word.sample(), discount: faker.number.int({min: undefined, max: undefined}), editionCount: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), editions: faker.helpers.arrayElement([Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({description: faker.word.sample(), discount: faker.number.int({min: undefined, max: undefined}), id: faker.number.int({min: undefined, max: undefined}), name: faker.word.sample(), price: faker.number.int({min: undefined, max: undefined}), stock: faker.number.int({min: undefined, max: undefined})})), undefined]), genre: faker.word.sample(), id: faker.number.int({min: undefined, max: undefined}), platform: faker.word.sample(), price: faker.number.int({min: undefined, max: undefined}), publisher: faker.word.sample(), rating: faker.word.sample(), release_date: faker.word.sample(), short_description: faker.word.sample(), thumbnail: faker.word.sample(), title: faker.word.sample(),averageRating: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), null]), reviewCount: faker.number.int({min: undefined, max: undefined})})
+
+export const getGetGameReviewsResponseMock = (overrideResponse: Partial< ReviewsPage > = {}): ReviewsPage => ({reviews: Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({authorName: faker.word.sample(), body: faker.word.sample(), createdAt: `${faker.date.past().toISOString().split('.')[0]}Z`, id: faker.number.int({min: undefined, max: undefined}), rating: faker.number.int({min: 1, max: 5})})), totalPages: faker.number.int({min: undefined, max: undefined}), ...overrideResponse})
+
+export const getGetMyGameReviewResponseMock = (overrideResponse: Partial< OwnReview > = {}): OwnReview => ({body: faker.word.sample(), createdAt: `${faker.date.past().toISOString().split('.')[0]}Z`, id: faker.number.int({min: undefined, max: undefined}), rating: faker.number.int({min: 1, max: 5}), updatedAt: `${faker.date.past().toISOString().split('.')[0]}Z`, ...overrideResponse})
+
+export const getPutGameReviewResponseMock = (overrideResponse: Partial< OwnReview > = {}): OwnReview => ({body: faker.word.sample(), createdAt: `${faker.date.past().toISOString().split('.')[0]}Z`, id: faker.number.int({min: undefined, max: undefined}), rating: faker.number.int({min: 1, max: 5}), updatedAt: `${faker.date.past().toISOString().split('.')[0]}Z`, ...overrideResponse})
 
 export const getRegisterResponseMock = (overrideResponse: Partial< UserObject > = {}): UserObject => ({message: faker.helpers.arrayElement([faker.word.sample(), undefined]), user: faker.helpers.arrayElement([{accessToken: faker.helpers.arrayElement([faker.word.sample(), undefined]), email: faker.helpers.arrayElement([faker.word.sample(), undefined]), name: faker.helpers.arrayElement([faker.word.sample(), undefined]), role: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined])}, undefined]), ...overrideResponse})
 
@@ -231,7 +240,7 @@ export const getGetAdminOrdersMockHandler = (overrideResponse?: AdminOrdersPage 
   })
 }
 
-export const getGetGamesTopDealsMockHandler = (overrideResponse?: GameObject[] | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<GameObject[]> | GameObject[])) => {
+export const getGetGamesTopDealsMockHandler = (overrideResponse?: GameWithReviewSummary[] | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<GameWithReviewSummary[]> | GameWithReviewSummary[])) => {
   return http.get('*/games/top-deals', async (info) => {await delay(1000);
     return new HttpResponse(JSON.stringify(overrideResponse !== undefined 
             ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse) 
@@ -276,11 +285,56 @@ export const getGetGamesMockHandler = (overrideResponse?: GamesArray | ((info: P
   })
 }
 
-export const getGetGameMockHandler = (overrideResponse?: GameObject | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<GameObject> | GameObject)) => {
+export const getGetGameMockHandler = (overrideResponse?: GameWithReviewSummary | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<GameWithReviewSummary> | GameWithReviewSummary)) => {
   return http.get('*/game/:gameId', async (info) => {await delay(1000);
     return new HttpResponse(JSON.stringify(overrideResponse !== undefined 
             ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse) 
             : getGetGameResponseMock()),
+      {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      }
+    )
+  })
+}
+
+export const getGetGameReviewsMockHandler = (overrideResponse?: ReviewsPage | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<ReviewsPage> | ReviewsPage)) => {
+  return http.get('*/games/:id/reviews', async (info) => {await delay(1000);
+    return new HttpResponse(JSON.stringify(overrideResponse !== undefined 
+            ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse) 
+            : getGetGameReviewsResponseMock()),
+      {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      }
+    )
+  })
+}
+
+export const getGetMyGameReviewMockHandler = (overrideResponse?: OwnReview | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<OwnReview> | OwnReview)) => {
+  return http.get('*/games/:id/review', async (info) => {await delay(1000);
+    return new HttpResponse(JSON.stringify(overrideResponse !== undefined 
+            ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse) 
+            : getGetMyGameReviewResponseMock()),
+      {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      }
+    )
+  })
+}
+
+export const getPutGameReviewMockHandler = (overrideResponse?: OwnReview | ((info: Parameters<Parameters<typeof http.put>[1]>[0]) => Promise<OwnReview> | OwnReview)) => {
+  return http.put('*/games/:id/review', async (info) => {await delay(1000);
+    return new HttpResponse(JSON.stringify(overrideResponse !== undefined 
+            ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse) 
+            : getPutGameReviewResponseMock()),
       {
         status: 200,
         headers: {
@@ -543,6 +597,9 @@ export const getDefaultMock = () => [
   getGetGamesGenresMockHandler(),
   getGetGamesMockHandler(),
   getGetGameMockHandler(),
+  getGetGameReviewsMockHandler(),
+  getGetMyGameReviewMockHandler(),
+  getPutGameReviewMockHandler(),
   getRegisterMockHandler(),
   getLoginMockHandler(),
   getLogoutMockHandler(),

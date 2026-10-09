@@ -18,6 +18,9 @@ const SORT_TO_ORDER_BY: Record<AllowedSort, Prisma.Game_pcOrderByWithRelationInp
   rating_desc: { rating: 'desc' },
 }
 
+// The store's average review rating to one decimal, or null when there is no review.
+const roundAverage = (average: number | null | undefined) => (average == null ? null : Math.round(average * 10) / 10)
+
 @Injectable()
 export class GamesService {
   constructor(private readonly prisma: PrismaService) {}
@@ -109,11 +112,30 @@ export class GamesService {
     return rows.map((row) => row.id)
   }
 
+  // Each deal carries the store's own review summary, for the featured slab on the home page.
   async fetchTopDeals() {
-    return this.prisma.game_pc.findMany({
+    const games = await this.prisma.game_pc.findMany({
       where: { discount: { gt: 0 } },
       orderBy: { discount: 'desc' },
       take: 5,
+    })
+    if (games.length === 0) return []
+
+    const summaries = await this.prisma.review.groupBy({
+      by: ['gameId'],
+      where: { gameId: { in: games.map((game) => game.id) } },
+      _avg: { rating: true },
+      _count: { _all: true },
+    })
+    const byGame = new Map(summaries.map((summary) => [summary.gameId, summary]))
+
+    return games.map((game) => {
+      const summary = byGame.get(game.id)
+      return {
+        ...game,
+        averageRating: roundAverage(summary?._avg.rating),
+        reviewCount: summary?._count._all ?? 0,
+      }
     })
   }
 
@@ -127,6 +149,23 @@ export class GamesService {
     }
 
     return game
+  }
+
+  // The game with its editions and the store's own review summary. The seed
+  // `rating` string stays until the store has enough reviews to replace it.
+  async fetchGameDetail({ gameId }: { gameId: number }) {
+    const game = await this.fetchGameById({ gameId })
+    const { _avg, _count } = await this.prisma.review.aggregate({
+      where: { gameId },
+      _avg: { rating: true },
+      _count: { _all: true },
+    })
+
+    return {
+      ...game,
+      averageRating: roundAverage(_avg.rating),
+      reviewCount: _count._all,
+    }
   }
 
   async createGame(data: CreateGameDto) {

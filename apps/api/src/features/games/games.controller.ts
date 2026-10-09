@@ -72,7 +72,7 @@ export class GamesController {
     }
 
     try {
-      return await this.gamesService.fetchGameById({ gameId: Number(gameIdParam) })
+      return await this.gamesService.fetchGameDetail({ gameId: Number(gameIdParam) })
     } catch (error) {
       throw toHttpException(error)
     }

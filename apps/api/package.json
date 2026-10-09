@@ -12,6 +12,7 @@
     "build:mock": "tsc ./src/db-seed/insertAllData.ts",
     "insert:mock": "node ./src/db-seed/insertAllData.js",
     "seed:api": "ts-node src/db-seed/populate-via-api.ts",
+    "seed:reviews": "ts-node src/db-seed/seed-reviews.ts",
     "lint": "eslint src --ext .ts --max-warnings 0",
     "typecheck": "tsc --noEmit",
     "migrate:deploy": "prisma migrate deploy"

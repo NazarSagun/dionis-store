@@ -30,17 +30,22 @@ import type {
   GameInput,
   GameObject,
   GameUpdateInput,
+  GameWithReviewSummary,
   GamesArray,
   GenreCount,
   GetAdminOrdersParams,
+  GetGameReviewsParams,
   GetGamesParams,
   GetOrdersParams,
   MergeWishlistBody,
   OrderItemObject,
   OrderObject,
   OrdersPage,
+  OwnReview,
   OwnedItem,
   PaymentIntentResponse,
+  ReviewInput,
+  ReviewsPage,
   ShippingAddressInput,
   SuccessMessage,
   UpdateNameInput,
@@ -640,7 +645,7 @@ export const useGetAdminOrders = <TData = Awaited<ReturnType<typeof getAdminOrde
 
 
 /**
- * @summary List up to 10 games with the highest discount, discount > 0, highest first
+ * @summary List up to 5 games with the highest discount, discount > 0, highest first
  */
 export const getGamesTopDeals = (
     
@@ -648,7 +653,7 @@ export const getGamesTopDeals = (
 ) => {
       
       
-      return customInstance<GameObject[]>(
+      return customInstance<GameWithReviewSummary[]>(
       {url: `/games/top-deals`, method: 'GET', signal
     },
       options);
@@ -682,7 +687,7 @@ export type GetGamesTopDealsQueryResult = NonNullable<Awaited<ReturnType<typeof 
 export type GetGamesTopDealsQueryError = ErrorType<ErrorMessage>
 
 /**
- * @summary List up to 10 games with the highest discount, discount > 0, highest first
+ * @summary List up to 5 games with the highest discount, discount > 0, highest first
  */
 export const useGetGamesTopDeals = <TData = Awaited<ReturnType<typeof getGamesTopDeals>>, TError = ErrorType<ErrorMessage>>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getGamesTopDeals>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
@@ -836,7 +841,7 @@ export const getGame = (
 ) => {
       
       
-      return customInstance<GameObject>(
+      return customInstance<GameWithReviewSummary>(
       {url: `/game/${gameId}`, method: 'GET', signal
     },
       options);
@@ -889,6 +894,191 @@ export const useGetGame = <TData = Awaited<ReturnType<typeof getGame>>, TError =
 
 
 /**
+ * @summary List the reviews of a game, newest first, ten per page
+ */
+export const getGameReviews = (
+    id: number,
+    params?: GetGameReviewsParams,
+ options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<ReviewsPage>(
+      {url: `/games/${id}/reviews`, method: 'GET',
+        params, signal
+    },
+      options);
+    }
+  
+
+export const getGetGameReviewsQueryKey = (id: number,
+    params?: GetGameReviewsParams,) => {
+    return [`/games/${id}/reviews`, ...(params ? [params]: [])] as const;
+    }
+
+    
+export const getGetGameReviewsQueryOptions = <TData = Awaited<ReturnType<typeof getGameReviews>>, TError = ErrorType<ErrorMessage>>(id: number,
+    params?: GetGameReviewsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getGameReviews>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetGameReviewsQueryKey(id,params);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getGameReviews>>> = ({ signal }) => getGameReviews(id,params, requestOptions, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, enabled: !!(id), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getGameReviews>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetGameReviewsQueryResult = NonNullable<Awaited<ReturnType<typeof getGameReviews>>>
+export type GetGameReviewsQueryError = ErrorType<ErrorMessage>
+
+/**
+ * @summary List the reviews of a game, newest first, ten per page
+ */
+export const useGetGameReviews = <TData = Awaited<ReturnType<typeof getGameReviews>>, TError = ErrorType<ErrorMessage>>(
+ id: number,
+    params?: GetGameReviewsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getGameReviews>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+
+  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } => {
+
+  const queryOptions = getGetGameReviewsQueryOptions(id,params,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+/**
+ * @summary Fetch the signed-in user's own review of a game
+ */
+export const getMyGameReview = (
+    id: number,
+ options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<OwnReview>(
+      {url: `/games/${id}/review`, method: 'GET', signal
+    },
+      options);
+    }
+  
+
+export const getGetMyGameReviewQueryKey = (id: number,) => {
+    return [`/games/${id}/review`] as const;
+    }
+
+    
+export const getGetMyGameReviewQueryOptions = <TData = Awaited<ReturnType<typeof getMyGameReview>>, TError = ErrorType<ErrorMessage>>(id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMyGameReview>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetMyGameReviewQueryKey(id);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getMyGameReview>>> = ({ signal }) => getMyGameReview(id, requestOptions, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, enabled: !!(id), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getMyGameReview>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetMyGameReviewQueryResult = NonNullable<Awaited<ReturnType<typeof getMyGameReview>>>
+export type GetMyGameReviewQueryError = ErrorType<ErrorMessage>
+
+/**
+ * @summary Fetch the signed-in user's own review of a game
+ */
+export const useGetMyGameReview = <TData = Awaited<ReturnType<typeof getMyGameReview>>, TError = ErrorType<ErrorMessage>>(
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMyGameReview>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+
+  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } => {
+
+  const queryOptions = getGetMyGameReviewQueryOptions(id,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+/**
+ * @summary Create or replace the signed-in user's review of a game they bought
+ */
+export const putGameReview = (
+    id: number,
+    reviewInput: BodyType<ReviewInput>,
+ options?: SecondParameter<typeof customInstance>,) => {
+      
+      
+      return customInstance<OwnReview>(
+      {url: `/games/${id}/review`, method: 'PUT',
+      headers: {'Content-Type': 'application/json', },
+      data: reviewInput
+    },
+      options);
+    }
+  
+
+
+export const getPutGameReviewMutationOptions = <TError = ErrorType<ErrorMessage>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putGameReview>>, TError,{id: number;data: BodyType<ReviewInput>}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof putGameReview>>, TError,{id: number;data: BodyType<ReviewInput>}, TContext> => {
+const {mutation: mutationOptions, request: requestOptions} = options ?? {};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof putGameReview>>, {id: number;data: BodyType<ReviewInput>}> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  putGameReview(id,data,requestOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PutGameReviewMutationResult = NonNullable<Awaited<ReturnType<typeof putGameReview>>>
+    export type PutGameReviewMutationBody = BodyType<ReviewInput>
+    export type PutGameReviewMutationError = ErrorType<ErrorMessage>
+
+    /**
+ * @summary Create or replace the signed-in user's review of a game they bought
+ */
+export const usePutGameReview = <TError = ErrorType<ErrorMessage>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putGameReview>>, TError,{id: number;data: BodyType<ReviewInput>}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationResult<
+        Awaited<ReturnType<typeof putGameReview>>,
+        TError,
+        {id: number;data: BodyType<ReviewInput>},
+        TContext
+      > => {
+
+      const mutationOptions = getPutGameReviewMutationOptions(options);
+
+      return useMutation(mutationOptions);
+    }
+    /**
  * @summary Register a new user
  */
 export const register = (

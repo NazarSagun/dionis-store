@@ -22,6 +22,7 @@ model User {
   createdAt    DateTime @default(now())
   orders       Order[]
   wishlist     WishlistItem[]
+  reviews      Review[]
 }
 
 model Game_pc {
@@ -40,6 +41,7 @@ model Game_pc {
   orderItems             OrderItem[]
   editions               GameEdition[]
   wishlistItems          WishlistItem[]
+  reviews                Review[]
 }
 
 model GameEdition {
@@ -101,4 +103,20 @@ model WishlistItem {
   createdAt        DateTime @default(now())
 
   @@unique([userId, gameId])
+}
+
+// One review per user and game. Only a user who bought the game can write it.
+model Review {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  gameId    Int
+  game      Game_pc  @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  rating    Int
+  body      String   @default("")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, gameId])
+  @@index([gameId, createdAt])
 }
