@@ -70,6 +70,21 @@ describe('MailService', () => {
     )
   })
 
+  it('skips a reserved test domain on a real SMTP server', async () => {
+    process.env.SMTP_HOST = 'smtp.sendgrid.net'
+    const service = new MailService()
+
+    await expect(service.sendOrderReceipt('a@dionis-store.test', order)).resolves.toBe(false)
+    expect(sendMail).not.toHaveBeenCalled()
+  })
+
+  it('sends a normal address on a real SMTP server', async () => {
+    process.env.SMTP_HOST = 'smtp.sendgrid.net'
+    const service = new MailService()
+
+    await expect(service.sendOrderReceipt('a@gmail.com', order)).resolves.toBe(true)
+  })
+
   it('logs in only when SMTP_USER is set', () => {
     process.env.SMTP_HOST = 'smtp.test'
     process.env.SMTP_USER = 'user'
