@@ -92,10 +92,10 @@ The game detail page shows the average rating, the list of reviews, and a review
 9. The module `apps/web/modules/reviews` holds `domain/` (types), `integration/` (`repository.ts` and a mapper), and `presentation/` (one folder per component). It has no `core/` store, because the server owns the state and React Query caches it. The game detail page imports the section through the module's `presentation/` entry.
 10. Take colors and shadows from the design tokens. Do not use a raw hex value.
 11. While the game has no review, an empty state (`reviews-empty`) replaces the average card. It has the heading `No reviews yet` and one action that depends on the visitor:
-    - A signed-out visitor sees a `Log in` link to the login page (inside `review-login-prompt`).
-    - A signed-in user who does not own the game sees `Buy this game to review it` (inside `review-owner-required`) and a `See purchase options` link to the edition buttons (`#purchase-options`).
+    - A signed-out visitor sees a `Log in` link (inside `review-login-prompt`). The link is `/login?next=<current path>`, and login returns the user to that page. The `next` value must be a path on this site. A full URL, `//host`, and a backslash all fall back to the home page.
+    - A signed-in user who does not own the game sees the text `Buy this game to review it` (`review-owner-required`) and no button or link, because the edition buttons are already on the page.
     - An owner sees `You own this game. Be the first to review it.` and a `Write the first review` button (`review-write-first`). The button scrolls to the review form and focuses its first star. The form shows below the empty state.
-      The login and purchase messages show once, in the empty state, and not again in a card below it. When the first review is saved, the empty state gives way to the average card, and the form stays mounted.
+      The login and purchase messages show once, in the empty state, and not again in a card below it. The `Log in` link of the review prompt on a game with reviews uses the same `next` path. When the first review is saved, the empty state gives way to the average card, and the form stays mounted.
 
 ### Acceptance criteria
 
@@ -106,7 +106,7 @@ The game detail page shows the average rating, the list of reviews, and a review
 - A signed-out user sees the login prompt and no form.
 - The submit button is disabled until a star is picked.
 - A game with 11 reviews shows 10 on page 1 and 1 on page 2.
-- A game with no review shows the empty state. A signed-out visitor sees `Log in`. A non-owner sees `See purchase options`, and the link goes to `#purchase-options`. An owner clicks `Write the first review` and the first star has focus.
+- A game with no review shows the empty state. A signed-out visitor sees `Log in`, logs in, and lands on the same game page. A `next` value that points to another site lands on the home page. A non-owner sees the text `Buy this game to review it` and no button. An owner clicks `Write the first review` and the first star has focus.
 - A review text such as `<b>hi</b>` shows as the literal characters and does not render bold text.
 - No review shows the author email address anywhere on the page.
 

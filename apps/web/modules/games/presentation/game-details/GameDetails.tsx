@@ -9,7 +9,6 @@ import { useRecordView } from '@/modules/account/core/facade'
 import { useIsAuthenticated } from '@/modules/auth/core/facade'
 import { useAddCartItem, useCartItems, useUpdateCartItemQuantity } from '@/modules/cart/core/facade'
 import { CartItem } from '@/modules/cart/domain/models'
-import { PURCHASE_OPTIONS_ID } from '@/modules/reviews/presentation/reviews-empty-state/ReviewsEmptyState'
 import { ReviewsSection } from '@/modules/reviews/presentation/reviews-section/ReviewsSection'
 import { useIsInWishlist, useToggleWishlistItem } from '@/modules/wishlist/core/facade'
 
@@ -138,7 +137,7 @@ export const GameDetails = ({ gameId }: GameDetailsProps) => {
                   {data.discount > 0 ? calculateDiscountedPrice(data.price, data.discount) : data.price}€
                 </span>
               </div>
-              <div id={PURCHASE_OPTIONS_ID} className='flex flex-wrap gap-4'>
+              <div className='flex flex-wrap gap-4'>
                 <button
                   type='button'
                   className={cn(buttonStyles, isWishlisted ? 'bg-neon-magenta' : 'bg-panel-alt')}

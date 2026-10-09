@@ -1,13 +1,13 @@
 'use client'
 
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { Button, Skeleton } from '@repo/ui'
+
+import { loginHref } from '@/modules/auth/domain/redirect'
 
 import { REVIEW_FORM_ID } from '../review-form/ReviewForm'
 import { ReviewAccess } from '../reviews-section/useReviewAccess'
-
-// The element that holds the edition buttons on the game page.
-export const PURCHASE_OPTIONS_ID = 'purchase-options'
 
 const focusReviewForm = () => {
   const form = document.getElementById(REVIEW_FORM_ID)
@@ -15,41 +15,43 @@ const focusReviewForm = () => {
   form?.querySelector<HTMLButtonElement>('button')?.focus()
 }
 
-// Replaces the average card while the game has no review. Each state of the
-// visitor gets one action that leads to the first review.
-export const ReviewsEmptyState = ({ access }: { access: ReviewAccess }) => (
-  <div data-testid='reviews-empty' className='flex flex-col gap-3 rounded-md border border-border bg-card p-6'>
-    <h3 className='font-display text-lg font-medium text-foreground'>No reviews yet</h3>
+// Replaces the average card while the game has no review. A signed-out visitor
+// and an owner get an action. A user who did not buy the game gets the reason
+// only, because the edition buttons are already on the page.
+export const ReviewsEmptyState = ({ access }: { access: ReviewAccess }) => {
+  const pathname = usePathname()
 
-    {access === 'loading' && <Skeleton className='h-10 w-40' />}
+  return (
+    <div data-testid='reviews-empty' className='flex flex-col gap-3 rounded-md border border-border bg-card p-6'>
+      <h3 className='font-display text-lg font-medium text-foreground'>No reviews yet</h3>
 
-    {access === 'guest' && (
-      <div data-testid='review-login-prompt' className='flex flex-col items-start gap-4'>
-        <p className='font-sans text-sm text-muted-foreground'>
-          Log in to review games you own, and be the first to rate this one.
+      {access === 'loading' && <Skeleton className='h-10 w-40' />}
+
+      {access === 'guest' && (
+        <div data-testid='review-login-prompt' className='flex flex-col items-start gap-4'>
+          <p className='font-sans text-sm text-muted-foreground'>
+            Log in to review games you own, and be the first to rate this one.
+          </p>
+          <Button asChild variant='secondary'>
+            <Link href={loginHref(pathname)}>Log in</Link>
+          </Button>
+        </div>
+      )}
+
+      {access === 'not-owner' && (
+        <p data-testid='review-owner-required' className='font-sans text-sm text-muted-foreground'>
+          Buy this game to review it
         </p>
-        <Button asChild variant='secondary'>
-          <Link href='/login'>Log in</Link>
-        </Button>
-      </div>
-    )}
+      )}
 
-    {access === 'not-owner' && (
-      <div data-testid='review-owner-required' className='flex flex-col items-start gap-4'>
-        <p className='font-sans text-sm text-muted-foreground'>Buy this game to review it</p>
-        <Button asChild variant='secondary'>
-          <a href={`#${PURCHASE_OPTIONS_ID}`}>See purchase options</a>
-        </Button>
-      </div>
-    )}
-
-    {access === 'owner' && (
-      <div className='flex flex-col items-start gap-4'>
-        <p className='font-sans text-sm text-muted-foreground'>You own this game. Be the first to review it.</p>
-        <Button data-testid='review-write-first' onClick={focusReviewForm}>
-          Write the first review
-        </Button>
-      </div>
-    )}
-  </div>
-)
+      {access === 'owner' && (
+        <div className='flex flex-col items-start gap-4'>
+          <p className='font-sans text-sm text-muted-foreground'>You own this game. Be the first to review it.</p>
+          <Button data-testid='review-write-first' onClick={focusReviewForm}>
+            Write the first review
+          </Button>
+        </div>
+      )}
+    </div>
+  )
+}

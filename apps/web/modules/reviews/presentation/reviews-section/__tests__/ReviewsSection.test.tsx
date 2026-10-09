@@ -1,12 +1,15 @@
 import userEvent from '@testing-library/user-event'
 import { http, HttpResponse } from 'msw'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 import { useAuthStore } from '@/modules/auth/core/store'
 import { serviceWorker } from '@/test-utils/mock-server'
 import { render, screen } from '@/test-utils/utils'
 
 import { ReviewsSection } from '../ReviewsSection'
+
+const mockPathname = vi.hoisted(() => ({ value: null as string | null }))
+vi.mock('next/navigation', () => ({ usePathname: () => mockPathname.value }))
 
 const TIMEOUT = 3000
 const signIn = () => useAuthStore.setState({ isAuthenticated: true, accessToken: 't', user: null, role: null })
@@ -64,7 +67,7 @@ describe('<ReviewsSection />', () => {
     expect(screen.queryByTestId('review-login-prompt')).not.toBeInTheDocument()
   })
 
-  it('offers a purchase link in the empty state to a user who does not own the game', async () => {
+  it('gives a user who does not own the game the reason only, with no button or link', async () => {
     signIn()
     serviceWorker.use(
       emptyList(405),
@@ -75,9 +78,18 @@ describe('<ReviewsSection />', () => {
 
     const prompt = await screen.findByTestId('review-owner-required', {}, { timeout: TIMEOUT })
     expect(prompt).toHaveTextContent('Buy this game to review it')
-    expect(screen.getByRole('link', { name: 'See purchase options' })).toHaveAttribute('href', '#purchase-options')
-    // The empty state holds the action, so the message card does not repeat it.
+    expect(prompt.querySelector('a, button')).toBeNull()
     expect(screen.getAllByTestId('review-owner-required')).toHaveLength(1)
+  })
+
+  it('sends a signed-out visitor to log in and back to the page they were on', () => {
+    mockPathname.value = '/game/408'
+    serviceWorker.use(emptyList(408))
+
+    render(<ReviewsSection gameId={408} averageRating={null} reviewCount={0} />)
+
+    expect(screen.getByRole('link', { name: 'Log in' })).toHaveAttribute('href', '/login?next=%2Fgame%2F408')
+    mockPathname.value = null
   })
 
   it('lets an owner jump to the form from the empty state', async () => {

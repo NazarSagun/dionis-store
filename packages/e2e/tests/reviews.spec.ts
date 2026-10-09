@@ -1,6 +1,6 @@
 import { APIRequestContext, expect, Page, test } from '@playwright/test'
 
-import { apiToken, apiUrl, createGameViaApi, signUpCustomer } from './helpers/admin'
+import { apiToken, apiUrl, createGameViaApi, logOut, signUpCustomer } from './helpers/admin'
 import {
   addEditionToCart,
   completePayment,
@@ -99,6 +99,37 @@ test.describe('Reviews section for visitors', () => {
       .click()
 
     await expect(page).toHaveURL(/\/login/)
+  })
+
+  test('logging in from the empty state returns to the game page', async ({ page, request }) => {
+    const { id } = await createGameViaApi(request)
+    const email = await signUpCustomer(page)
+    await logOut(page)
+    await page.goto(`/game/${id}`)
+
+    await page
+      .getByTestId('review-login-prompt')
+      .getByRole('link', { name: /log in/i })
+      .click()
+    await expect(page).toHaveURL(new RegExp(`/login\\?next=%2Fgame%2F${id}$`))
+    await page.getByTestId('email').fill(email)
+    await page.getByTestId('password').fill(PASSWORD)
+    await page.getByTestId('submit-button').click()
+
+    await expect(page).toHaveURL(new RegExp(`/game/${id}$`))
+    await expect(page.getByTestId('review-owner-required')).toBeVisible()
+  })
+
+  test('a login link that points to another site goes to the home page', async ({ page }) => {
+    const email = await signUpCustomer(page)
+    await logOut(page)
+
+    await page.goto('/login?next=https%3A%2F%2Fevil.example%2F')
+    await page.getByTestId('email').fill(email)
+    await page.getByTestId('password').fill(PASSWORD)
+    await page.getByTestId('submit-button').click()
+
+    await expect(page).toHaveURL('/')
   })
 
   test('shows the average rating, the count, and one item per review', async ({ page, request }) => {
@@ -283,18 +314,14 @@ test.describe('Reviews for a signed-in user who does not own the game', () => {
     await expect(page.getByTestId('review-login-prompt')).toHaveCount(0)
   })
 
-  test('the empty state links to the purchase options', async ({ page, request }) => {
+  test('the empty state gives the reason only, with no button or link', async ({ page, request }) => {
     const { id } = await createGameViaApi(request)
     await signUpCustomer(page)
     await page.goto(`/game/${id}`)
 
-    await page
-      .getByTestId('reviews-empty')
-      .getByRole('link', { name: /see purchase options/i })
-      .click()
-
-    await expect(page).toHaveURL(/#purchase-options$/)
-    await expect(page.locator('#purchase-options')).toBeVisible()
+    const reason = page.getByTestId('review-owner-required')
+    await expect(reason).toHaveText(/buy this game to review it/i)
+    await expect(reason.locator('a, button')).toHaveCount(0)
   })
 
   test('the API answers 403 and stores nothing', async ({ page, request }) => {

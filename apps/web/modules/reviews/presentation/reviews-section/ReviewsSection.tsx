@@ -2,7 +2,10 @@
 
 import { ReactNode } from 'react'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { Button, Skeleton } from '@repo/ui'
+
+import { loginHref } from '@/modules/auth/domain/redirect'
 
 import { ReviewForm } from '../review-form/ReviewForm'
 import { ReviewList } from '../review-list/ReviewList'
@@ -26,6 +29,8 @@ const MessageCard = ({ testId, children }: { testId: string; children: ReactNode
 // Below the average card. While the game has no review the empty state holds
 // the login and purchase actions, so only the form shows here.
 const ReviewAction = ({ gameId, access, isEmpty }: { gameId: number; access: ReviewAccess; isEmpty: boolean }) => {
+  const pathname = usePathname()
+
   if (access === 'owner') return <ReviewForm gameId={gameId} />
   if (isEmpty) return null
   if (access === 'loading') return <Skeleton className='h-40 w-full' />
@@ -34,7 +39,7 @@ const ReviewAction = ({ gameId, access, isEmpty }: { gameId: number; access: Rev
       <MessageCard testId='review-login-prompt'>
         <p className='font-sans text-sm font-semibold text-foreground'>Log in to review games you own.</p>
         <Button asChild variant='secondary'>
-          <Link href='/login'>Log in</Link>
+          <Link href={loginHref(pathname)}>Log in</Link>
         </Button>
       </MessageCard>
     )
