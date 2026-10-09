@@ -7,6 +7,7 @@ import { PrismaService } from '../../common/prisma/prisma.service'
 import { CustomError } from '../../common/errors/custom-error'
 import { Role, Roles } from '../../common/types/roles'
 import { createAccessToken, createRefreshToken, getDecodedDto } from './auth-token.util'
+import { hasMailServer, isDisposableEmail } from './email-domain.util'
 
 interface RegisterInput {
   name: string
@@ -40,6 +41,10 @@ export class AuthService {
   }
 
   async register({ name, email, password }: RegisterInput) {
+    if (isDisposableEmail(email) || !(await hasMailServer(email))) {
+      throw new CustomError('Use a real email address', 400)
+    }
+
     const userExists = await this.prisma.user.findUnique({ where: { email } })
     if (userExists) {
       throw new CustomError('User already exists!', 400)
