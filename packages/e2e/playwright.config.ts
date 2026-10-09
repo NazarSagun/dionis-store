@@ -58,7 +58,7 @@ export default defineConfig({
             PORT: String(LOCAL.apiPort),
             CLIENT_URL: webUrl,
             RATE_LIMIT: 'off',
-            SMTP_HOST: 'localhost',
+            SMTP_HOST: '127.0.0.1',
             SMTP_PORT: String(LOCAL.smtpPort),
           },
         },
