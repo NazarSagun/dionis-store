@@ -129,6 +129,23 @@ export class GamesService {
     return game
   }
 
+  // The game with its editions and the store's own review summary. The seed
+  // `rating` string stays until the store has enough reviews to replace it.
+  async fetchGameDetail({ gameId }: { gameId: number }) {
+    const game = await this.fetchGameById({ gameId })
+    const { _avg, _count } = await this.prisma.review.aggregate({
+      where: { gameId },
+      _avg: { rating: true },
+      _count: { _all: true },
+    })
+
+    return {
+      ...game,
+      averageRating: _avg.rating === null ? null : Math.round(_avg.rating * 10) / 10,
+      reviewCount: _count._all,
+    }
+  }
+
   async createGame(data: CreateGameDto) {
     try {
       const game = await this.prisma.game_pc.create({ data })

@@ -9,6 +9,7 @@ import { useRecordView } from '@/modules/account/core/facade'
 import { useIsAuthenticated } from '@/modules/auth/core/facade'
 import { useAddCartItem, useCartItems, useUpdateCartItemQuantity } from '@/modules/cart/core/facade'
 import { CartItem } from '@/modules/cart/domain/models'
+import { ReviewsSection } from '@/modules/reviews/presentation/reviews-section/ReviewsSection'
 import { useIsInWishlist, useToggleWishlistItem } from '@/modules/wishlist/core/facade'
 
 import { isGameOwned } from '../../domain/ownership'
@@ -214,6 +215,7 @@ export const GameDetails = ({ gameId }: GameDetailsProps) => {
             </div>
           ))}
         </div>
+        <ReviewsSection gameId={data.id} averageRating={data.averageRating} reviewCount={data.reviewCount} />
       </div>
     )
   }

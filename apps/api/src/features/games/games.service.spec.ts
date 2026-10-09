@@ -24,6 +24,7 @@ describe('GamesService', () => {
       deleteMany: jest.Mock
     }
     order: { count: jest.Mock }
+    review: { aggregate: jest.Mock }
     $queryRaw: jest.Mock
     $executeRaw: jest.Mock
     $transaction: jest.Mock
@@ -48,6 +49,7 @@ describe('GamesService', () => {
         deleteMany: jest.fn().mockReturnValue('delete-editions'),
       },
       order: { count: jest.fn().mockResolvedValue(0) },
+      review: { aggregate: jest.fn().mockResolvedValue({ _avg: { rating: null }, _count: { _all: 0 } }) },
       $transaction: jest.fn(),
       $executeRaw: jest.fn(),
       $queryRaw: jest.fn().mockResolvedValue([{ id: 4 }, { id: 9 }]),
@@ -307,6 +309,30 @@ describe('GamesService', () => {
       const result = await service.fetchTopDeals()
 
       expect(result).toEqual([])
+    })
+  })
+
+  describe('fetchGameDetail', () => {
+    it('adds the average rating rounded to one decimal and the review count', async () => {
+      prisma.review.aggregate.mockResolvedValue({ _avg: { rating: 4.3333 }, _count: { _all: 3 } })
+
+      const game = await service.fetchGameDetail({ gameId: 1 })
+
+      expect(prisma.review.aggregate).toHaveBeenCalledWith(expect.objectContaining({ where: { gameId: 1 } }))
+      expect(game).toMatchObject({ id: 1, averageRating: 4.3, reviewCount: 3 })
+    })
+
+    it('returns a null average and a zero count for a game without reviews', async () => {
+      const game = await service.fetchGameDetail({ gameId: 1 })
+
+      expect(game).toMatchObject({ averageRating: null, reviewCount: 0 })
+    })
+
+    it('rejects a game that does not exist without counting reviews', async () => {
+      prisma.game_pc.findUnique.mockResolvedValue(null)
+
+      await expect(service.fetchGameDetail({ gameId: 99 })).rejects.toBeInstanceOf(CustomError)
+      expect(prisma.review.aggregate).not.toHaveBeenCalled()
     })
   })
 })

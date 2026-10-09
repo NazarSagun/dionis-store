@@ -8,6 +8,7 @@ import { AuthModule } from './features/auth/auth.module'
 import { UsersModule } from './features/users/users.module'
 import { GamesModule } from './features/games/games.module'
 import { OrdersModule } from './features/orders/orders.module'
+import { ReviewsModule } from './features/reviews/reviews.module'
 import { WishlistModule } from './features/wishlist/wishlist.module'
 
 @Module({
@@ -26,6 +27,7 @@ import { WishlistModule } from './features/wishlist/wishlist.module'
     GamesModule,
     OrdersModule,
     WishlistModule,
+    ReviewsModule,
   ],
   providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],
 })

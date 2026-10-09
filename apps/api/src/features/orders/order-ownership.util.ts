@@ -13,3 +13,9 @@ export function findOwnedItem(prisma: PrismaService, userId: number, items: Owne
     },
   })
 }
+
+// True when the user bought the game in any form: the digital copy or any
+// physical edition. Reviews use this, because findOwnedItem needs the edition.
+export function findOwnedGame(prisma: PrismaService, userId: number, gameId: number) {
+  return prisma.orderItem.findFirst({ where: { gameId, order: { userId } }, select: { id: true } })
+}
