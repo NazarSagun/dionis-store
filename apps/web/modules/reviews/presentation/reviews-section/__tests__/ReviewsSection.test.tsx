@@ -1,15 +1,19 @@
 import userEvent from '@testing-library/user-event'
 import { http, HttpResponse } from 'msw'
-import { describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import { useAuthStore } from '@/modules/auth/core/store'
 import { serviceWorker } from '@/test-utils/mock-server'
-import { render, screen } from '@/test-utils/utils'
+import { render, screen, within } from '@/test-utils/utils'
 
 import { ReviewsSection } from '../ReviewsSection'
 
 const mockPathname = vi.hoisted(() => ({ value: null as string | null }))
-vi.mock('next/navigation', () => ({ usePathname: () => mockPathname.value }))
+const mockSearch = vi.hoisted(() => ({ value: '' }))
+vi.mock('next/navigation', () => ({
+  usePathname: () => mockPathname.value,
+  useSearchParams: () => new URLSearchParams(mockSearch.value),
+}))
 
 const TIMEOUT = 3000
 const signIn = () => useAuthStore.setState({ isAuthenticated: true, accessToken: 't', user: null, role: null })
@@ -17,6 +21,13 @@ const emptyList = (gameId: number) =>
   http.get(`*/games/${gameId}/reviews`, () => HttpResponse.json({ totalPages: 1, reviews: [] }))
 
 describe('<ReviewsSection />', () => {
+  // jsdom has no scrollIntoView, so some tests stub it. Put it back so the stub never leaks.
+  const originalScrollIntoView = Element.prototype.scrollIntoView
+
+  afterEach(() => {
+    Element.prototype.scrollIntoView = originalScrollIntoView
+  })
+
   it('shows the empty state and a login prompt to a signed-out visitor', () => {
     serviceWorker.use(emptyList(401))
 
@@ -115,5 +126,77 @@ describe('<ReviewsSection />', () => {
 
     expect(screen.queryByTestId('reviews-empty')).not.toBeInTheDocument()
     expect(screen.getByTestId('review-login-prompt')).toBeInTheDocument()
+  })
+
+  describe('with ?review= in the URL', () => {
+    const linked = {
+      id: 77,
+      rating: 5,
+      body: 'The linked review',
+      authorName: 'Mara K.',
+      createdAt: '2026-10-08T12:00:00.000Z',
+      replyCount: 1,
+    }
+
+    afterEach(() => {
+      mockSearch.value = ''
+    })
+
+    it('shows the linked review first with its thread open, and not again in the list', async () => {
+      mockSearch.value = 'review=77'
+      Element.prototype.scrollIntoView = () => {}
+      serviceWorker.use(
+        http.get('*/games/411/reviews', () =>
+          HttpResponse.json({ totalPages: 1, reviews: [{ ...linked, id: 5, body: 'Another review' }, linked] }),
+        ),
+        http.get('*/reviews/77', () => HttpResponse.json({ ...linked, gameId: 411 })),
+        http.get('*/reviews/77/replies', () =>
+          HttpResponse.json({
+            totalPages: 1,
+            replies: [{ id: 1, body: 'A reply', authorName: 'Tomás R.', createdAt: '2026-10-09T12:00:00.000Z' }],
+          }),
+        ),
+      )
+
+      render(<ReviewsSection gameId={411} averageRating={4} reviewCount={2} />)
+
+      const section = await screen.findByTestId('review-linked', {}, { timeout: TIMEOUT })
+      expect(within(section).getByTestId('review-linked-label')).toHaveTextContent('Linked from your notification')
+      expect(await within(section).findByTestId('reply-body', {}, { timeout: TIMEOUT })).toHaveTextContent('A reply')
+      const items = await screen.findAllByTestId('review-item', {}, { timeout: TIMEOUT })
+      expect(items).toHaveLength(1)
+      expect(items[0]).toHaveTextContent('Another review')
+    })
+
+    it('ignores a linked review of another game', async () => {
+      mockSearch.value = 'review=78'
+      serviceWorker.use(
+        emptyList(412),
+        http.get('*/reviews/78', () => HttpResponse.json({ ...linked, id: 78, gameId: 999 })),
+      )
+
+      render(<ReviewsSection gameId={412} averageRating={4} reviewCount={3} />)
+
+      await new Promise((resolve) => setTimeout(resolve, 200))
+      expect(screen.queryByTestId('review-linked')).not.toBeInTheDocument()
+    })
+
+    it('ignores a value that is not a review id, without asking the API', async () => {
+      mockSearch.value = 'review=abc'
+      let asked = false
+      serviceWorker.use(
+        emptyList(413),
+        http.get('*/reviews/*', () => {
+          asked = true
+          return HttpResponse.json({}, { status: 404 })
+        }),
+      )
+
+      render(<ReviewsSection gameId={413} averageRating={4} reviewCount={3} />)
+
+      await new Promise((resolve) => setTimeout(resolve, 200))
+      expect(screen.queryByTestId('review-linked')).not.toBeInTheDocument()
+      expect(asked).toBe(false)
+    })
   })
 })

@@ -5,8 +5,9 @@ import { Skeleton } from '@repo/ui'
 
 import { LoginLink } from '@/modules/auth/presentation/login-link/LoginLink'
 
-import { ReviewAccess, useReviewAccess } from '../../core/facade'
+import { ReviewAccess, useLinkedReview, useReviewAccess } from '../../core/facade'
 import { ReviewForm } from '../review-form/ReviewForm'
+import { ReviewItem } from '../review-item/ReviewItem'
 import { ReviewList } from '../review-list/ReviewList'
 import { ReviewsEmptyState } from '../reviews-empty-state/ReviewsEmptyState'
 import { ReviewsSummary } from '../reviews-summary/ReviewsSummary'
@@ -47,6 +48,7 @@ const ReviewAction = ({ gameId, access, isEmpty }: { gameId: number; access: Rev
 export const ReviewsSection = ({ gameId, averageRating, reviewCount }: ReviewsSectionProps) => {
   const access = useReviewAccess(gameId)
   const isEmpty = averageRating === null || reviewCount === 0
+  const linkedReview = useLinkedReview(gameId)
 
   return (
     <section data-testid='reviews-section' className='flex flex-col gap-6'>
@@ -60,7 +62,10 @@ export const ReviewsSection = ({ gameId, averageRating, reviewCount }: ReviewsSe
           )}
           <ReviewAction gameId={gameId} access={access} isEmpty={isEmpty} />
         </div>
-        <ReviewList gameId={gameId} />
+        <div className='flex flex-col gap-4'>
+          {linkedReview && <ReviewItem review={linkedReview} gameId={gameId} linked />}
+          <ReviewList gameId={gameId} excludeReviewId={linkedReview?.id} />
+        </div>
       </div>
     </section>
   )

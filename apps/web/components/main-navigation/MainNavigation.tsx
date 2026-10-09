@@ -7,6 +7,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { useAuthLogout, useAuthUser, useIsAdmin, useIsAuthenticated } from '@/modules/auth/core/facade'
 import { useLogout } from '@/modules/auth/integration/repository'
 import { useCartItems, useOpenCartDrawer } from '@/modules/cart/core/facade'
+import { NotificationBell } from '@/modules/notifications/presentation/notification-bell/NotificationBell'
 
 const menuItemStyles =
   'cursor-pointer rounded-sm px-3 py-2 font-mono text-sm text-foreground focus:bg-neon-cyan focus:text-primary-foreground'
@@ -23,7 +24,7 @@ export const MainNavigation = () => {
   const { refetch: logout } = useLogout({ query: { enabled: false } })
 
   return (
-    <nav className='flex items-center justify-between border-b border-ink bg-background px-4 py-4 sm:px-8'>
+    <nav className='relative flex items-center justify-between border-b border-ink bg-background px-4 py-4 sm:px-8'>
       <Link href='/' className='font-display text-xl font-bold text-foreground'>
         DIONIS
       </Link>
@@ -32,6 +33,7 @@ export const MainNavigation = () => {
         <button type='button' data-testid='cart-trigger' onClick={openCartDrawer} className={navLinkStyles}>
           Cart ({cartItems.length})
         </button>
+        {isUserAuth && <NotificationBell />}
         <DropdownMenu>
           <DropdownMenuTrigger data-testid='account-menu-trigger' aria-label='Account menu'>
             <Image priority width={32} height={32} alt='logo' src='/icons/account.svg' />

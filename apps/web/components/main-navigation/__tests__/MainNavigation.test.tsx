@@ -39,4 +39,15 @@ describe('<MainNavigation />', () => {
 
     expect(await findByText('Wishlist')).toBeInTheDocument()
   })
+
+  it('Should show the notification bell to a signed-in user only', async () => {
+    const signedOut = render(<MainNavigation />)
+    expect(signedOut.queryByTestId('notification-bell')).not.toBeInTheDocument()
+    signedOut.unmount()
+
+    useAuthStore.setState({ isAuthenticated: true, accessToken: 'token', user: { name: 'Player' } })
+    const signedIn = render(<MainNavigation />)
+
+    expect(await signedIn.findByTestId('notification-bell')).toBeInTheDocument()
+  })
 })

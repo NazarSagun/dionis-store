@@ -2,11 +2,40 @@ import { Injectable } from '@nestjs/common'
 import { CustomError } from '../../common/errors/custom-error'
 import { PrismaService } from '../../common/prisma/prisma.service'
 import { findOwnedGame } from '../orders/order-ownership.util'
+import { CreateReplyDto } from './dto/create-reply.dto'
 import { UpsertReviewDto } from './dto/upsert-review.dto'
 
 export const REVIEWS_PAGE_SIZE = 10
+export const REPLIES_PAGE_SIZE = 10
 
 const OWN_REVIEW_SELECT = { id: true, rating: true, body: true, createdAt: true, updatedAt: true } as const
+
+// The public shapes. They carry the author's name and never the email or the
+// user id.
+const PUBLIC_REVIEW_SELECT = {
+  id: true,
+  rating: true,
+  body: true,
+  createdAt: true,
+  user: { select: { name: true } },
+  _count: { select: { replies: true } },
+} as const
+
+const PUBLIC_REPLY_SELECT = { id: true, body: true, createdAt: true, user: { select: { name: true } } } as const
+
+const authorName = (user: { name: string | null }) => user.name?.trim() || 'Anonymous'
+
+function toPublicReview<T extends { user: { name: string | null }; _count: { replies: number } }>({
+  user,
+  _count,
+  ...review
+}: T) {
+  return { ...review, authorName: authorName(user), replyCount: _count.replies }
+}
+
+function toPublicReply<T extends { user: { name: string | null } }>({ user, ...reply }: T) {
+  return { ...reply, authorName: authorName(user) }
+}
 
 @Injectable()
 export class ReviewsService {
@@ -24,14 +53,82 @@ export class ReviewsService {
         orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
         skip: (page - 1) * REVIEWS_PAGE_SIZE,
         take: REVIEWS_PAGE_SIZE,
-        select: { id: true, rating: true, body: true, createdAt: true, user: { select: { name: true } } },
+        select: PUBLIC_REVIEW_SELECT,
       }),
     ])
 
     return {
       totalPages: Math.max(1, Math.ceil(total / REVIEWS_PAGE_SIZE)),
-      reviews: rows.map(({ user, ...review }) => ({ ...review, authorName: user.name?.trim() || 'Anonymous' })),
+      reviews: rows.map(toPublicReview),
     }
+  }
+
+  // One review, for the link in a notification. It adds the game id, so the
+  // page can tell a review of another game.
+  async getById(reviewId: number) {
+    const row = await this.prisma.review.findUnique({
+      where: { id: reviewId },
+      select: { ...PUBLIC_REVIEW_SELECT, gameId: true },
+    })
+    if (!row) {
+      throw new CustomError('There is no such review', 404)
+    }
+    return { ...toPublicReview(row), gameId: row.gameId }
+  }
+
+  async listReplies(reviewId: number, page: number) {
+    await this.assertReviewExists(reviewId)
+
+    const [total, rows] = await Promise.all([
+      this.prisma.reviewReply.count({ where: { reviewId } }),
+      this.prisma.reviewReply.findMany({
+        where: { reviewId },
+        orderBy: [{ createdAt: 'asc' }, { id: 'asc' }],
+        skip: (page - 1) * REPLIES_PAGE_SIZE,
+        take: REPLIES_PAGE_SIZE,
+        select: PUBLIC_REPLY_SELECT,
+      }),
+    ])
+
+    return {
+      totalPages: Math.max(1, Math.ceil(total / REPLIES_PAGE_SIZE)),
+      replies: rows.map(toPublicReply),
+    }
+  }
+
+  // Saves the reply and one notification for the review author and for every
+  // other user who already replied. The writer never gets one. All of it runs
+  // in one transaction, so a reply never exists without its notifications.
+  async createReply(email: string, reviewId: number, dto: CreateReplyDto) {
+    const userId = await this.getUserId(email)
+    const review = await this.prisma.review.findUnique({
+      where: { id: reviewId },
+      select: { gameId: true, userId: true },
+    })
+    if (!review) {
+      throw new CustomError('There is no such review', 404)
+    }
+    if (!(await findOwnedGame(this.prisma, userId, review.gameId))) {
+      throw new CustomError('You can only reply to games you own.', 403)
+    }
+
+    return this.prisma.$transaction(async (tx) => {
+      const earlier = await tx.reviewReply.findMany({
+        where: { reviewId },
+        select: { userId: true },
+        distinct: ['userId'],
+      })
+      const reply = await tx.reviewReply.create({
+        data: { reviewId, userId, body: dto.body },
+        select: PUBLIC_REPLY_SELECT,
+      })
+      const recipients = new Set([review.userId, ...earlier.map((row) => row.userId)])
+      recipients.delete(userId)
+      await tx.notification.createMany({
+        data: [...recipients].map((recipientId) => ({ userId: recipientId, replyId: reply.id })),
+      })
+      return toPublicReply(reply)
+    })
   }
 
   async getOwn(email: string, gameId: number) {
@@ -70,6 +167,13 @@ export class ReviewsService {
       throw new CustomError('User does not exist', 400)
     }
     return user.id
+  }
+
+  private async assertReviewExists(reviewId: number) {
+    const review = await this.prisma.review.findUnique({ where: { id: reviewId }, select: { id: true } })
+    if (!review) {
+      throw new CustomError('There is no such review', 404)
+    }
   }
 
   private async assertGameExists(gameId: number) {

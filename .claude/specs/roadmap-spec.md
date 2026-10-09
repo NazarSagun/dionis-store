@@ -56,7 +56,7 @@ A user who owns a game can give it a rating from 1 to 5 and a short text review.
 
 #### Out of scope
 
-- Moderation, replies, and helpful votes.
+- Moderation and helpful votes. Replies have their own spec: `.claude/specs/features/reviews/review-replies-spec.md`.
 
 ### 2.4 Restock alerts
 

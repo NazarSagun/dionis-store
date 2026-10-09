@@ -19,12 +19,16 @@ import type {
   GameWithReviewSummary,
   GamesArray,
   GenreCount,
+  LinkedReview,
+  NotificationsResponse,
   OrderItemObject,
   OrderObject,
   OrdersPage,
   OwnReview,
   OwnedItem,
   PaymentIntentResponse,
+  RepliesPage,
+  Reply,
   ReviewsPage,
   SuccessMessage,
   UpdateNameResponse,
@@ -57,11 +61,19 @@ export const getGetGamesResponseMock = (overrideResponse: Partial< GamesArray > 
 
 export const getGetGameResponseMock = (): GameWithReviewSummary => ({developer: faker.word.sample(), discount: faker.number.int({min: undefined, max: undefined}), editionCount: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), editions: faker.helpers.arrayElement([Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({description: faker.word.sample(), discount: faker.number.int({min: undefined, max: undefined}), id: faker.number.int({min: undefined, max: undefined}), name: faker.word.sample(), price: faker.number.int({min: undefined, max: undefined}), stock: faker.number.int({min: undefined, max: undefined})})), undefined]), genre: faker.word.sample(), id: faker.number.int({min: undefined, max: undefined}), platform: faker.word.sample(), price: faker.number.int({min: undefined, max: undefined}), publisher: faker.word.sample(), rating: faker.word.sample(), release_date: faker.word.sample(), short_description: faker.word.sample(), thumbnail: faker.word.sample(), title: faker.word.sample(),averageRating: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), null]), reviewCount: faker.number.int({min: undefined, max: undefined})})
 
-export const getGetGameReviewsResponseMock = (overrideResponse: Partial< ReviewsPage > = {}): ReviewsPage => ({reviews: Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({authorName: faker.word.sample(), body: faker.word.sample(), createdAt: `${faker.date.past().toISOString().split('.')[0]}Z`, id: faker.number.int({min: undefined, max: undefined}), rating: faker.number.int({min: 1, max: 5})})), totalPages: faker.number.int({min: undefined, max: undefined}), ...overrideResponse})
+export const getGetGameReviewsResponseMock = (overrideResponse: Partial< ReviewsPage > = {}): ReviewsPage => ({reviews: Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({authorName: faker.word.sample(), body: faker.word.sample(), createdAt: `${faker.date.past().toISOString().split('.')[0]}Z`, id: faker.number.int({min: undefined, max: undefined}), rating: faker.number.int({min: 1, max: 5}), replyCount: faker.number.int({min: undefined, max: undefined})})), totalPages: faker.number.int({min: undefined, max: undefined}), ...overrideResponse})
 
 export const getGetMyGameReviewResponseMock = (overrideResponse: Partial< OwnReview > = {}): OwnReview => ({body: faker.word.sample(), createdAt: `${faker.date.past().toISOString().split('.')[0]}Z`, id: faker.number.int({min: undefined, max: undefined}), rating: faker.number.int({min: 1, max: 5}), updatedAt: `${faker.date.past().toISOString().split('.')[0]}Z`, ...overrideResponse})
 
 export const getPutGameReviewResponseMock = (overrideResponse: Partial< OwnReview > = {}): OwnReview => ({body: faker.word.sample(), createdAt: `${faker.date.past().toISOString().split('.')[0]}Z`, id: faker.number.int({min: undefined, max: undefined}), rating: faker.number.int({min: 1, max: 5}), updatedAt: `${faker.date.past().toISOString().split('.')[0]}Z`, ...overrideResponse})
+
+export const getGetReviewResponseMock = (): LinkedReview => ({authorName: faker.word.sample(), body: faker.word.sample(), createdAt: `${faker.date.past().toISOString().split('.')[0]}Z`, id: faker.number.int({min: undefined, max: undefined}), rating: faker.number.int({min: 1, max: 5}), replyCount: faker.number.int({min: undefined, max: undefined}),gameId: faker.number.int({min: undefined, max: undefined})})
+
+export const getGetReviewRepliesResponseMock = (overrideResponse: Partial< RepliesPage > = {}): RepliesPage => ({replies: Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({authorName: faker.word.sample(), body: faker.word.sample(), createdAt: `${faker.date.past().toISOString().split('.')[0]}Z`, id: faker.number.int({min: undefined, max: undefined})})), totalPages: faker.number.int({min: undefined, max: undefined}), ...overrideResponse})
+
+export const getPostReviewReplyResponseMock = (overrideResponse: Partial< Reply > = {}): Reply => ({authorName: faker.word.sample(), body: faker.word.sample(), createdAt: `${faker.date.past().toISOString().split('.')[0]}Z`, id: faker.number.int({min: undefined, max: undefined}), ...overrideResponse})
+
+export const getGetNotificationsResponseMock = (overrideResponse: Partial< NotificationsResponse > = {}): NotificationsResponse => ({notifications: Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({actorName: faker.word.sample(), createdAt: `${faker.date.past().toISOString().split('.')[0]}Z`, gameId: faker.number.int({min: undefined, max: undefined}), gameTitle: faker.word.sample(), id: faker.number.int({min: undefined, max: undefined}), reviewId: faker.number.int({min: undefined, max: undefined}), type: faker.helpers.arrayElement(['review_reply'] as const)})), unreadCount: faker.number.int({min: undefined, max: undefined}), ...overrideResponse})
 
 export const getRegisterResponseMock = (overrideResponse: Partial< UserObject > = {}): UserObject => ({message: faker.helpers.arrayElement([faker.word.sample(), undefined]), user: faker.helpers.arrayElement([{accessToken: faker.helpers.arrayElement([faker.word.sample(), undefined]), email: faker.helpers.arrayElement([faker.word.sample(), undefined]), name: faker.helpers.arrayElement([faker.word.sample(), undefined]), role: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined])}, undefined]), ...overrideResponse})
 
@@ -345,6 +357,92 @@ export const getPutGameReviewMockHandler = (overrideResponse?: OwnReview | ((inf
   })
 }
 
+export const getGetReviewMockHandler = (overrideResponse?: LinkedReview | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<LinkedReview> | LinkedReview)) => {
+  return http.get('*/reviews/:reviewId', async (info) => {await delay(1000);
+    return new HttpResponse(JSON.stringify(overrideResponse !== undefined 
+            ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse) 
+            : getGetReviewResponseMock()),
+      {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      }
+    )
+  })
+}
+
+export const getGetReviewRepliesMockHandler = (overrideResponse?: RepliesPage | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<RepliesPage> | RepliesPage)) => {
+  return http.get('*/reviews/:reviewId/replies', async (info) => {await delay(1000);
+    return new HttpResponse(JSON.stringify(overrideResponse !== undefined 
+            ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse) 
+            : getGetReviewRepliesResponseMock()),
+      {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      }
+    )
+  })
+}
+
+export const getPostReviewReplyMockHandler = (overrideResponse?: Reply | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<Reply> | Reply)) => {
+  return http.post('*/reviews/:reviewId/replies', async (info) => {await delay(1000);
+    return new HttpResponse(JSON.stringify(overrideResponse !== undefined 
+            ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse) 
+            : getPostReviewReplyResponseMock()),
+      {
+        status: 201,
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      }
+    )
+  })
+}
+
+export const getGetNotificationsMockHandler = (overrideResponse?: NotificationsResponse | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<NotificationsResponse> | NotificationsResponse)) => {
+  return http.get('*/notifications', async (info) => {await delay(1000);
+    return new HttpResponse(JSON.stringify(overrideResponse !== undefined 
+            ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse) 
+            : getGetNotificationsResponseMock()),
+      {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      }
+    )
+  })
+}
+
+export const getPostNotificationReadMockHandler = () => {
+  return http.post('*/notifications/:id/read', async () => {await delay(1000);
+    return new HttpResponse(null,
+      {
+        status: 204,
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      }
+    )
+  })
+}
+
+export const getPostNotificationsReadAllMockHandler = () => {
+  return http.post('*/notifications/read-all', async () => {await delay(1000);
+    return new HttpResponse(null,
+      {
+        status: 204,
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      }
+    )
+  })
+}
+
 export const getRegisterMockHandler = (overrideResponse?: UserObject | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<UserObject> | UserObject)) => {
   return http.post('*/register', async (info) => {await delay(1000);
     return new HttpResponse(JSON.stringify(overrideResponse !== undefined 
@@ -600,6 +698,12 @@ export const getDefaultMock = () => [
   getGetGameReviewsMockHandler(),
   getGetMyGameReviewMockHandler(),
   getPutGameReviewMockHandler(),
+  getGetReviewMockHandler(),
+  getGetReviewRepliesMockHandler(),
+  getPostReviewReplyMockHandler(),
+  getGetNotificationsMockHandler(),
+  getPostNotificationReadMockHandler(),
+  getPostNotificationsReadAllMockHandler(),
   getRegisterMockHandler(),
   getLoginMockHandler(),
   getLogoutMockHandler(),

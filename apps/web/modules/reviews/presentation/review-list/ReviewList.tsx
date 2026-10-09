@@ -7,7 +7,8 @@ import { keepPreviousData } from '@tanstack/react-query'
 import { useGetGameReviews } from '../../integration/repository'
 import { ReviewItem } from '../review-item/ReviewItem'
 
-export const ReviewList = ({ gameId }: { gameId: number }) => {
+// `excludeReviewId` leaves out the review that the page already shows as linked.
+export const ReviewList = ({ gameId, excludeReviewId }: { gameId: number; excludeReviewId?: number }) => {
   const [page, setPage] = useState(1)
   const { data, isLoading, isError, refetch } = useGetGameReviews(
     gameId,
@@ -45,9 +46,11 @@ export const ReviewList = ({ gameId }: { gameId: number }) => {
 
   return (
     <div className='flex flex-col gap-4'>
-      {data.reviews.map((review) => (
-        <ReviewItem key={review.id} review={review} />
-      ))}
+      {data.reviews
+        .filter((review) => review.id !== excludeReviewId)
+        .map((review) => (
+          <ReviewItem key={review.id} review={review} gameId={gameId} />
+        ))}
       {data.totalPages > 1 && (
         <nav aria-label='Reviews pages' className='flex items-center justify-center gap-4'>
           <Button

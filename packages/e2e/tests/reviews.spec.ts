@@ -462,7 +462,14 @@ test.describe('Reviews from an owner', () => {
 
     const list = await (await request.get(reviewsUrl(gameId))).json()
     expect(list.reviews).toHaveLength(1)
-    expect(Object.keys(list.reviews[0]).sort()).toEqual(['authorName', 'body', 'createdAt', 'id', 'rating'])
+    expect(Object.keys(list.reviews[0]).sort()).toEqual([
+      'authorName',
+      'body',
+      'createdAt',
+      'id',
+      'rating',
+      'replyCount',
+    ])
     expect(JSON.stringify(list)).not.toContain(email)
 
     const game = await (await request.get(`${apiUrl}/api/game/${gameId}`)).json()
