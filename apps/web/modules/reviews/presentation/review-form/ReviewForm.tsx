@@ -22,6 +22,8 @@ const StarIcon = ({ filled }: { filled: boolean }) => (
   </svg>
 )
 
+export const REVIEW_FORM_ID = 'review-form'
+
 export const ReviewForm = ({ gameId }: { gameId: number }) => {
   const queryClient = useQueryClient()
   const [rating, setRating] = useState(0)
@@ -66,6 +68,7 @@ export const ReviewForm = ({ gameId }: { gameId: number }) => {
 
   return (
     <form
+      id={REVIEW_FORM_ID}
       data-testid='review-form'
       onSubmit={onSubmit}
       className='flex flex-col gap-4 rounded-md border border-border bg-card p-6'

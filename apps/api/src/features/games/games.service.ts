@@ -109,11 +109,30 @@ export class GamesService {
     return rows.map((row) => row.id)
   }
 
+  // Each deal carries the store's own review summary, for the featured slab on the home page.
   async fetchTopDeals() {
-    return this.prisma.game_pc.findMany({
+    const games = await this.prisma.game_pc.findMany({
       where: { discount: { gt: 0 } },
       orderBy: { discount: 'desc' },
       take: 5,
+    })
+    if (games.length === 0) return []
+
+    const summaries = await this.prisma.review.groupBy({
+      by: ['gameId'],
+      where: { gameId: { in: games.map((game) => game.id) } },
+      _avg: { rating: true },
+      _count: { _all: true },
+    })
+    const byGame = new Map(summaries.map((summary) => [summary.gameId, summary]))
+
+    return games.map((game) => {
+      const summary = byGame.get(game.id)
+      return {
+        ...game,
+        averageRating: summary?._avg.rating == null ? null : Math.round(summary._avg.rating * 10) / 10,
+        reviewCount: summary?._count._all ?? 0,
+      }
     })
   }
 

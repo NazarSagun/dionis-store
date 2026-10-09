@@ -283,6 +283,20 @@ test.describe('Reviews for a signed-in user who does not own the game', () => {
     await expect(page.getByTestId('review-login-prompt')).toHaveCount(0)
   })
 
+  test('the empty state links to the purchase options', async ({ page, request }) => {
+    const { id } = await createGameViaApi(request)
+    await signUpCustomer(page)
+    await page.goto(`/game/${id}`)
+
+    await page
+      .getByTestId('reviews-empty')
+      .getByRole('link', { name: /see purchase options/i })
+      .click()
+
+    await expect(page).toHaveURL(/#purchase-options$/)
+    await expect(page.locator('#purchase-options')).toBeVisible()
+  })
+
   test('the API answers 403 and stores nothing', async ({ page, request }) => {
     const { id } = await createGameViaApi(request)
     const email = await signUpCustomer(page)
@@ -329,6 +343,9 @@ test.describe('Reviews from an owner', () => {
     await buyFreshGame(page, request)
     const form = page.getByTestId('review-form')
     await expect(form).toBeVisible()
+    await expect(page.getByTestId('reviews-empty')).toContainText(/be the first to review it/i)
+    await page.getByTestId('review-write-first').click()
+    await expect(page.getByTestId('review-star').first()).toBeFocused()
     await expect(page.getByTestId('review-submit')).toBeDisabled()
     await expect(page.getByTestId('review-submit')).toHaveText(/submit review/i)
 

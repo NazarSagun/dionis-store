@@ -397,17 +397,17 @@ paths:
         - bearerHttpAuthentication: []
   /games/top-deals:
     get:
-      summary: List up to 10 games with the highest discount, discount > 0, highest first
+      summary: List up to 5 games with the highest discount, discount > 0, highest first
       operationId: getGamesTopDeals
       responses:
         '200':
-          description: Array of discounted games, highest discount first
+          description: Array of discounted games with their review summary, highest discount first
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/gameObject'
+                  $ref: '#/components/schemas/gameDetailObject'
         '500':
           description: Server error
           content:
@@ -1431,7 +1431,7 @@ components:
         pageSize:
           type: integer
     gameDetailObject:
-      description: A game with the average rating of the store's own reviews
+      description: A game with the average rating and the count of the store's own reviews
       allOf:
         - $ref: '#/components/schemas/gameObject'
         - type: object

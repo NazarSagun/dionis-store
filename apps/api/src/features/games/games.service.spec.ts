@@ -24,7 +24,7 @@ describe('GamesService', () => {
       deleteMany: jest.Mock
     }
     order: { count: jest.Mock }
-    review: { aggregate: jest.Mock }
+    review: { aggregate: jest.Mock; groupBy: jest.Mock }
     $queryRaw: jest.Mock
     $executeRaw: jest.Mock
     $transaction: jest.Mock
@@ -49,7 +49,10 @@ describe('GamesService', () => {
         deleteMany: jest.fn().mockReturnValue('delete-editions'),
       },
       order: { count: jest.fn().mockResolvedValue(0) },
-      review: { aggregate: jest.fn().mockResolvedValue({ _avg: { rating: null }, _count: { _all: 0 } }) },
+      review: {
+        aggregate: jest.fn().mockResolvedValue({ _avg: { rating: null }, _count: { _all: 0 } }),
+        groupBy: jest.fn().mockResolvedValue([]),
+      },
       $transaction: jest.fn(),
       $executeRaw: jest.fn(),
       $queryRaw: jest.fn().mockResolvedValue([{ id: 4 }, { id: 9 }]),
@@ -309,6 +312,27 @@ describe('GamesService', () => {
       const result = await service.fetchTopDeals()
 
       expect(result).toEqual([])
+    })
+
+    it('adds the average rating and the review count of each deal', async () => {
+      prisma.game_pc.findMany.mockResolvedValue([{ id: 4 }, { id: 9 }])
+      prisma.review.groupBy.mockResolvedValue([{ gameId: 9, _avg: { rating: 4.25 }, _count: { _all: 8 } }])
+
+      const result = await service.fetchTopDeals()
+
+      expect(prisma.review.groupBy).toHaveBeenCalledWith(expect.objectContaining({ where: { gameId: { in: [4, 9] } } }))
+      expect(result).toEqual([
+        { id: 4, averageRating: null, reviewCount: 0 },
+        { id: 9, averageRating: 4.3, reviewCount: 8 },
+      ])
+    })
+
+    it('skips the review query when there is no deal', async () => {
+      prisma.game_pc.findMany.mockResolvedValue([])
+
+      await service.fetchTopDeals()
+
+      expect(prisma.review.groupBy).not.toHaveBeenCalled()
     })
   })
 

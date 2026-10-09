@@ -645,7 +645,7 @@ export const useGetAdminOrders = <TData = Awaited<ReturnType<typeof getAdminOrde
 
 
 /**
- * @summary List up to 10 games with the highest discount, discount > 0, highest first
+ * @summary List up to 5 games with the highest discount, discount > 0, highest first
  */
 export const getGamesTopDeals = (
     
@@ -653,7 +653,7 @@ export const getGamesTopDeals = (
 ) => {
       
       
-      return customInstance<GameObject[]>(
+      return customInstance<GameDetailObject[]>(
       {url: `/games/top-deals`, method: 'GET', signal
     },
       options);
@@ -687,7 +687,7 @@ export type GetGamesTopDealsQueryResult = NonNullable<Awaited<ReturnType<typeof 
 export type GetGamesTopDealsQueryError = ErrorType<ErrorMessage>
 
 /**
- * @summary List up to 10 games with the highest discount, discount > 0, highest first
+ * @summary List up to 5 games with the highest discount, discount > 0, highest first
  */
 export const useGetGamesTopDeals = <TData = Awaited<ReturnType<typeof getGamesTopDeals>>, TError = ErrorType<ErrorMessage>>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getGamesTopDeals>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}

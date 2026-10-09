@@ -81,7 +81,7 @@ The game detail page shows the average rating, the list of reviews, and a review
 
 ### Requirements
 
-1. Below the information panel on the game detail page, add a reviews section. It shows the average rating with one decimal (`reviews-average`, for example `4.5`) and the review count (`reviews-count`, `1 review` or `12 reviews`). When there is no review, it shows `No reviews yet` and hides the average and the count.
+1. Below the information panel on the game detail page, add a reviews section. It shows the average rating with one decimal (`reviews-average`, for example `4.5`) and the review count (`reviews-count`, `1 review` or `12 reviews`). When there is no review, it shows the empty state of requirement 11 in place of the average card.
 2. The section lists the reviews of the current page. Each item shows the stars, the author name, the date, and the text. A review without text shows the stars only.
 3. The list has previous and next page controls when `totalPages` is above 1. The list uses the existing pagination pattern in the games module, where it fits.
 4. A signed-in user who owns the game sees a review form. It has five star buttons and a text area with a counter for the 1000-character limit. When the user already has a review, the form opens with the saved values and the button reads `Update review`. Otherwise the button reads `Submit review`.
@@ -91,6 +91,11 @@ The game detail page shows the average rating, the list of reviews, and a review
 8. The reviews section degrades on an API error. It shows a short message (`reviews-load-error`) with a `Try again` button (`reviews-retry`) that loads the list again, and keeps the rest of the page intact.
 9. The module `apps/web/modules/reviews` holds `domain/` (types), `integration/` (`repository.ts` and a mapper), and `presentation/` (one folder per component). It has no `core/` store, because the server owns the state and React Query caches it. The game detail page imports the section through the module's `presentation/` entry.
 10. Take colors and shadows from the design tokens. Do not use a raw hex value.
+11. While the game has no review, an empty state (`reviews-empty`) replaces the average card. It has the heading `No reviews yet` and one action that depends on the visitor:
+    - A signed-out visitor sees a `Log in` link to the login page (inside `review-login-prompt`).
+    - A signed-in user who does not own the game sees `Buy this game to review it` (inside `review-owner-required`) and a `See purchase options` link to the edition buttons (`#purchase-options`).
+    - An owner sees `You own this game. Be the first to review it.` and a `Write the first review` button (`review-write-first`). The button scrolls to the review form and focuses its first star. The form shows below the empty state.
+      The login and purchase messages show once, in the empty state, and not again in a card below it. When the first review is saved, the empty state gives way to the average card, and the form stays mounted.
 
 ### Acceptance criteria
 
@@ -101,6 +106,7 @@ The game detail page shows the average rating, the list of reviews, and a review
 - A signed-out user sees the login prompt and no form.
 - The submit button is disabled until a star is picked.
 - A game with 11 reviews shows 10 on page 1 and 1 on page 2.
+- A game with no review shows the empty state. A signed-out visitor sees `Log in`. A non-owner sees `See purchase options`, and the link goes to `#purchase-options`. An owner clicks `Write the first review` and the first star has focus.
 - A review text such as `<b>hi</b>` shows as the literal characters and does not render bold text.
 - No review shows the author email address anywhere on the page.
 
@@ -109,6 +115,31 @@ The game detail page shows the average rating, the list of reviews, and a review
 - Showing the new average on the game card, the wishlist, or the home page.
 - Editing or deleting a review from the account page.
 - Reporting a review.
+
+## Feature 3: Store score on the featured deal
+
+### Description
+
+The featured deal on the home page (the first game of `Top Deals`) shows the store's own average rating next to the seed rating badge.
+
+### Requirements
+
+1. `GET /api/games/top-deals` adds `averageRating` and `reviewCount` to each game, with the same meaning as on `GET /api/game/:gameId`. The API reads the summaries of all deals with one grouped query.
+2. The featured deal shows the stars (hidden below the `sm` breakpoint), the average with one decimal (`featured-average`), and the count in brackets (`featured-count`), inside `featured-reviews`. When the game has no review, the element does not render.
+3. The score sits in the same row as the rating badge and the price. It adds no height, so the home page does not shift. The skeleton heights of `TopDealsSkeleton` stay valid.
+4. The `Next Up` rows and the game cards show no store score in this pass.
+
+### Acceptance criteria
+
+- With a review summary of 4.5 and 12 reviews, the featured deal shows `4.5` and `(12)`.
+- With no review, the featured deal shows no store score.
+- Every game in the `top-deals` response has `averageRating` and a numeric `reviewCount`.
+- The featured slab is 568 px high when stacked and 268 px high from the `md` breakpoint, with or without a score.
+
+### Out of scope
+
+- Replacing the seed `rating` badge.
+- A store score on the `Next Up` rows, the game cards, and the wishlist.
 
 ## Cross-feature requirements
 
@@ -120,6 +151,8 @@ The game detail page shows the average rating, the list of reviews, and a review
   - `review-item`: each listed review.
   - `review-author`, `review-stars`, `review-date`, `review-body`: parts of one `review-item`. `review-stars` has an `aria-label` such as `4 out of 5 stars`, so a test can read the rating.
   - `reviews-load-error` and `reviews-retry`: the load failure message and its `Try again` button.
+  - `review-write-first`: the owner action of the empty state.
+  - `featured-reviews`, `featured-stars`, `featured-average`, `featured-count`: the score on the featured deal.
   - `review-form`: the form container.
   - `review-star`: each of the five star buttons.
   - `review-body-input`: the text area.

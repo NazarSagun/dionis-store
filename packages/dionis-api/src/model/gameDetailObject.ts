@@ -8,6 +8,6 @@ import type { GameObject } from './gameObject';
 import type { GameDetailObjectAllOf } from './gameDetailObjectAllOf';
 
 /**
- * A game with the average rating of the store's own reviews
+ * A game with the average rating and the count of the store's own reviews
  */
 export type GameDetailObject = GameObject & GameDetailObjectAllOf;

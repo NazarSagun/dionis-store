@@ -36,4 +36,42 @@ test.describe('Top Deals section', () => {
       await expect(nextUpRows.nth(index)).toContainText(deal.title)
     }
   })
+
+  test('every deal from the API carries the store review summary', async ({ request }) => {
+    const deals = await (await request.get(`${apiUrl}/api/games/top-deals`)).json()
+
+    for (const deal of deals) {
+      expect(deal).toHaveProperty('averageRating')
+      expect(typeof deal.reviewCount).toBe('number')
+    }
+  })
+
+  test('shows the store average and review count on the featured deal', async ({ page }) => {
+    await page.route('**/api/games/top-deals', async (route) => {
+      const response = await route.fetch()
+      const deals = await response.json()
+      deals[0] = { ...deals[0], averageRating: 4.5, reviewCount: 12 }
+      await route.fulfill({ response, json: deals })
+    })
+
+    await page.goto('/')
+
+    const featured = page.getByTestId('featured-deal')
+    await expect(featured.getByTestId('featured-average')).toHaveText('4.5')
+    await expect(featured.getByTestId('featured-count')).toHaveText('(12)')
+  })
+
+  test('shows no store score on the featured deal when it has no review', async ({ page }) => {
+    await page.route('**/api/games/top-deals', async (route) => {
+      const response = await route.fetch()
+      const deals = await response.json()
+      deals[0] = { ...deals[0], averageRating: null, reviewCount: 0 }
+      await route.fulfill({ response, json: deals })
+    })
+
+    await page.goto('/')
+
+    await expect(page.getByTestId('featured-deal')).toBeVisible()
+    await expect(page.getByTestId('featured-reviews')).toHaveCount(0)
+  })
 })
