@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common'
+import { CacheModule } from '@nestjs/cache-manager'
 import { ConfigModule } from '@nestjs/config'
 import { APP_GUARD } from '@nestjs/core'
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler'
@@ -23,6 +24,11 @@ import { WishlistModule } from './features/wishlist/wishlist.module'
       throttlers: [{ ttl: 60_000, limit: 300 }],
       skipIf: (context) => shouldSkipThrottle(context),
     }),
+    // In-process cache, one per API instance. An entry lives five minutes, and a write
+    // clears it sooner. A read that started before a write can store old data after
+    // the clear, so the short TTL caps how long that old data stays. `max` caps the
+    // entries, since a search string makes a new key.
+    CacheModule.register({ isGlobal: true, ttl: 5 * 60 * 1000, max: 500 }),
     PrismaModule,
     MailModule,
     AuthModule,

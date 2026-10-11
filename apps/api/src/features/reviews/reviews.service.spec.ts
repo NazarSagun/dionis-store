@@ -1,10 +1,13 @@
+import { CACHE_MANAGER } from '@nestjs/cache-manager'
 import { Test } from '@nestjs/testing'
 import { CustomError } from '../../common/errors/custom-error'
 import { PrismaService } from '../../common/prisma/prisma.service'
+import { gameDetailKey, TOP_DEALS_KEY } from '../games/cache-keys'
 import { ReviewsService } from './reviews.service'
 
 describe('ReviewsService', () => {
   let service: ReviewsService
+  let cache: { del: jest.Mock }
   let prisma: {
     user: { findUnique: jest.Mock }
     game_pc: { findUnique: jest.Mock }
@@ -40,8 +43,14 @@ describe('ReviewsService', () => {
     }
     prisma.$transaction.mockImplementation((callback) => callback(prisma))
 
+    cache = { del: jest.fn() }
+
     const module = await Test.createTestingModule({
-      providers: [ReviewsService, { provide: PrismaService, useValue: prisma }],
+      providers: [
+        ReviewsService,
+        { provide: PrismaService, useValue: prisma },
+        { provide: CACHE_MANAGER, useValue: cache },
+      ],
     }).compile()
 
     service = module.get(ReviewsService)
@@ -91,6 +100,13 @@ describe('ReviewsService', () => {
   })
 
   describe('upsert', () => {
+    it('drops the cached detail and top deals of the game, which carry its average rating', async () => {
+      await service.upsert(email, 3, { rating: 4, body: 'Good' })
+
+      expect(cache.del).toHaveBeenCalledWith(gameDetailKey(3))
+      expect(cache.del).toHaveBeenCalledWith(TOP_DEALS_KEY)
+    })
+
     it('saves the review of an owner, keyed by user and game', async () => {
       await service.upsert(email, 3, { rating: 4, body: 'Good' })
 

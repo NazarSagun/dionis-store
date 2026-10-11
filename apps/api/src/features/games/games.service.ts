@@ -1,4 +1,6 @@
-import { Injectable } from '@nestjs/common'
+import { CACHE_MANAGER } from '@nestjs/cache-manager'
+import { Inject, Injectable } from '@nestjs/common'
+import { Cache } from 'cache-manager'
 import { Prisma } from '@prisma/client'
 import { PrismaService } from '../../common/prisma/prisma.service'
 import { CustomError } from '../../common/errors/custom-error'
@@ -6,6 +8,7 @@ import { CreateGameDto } from './dto/create-game.dto'
 import { CreateEditionDto, UpdateEditionDto } from './dto/edition.dto'
 import { UpdateGameDto } from './dto/update-game.dto'
 import { AllowedEdition, AllowedPlatform, AllowedSort } from './dto/games-query.dto'
+import { gameDetailKey, gamesListKey, GENRES_KEY, TOP_DEALS_KEY } from './cache-keys'
 
 const SORT_TO_ORDER_BY: Record<AllowedSort, Prisma.Game_pcOrderByWithRelationInput> = {
   price_asc: { price: 'asc' },
@@ -21,29 +24,45 @@ const SORT_TO_ORDER_BY: Record<AllowedSort, Prisma.Game_pcOrderByWithRelationInp
 // The store's average review rating to one decimal, or null when there is no review.
 const roundAverage = (average: number | null | undefined) => (average == null ? null : Math.round(average * 10) / 10)
 
+export interface FetchGamesParams {
+  page: number
+  search?: string
+  platform?: AllowedPlatform
+  sort?: AllowedSort
+  edition?: AllowedEdition
+  genre?: string
+  minPrice?: number
+  maxPrice?: number
+}
+
 @Injectable()
 export class GamesService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    @Inject(CACHE_MANAGER) private readonly cache: Cache,
+  ) {}
 
-  async fetchGames({
-    page,
-    search,
-    platform,
-    sort,
-    edition,
-    genre,
-    minPrice,
-    maxPrice,
-  }: {
-    page: number
-    search?: string
-    platform?: AllowedPlatform
-    sort?: AllowedSort
-    edition?: AllowedEdition
-    genre?: string
-    minPrice?: number
-    maxPrice?: number
-  }) {
+  // Serves the cached value, or runs the query and keeps its result. A query
+  // that throws is not cached.
+  private async remember<T>(key: string, load: () => Promise<T>): Promise<T> {
+    const cached = await this.cache.get<T>(key)
+    if (cached !== undefined) return cached
+    const value = await load()
+    await this.cache.set(key, value)
+    return value
+  }
+
+  // Any write to a game or an edition changes the list, the genres, the deals
+  // and the detail, and the cache holds nothing else, so it is cleared whole.
+  private async clearCache() {
+    await this.cache.reset()
+  }
+
+  fetchGames(params: FetchGamesParams) {
+    return this.remember(gamesListKey(params), () => this.loadGames(params))
+  }
+
+  private async loadGames({ page, search, platform, sort, edition, genre, minPrice, maxPrice }: FetchGamesParams) {
     const limit = 20
     const currentPage = page || 1
 
@@ -88,7 +107,11 @@ export class GamesService {
     return { totalPages, games }
   }
 
-  async fetchGenres() {
+  fetchGenres() {
+    return this.remember(GENRES_KEY, () => this.loadGenres())
+  }
+
+  private async loadGenres() {
     const genres = await this.prisma.game_pc.groupBy({
       by: ['genre'],
       _count: { _all: true },
@@ -113,7 +136,11 @@ export class GamesService {
   }
 
   // Each deal carries the store's own review summary, for the featured slab on the home page.
-  async fetchTopDeals() {
+  fetchTopDeals() {
+    return this.remember(TOP_DEALS_KEY, () => this.loadTopDeals())
+  }
+
+  private async loadTopDeals() {
     const games = await this.prisma.game_pc.findMany({
       where: { discount: { gt: 0 } },
       orderBy: { discount: 'desc' },
@@ -153,7 +180,11 @@ export class GamesService {
 
   // The game with its editions and the store's own review summary. The seed
   // `rating` string stays until the store has enough reviews to replace it.
-  async fetchGameDetail({ gameId }: { gameId: number }) {
+  fetchGameDetail({ gameId }: { gameId: number }) {
+    return this.remember(gameDetailKey(gameId), () => this.loadGameDetail(gameId))
+  }
+
+  private async loadGameDetail(gameId: number) {
     const game = await this.fetchGameById({ gameId })
     const { _avg, _count } = await this.prisma.review.aggregate({
       where: { gameId },
@@ -171,6 +202,7 @@ export class GamesService {
   async createGame(data: CreateGameDto) {
     try {
       const game = await this.prisma.game_pc.create({ data })
+      await this.clearCache()
       // Postgres does not advance a sequence for an explicit id. The seed
       // inserts FreeToGame ids after the migration created the sequence, so
       // without this the next id-less create would collide with game 1.
@@ -191,7 +223,9 @@ export class GamesService {
   async updateGame(id: number, data: UpdateGameDto) {
     await this.fetchGameById({ gameId: id })
     try {
-      return await this.prisma.game_pc.update({ where: { id }, data })
+      const game = await this.prisma.game_pc.update({ where: { id }, data })
+      await this.clearCache()
+      return game
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
         throw new CustomError('A game with this id or title already exists', 409)
@@ -213,16 +247,21 @@ export class GamesService {
       this.prisma.gameEdition.deleteMany({ where: { gameId: id } }),
       this.prisma.game_pc.delete({ where: { id } }),
     ])
+    await this.clearCache()
   }
 
   async createEdition(gameId: number, data: CreateEditionDto) {
     await this.fetchGameById({ gameId })
-    return this.prisma.gameEdition.create({ data: { ...data, gameId } })
+    const edition = await this.prisma.gameEdition.create({ data: { ...data, gameId } })
+    await this.clearCache()
+    return edition
   }
 
   async updateEdition(id: number, data: UpdateEditionDto) {
     await this.getEdition(id)
-    return this.prisma.gameEdition.update({ where: { id }, data })
+    const edition = await this.prisma.gameEdition.update({ where: { id }, data })
+    await this.clearCache()
+    return edition
   }
 
   async deleteEdition(id: number) {
@@ -232,6 +271,7 @@ export class GamesService {
       throw new CustomError(`This edition is in ${pluralOrders(orders)} and cannot be deleted.`, 409)
     }
     await this.prisma.gameEdition.delete({ where: { id } })
+    await this.clearCache()
   }
 
   private async getEdition(id: number) {
