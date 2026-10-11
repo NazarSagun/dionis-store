@@ -1,6 +1,9 @@
-import { Injectable } from '@nestjs/common'
+import { CACHE_MANAGER } from '@nestjs/cache-manager'
+import { Inject, Injectable } from '@nestjs/common'
+import { Cache } from 'cache-manager'
 import { CustomError } from '../../common/errors/custom-error'
 import { PrismaService } from '../../common/prisma/prisma.service'
+import { gameDetailKey, TOP_DEALS_KEY } from '../games/cache-keys'
 import { findOwnedGame } from '../orders/order-ownership.util'
 import { CreateReplyDto } from './dto/create-reply.dto'
 import { UpsertReviewDto } from './dto/upsert-review.dto'
@@ -39,7 +42,10 @@ function toPublicReply<T extends { user: { name: string | null } }>({ user, ...r
 
 @Injectable()
 export class ReviewsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    @Inject(CACHE_MANAGER) private readonly cache: Cache,
+  ) {}
 
   // The public list. It returns the author's name and never the email or the
   // user id.
@@ -153,12 +159,15 @@ export class ReviewsService {
     }
 
     const data = { rating: dto.rating, body: dto.body ?? '' }
-    return this.prisma.review.upsert({
+    const review = await this.prisma.review.upsert({
       where: { userId_gameId: { userId, gameId } },
       create: { userId, gameId, ...data },
       update: data,
       select: OWN_REVIEW_SELECT,
     })
+    // The game detail and the top deals carry the average rating.
+    await Promise.all([this.cache.del(gameDetailKey(gameId)), this.cache.del(TOP_DEALS_KEY)])
+    return review
   }
 
   private async getUserId(email: string) {

@@ -1,3 +1,4 @@
+import { CACHE_MANAGER } from '@nestjs/cache-manager'
 import { Test } from '@nestjs/testing'
 import { Prisma } from '@prisma/client'
 import { MailService } from '../../common/mail/mail.service'
@@ -66,6 +67,7 @@ describe('OrdersService', () => {
         { provide: PrismaService, useValue: prisma },
         { provide: StripeService, useValue: stripe },
         { provide: MailService, useValue: mail },
+        { provide: CACHE_MANAGER, useValue: { del: jest.fn() } },
       ],
     }).compile()
 

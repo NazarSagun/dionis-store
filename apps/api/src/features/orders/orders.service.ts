@@ -1,10 +1,13 @@
 import { randomBytes } from 'crypto'
-import { Injectable, Logger } from '@nestjs/common'
+import { CACHE_MANAGER } from '@nestjs/cache-manager'
+import { Inject, Injectable, Logger } from '@nestjs/common'
 import { Prisma } from '@prisma/client'
+import { Cache } from 'cache-manager'
 import Stripe from 'stripe'
 import { MailService } from '../../common/mail/mail.service'
 import { PrismaService } from '../../common/prisma/prisma.service'
 import { CustomError } from '../../common/errors/custom-error'
+import { gameDetailKey } from '../games/cache-keys'
 import { ShippingAddressDto } from './dto/shipping-address.dto'
 import { findOwnedItem } from './order-ownership.util'
 import { SHIPPING_FEE_CENTS } from './shipping-fee'
@@ -81,6 +84,7 @@ export class OrdersService {
     private readonly prisma: PrismaService,
     private readonly stripe: StripeService,
     private readonly mail: MailService,
+    @Inject(CACHE_MANAGER) private readonly cache: Cache,
   ) {}
 
   async createPaymentIntent(email: string, items: unknown) {
@@ -238,6 +242,10 @@ export class OrdersService {
       }
       throw error
     }
+
+    // The game detail lists the stock of each edition.
+    const stockedGameIds = new Set(pricedItems.filter((item) => item.editionId != null).map((item) => item.gameId))
+    await Promise.all([...stockedGameIds].map((gameId) => this.cache.del(gameDetailKey(gameId))))
 
     await this.sendReceipt(order, user.email)
     return order

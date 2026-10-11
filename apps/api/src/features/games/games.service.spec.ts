@@ -1,3 +1,4 @@
+import { CacheModule } from '@nestjs/cache-manager'
 import { Test } from '@nestjs/testing'
 import { Prisma } from '@prisma/client'
 import { PrismaService } from '../../common/prisma/prisma.service'
@@ -59,10 +60,38 @@ describe('GamesService', () => {
     }
 
     const module = await Test.createTestingModule({
+      imports: [CacheModule.register()],
       providers: [GamesService, { provide: PrismaService, useValue: prisma }],
     }).compile()
 
     service = module.get(GamesService)
+  })
+
+  describe('cache', () => {
+    it('serves a repeated list query from memory', async () => {
+      await service.fetchGames({ page: 1, search: 'zelda' })
+      await service.fetchGames({ page: 1, search: 'zelda' })
+      await service.fetchGames({ page: 1, search: 'mario' })
+
+      expect(prisma.game_pc.findMany).toHaveBeenCalledTimes(2)
+    })
+
+    it('serves a repeated game detail from memory, then reloads it after an update', async () => {
+      await service.fetchGameDetail({ gameId: 1 })
+      await service.fetchGameDetail({ gameId: 1 })
+      expect(prisma.review.aggregate).toHaveBeenCalledTimes(1)
+
+      await service.updateGame(1, { title: 'New title' })
+      await service.fetchGameDetail({ gameId: 1 })
+      expect(prisma.review.aggregate).toHaveBeenCalledTimes(2)
+    })
+
+    it('does not cache a failed query', async () => {
+      prisma.game_pc.findUnique.mockResolvedValueOnce(null)
+      await expect(service.fetchGameDetail({ gameId: 1 })).rejects.toBeInstanceOf(CustomError)
+
+      await expect(service.fetchGameDetail({ gameId: 1 })).resolves.toMatchObject({ id: 1 })
+    })
   })
 
   describe('query building (correctness)', () => {
