@@ -19,7 +19,10 @@ ENV NEXT_PUBLIC_BASE_URL=$NEXT_PUBLIC_BASE_URL
 ENV NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=$NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
 ENV NEXT_PUBLIC_SENTRY_DSN=$NEXT_PUBLIC_SENTRY_DSN
 # Source map upload token. A secret mount keeps it out of the image layers.
-RUN --mount=type=secret,id=sentry_auth_token,env=SENTRY_AUTH_TOKEN pnpm --filter web build
+# The token is read from the secret file, because older BuildKit versions do
+# not support env= on a secret mount. Without the secret, the build skips the upload.
+RUN --mount=type=secret,id=sentry_auth_token \
+    SENTRY_AUTH_TOKEN="$(cat /run/secrets/sentry_auth_token 2>/dev/null)" pnpm --filter web build
 
 ENV NODE_ENV=production HOSTNAME=0.0.0.0
 WORKDIR /app/apps/web
