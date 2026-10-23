@@ -1,5 +1,7 @@
+const { withSentryConfig } = require('@sentry/nextjs/config');
+
 /** @type {import('next').NextConfig} */
-module.exports = {
+const nextConfig = {
   poweredByHeader: false,
   // `next build` writes to the same .next/ that a running `next dev` reads
   // from, and clobbering it out from under a live dev server produces stale
@@ -26,3 +28,16 @@ module.exports = {
     ],
   },
 };
+
+module.exports = withSentryConfig(nextConfig, {
+  org: 'nazar-hz',
+  project: 'dionis-web',
+  // Uploads source maps on `next build` when SENTRY_AUTH_TOKEN is set. Without
+  // it the build still passes, and stack traces show minified code.
+  authToken: process.env.SENTRY_AUTH_TOKEN,
+  widenClientFileUpload: true,
+  // Browser events go through this app's own /monitoring route, so ad
+  // blockers that block sentry.io do not drop them.
+  tunnelRoute: '/monitoring',
+  silent: !process.env.CI,
+});

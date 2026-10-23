@@ -4,7 +4,9 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": [".next/**", "!.next/cache/**"]
+      "outputs": [".next/**", "!.next/cache/**"],
+      "env": ["NODE_ENV", "NEXT_RUNTIME"],
+      "passThroughEnv": ["SENTRY_AUTH_TOKEN", "CI"]
     },
     "lint": {
       "dependsOn": ["^lint"]

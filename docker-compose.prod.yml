@@ -43,6 +43,9 @@ services:
       SMTP_USER: ${SMTP_USER:-}
       SMTP_PASS: ${SMTP_PASS:-}
       MAIL_FROM: ${MAIL_FROM:-Dionis Store <no-reply@dionis-store.local>}
+      # Empty SENTRY_DSN turns error reporting off.
+      SENTRY_DSN: ${SENTRY_DSN:-}
+      SENTRY_ENVIRONMENT: ${SENTRY_ENVIRONMENT:-production}
     depends_on:
       db:
         condition: service_healthy
@@ -84,11 +87,19 @@ services:
       args:
         NEXT_PUBLIC_BASE_URL: ${NEXT_PUBLIC_BASE_URL:?set NEXT_PUBLIC_BASE_URL}
         NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: ${NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY:-}
+        NEXT_PUBLIC_SENTRY_DSN: ${NEXT_PUBLIC_SENTRY_DSN:-}
+      secrets:
+        - sentry_auth_token
     security_opt:
       - no-new-privileges:true
     cap_drop:
       - ALL
     restart: unless-stopped
+
+# Empty SENTRY_AUTH_TOKEN builds the web app without uploading source maps.
+secrets:
+  sentry_auth_token:
+    environment: SENTRY_AUTH_TOKEN
 
 volumes:
   db_data:
