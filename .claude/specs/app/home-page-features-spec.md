@@ -6,8 +6,7 @@ Today the home page shows only a paginated game grid. A user cannot search or fi
 
 ## Design reference
 
-Figma frame name: Home: Search, Deals & Wishlist (proposal). Link:
-https://www.figma.com/design/iENdx0LKoWPG4L8UtI4qq0/Dionis-Store-%E2%80%94-Retro-Redesign?node-id=17-176
+Figma frame name: Home: Search, Deals & Wishlist (proposal).
 
 This frame is a proposal. It does not replace the original "Home" frame in the file.
 

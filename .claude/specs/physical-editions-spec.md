@@ -8,8 +8,7 @@ This spec touches the game catalog, the cart, both checkout steps, and the `Orde
 
 ## Design reference
 
-Figma section: "Physical Editions (proposal)" (draft, pending review). Same file as the Home, Checkout, and Account redesigns:
-https://www.figma.com/design/iENdx0LKoWPG4L8UtI4qq0/Dionis-Store-%E2%80%94-Retro-Redesign?node-id=101-693
+Figma section: "Physical Editions (proposal)" (draft, pending review). Same file as the Home, Checkout, and Account redesigns.
 
 Four frames, one per touched screen, each cloned from its existing frame and extended rather than redrawn:
 - "Game Details — Physical Editions (proposal)" (Feature 1): relabels "Add to Cart" as "Add Digital Copy" and resizes it down to match a new row of equally-sized `edition-option` buttons, one per physical edition, all using the Button component's Primary variant, with a dimmed Secondary variant for an out-of-stock edition. Each edition's own description (its bundled contents) shows under the game's description, above the buttons.
