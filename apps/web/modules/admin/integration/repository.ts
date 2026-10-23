@@ -1,4 +1,5 @@
 export {
+  getGetAdminOrdersQueryKey,
   getGetGameQueryKey,
   getGetGamesQueryKey,
   useCreateEdition,
@@ -8,6 +9,7 @@ export {
   useGetAdminOrders,
   useGetGame,
   useGetGames,
+  usePatchAdminOrder,
   useUpdateEdition,
   useUpdateGame,
 } from '@repo/dionis-api/src/dionis/default/default'

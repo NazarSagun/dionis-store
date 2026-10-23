@@ -3,10 +3,17 @@
 import { Fragment, useEffect, useState } from 'react'
 import { Button, Skeleton } from '@repo/ui'
 
-import { formatCentsToEuros, formatOrderDate } from '@/modules/account/domain/formatting'
+import {
+  formatCentsToEuros,
+  formatOrderDate,
+  isPhysicalOrder,
+  ORDER_STATUS_LABELS,
+  orderStatusBadgeClass,
+} from '@/modules/account/domain/formatting'
 
 import { adminButtonText, adminInput, adminLabel, adminPanel } from '../../domain/styles'
 import { AdminOrderObject, useGetAdminOrders } from '../../integration/repository'
+import { ShipmentForm } from '../shipment-form/ShipmentForm'
 
 const PAGE_SIZE = 20
 const SEARCH_DEBOUNCE_MS = 300
@@ -14,7 +21,7 @@ const headerCell = 'px-6 py-3 text-left font-sans text-xs font-semibold uppercas
 
 const OrderDetails = ({ order }: { order: AdminOrderObject }) => (
   <tr className='bg-panel-alt'>
-    <td colSpan={6} className='px-6 pb-6 pt-2'>
+    <td colSpan={7} className='px-6 pb-6 pt-2'>
       <div data-testid='admin-order-items' className='flex flex-col gap-8 pl-10 sm:flex-row'>
         <div className='flex flex-1 flex-col gap-3'>
           <span className={adminLabel}>Items</span>
@@ -58,6 +65,7 @@ const OrderDetails = ({ order }: { order: AdminOrderObject }) => (
               ))}
           </div>
         )}
+        {isPhysicalOrder(order) && <ShipmentForm order={order} />}
       </div>
     </td>
   </tr>
@@ -97,7 +105,7 @@ export const OrdersTable = () => {
       </label>
 
       <div className={`${adminPanel} w-full overflow-x-auto`}>
-        <table data-testid='admin-orders-table' className='w-full min-w-[720px] border-collapse'>
+        <table data-testid='admin-orders-table' className='w-full min-w-[840px] border-collapse'>
           <thead className='bg-panel-alt'>
             <tr>
               <th className={`${headerCell} w-12`}>
@@ -106,6 +114,7 @@ export const OrdersTable = () => {
               <th className={headerCell}>Order</th>
               <th className={headerCell}>Date</th>
               <th className={headerCell}>Customer</th>
+              <th className={headerCell}>Status</th>
               <th className={`${headerCell} text-right`}>Items</th>
               <th className={`${headerCell} text-right`}>Total</th>
             </tr>
@@ -136,6 +145,13 @@ export const OrdersTable = () => {
                       {formatOrderDate(order.createdAt as string)}
                     </td>
                     <td className='px-6 py-4 font-sans text-sm text-foreground'>{order.user.email}</td>
+                    <td className='px-6 py-4'>
+                      {order.status && (
+                        <span data-testid='admin-order-status' className={orderStatusBadgeClass(order.status)}>
+                          {ORDER_STATUS_LABELS[order.status]}
+                        </span>
+                      )}
+                    </td>
                     <td className='px-6 py-4 text-right font-mono text-sm tabular-nums text-foreground'>
                       {order.items?.length ?? 0}
                     </td>
