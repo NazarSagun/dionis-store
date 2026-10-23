@@ -14,9 +14,12 @@ RUN pnpm install --frozen-lockfile
 # they are build arguments, not runtime variables.
 ARG NEXT_PUBLIC_BASE_URL
 ARG NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+ARG NEXT_PUBLIC_SENTRY_DSN
 ENV NEXT_PUBLIC_BASE_URL=$NEXT_PUBLIC_BASE_URL
 ENV NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=$NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
-RUN pnpm --filter web build
+ENV NEXT_PUBLIC_SENTRY_DSN=$NEXT_PUBLIC_SENTRY_DSN
+# Source map upload token. A secret mount keeps it out of the image layers.
+RUN --mount=type=secret,id=sentry_auth_token,env=SENTRY_AUTH_TOKEN pnpm --filter web build
 
 ENV NODE_ENV=production HOSTNAME=0.0.0.0
 WORKDIR /app/apps/web

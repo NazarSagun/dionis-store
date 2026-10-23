@@ -1,3 +1,5 @@
+// Must stay the first import. See instrument.ts.
+import './instrument'
 import 'reflect-metadata'
 import cookieParser from 'cookie-parser'
 import { BadRequestException, ValidationPipe } from '@nestjs/common'

@@ -3,6 +3,7 @@ import { CacheModule } from '@nestjs/cache-manager'
 import { ConfigModule } from '@nestjs/config'
 import { APP_GUARD } from '@nestjs/core'
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler'
+import { SentryModule } from '@sentry/nestjs/setup'
 import { MailModule } from './common/mail/mail.module'
 import { PrismaModule } from './common/prisma/prisma.module'
 import { shouldSkipThrottle } from './common/throttle/skip-throttle'
@@ -16,6 +17,8 @@ import { WishlistModule } from './features/wishlist/wishlist.module'
 
 @Module({
   imports: [
+    // Names each Sentry trace after its route.
+    SentryModule.forRoot(),
     ConfigModule.forRoot({ isGlobal: true }),
     // 300 requests a minute per client IP for every route. RATE_LIMIT=off turns it
     // off, for the E2E run, whose tests sign up many users from one address.
