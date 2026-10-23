@@ -395,6 +395,55 @@ paths:
                 $ref: '#/components/schemas/errorMessage'
       security:
         - bearerHttpAuthentication: []
+  /admin/orders/{orderId}:
+    patch:
+      summary: Set the shipping status and tracking number of a physical order (admin)
+      operationId: patchAdminOrder
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/orderShipmentInput'
+      responses:
+        '200':
+          description: The updated order
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/adminOrderObject'
+        '400':
+          description: Invalid id or body, or a digital-only order
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+        '403':
+          description: Not an admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+        '404':
+          description: Order not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+      security:
+        - bearerHttpAuthentication: []
   /games/top-deals:
     get:
       summary: List up to 5 games with the highest discount, discount > 0, highest first
@@ -1860,6 +1909,11 @@ components:
         shippingCountry:
           type: string
           nullable: true
+        status:
+          $ref: '#/components/schemas/orderStatus'
+        trackingNumber:
+          type: string
+          nullable: true
         createdAt:
           type: string
           format: date-time
@@ -1867,6 +1921,24 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/orderItemObject'
+    orderStatus:
+      type: string
+      enum:
+        - PENDING
+        - SHIPPED
+        - DELIVERED
+      description: A digital-only order is DELIVERED when it is created
+    orderShipmentInput:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          $ref: '#/components/schemas/orderStatus'
+        trackingNumber:
+          type: string
+          maxLength: 64
+          description: Trimmed by the server. An empty string clears the stored value. Leave it out to keep it.
     shippingAddressInput:
       type: object
       required:

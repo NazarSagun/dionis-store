@@ -5,26 +5,40 @@ import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { Button, Skeleton } from '@repo/ui'
 
-import { formatCentsToEuros, formatOrderDate } from '../../domain/formatting'
+import {
+  formatCentsToEuros,
+  formatOrderDate,
+  isPhysicalOrder,
+  ORDER_STATUS_LABELS,
+  orderStatusBadgeClass,
+} from '../../domain/formatting'
 import { OrderObject, useOrderPages } from '../../integration/repository'
 import { LoadMoreButton } from '../load-more-button/LoadMoreButton'
 
 const OrderHistoryRow = ({ order }: { order: OrderObject }) => {
   const [isExpanded, setIsExpanded] = useState(false)
   const items = order.items ?? []
+  const status = isPhysicalOrder(order) ? order.status : undefined
 
   return (
     <div data-testid='order-history-row' className='flex flex-col gap-3 border-b border-ink pb-4'>
       <div className='flex flex-wrap items-center justify-between gap-2'>
-        <button
-          type='button'
-          data-testid='order-history-toggle'
-          onClick={() => setIsExpanded((expanded) => !expanded)}
-          className='min-w-0 text-left font-mono text-sm font-bold text-foreground'
-        >
-          Order #{order.id} · {formatOrderDate(order.createdAt as string)} · {items.length}{' '}
-          {items.length === 1 ? 'item' : 'items'}
-        </button>
+        <div className='flex min-w-0 flex-wrap items-center gap-3'>
+          <button
+            type='button'
+            data-testid='order-history-toggle'
+            onClick={() => setIsExpanded((expanded) => !expanded)}
+            className='min-w-0 text-left font-mono text-sm font-bold text-foreground'
+          >
+            Order #{order.id} · {formatOrderDate(order.createdAt as string)} · {items.length}{' '}
+            {items.length === 1 ? 'item' : 'items'}
+          </button>
+          {status && (
+            <span data-testid='order-history-status' className={orderStatusBadgeClass(status)}>
+              {ORDER_STATUS_LABELS[status]}
+            </span>
+          )}
+        </div>
         <span className='font-display text-lg text-neon-amber'>€{formatCentsToEuros(order.totalPrice as number)}</span>
       </div>
       {isExpanded && (
@@ -48,6 +62,11 @@ const OrderHistoryRow = ({ order }: { order: OrderObject }) => {
               </div>
             </div>
           ))}
+          {order.trackingNumber && (
+            <p data-testid='order-history-tracking' className='font-mono text-sm text-muted-foreground'>
+              Tracking number: {order.trackingNumber}
+            </p>
+          )}
         </div>
       )}
     </div>

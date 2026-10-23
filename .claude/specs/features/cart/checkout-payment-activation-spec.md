@@ -6,8 +6,7 @@
 
 ## Design reference
 
-Figma section name: Checkout: Payment & Game Activation (proposal). Link:
-https://www.figma.com/design/iENdx0LKoWPG4L8UtI4qq0/Dionis-Store-%E2%80%94-Retro-Redesign?node-id=58-481
+Figma section name: Checkout: Payment & Game Activation (proposal).
 
 The section holds two frames, "Cart: Payment (proposal)" and "Cart: Game Activation (proposal)." Both frames live in the same file as the Home redesign and the existing "Cart" frame. Neither frame replaces the existing "Cart" frame, which still covers step 1 only.
 

@@ -73,8 +73,17 @@ model Order {
   // Set when the receipt email is claimed. Null means no email went out, so a
   // later job can retry it.
   receiptSentAt         DateTime?
+  // A digital-only order is DELIVERED when it is created. Nothing ships.
+  status                OrderStatus @default(PENDING)
+  trackingNumber        String?
   createdAt             DateTime    @default(now())
   items                 OrderItem[]
+}
+
+enum OrderStatus {
+  PENDING
+  SHIPPED
+  DELIVERED
 }
 
 model OrderItem {

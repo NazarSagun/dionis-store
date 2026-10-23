@@ -5,6 +5,7 @@
  * OpenAPI spec version: 1.0.0
  */
 import type { OrderItemObject } from './orderItemObject';
+import type { OrderStatus } from './orderStatus';
 
 export interface OrderObject {
   createdAt?: string;
@@ -22,8 +23,11 @@ export interface OrderObject {
   shippingName?: string | null;
   /** @nullable */
   shippingPostalCode?: string | null;
+  status?: OrderStatus;
   stripePaymentIntentId?: string;
   /** Total actually charged, in cents, including the shipping fee if any item is a physical edition */
   totalPrice?: number;
+  /** @nullable */
+  trackingNumber?: string | null;
   userId?: number;
 }

@@ -44,6 +44,8 @@ export * from './notificationsResponse';
 export * from './orderItemInput';
 export * from './orderItemObject';
 export * from './orderObject';
+export * from './orderShipmentInput';
+export * from './orderStatus';
 export * from './ordersPage';
 export * from './ownReview';
 export * from './ownedItem';

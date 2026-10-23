@@ -8,15 +8,14 @@ This spec adds an admin area at `/admin` with three parts: a games list with cre
 
 ## Design reference
 
-Figma section "Admin Panel (proposal)" (draft, pending review), in the same file and on the same "Flat Precision" page as the Home, Cart, and Account frames:
-https://www.figma.com/design/iENdx0LKoWPG4L8UtI4qq0/Dionis-Store-%E2%80%94-Retro-Redesign?node-id=233-195
+Figma section "Admin Panel (proposal)" (draft, pending review), in the same file and on the same "Flat Precision" page as the Home, Cart, and Account frames.
 
 Four frames, built from the file's own `NavBar`, `Tab/Active`, `Button/Primary`, `Button/Secondary`, and `Input/Default` components and its `semantic/*` color variables:
 
-- "Admin — Games" (Feature 2): [node 233-196](https://www.figma.com/design/iENdx0LKoWPG4L8UtI4qq0/Dionis-Store-%E2%80%94-Retro-Redesign?node-id=233-196). Header with the "ADMIN" eyebrow and "New game", the Games and Orders tabs, the title search, the table with the first row in its hover state, and pagination.
-- "Admin — Edit game" (Features 3, 4, 5): [node 233-217](https://www.figma.com/design/iENdx0LKoWPG4L8UtI4qq0/Dionis-Store-%E2%80%94-Retro-Redesign?node-id=233-217). The two-column form. It shows two states at once: a field error on Discount with the form error summary above Save, and the "cannot be deleted" message above the form. "Delete game" is an outlined red button, apart from Save. Below the form are the Editions list, with an "Out of stock" badge, and the add-edition form open.
-- "Admin — Orders" (Feature 6): [node 233-236](https://www.figma.com/design/iENdx0LKoWPG4L8UtI4qq0/Dionis-Store-%E2%80%94-Retro-Redesign?node-id=233-236). The email search, the table with the first order expanded to its items and shipping address, and pagination.
-- "Admin — Delete game dialog" (Feature 4): [node 239-286](https://www.figma.com/design/iENdx0LKoWPG4L8UtI4qq0/Dionis-Store-%E2%80%94-Retro-Redesign?node-id=239-286). The Edit game frame behind a scrim, with the confirmation `Dialog`: "Cancel", and "Delete game" as a filled red button.
+- "Admin — Games" (Feature 2): node 233-196. Header with the "ADMIN" eyebrow and "New game", the Games and Orders tabs, the title search, the table with the first row in its hover state, and pagination.
+- "Admin — Edit game" (Features 3, 4, 5): node 233-217. The two-column form. It shows two states at once: a field error on Discount with the form error summary above Save, and the "cannot be deleted" message above the form. "Delete game" is an outlined red button, apart from Save. Below the form are the Editions list, with an "Out of stock" badge, and the add-edition form open.
+- "Admin — Orders" (Feature 6): node 233-236. The email search, the table with the first order expanded to its items and shipping address, and pagination.
+- "Admin — Delete game dialog" (Feature 4): node 239-286. The Edit game frame behind a scrim, with the confirmation `Dialog`: "Cancel", and "Delete game" as a filled red button.
 
 The account menu's "Admin" item (Feature 1) reuses the existing dropdown item style, so it has no frame of its own.
 

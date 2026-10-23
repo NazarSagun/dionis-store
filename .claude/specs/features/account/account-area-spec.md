@@ -10,8 +10,7 @@ This spec adds an `/account` page with two sections. The first is a purchased-ga
 
 ## Design reference
 
-Figma frame: "Account" (draft, pending review). Same file as the Home and Checkout redesigns:
-https://www.figma.com/design/iENdx0LKoWPG4L8UtI4qq0/Dionis-Store-%E2%80%94-Retro-Redesign?node-id=89-481
+Figma frame: "Account" (draft, pending review). Same file as the Home and Checkout redesigns.
 
 Covers all 8 features on one page: greeting header, a Library/Wishlist/Order History/Settings tab row, and all five sections stacked below it. The Library section's rows are cloned from the existing "Cart: Game Activation (proposal)" frame, per this spec's Assumptions section. The Wishlist section reuses the existing `Home — Search, Deals & Wishlist (proposal)` frame's wishlist row.
 

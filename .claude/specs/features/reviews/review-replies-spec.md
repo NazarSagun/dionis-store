@@ -8,8 +8,7 @@ An owner of a game can reply to any review of that game. Replies form a flat thr
 
 ## Design reference
 
-Figma section name: Review replies and notifications (proposal). It lives in the same file and on the same page as the reviews frames. Link:
-https://www.figma.com/design/iENdx0LKoWPG4L8UtI4qq0/Dionis-Store-%E2%80%94-Retro-Redesign?node-id=345-369
+Figma section name: Review replies and notifications (proposal). It lives in the same file and on the same page as the reviews frames.
 
 The section holds five frames:
 

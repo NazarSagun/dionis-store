@@ -4,7 +4,7 @@
 
 This spec lists the features that Dionis Store does not have yet, with an implementation plan for each one. It is a roadmap, not a single feature spec. Before you build a feature, write its own spec from its section here through the `feature-pipeline` skill. That spec adds the Figma design, the `data-testid` names, and the E2E tests.
 
-Phase 0, Phase 1, and Features 2.1 and 2.2 are built, so this spec no longer lists them. The remaining features keep their old numbers, because other specs refer to them by number.
+Phase 0, Phase 1, and Features 2.1, 2.2, 2.3, and 2.5 are built, so this spec no longer lists them. The remaining features keep their old numbers, because other specs refer to them by number.
 
 ## Current state
 
@@ -17,7 +17,7 @@ This section records the facts that the plans below depend on. It was checked ag
 - Both routes call `createOrderFromPaymentIntent`. It is idempotent (safe to run twice) on `stripePaymentIntentId`, because that column is `@unique`. `/confirm` returns an existing order only to the user who placed it.
 - `priceOrderItems` is the only place that calculates prices. It rejects an edition that does not belong to the cart line's game.
 - `GameEdition.stock` goes down inside the order transaction, through a conditional `updateMany`.
-- `Order` has no status field. Every order is final, and nothing tracks shipping or refunds.
+- `Order` has a `status` (`PENDING`, `SHIPPED`, or `DELIVERED`) and a nullable `trackingNumber`. A digital-only order is `DELIVERED` when it is created. An admin sets both through `PATCH /api/admin/orders/:id`. Nothing tracks refunds.
 - After an order commits, `MailService` sends one receipt email. `Order.receiptSentAt` records the send, and a failed send leaves it empty.
 - `GET /api/orders` returns one page of orders. `GET /api/orders/owned` answers the ownership check. `findOwnedItem` in `apps/api/src/features/orders/order-ownership.util.ts` checks whether a user owns a `(gameId, editionId)` pair.
 
@@ -25,7 +25,7 @@ This section records the facts that the plans below depend on. It was checked ag
 
 - `Roles` has `User = 101`, `Editor = 233`, and `Admin = 500`. `RolesGuard` reads the role from `@RequireRole(...)`. `Editor` is unused.
 - The admin panel at `/admin` creates, edits, and deletes games and their physical editions, and lists every order with search by email. The API routes are `POST /api/games`, `PATCH` and `DELETE /api/games/:id`, `POST /api/games/:id/editions`, `PATCH` and `DELETE /api/editions/:id`, and `GET /api/admin/orders`.
-- `Game_pc.rating` is a string from the seed source. The store has no reviews of its own.
+- `Game_pc.rating` is a string from the seed source. Owners can also rate and review a game (`Review`, with replies), and `GET /api/game/:gameId` returns `averageRating` and `reviewCount`.
 - The catalog search, filters, and sort live in the URL. `GET /api/games/genres` lists the genres.
 
 ### Accounts
@@ -40,23 +40,6 @@ This section records the facts that the plans below depend on. It was checked ag
 - Production is one EC2 instance in `eu-north-1` with Caddy, at `https://dioniss.com`. A deploy is a manual `git pull` and `docker compose` build on the server.
 
 ## Phase 2: Store operations
-
-### 2.3 Reviews and ratings from owners
-
-#### Description
-
-A user who owns a game can give it a rating from 1 to 5 and a short text review. The game detail page shows the average rating and the reviews.
-
-#### Implementation plan
-
-1. Add the model `Review { userId, gameId, rating, body, createdAt }` with `@@unique([userId, gameId])`.
-2. Add `GET /api/games/:id/reviews` (public) and `PUT /api/games/:id/review` (JWT guard). The `PUT` route checks ownership with `findOwnedItem`, and returns `403` if the user does not own the game.
-3. Return `averageRating` and `reviewCount` from `GET /api/game/:gameId`. The existing `rating` string comes from the seed source. Keep it until the store has its own reviews, then remove it.
-4. Add a reviews section and a review form to the game detail page.
-
-#### Out of scope
-
-- Moderation and helpful votes. Replies have their own spec: `.claude/specs/features/reviews/review-replies-spec.md`.
 
 ### 2.4 Restock alerts
 
@@ -74,22 +57,6 @@ On an edition that is out of stock, a user can click "Notify me". When stock goe
 #### Dependencies
 
 Feature 2.1 and Feature 2.2. Both are built.
-
-### 2.5 Shipping status for physical orders
-
-#### Description
-
-A physical order has a status: `PENDING`, `SHIPPED`, or `DELIVERED`. An admin sets the status and an optional tracking number. The user sees the status in Order History.
-
-#### Implementation plan
-
-1. Add an `OrderStatus` enum, a `status` field with the default `PENDING`, and a nullable `trackingNumber` to `Order`. A digital-only order is set to `DELIVERED` when it is created.
-2. Add `PATCH /api/admin/orders/:id` with `@RequireRole(Roles.Admin)`.
-3. Show the status and the tracking number in Order History.
-
-#### Dependencies
-
-Feature 2.1, which is built.
 
 ## Phase 3: Growth
 
@@ -117,9 +84,8 @@ Leave these items out until there is a clear need: deal countdowns, bundles, mul
 
 ## Recommended order
 
-1. 2.5 Shipping status. Feature 3.3 needs its status field.
-2. 2.3 Reviews and 2.4 Restock alerts, in any order.
-3. Phase 3, one spec at a time.
+1. 2.4 Restock alerts.
+2. Phase 3, one spec at a time. Feature 3.3 adds a `REFUNDED` value to the existing order status.
 
 ## Cross-feature requirements
 
