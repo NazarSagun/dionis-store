@@ -7,7 +7,7 @@ runs against the ones that you start yourself.
 
 ## Isolated local run
 
-`pnpm test:e2e:local` (from the repo root or this package) runs the whole suite on its own stack, so it never touches your dev servers or your dev database. It starts `docker-compose.e2e.yml` (Postgres on port 5433 and Mailpit on ports 1026 and 8026), resets the database (`prisma migrate reset`), builds the API into `apps/api/dist-e2e`, and builds the web app into `apps/web/.next-e2e`. The API runs on port 3501 and the web app on port 3001. The seed runs in `global-setup.ts`. The settings are in `e2e-local.ts`.
+`pnpm test:e2e:local` (from the repo root or this package) runs the whole suite on its own stack, so it never touches your dev servers or your dev database. It starts `docker-compose.e2e.yml` (Postgres on port 5435 and Mailpit on ports 1026 and 8026), resets the database (`prisma migrate reset`), builds the API into `apps/api/dist-e2e`, and builds the web app into `apps/web/.next-e2e`. The API runs on port 3501 and the web app on port 3001. The seed runs in `global-setup.ts`. The settings are in `e2e-local.ts`.
 
 The reset refuses to run unless the database name ends in `_e2e`. The database stays up after the run, and the next run resets it. `pnpm e2e:down` removes it.
 
