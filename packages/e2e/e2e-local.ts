@@ -10,7 +10,7 @@ export const LOCAL = {
   apiPort: 3501,
   smtpPort: 1026,
   mailApiPort: 8026,
-  databaseUrl: 'postgresql://postgres@localhost:5442/dionis_store_e2e',
+  databaseUrl: 'postgresql://postgres@localhost:5435/dionis_store_e2e',
 }
 
 export const databaseUrl = process.env.E2E_DATABASE_URL ?? LOCAL.databaseUrl

@@ -100,7 +100,7 @@ Run the following command from the repository root to run the Playwright end-to-
 pnpm test:e2e:local
 ```
 
-The command starts a Postgres database on port 5442 (kept in RAM) and Mailpit on ports 1026 and 8026. Then it resets the database, applies the migrations, and starts its own API on port 3501 and web app on port 3001. After the servers are up, it seeds the games. The database stays up after the run, so you can inspect it, and the next run resets it. To remove it, run the following command.
+The command starts a Postgres database on port 5435 (kept in RAM) and Mailpit on ports 1026 and 8026. Then it resets the database, applies the migrations, and starts its own API on port 3501 and web app on port 3001. After the servers are up, it seeds the games. The database stays up after the run, so you can inspect it, and the next run resets it. To remove it, run the following command.
 
 ```sh
 pnpm e2e:down
