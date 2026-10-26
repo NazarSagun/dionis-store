@@ -8,8 +8,7 @@ This spec lets a user who bought a game rate it from 1 to 5 and write a short re
 
 ## Design reference
 
-Figma section name: Reviews: Game Details (proposal). It lives in the same file and on the same page as the other redesign frames. Link:
-https://www.figma.com/design/iENdx0LKoWPG4L8UtI4qq0/Dionis-Store-%E2%80%94-Retro-Redesign?node-id=327-353
+Figma section name: Reviews: Game Details (proposal). It lives in the same file and on the same page as the other redesign frames.
 
 The section holds three frames:
 

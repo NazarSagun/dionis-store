@@ -1,5 +1,7 @@
 import Link from 'next/link'
 
+import { ORDER_STATUS_LABELS } from '@/modules/account/domain/formatting'
+
 import { formatRelativeTime } from '../../domain/models'
 import { Notification } from '../../integration/repository'
 
@@ -10,6 +12,21 @@ interface NotificationItemProps {
   onRead: (id: number) => void
 }
 
+const NotificationText = ({ notification }: { notification: Notification }) =>
+  notification.type === 'shipment' ? (
+    <span className='break-words font-sans text-sm text-foreground'>
+      Your order <strong className='font-semibold'>#{notification.orderId}</strong> is{' '}
+      <strong className='font-semibold'>
+        {(notification.orderStatus ? ORDER_STATUS_LABELS[notification.orderStatus] : '').toLowerCase()}
+      </strong>
+    </span>
+  ) : (
+    <span className='break-words font-sans text-sm text-foreground'>
+      <strong className='font-semibold'>{notification.actorName}</strong> replied to a review of{' '}
+      <strong className='font-semibold'>{notification.gameTitle}</strong>
+    </span>
+  )
+
 export const NotificationItem = ({ notification, onOpen, onRead }: NotificationItemProps) => (
   <li
     data-testid='notification-item'
@@ -17,14 +34,15 @@ export const NotificationItem = ({ notification, onOpen, onRead }: NotificationI
   >
     <Link
       data-testid='notification-link'
-      href={`/game/${notification.gameId}?review=${notification.reviewId}`}
+      href={
+        notification.type === 'shipment'
+          ? '/account#account-order-history'
+          : `/game/${notification.gameId}?review=${notification.reviewId}`
+      }
       onClick={() => onOpen(notification.id)}
       className='flex min-w-0 flex-1 flex-col gap-1 rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
     >
-      <span className='break-words font-sans text-sm text-foreground'>
-        <strong className='font-semibold'>{notification.actorName}</strong> replied to a review of{' '}
-        <strong className='font-semibold'>{notification.gameTitle}</strong>
-      </span>
+      <NotificationText notification={notification} />
       <time
         data-testid='notification-time'
         dateTime={notification.createdAt}

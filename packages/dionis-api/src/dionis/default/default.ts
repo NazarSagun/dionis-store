@@ -18,6 +18,7 @@ import type {
   UseQueryResult
 } from '@tanstack/react-query'
 import type {
+  AdminOrderObject,
   AdminOrdersPage,
   AuthErrorMessage,
   ChangePasswordInput,
@@ -43,6 +44,7 @@ import type {
   NotificationsResponse,
   OrderItemObject,
   OrderObject,
+  OrderShipmentInput,
   OrdersPage,
   OwnReview,
   OwnedItem,
@@ -651,6 +653,64 @@ export const useGetAdminOrders = <TData = Awaited<ReturnType<typeof getAdminOrde
 
 
 /**
+ * @summary Set the shipping status and tracking number of a physical order (admin)
+ */
+export const patchAdminOrder = (
+    orderId: number,
+    orderShipmentInput: BodyType<OrderShipmentInput>,
+ options?: SecondParameter<typeof customInstance>,) => {
+      
+      
+      return customInstance<AdminOrderObject>(
+      {url: `/admin/orders/${orderId}`, method: 'PATCH',
+      headers: {'Content-Type': 'application/json', },
+      data: orderShipmentInput
+    },
+      options);
+    }
+  
+
+
+export const getPatchAdminOrderMutationOptions = <TError = ErrorType<ErrorMessage>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof patchAdminOrder>>, TError,{orderId: number;data: BodyType<OrderShipmentInput>}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof patchAdminOrder>>, TError,{orderId: number;data: BodyType<OrderShipmentInput>}, TContext> => {
+const {mutation: mutationOptions, request: requestOptions} = options ?? {};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof patchAdminOrder>>, {orderId: number;data: BodyType<OrderShipmentInput>}> = (props) => {
+          const {orderId,data} = props ?? {};
+
+          return  patchAdminOrder(orderId,data,requestOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PatchAdminOrderMutationResult = NonNullable<Awaited<ReturnType<typeof patchAdminOrder>>>
+    export type PatchAdminOrderMutationBody = BodyType<OrderShipmentInput>
+    export type PatchAdminOrderMutationError = ErrorType<ErrorMessage>
+
+    /**
+ * @summary Set the shipping status and tracking number of a physical order (admin)
+ */
+export const usePatchAdminOrder = <TError = ErrorType<ErrorMessage>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof patchAdminOrder>>, TError,{orderId: number;data: BodyType<OrderShipmentInput>}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationResult<
+        Awaited<ReturnType<typeof patchAdminOrder>>,
+        TError,
+        {orderId: number;data: BodyType<OrderShipmentInput>},
+        TContext
+      > => {
+
+      const mutationOptions = getPatchAdminOrderMutationOptions(options);
+
+      return useMutation(mutationOptions);
+    }
+    /**
  * @summary List up to 5 games with the highest discount, discount > 0, highest first
  */
 export const getGamesTopDeals = (

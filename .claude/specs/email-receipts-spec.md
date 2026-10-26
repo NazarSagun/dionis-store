@@ -8,8 +8,7 @@ Today `OrdersService.createOrderFromPaymentIntent` in `apps/api/src/features/ord
 
 ## Design reference
 
-Figma section name: Email: Order Receipt (proposal). It lives in the same file as the other redesign frames. Link:
-https://www.figma.com/design/iENdx0LKoWPG4L8UtI4qq0/Dionis-Store-%E2%80%94-Retro-Redesign?node-id=255-353
+Figma section name: Email: Order Receipt (proposal). It lives in the same file as the other redesign frames.
 
 The section holds two frames: "Email — Order receipt (600)" (`node-id=255-354`) and "Email — Order receipt (375 mobile)" (`node-id=255-403`). Both show one mixed order: two digital items with an activation code each, and one physical item with a shipping address. The frames use the file's own color variables, spacing, and text styles. This feature has no change to the web app. It adds a backend service and an email template.
 

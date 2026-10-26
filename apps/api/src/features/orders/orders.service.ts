@@ -1,7 +1,7 @@
 import { randomBytes } from 'crypto'
 import { CACHE_MANAGER } from '@nestjs/cache-manager'
 import { Inject, Injectable, Logger } from '@nestjs/common'
-import { Prisma } from '@prisma/client'
+import { OrderStatus, Prisma } from '@prisma/client'
 import { Cache } from 'cache-manager'
 import Stripe from 'stripe'
 import { MailService } from '../../common/mail/mail.service'
@@ -227,6 +227,7 @@ export class OrdersService {
             totalPrice: paymentIntent.amount,
             stripePaymentIntentId: paymentIntent.id,
             ...(hasPhysicalItem && shippingAddress ? shippingAddress : {}),
+            ...(hasPhysicalItem ? {} : { status: OrderStatus.DELIVERED }),
             items: { create: orderItemsData },
           },
           include: ORDER_ITEMS_INCLUDE,
@@ -314,6 +315,32 @@ export class OrdersService {
       this.prisma.order.count({ where }),
     ])
     return { items, total, page, pageSize }
+  }
+
+  // The admin sets where a physical order is. A missing trackingNumber keeps
+  // the stored one, and an empty one clears it.
+  async updateOrderShipment(orderId: number, status: OrderStatus, trackingNumber?: string) {
+    const order = await this.prisma.order.findUnique({ where: { id: orderId }, include: { items: true } })
+    if (!order) {
+      throw new CustomError('Order not found', 404)
+    }
+    if (!order.items.some((item) => item.editionId != null)) {
+      throw new CustomError('A digital-only order has nothing to ship', 400)
+    }
+
+    const trimmed = trackingNumber?.trim()
+    // The customer gets a bell item when the order moves on. Going back to
+    // PENDING or saving the same status again sends nothing.
+    const notify = status !== order.status && status !== OrderStatus.PENDING
+    return this.prisma.order.update({
+      where: { id: orderId },
+      data: {
+        status,
+        ...(trimmed === undefined ? {} : { trackingNumber: trimmed || null }),
+        ...(notify ? { notifications: { create: { userId: order.userId, orderStatus: status } } } : {}),
+      },
+      include: { ...ORDER_ITEMS_INCLUDE, user: { select: { email: true } } },
+    })
   }
 
   // What a game page needs to show "Already in Library", without loading

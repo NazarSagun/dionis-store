@@ -73,8 +73,18 @@ model Order {
   // Set when the receipt email is claimed. Null means no email went out, so a
   // later job can retry it.
   receiptSentAt         DateTime?
+  // A digital-only order is DELIVERED when it is created. Nothing ships.
+  status                OrderStatus @default(PENDING)
+  trackingNumber        String?
+  notifications         Notification[]
   createdAt             DateTime    @default(now())
   items                 OrderItem[]
+}
+
+enum OrderStatus {
+  PENDING
+  SHIPPED
+  DELIVERED
 }
 
 model OrderItem {
@@ -139,14 +149,18 @@ model ReviewReply {
   @@index([reviewId, createdAt])
 }
 
-// One row per recipient and reply. A row with a readAt date no longer shows in
-// the bell.
+// One row per recipient and event. A reply row has replyId. A shipment row has
+// orderId and the status the order changed to. A row with a readAt date no
+// longer shows in the bell.
 model Notification {
   id        Int         @id @default(autoincrement())
   userId    Int
   user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  replyId   Int
-  reply     ReviewReply @relation(fields: [replyId], references: [id], onDelete: Cascade)
+  replyId   Int?
+  reply     ReviewReply? @relation(fields: [replyId], references: [id], onDelete: Cascade)
+  orderId   Int?
+  order     Order?       @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  orderStatus OrderStatus?
   readAt    DateTime?
   createdAt DateTime    @default(now())
 

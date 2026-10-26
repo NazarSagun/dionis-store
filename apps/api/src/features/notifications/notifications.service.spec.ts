@@ -30,6 +30,19 @@ describe('NotificationsService', () => {
   })
 
   describe('list', () => {
+    it('returns a shipment row with the order id and the new status', async () => {
+      prisma.notification.count.mockResolvedValue(1)
+      prisma.notification.findMany.mockResolvedValue([
+        { id: 3, createdAt: new Date('2026-10-26'), reply: null, orderId: 837, orderStatus: 'SHIPPED' },
+      ])
+
+      const result = await service.list(email)
+
+      expect(result.notifications).toEqual([
+        { id: 3, type: 'shipment', orderId: 837, orderStatus: 'SHIPPED', createdAt: new Date('2026-10-26') },
+      ])
+    })
+
     it('returns the unread rows, newest first, with the actor name and no email or user id', async () => {
       prisma.notification.count.mockResolvedValue(25)
       prisma.notification.findMany.mockResolvedValue([

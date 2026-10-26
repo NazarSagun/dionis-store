@@ -227,6 +227,16 @@ describe('OrdersService', () => {
       )
     })
 
+    it('marks a digital-only order as DELIVERED', async () => {
+      stripe.retrievePaymentIntent.mockResolvedValue(paymentIntent())
+
+      await service.confirmOrder(user.email, 'pi_123')
+
+      expect(prisma.order.create).toHaveBeenCalledWith(
+        expect.objectContaining({ data: expect.objectContaining({ status: 'DELIVERED' }) }),
+      )
+    })
+
     it('stores the amount Stripe charged as the total, even when the price changed since', async () => {
       // Charged at 50€; the game went on sale to 40€ before the order was created.
       stripe.retrievePaymentIntent.mockResolvedValue(paymentIntent({ amount: 5000 }))
@@ -429,6 +439,80 @@ describe('OrdersService', () => {
           }),
         }),
       )
+      // The column default, PENDING, applies.
+      expect(prisma.order.create.mock.calls[0][0].data).not.toHaveProperty('status')
+    })
+  })
+
+  describe('updateOrderShipment', () => {
+    const physicalOrder = { id: 7, userId: 3, status: 'PENDING', items: [{ editionId: 10 }] }
+
+    beforeEach(() => {
+      prisma.order.findUnique.mockResolvedValue(physicalOrder)
+      prisma.order.update.mockResolvedValue({ id: 7 })
+    })
+
+    it('sets the status and stores the trimmed tracking number', async () => {
+      await service.updateOrderShipment(7, 'SHIPPED', ' TRK123 ')
+
+      expect(prisma.order.update).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { id: 7 },
+          data: {
+            status: 'SHIPPED',
+            trackingNumber: 'TRK123',
+            notifications: { create: { userId: 3, orderStatus: 'SHIPPED' } },
+          },
+        }),
+      )
+    })
+
+    it('sends no notification when the status stays the same or goes back to PENDING', async () => {
+      prisma.order.findUnique.mockResolvedValue({ ...physicalOrder, status: 'SHIPPED' })
+      await service.updateOrderShipment(7, 'SHIPPED', 'TRK999')
+      await service.updateOrderShipment(7, 'PENDING')
+
+      for (const [call] of prisma.order.update.mock.calls) {
+        expect(call.data).not.toHaveProperty('notifications')
+      }
+    })
+
+    it('keeps the stored tracking number when none is sent', async () => {
+      await service.updateOrderShipment(7, 'DELIVERED')
+
+      expect(prisma.order.update).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: { status: 'DELIVERED', notifications: { create: { userId: 3, orderStatus: 'DELIVERED' } } },
+        }),
+      )
+    })
+
+    it('clears the tracking number when an empty one is sent', async () => {
+      await service.updateOrderShipment(7, 'DELIVERED', '  ')
+
+      expect(prisma.order.update).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: {
+            status: 'DELIVERED',
+            trackingNumber: null,
+            notifications: { create: { userId: 3, orderStatus: 'DELIVERED' } },
+          },
+        }),
+      )
+    })
+
+    it('returns 404 for an unknown order', async () => {
+      prisma.order.findUnique.mockResolvedValue(null)
+
+      await expect(service.updateOrderShipment(7, 'SHIPPED')).rejects.toMatchObject({ statusCode: 404 })
+      expect(prisma.order.update).not.toHaveBeenCalled()
+    })
+
+    it('returns 400 for a digital-only order', async () => {
+      prisma.order.findUnique.mockResolvedValue({ id: 7, items: [{ editionId: null }] })
+
+      await expect(service.updateOrderShipment(7, 'SHIPPED')).rejects.toMatchObject({ statusCode: 400 })
+      expect(prisma.order.update).not.toHaveBeenCalled()
     })
   })
 

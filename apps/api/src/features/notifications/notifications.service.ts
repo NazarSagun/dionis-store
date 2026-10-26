@@ -23,6 +23,8 @@ export class NotificationsService {
         select: {
           id: true,
           createdAt: true,
+          orderId: true,
+          orderStatus: true,
           reply: {
             select: {
               user: { select: { name: true } },
@@ -35,15 +37,19 @@ export class NotificationsService {
 
     return {
       unreadCount,
-      notifications: rows.map(({ id, createdAt, reply }) => ({
-        id,
-        type: 'review_reply' as const,
-        gameId: reply.review.gameId,
-        gameTitle: reply.review.game.title,
-        reviewId: reply.review.id,
-        actorName: reply.user.name?.trim() || 'Anonymous',
-        createdAt,
-      })),
+      notifications: rows.map(({ id, createdAt, reply, orderId, orderStatus }) =>
+        reply
+          ? {
+              id,
+              type: 'review_reply' as const,
+              gameId: reply.review.gameId,
+              gameTitle: reply.review.game.title,
+              reviewId: reply.review.id,
+              actorName: reply.user.name?.trim() || 'Anonymous',
+              createdAt,
+            }
+          : { id, type: 'shipment' as const, orderId, orderStatus, createdAt },
+      ),
     }
   }
 
