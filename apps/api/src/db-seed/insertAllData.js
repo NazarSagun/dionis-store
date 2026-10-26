@@ -67,4 +67,4 @@ function insertAllData() {
         });
     });
 }
-insertAllData();
+void insertAllData();

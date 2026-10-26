@@ -57,6 +57,7 @@ export * from './review';
 export * from './reviewInput';
 export * from './reviewsPage';
 export * from './shippingAddressInput';
+export * from './stockAlertsResponse';
 export * from './successMessage';
 export * from './updateNameInput';
 export * from './updateNameResponse';

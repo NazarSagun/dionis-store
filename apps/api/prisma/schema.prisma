@@ -25,6 +25,7 @@ model User {
   reviews      Review[]
   replies       ReviewReply[]
   notifications Notification[]
+  stockAlerts  StockAlert[]
 }
 
 model Game_pc {
@@ -56,6 +57,21 @@ model GameEdition {
   stock       Int
   description String
   orderItems  OrderItem[]
+  stockAlerts   StockAlert[]
+  notifications Notification[]
+}
+
+model StockAlert {
+  id         Int         @id @default(autoincrement())
+  userId     Int
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  editionId  Int
+  edition    GameEdition @relation(fields: [editionId], references: [id], onDelete: Cascade)
+  createdAt  DateTime    @default(now())
+  notifiedAt DateTime?
+
+  @@unique([userId, editionId])
+  @@index([editionId, notifiedAt])
 }
 
 model Order {
@@ -161,6 +177,8 @@ model Notification {
   orderId   Int?
   order     Order?       @relation(fields: [orderId], references: [id], onDelete: Cascade)
   orderStatus OrderStatus?
+  editionId Int?
+  edition   GameEdition? @relation(fields: [editionId], references: [id], onDelete: Cascade)
   readAt    DateTime?
   createdAt DateTime    @default(now())
 

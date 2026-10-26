@@ -43,6 +43,33 @@ describe('NotificationsService', () => {
       ])
     })
 
+    it('returns a restock row with the game and the edition name, and no email', async () => {
+      prisma.notification.count.mockResolvedValue(1)
+      prisma.notification.findMany.mockResolvedValue([
+        {
+          id: 4,
+          createdAt: new Date('2026-10-27'),
+          reply: null,
+          orderId: null,
+          orderStatus: null,
+          edition: { name: "Collector's Edition", gameId: 3, game: { title: 'Ironclad Siege' } },
+        },
+      ])
+
+      const result = await service.list(email)
+
+      expect(result.notifications).toEqual([
+        {
+          id: 4,
+          type: 'restock',
+          gameId: 3,
+          gameTitle: 'Ironclad Siege',
+          editionName: "Collector's Edition",
+          createdAt: new Date('2026-10-27'),
+        },
+      ])
+    })
+
     it('returns the unread rows, newest first, with the actor name and no email or user id', async () => {
       prisma.notification.count.mockResolvedValue(25)
       prisma.notification.findMany.mockResolvedValue([

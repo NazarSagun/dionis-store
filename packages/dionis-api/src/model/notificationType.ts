@@ -12,4 +12,5 @@ export type NotificationType = typeof NotificationType[keyof typeof Notification
 export const NotificationType = {
   review_reply: 'review_reply',
   shipment: 'shipment',
+  restock: 'restock',
 } as const;

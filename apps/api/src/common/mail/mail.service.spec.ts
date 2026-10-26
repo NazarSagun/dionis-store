@@ -70,6 +70,33 @@ describe('MailService', () => {
     )
   })
 
+  it('sends a restock alert with the game link and both bodies', async () => {
+    process.env.SMTP_HOST = 'localhost'
+    const service = new MailService()
+
+    await expect(
+      service.sendRestockAlert('a@b.test', { gameId: 3, gameTitle: 'Nebula Runner', editionName: 'Collector' }),
+    ).resolves.toBe(true)
+
+    expect(sendMail).toHaveBeenCalledWith(
+      expect.objectContaining({
+        to: 'a@b.test',
+        subject: 'Nebula Runner (Collector) is back in stock',
+        html: expect.stringContaining('href="http://localhost:3000/game/3"'),
+        text: expect.stringContaining('http://localhost:3000/game/3'),
+      }),
+    )
+  })
+
+  it('sends no restock alert when mail is off or the address is a test domain on a real server', async () => {
+    const alert = { gameId: 3, gameTitle: 'Nebula Runner', editionName: 'Collector' }
+    await expect(new MailService().sendRestockAlert('a@b.test', alert)).resolves.toBe(false)
+
+    process.env.SMTP_HOST = 'smtp.sendgrid.net'
+    await expect(new MailService().sendRestockAlert('a@dionis-store.test', alert)).resolves.toBe(false)
+    expect(sendMail).not.toHaveBeenCalled()
+  })
+
   it('skips a reserved test domain on a real SMTP server', async () => {
     process.env.SMTP_HOST = 'smtp.sendgrid.net'
     const service = new MailService()

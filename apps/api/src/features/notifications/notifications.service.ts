@@ -25,6 +25,7 @@ export class NotificationsService {
           createdAt: true,
           orderId: true,
           orderStatus: true,
+          edition: { select: { name: true, gameId: true, game: { select: { title: true } } } },
           reply: {
             select: {
               user: { select: { name: true } },
@@ -37,19 +38,30 @@ export class NotificationsService {
 
     return {
       unreadCount,
-      notifications: rows.map(({ id, createdAt, reply, orderId, orderStatus }) =>
-        reply
-          ? {
-              id,
-              type: 'review_reply' as const,
-              gameId: reply.review.gameId,
-              gameTitle: reply.review.game.title,
-              reviewId: reply.review.id,
-              actorName: reply.user.name?.trim() || 'Anonymous',
-              createdAt,
-            }
-          : { id, type: 'shipment' as const, orderId, orderStatus, createdAt },
-      ),
+      notifications: rows.map(({ id, createdAt, reply, orderId, orderStatus, edition }) => {
+        if (reply) {
+          return {
+            id,
+            type: 'review_reply' as const,
+            gameId: reply.review.gameId,
+            gameTitle: reply.review.game.title,
+            reviewId: reply.review.id,
+            actorName: reply.user.name?.trim() || 'Anonymous',
+            createdAt,
+          }
+        }
+        if (edition) {
+          return {
+            id,
+            type: 'restock' as const,
+            gameId: edition.gameId,
+            gameTitle: edition.game.title,
+            editionName: edition.name,
+            createdAt,
+          }
+        }
+        return { id, type: 'shipment' as const, orderId, orderStatus, createdAt }
+      }),
     }
   }
 

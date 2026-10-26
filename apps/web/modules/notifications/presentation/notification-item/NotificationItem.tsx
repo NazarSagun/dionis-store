@@ -12,8 +12,22 @@ interface NotificationItemProps {
   onRead: (id: number) => void
 }
 
-const NotificationText = ({ notification }: { notification: Notification }) =>
-  notification.type === 'shipment' ? (
+const notificationHref = (notification: Notification) => {
+  if (notification.type === 'shipment') return '/account#account-order-history'
+  if (notification.type === 'restock') return `/game/${notification.gameId}`
+  return `/game/${notification.gameId}?review=${notification.reviewId}`
+}
+
+const NotificationText = ({ notification }: { notification: Notification }) => {
+  if (notification.type === 'restock') {
+    return (
+      <span className='break-words font-sans text-sm text-foreground'>
+        <strong className='font-semibold'>{notification.gameTitle}</strong> (
+        <strong className='font-semibold'>{notification.editionName}</strong>) is back in stock
+      </span>
+    )
+  }
+  return notification.type === 'shipment' ? (
     <span className='break-words font-sans text-sm text-foreground'>
       Your order <strong className='font-semibold'>#{notification.orderId}</strong> is{' '}
       <strong className='font-semibold'>
@@ -26,6 +40,7 @@ const NotificationText = ({ notification }: { notification: Notification }) =>
       <strong className='font-semibold'>{notification.gameTitle}</strong>
     </span>
   )
+}
 
 export const NotificationItem = ({ notification, onOpen, onRead }: NotificationItemProps) => (
   <li
@@ -34,11 +49,7 @@ export const NotificationItem = ({ notification, onOpen, onRead }: NotificationI
   >
     <Link
       data-testid='notification-link'
-      href={
-        notification.type === 'shipment'
-          ? '/account#account-order-history'
-          : `/game/${notification.gameId}?review=${notification.reviewId}`
-      }
+      href={notificationHref(notification)}
       onClick={() => onOpen(notification.id)}
       className='flex min-w-0 flex-1 flex-col gap-1 rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
     >

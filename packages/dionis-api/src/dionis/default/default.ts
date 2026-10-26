@@ -55,6 +55,7 @@ import type {
   ReviewInput,
   ReviewsPage,
   ShippingAddressInput,
+  StockAlertsResponse,
   SuccessMessage,
   UpdateNameInput,
   UpdateNameResponse,
@@ -1330,6 +1331,177 @@ export const usePostReviewReply = <TError = ErrorType<ErrorMessage>,
       return useMutation(mutationOptions);
     }
     /**
+ * @summary Ask to be told when an out-of-stock edition is back. Safe to run twice.
+ */
+export const putEditionStockAlert = (
+    id: number,
+ options?: SecondParameter<typeof customInstance>,) => {
+      
+      
+      return customInstance<void>(
+      {url: `/editions/${id}/stock-alert`, method: 'PUT'
+    },
+      options);
+    }
+  
+
+
+export const getPutEditionStockAlertMutationOptions = <TError = ErrorType<ErrorMessage>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putEditionStockAlert>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof putEditionStockAlert>>, TError,{id: number}, TContext> => {
+const {mutation: mutationOptions, request: requestOptions} = options ?? {};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof putEditionStockAlert>>, {id: number}> = (props) => {
+          const {id} = props ?? {};
+
+          return  putEditionStockAlert(id,requestOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PutEditionStockAlertMutationResult = NonNullable<Awaited<ReturnType<typeof putEditionStockAlert>>>
+    
+    export type PutEditionStockAlertMutationError = ErrorType<ErrorMessage>
+
+    /**
+ * @summary Ask to be told when an out-of-stock edition is back. Safe to run twice.
+ */
+export const usePutEditionStockAlert = <TError = ErrorType<ErrorMessage>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putEditionStockAlert>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationResult<
+        Awaited<ReturnType<typeof putEditionStockAlert>>,
+        TError,
+        {id: number},
+        TContext
+      > => {
+
+      const mutationOptions = getPutEditionStockAlertMutationOptions(options);
+
+      return useMutation(mutationOptions);
+    }
+    /**
+ * @summary Cancel a restock alert. Safe to run twice.
+ */
+export const deleteEditionStockAlert = (
+    id: number,
+ options?: SecondParameter<typeof customInstance>,) => {
+      
+      
+      return customInstance<void>(
+      {url: `/editions/${id}/stock-alert`, method: 'DELETE'
+    },
+      options);
+    }
+  
+
+
+export const getDeleteEditionStockAlertMutationOptions = <TError = ErrorType<ErrorMessage>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteEditionStockAlert>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof deleteEditionStockAlert>>, TError,{id: number}, TContext> => {
+const {mutation: mutationOptions, request: requestOptions} = options ?? {};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteEditionStockAlert>>, {id: number}> = (props) => {
+          const {id} = props ?? {};
+
+          return  deleteEditionStockAlert(id,requestOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type DeleteEditionStockAlertMutationResult = NonNullable<Awaited<ReturnType<typeof deleteEditionStockAlert>>>
+    
+    export type DeleteEditionStockAlertMutationError = ErrorType<ErrorMessage>
+
+    /**
+ * @summary Cancel a restock alert. Safe to run twice.
+ */
+export const useDeleteEditionStockAlert = <TError = ErrorType<ErrorMessage>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteEditionStockAlert>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationResult<
+        Awaited<ReturnType<typeof deleteEditionStockAlert>>,
+        TError,
+        {id: number},
+        TContext
+      > => {
+
+      const mutationOptions = getDeleteEditionStockAlertMutationOptions(options);
+
+      return useMutation(mutationOptions);
+    }
+    /**
+ * @summary The editions of a game on which the signed-in user has an open restock alert
+ */
+export const getGameStockAlerts = (
+    gameId: number,
+ options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<StockAlertsResponse>(
+      {url: `/games/${gameId}/stock-alerts`, method: 'GET', signal
+    },
+      options);
+    }
+  
+
+export const getGetGameStockAlertsQueryKey = (gameId: number,) => {
+    return [`/games/${gameId}/stock-alerts`] as const;
+    }
+
+    
+export const getGetGameStockAlertsQueryOptions = <TData = Awaited<ReturnType<typeof getGameStockAlerts>>, TError = ErrorType<ErrorMessage>>(gameId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getGameStockAlerts>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetGameStockAlertsQueryKey(gameId);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getGameStockAlerts>>> = ({ signal }) => getGameStockAlerts(gameId, requestOptions, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, enabled: !!(gameId), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getGameStockAlerts>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetGameStockAlertsQueryResult = NonNullable<Awaited<ReturnType<typeof getGameStockAlerts>>>
+export type GetGameStockAlertsQueryError = ErrorType<ErrorMessage>
+
+/**
+ * @summary The editions of a game on which the signed-in user has an open restock alert
+ */
+export const useGetGameStockAlerts = <TData = Awaited<ReturnType<typeof getGameStockAlerts>>, TError = ErrorType<ErrorMessage>>(
+ gameId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getGameStockAlerts>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+
+  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } => {
+
+  const queryOptions = getGetGameStockAlertsQueryOptions(gameId,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+/**
  * @summary List the unread notifications of the signed-in user, newest first, at most 20
  */
 export const getNotifications = (
