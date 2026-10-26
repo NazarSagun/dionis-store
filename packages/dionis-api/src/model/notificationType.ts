@@ -11,4 +11,5 @@ export type NotificationType = typeof NotificationType[keyof typeof Notification
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const NotificationType = {
   review_reply: 'review_reply',
+  shipment: 'shipment',
 } as const;

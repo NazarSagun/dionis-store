@@ -329,9 +329,16 @@ export class OrdersService {
     }
 
     const trimmed = trackingNumber?.trim()
+    // The customer gets a bell item when the order moves on. Going back to
+    // PENDING or saving the same status again sends nothing.
+    const notify = status !== order.status && status !== OrderStatus.PENDING
     return this.prisma.order.update({
       where: { id: orderId },
-      data: { status, ...(trimmed === undefined ? {} : { trackingNumber: trimmed || null }) },
+      data: {
+        status,
+        ...(trimmed === undefined ? {} : { trackingNumber: trimmed || null }),
+        ...(notify ? { notifications: { create: { userId: order.userId, orderStatus: status } } } : {}),
+      },
       include: { ...ORDER_ITEMS_INCLUDE, user: { select: { email: true } } },
     })
   }

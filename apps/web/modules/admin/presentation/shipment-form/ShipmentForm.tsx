@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Button } from '@repo/ui'
+import { Button, useToast } from '@repo/ui'
 import { useQueryClient } from '@tanstack/react-query'
 
 import { ORDER_STATUS_LABELS, OrderStatus } from '@/modules/account/domain/formatting'
@@ -13,6 +13,7 @@ const TRACKING_NUMBER_MAX_LENGTH = 64
 
 export const ShipmentForm = ({ order }: { order: AdminOrderObject }) => {
   const queryClient = useQueryClient()
+  const { toast } = useToast()
   const [status, setStatus] = useState<OrderStatus>(order.status ?? 'PENDING')
   const [trackingNumber, setTrackingNumber] = useState(order.trackingNumber ?? '')
   const [error, setError] = useState<string>()
@@ -23,7 +24,10 @@ export const ShipmentForm = ({ order }: { order: AdminOrderObject }) => {
     patchOrder(
       { orderId: order.id as number, data: { status, trackingNumber } },
       {
-        onSuccess: () => void queryClient.invalidateQueries({ queryKey: getGetAdminOrdersQueryKey() }),
+        onSuccess: () => {
+          toast({ title: 'Shipment saved' })
+          void queryClient.invalidateQueries({ queryKey: getGetAdminOrdersQueryKey() })
+        },
         onError: (saveError) => setError(apiErrorMessage(saveError, 'Could not save the shipment. Please try again.')),
       },
     )

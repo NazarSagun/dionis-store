@@ -445,7 +445,7 @@ describe('OrdersService', () => {
   })
 
   describe('updateOrderShipment', () => {
-    const physicalOrder = { id: 7, items: [{ editionId: 10 }] }
+    const physicalOrder = { id: 7, userId: 3, status: 'PENDING', items: [{ editionId: 10 }] }
 
     beforeEach(() => {
       prisma.order.findUnique.mockResolvedValue(physicalOrder)
@@ -456,21 +456,48 @@ describe('OrdersService', () => {
       await service.updateOrderShipment(7, 'SHIPPED', ' TRK123 ')
 
       expect(prisma.order.update).toHaveBeenCalledWith(
-        expect.objectContaining({ where: { id: 7 }, data: { status: 'SHIPPED', trackingNumber: 'TRK123' } }),
+        expect.objectContaining({
+          where: { id: 7 },
+          data: {
+            status: 'SHIPPED',
+            trackingNumber: 'TRK123',
+            notifications: { create: { userId: 3, orderStatus: 'SHIPPED' } },
+          },
+        }),
       )
+    })
+
+    it('sends no notification when the status stays the same or goes back to PENDING', async () => {
+      prisma.order.findUnique.mockResolvedValue({ ...physicalOrder, status: 'SHIPPED' })
+      await service.updateOrderShipment(7, 'SHIPPED', 'TRK999')
+      await service.updateOrderShipment(7, 'PENDING')
+
+      for (const [call] of prisma.order.update.mock.calls) {
+        expect(call.data).not.toHaveProperty('notifications')
+      }
     })
 
     it('keeps the stored tracking number when none is sent', async () => {
       await service.updateOrderShipment(7, 'DELIVERED')
 
-      expect(prisma.order.update).toHaveBeenCalledWith(expect.objectContaining({ data: { status: 'DELIVERED' } }))
+      expect(prisma.order.update).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: { status: 'DELIVERED', notifications: { create: { userId: 3, orderStatus: 'DELIVERED' } } },
+        }),
+      )
     })
 
     it('clears the tracking number when an empty one is sent', async () => {
       await service.updateOrderShipment(7, 'DELIVERED', '  ')
 
       expect(prisma.order.update).toHaveBeenCalledWith(
-        expect.objectContaining({ data: { status: 'DELIVERED', trackingNumber: null } }),
+        expect.objectContaining({
+          data: {
+            status: 'DELIVERED',
+            trackingNumber: null,
+            notifications: { create: { userId: 3, orderStatus: 'DELIVERED' } },
+          },
+        }),
       )
     })
 

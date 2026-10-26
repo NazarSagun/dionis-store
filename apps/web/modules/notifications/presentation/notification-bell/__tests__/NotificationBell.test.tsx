@@ -48,6 +48,24 @@ describe('<NotificationBell />', () => {
     useAuthStore.setState({ isAuthenticated: true, accessToken: 't', user: null, role: null })
   })
 
+  it('shows a shipment row with the order and its status, linked to the order history', async () => {
+    const shipment = {
+      id: 5,
+      type: 'shipment',
+      orderId: 837,
+      orderStatus: 'SHIPPED',
+      createdAt: '2026-10-26T12:00:00.000Z',
+    }
+    serveNotifications({ unreadCount: 1, notifications: [shipment] })
+
+    render(<NotificationBell />)
+    await userEvent.click(screen.getByTestId('notification-bell'))
+
+    const link = await screen.findByTestId('notification-link', {}, { timeout: TIMEOUT })
+    expect(link).toHaveTextContent('Your order #837 is shipped')
+    expect(link).toHaveAttribute('href', '/account#account-order-history')
+  })
+
   it('shows no badge when nothing is unread, and the caught-up panel when opened', async () => {
     serveNotifications({ unreadCount: 0, notifications: [] })
 

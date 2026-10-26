@@ -4,14 +4,20 @@
  * Swagger Dionis
  * OpenAPI spec version: 1.0.0
  */
+import type { OrderStatus } from './orderStatus';
 import type { NotificationType } from './notificationType';
 
+/**
+ * A review_reply row has the game, review and actor fields. A shipment row has orderId and orderStatus.
+ */
 export interface Notification {
-  actorName: string;
+  actorName?: string;
   createdAt: string;
-  gameId: number;
-  gameTitle: string;
+  gameId?: number;
+  gameTitle?: string;
   id: number;
-  reviewId: number;
+  orderId?: number;
+  orderStatus?: OrderStatus;
+  reviewId?: number;
   type: NotificationType;
 }

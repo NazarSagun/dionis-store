@@ -1761,11 +1761,8 @@ components:
       required:
         - id
         - type
-        - gameId
-        - gameTitle
-        - reviewId
-        - actorName
         - createdAt
+      description: A review_reply row has the game, review and actor fields. A shipment row has orderId and orderStatus.
       properties:
         id:
           type: integer
@@ -1773,6 +1770,11 @@ components:
           type: string
           enum:
             - review_reply
+            - shipment
+        orderId:
+          type: integer
+        orderStatus:
+          $ref: '#/components/schemas/orderStatus'
         gameId:
           type: integer
         gameTitle:
