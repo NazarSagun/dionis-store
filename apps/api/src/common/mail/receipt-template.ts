@@ -20,6 +20,8 @@ export interface ReceiptOrder {
   shippingCity: string | null
   shippingPostalCode: string | null
   shippingCountry: string | null
+  promoCode?: string | null
+  promoDiscountCents?: number | null
   items: ReceiptItem[]
 }
 
@@ -82,6 +84,14 @@ function itemRowHtml(item: ReceiptItem, address: string[], isFirst: boolean): st
   </td></tr>`
 }
 
+// One line above the total, only for an order that used a promo code.
+function promoRowHtml(order: ReceiptOrder): string {
+  if (!order.promoCode) return ''
+  const amount = order.promoDiscountCents ? ` −${formatEuros(order.promoDiscountCents)}` : ''
+  return `<div style="padding-bottom:12px;font-family:${BODY_FONT};font-size:14px;color:${COLOR.muted};">Promo code ${escapeHtml(order.promoCode)}${amount}</div>
+    `
+}
+
 function formatDate(date: Date): string {
   return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' })
 }
@@ -114,7 +124,7 @@ export function renderReceipt(order: ReceiptOrder, accountUrl: string) {
     </table>
   </td></tr>
   <tr><td style="padding:0 20px 32px;">
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
+    ${promoRowHtml(order)}<table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
       <td style="font-family:${BODY_FONT};font-size:14px;font-weight:600;color:${COLOR.muted};">Total paid</td>
       <td align="right" style="font-family:${HEADING_FONT};font-size:24px;font-weight:500;color:${COLOR.text};">${formatEuros(order.totalPrice)}</td>
     </tr></table>
@@ -136,6 +146,10 @@ export function renderReceipt(order: ReceiptOrder, accountUrl: string) {
     if (item.activationCode) lines.push(`  ACTIVATION CODE: ${item.activationCode}`)
   }
   if (address.length > 0) lines.push('', 'SHIPS TO:', ...address)
+  if (order.promoCode) {
+    const amount = order.promoDiscountCents ? `: -${formatEuros(order.promoDiscountCents)}` : ''
+    lines.push('', `Promo code ${order.promoCode}${amount}`)
+  }
   lines.push(
     '',
     `Total paid: ${formatEuros(order.totalPrice)}`,

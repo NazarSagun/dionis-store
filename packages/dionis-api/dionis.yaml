@@ -444,6 +444,156 @@ paths:
                 $ref: '#/components/schemas/errorMessage'
       security:
         - bearerHttpAuthentication: []
+  /admin/promo-codes:
+    get:
+      summary: List every promo code, newest first (admin)
+      operationId: getAdminPromoCodes
+      responses:
+        '200':
+          description: Every promo code with its number of uses
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/promoCodeObject'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+        '403':
+          description: Not an admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+      security:
+        - bearerHttpAuthentication: []
+    post:
+      summary: Create a promo code (admin)
+      operationId: createAdminPromoCode
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/createPromoCodeInput'
+      responses:
+        '201':
+          description: The created promo code
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/promoCodeObject'
+        '400':
+          description: Invalid body, or an expiry in the past
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+        '403':
+          description: Not an admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+        '409':
+          description: The code already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+      security:
+        - bearerHttpAuthentication: []
+  /admin/promo-codes/{id}:
+    delete:
+      summary: Delete a promo code (admin). Orders that used it keep their copy of the code.
+      operationId: deleteAdminPromoCode
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: The code was deleted
+        '400':
+          description: Invalid id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+        '403':
+          description: Not an admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+        '404':
+          description: Promo code not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+      security:
+        - bearerHttpAuthentication: []
+  /games/recommendations:
+    get:
+      summary: Games from the genres of the seed games, most common genre first. Never returns a seed or an excluded game.
+      operationId: getGamesRecommendations
+      parameters:
+        - name: seedGameIds
+          in: query
+          required: true
+          schema:
+            type: string
+            example: 1,2,3
+          description: 1 to 30 comma-separated game ids whose genres rank the result
+        - name: excludeGameIds
+          in: query
+          required: false
+          schema:
+            type: string
+            example: 4,5
+          description: Up to 60 comma-separated game ids that never appear in the result
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 12
+            default: 6
+      responses:
+        '200':
+          description: Games, in the order of the ranking. An empty array when no seed is a game.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/gameObject'
+        '400':
+          description: Invalid query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
   /games/top-deals:
     get:
       summary: List up to 5 games with the highest discount, discount > 0, highest first
@@ -1289,6 +1439,91 @@ paths:
                 $ref: '#/components/schemas/errorMessage'
       security:
         - bearerHttpAuthentication: []
+  /orders/payment-intent/{paymentIntentId}/promo:
+    put:
+      summary: Apply a promo code to an unpaid PaymentIntent. Changes the amount Stripe charges.
+      operationId: applyPromoCode
+      parameters:
+        - name: paymentIntentId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/promoCodeInput'
+      responses:
+        '200':
+          description: The new amount and the discount, in cents
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/promoApplied'
+        '400':
+          description: The code does not exist, has expired, has no uses left, or the user already used it
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+        '404':
+          description: The PaymentIntent does not belong to this user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+        '409':
+          description: The PaymentIntent is already paid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+      security:
+        - bearerHttpAuthentication: []
+    delete:
+      summary: Remove the promo code from an unpaid PaymentIntent and restore the full amount
+      operationId: removePromoCode
+      parameters:
+        - name: paymentIntentId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The full amount, in cents
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/promoRemoved'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+        '404':
+          description: The PaymentIntent does not belong to this user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+        '409':
+          description: The PaymentIntent is already paid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+      security:
+        - bearerHttpAuthentication: []
   /orders/{orderId}:
     get:
       summary: Fetch an order placed by the current user
@@ -2025,6 +2260,13 @@ components:
         trackingNumber:
           type: string
           nullable: true
+        promoCode:
+          type: string
+          nullable: true
+          description: The promo code the buyer used
+        promoDiscountCents:
+          type: integer
+          nullable: true
         createdAt:
           type: string
           format: date-time
@@ -2032,6 +2274,86 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/orderItemObject'
+    promoCodeObject:
+      type: object
+      required:
+        - id
+        - code
+        - percentOff
+        - uses
+        - createdAt
+      properties:
+        id:
+          type: integer
+        code:
+          type: string
+        percentOff:
+          type: integer
+          minimum: 1
+          maximum: 100
+        expiresAt:
+          type: string
+          format: date-time
+          nullable: true
+        maxUses:
+          type: integer
+          nullable: true
+        uses:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+    createPromoCodeInput:
+      type: object
+      required:
+        - code
+        - percentOff
+      properties:
+        code:
+          type: string
+          pattern: '^[A-Za-z0-9-]{3,32}$'
+          description: Stored in uppercase
+        percentOff:
+          type: integer
+          minimum: 1
+          maximum: 100
+        expiresAt:
+          type: string
+          format: date-time
+          description: Must be in the future
+        maxUses:
+          type: integer
+          minimum: 1
+    promoCodeInput:
+      type: object
+      required:
+        - code
+      properties:
+        code:
+          type: string
+          maxLength: 32
+    promoApplied:
+      type: object
+      required:
+        - amount
+        - discountCents
+        - code
+      properties:
+        amount:
+          type: integer
+          description: The amount Stripe now charges, in cents
+        discountCents:
+          type: integer
+        code:
+          type: string
+    promoRemoved:
+      type: object
+      required:
+        - amount
+      properties:
+        amount:
+          type: integer
+          description: The full amount, in cents
     orderStatus:
       type: string
       enum:

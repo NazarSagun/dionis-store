@@ -37,6 +37,9 @@ importers:
       '@repo/eslint-config':
         specifier: workspace:*
         version: link:packages/eslint-config
+      '@repo/prettier-config':
+        specifier: workspace:*
+        version: link:packages/prettier-config
       '@repo/typescript-config':
         specifier: workspace:*
         version: link:packages/typescript-config
@@ -379,6 +382,9 @@ importers:
       '@playwright/test':
         specifier: ^1.47.2
         version: 1.63.0
+      '@repo/prettier-config':
+        specifier: workspace:*
+        version: link:../prettier-config
       '@types/node':
         specifier: ^24.0.0
         version: 24.19.2
@@ -462,6 +468,9 @@ importers:
       '@repo/eslint-config':
         specifier: workspace:*
         version: link:../eslint-config
+      '@repo/prettier-config':
+        specifier: workspace:*
+        version: link:../prettier-config
       '@repo/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config

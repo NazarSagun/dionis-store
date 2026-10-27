@@ -3,14 +3,14 @@ import { ArrayMaxSize, IsArray, IsInt, IsOptional, Max, Min, ValidateNested } fr
 
 export class GuestWishlistItemDto {
   @IsInt()
-  gameId: number
+  gameId!: number
 
   // The discount the guest saw when adding the game. Kept as the snapshot,
   // so a price drop since then still shows the badge after login.
   @IsInt()
   @Min(0)
   @Max(100)
-  discount: number
+  discount!: number
 
   // Milliseconds since the epoch, from the guest wishlist's addedAt.
   @IsOptional()
@@ -23,5 +23,5 @@ export class MergeWishlistDto {
   @ArrayMaxSize(500)
   @ValidateNested({ each: true })
   @Type(() => GuestWishlistItemDto)
-  items: GuestWishlistItemDto[]
+  items!: GuestWishlistItemDto[]
 }

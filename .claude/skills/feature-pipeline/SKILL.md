@@ -40,8 +40,9 @@ Stop here and show the user the design. Don't proceed to phase 3 until they've r
 
 ## Phase 3: E2E tests
 
-Write Playwright tests into `packages/e2e/tests/<feature-name>.spec.ts` (add shared setup to `packages/e2e/tests/helpers/` if more than one spec file will need it) that encode the spec's acceptance criteria one by one. Follow the conventions already in `packages/e2e/tests/payment.spec.ts`, `game-activation.spec.ts`, and `cart.spec.ts`:
+Write Playwright tests into `packages/e2e/tests/<feature-name>.spec.ts` (add shared setup to `packages/e2e/tests/helpers/` if more than one spec file will need it) that encode the spec's happy-path acceptance criteria. Follow the conventions already in `packages/e2e/tests/payment.spec.ts`, `game-activation.spec.ts`, and `cart.spec.ts`:
 
+- Cover happy paths only: the main flow a user takes to reach the feature's goal, plus the one API check that proves the data is saved. Write no edge-case tests: no validation errors, failed requests, empty states, boundary values (singular/plural, limits, "9+"), redirects for the wrong user, wrong-role 401/403 checks, unknown ids, or keyboard and accessible-name checks. Edge cases belong in unit tests in `apps/api` and `apps/web`. Every E2E test slows the CI `e2e` job, and a cleanup that removed 67 such tests took that job from 18 to 5 minutes. If an acceptance criterion is an edge case, leave it out of the E2E file and tell the user which ones you skipped.
 - Select elements by the `data-testid`s the spec's cross-feature requirements call for - these tests are what forces phase 4 to actually add them.
 - These tests are written **before the backend or frontend code exists**, and are expected to fail until phase 4 lands. That's the point: they're the executable definition of "done" for phase 4, not a check run after the fact.
 

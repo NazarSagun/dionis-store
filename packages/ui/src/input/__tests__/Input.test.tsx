@@ -8,9 +8,7 @@ describe('<Input />', () => {
     cleanup()
   })
   it('should input the text', () => {
-    const { getByTestId } = render(
-      <Input onInputChange={() => {}} />
-    )
+    const { getByTestId } = render(<Input onInputChange={() => {}} />)
     const element = getByTestId('input') as HTMLInputElement
     fireEvent.change(element, { target: { value: 'test' } })
     expect(element.value).toBe('test')
@@ -19,9 +17,7 @@ describe('<Input />', () => {
   it('should not input the text if disabled', async () => {
     const user = userEvent.setup()
 
-    const { getByTestId } = render(
-      <Input onInputChange={() => {}} disabled />
-    )
+    const { getByTestId } = render(<Input onInputChange={() => {}} disabled />)
     const element = getByTestId('input') as HTMLInputElement
     expect(element.value).toBe('')
     expect(element).toBeDisabled()

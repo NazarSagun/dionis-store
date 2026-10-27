@@ -30,6 +30,7 @@ import type {
   ChangePasswordInput,
   ConfirmOrderBody,
   CreatePaymentIntentBody,
+  CreatePromoCodeInput,
   EditionInput,
   EditionUpdateInput,
   ErrorMessage,
@@ -43,6 +44,7 @@ import type {
   GetAdminOrdersParams,
   GetGameReviewsParams,
   GetGamesParams,
+  GetGamesRecommendationsParams,
   GetOrdersParams,
   GetReviewRepliesParams,
   LinkedReview,
@@ -55,6 +57,10 @@ import type {
   OwnReview,
   OwnedItem,
   PaymentIntentResponse,
+  PromoApplied,
+  PromoCodeInput,
+  PromoCodeObject,
+  PromoRemoved,
   RepliesPage,
   Reply,
   ReplyInput,
@@ -887,6 +893,323 @@ export const usePatchAdminOrder = <TError = ErrorType<ErrorMessage>,
       return useMutation(getPatchAdminOrderMutationOptions(options), queryClient);
     }
     /**
+ * @summary List every promo code, newest first (admin)
+ */
+export const getAdminPromoCodes = (
+
+ options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+) => {
+
+
+      return customInstance<PromoCodeObject[]>(
+      {url: `/admin/promo-codes`, method: 'GET', signal
+    },
+      options);
+    }
+
+
+
+
+export const getGetAdminPromoCodesQueryKey = () => {
+    return [
+    `/admin/promo-codes`
+    ] as const;
+    }
+
+
+export const getGetAdminPromoCodesQueryOptions = <TData = Awaited<ReturnType<typeof getAdminPromoCodes>>, TError = ErrorType<ErrorMessage>>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAdminPromoCodes>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetAdminPromoCodesQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getAdminPromoCodes>>> = ({ signal }) => getAdminPromoCodes(requestOptions, signal);
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getAdminPromoCodes>>, TError, TData> & { queryKey: DataTag<QueryKey, TData> }
+}
+
+export type GetAdminPromoCodesQueryResult = NonNullable<Awaited<ReturnType<typeof getAdminPromoCodes>>>
+export type GetAdminPromoCodesQueryError = ErrorType<ErrorMessage>
+
+
+export function useGetAdminPromoCodes<TData = Awaited<ReturnType<typeof getAdminPromoCodes>>, TError = ErrorType<ErrorMessage>>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAdminPromoCodes>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getAdminPromoCodes>>,
+          TError,
+          Awaited<ReturnType<typeof getAdminPromoCodes>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+export function useGetAdminPromoCodes<TData = Awaited<ReturnType<typeof getAdminPromoCodes>>, TError = ErrorType<ErrorMessage>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAdminPromoCodes>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getAdminPromoCodes>>,
+          TError,
+          Awaited<ReturnType<typeof getAdminPromoCodes>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+export function useGetAdminPromoCodes<TData = Awaited<ReturnType<typeof getAdminPromoCodes>>, TError = ErrorType<ErrorMessage>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAdminPromoCodes>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+/**
+ * @summary List every promo code, newest first (admin)
+ */
+
+export function useGetAdminPromoCodes<TData = Awaited<ReturnType<typeof getAdminPromoCodes>>, TError = ErrorType<ErrorMessage>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAdminPromoCodes>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> } {
+
+  const queryOptions = getGetAdminPromoCodesQueryOptions(options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+/**
+ * @summary Create a promo code (admin)
+ */
+export const createAdminPromoCode = (
+    createPromoCodeInput: BodyType<CreatePromoCodeInput>,
+ options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+) => {
+
+
+      return customInstance<PromoCodeObject>(
+      {url: `/admin/promo-codes`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: createPromoCodeInput, signal
+    },
+      options);
+    }
+
+
+
+
+export const getCreateAdminPromoCodeMutationKey = () => ['createAdminPromoCode'] as const;
+
+export const getCreateAdminPromoCodeMutationOptions = <TError = ErrorType<ErrorMessage>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createAdminPromoCode>>, TError,CreateAdminPromoCodeMutationVariables, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof createAdminPromoCode>>, TError,CreateAdminPromoCodeMutationVariables, TContext> => {
+
+const mutationKey = getCreateAdminPromoCodeMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createAdminPromoCode>>, CreateAdminPromoCodeMutationVariables> = (props) => {
+          const {data} = props ?? {};
+
+          return  createAdminPromoCode(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CreateAdminPromoCodeMutationResult = NonNullable<Awaited<ReturnType<typeof createAdminPromoCode>>>
+    export type CreateAdminPromoCodeMutationBody = BodyType<CreatePromoCodeInput>
+    export type CreateAdminPromoCodeMutationError = ErrorType<ErrorMessage>
+    export type CreateAdminPromoCodeMutationVariables = {data: BodyType<CreatePromoCodeInput>}
+
+    /**
+ * @summary Create a promo code (admin)
+ */
+export const useCreateAdminPromoCode = <TError = ErrorType<ErrorMessage>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createAdminPromoCode>>, TError,CreateAdminPromoCodeMutationVariables, TContext>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof createAdminPromoCode>>,
+        TError,
+        CreateAdminPromoCodeMutationVariables,
+        TContext
+      > => {
+      return useMutation(getCreateAdminPromoCodeMutationOptions(options), queryClient);
+    }
+    /**
+ * @summary Delete a promo code (admin). Orders that used it keep their copy of the code.
+ */
+export const deleteAdminPromoCode = (
+    id: number,
+ options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+) => {
+
+
+      return customInstance<void>(
+      {url: `/admin/promo-codes/${id}`, method: 'DELETE', signal
+    },
+      options);
+    }
+
+
+
+
+export const getDeleteAdminPromoCodeMutationKey = () => ['deleteAdminPromoCode'] as const;
+
+export const getDeleteAdminPromoCodeMutationOptions = <TError = ErrorType<ErrorMessage>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteAdminPromoCode>>, TError,DeleteAdminPromoCodeMutationVariables, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof deleteAdminPromoCode>>, TError,DeleteAdminPromoCodeMutationVariables, TContext> => {
+
+const mutationKey = getDeleteAdminPromoCodeMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteAdminPromoCode>>, DeleteAdminPromoCodeMutationVariables> = (props) => {
+          const {id} = props ?? {};
+
+          return  deleteAdminPromoCode(id,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type DeleteAdminPromoCodeMutationResult = NonNullable<Awaited<ReturnType<typeof deleteAdminPromoCode>>>
+
+    export type DeleteAdminPromoCodeMutationError = ErrorType<ErrorMessage>
+    export type DeleteAdminPromoCodeMutationVariables = {id: number}
+
+    /**
+ * @summary Delete a promo code (admin). Orders that used it keep their copy of the code.
+ */
+export const useDeleteAdminPromoCode = <TError = ErrorType<ErrorMessage>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteAdminPromoCode>>, TError,DeleteAdminPromoCodeMutationVariables, TContext>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof deleteAdminPromoCode>>,
+        TError,
+        DeleteAdminPromoCodeMutationVariables,
+        TContext
+      > => {
+      return useMutation(getDeleteAdminPromoCodeMutationOptions(options), queryClient);
+    }
+    /**
+ * @summary Games from the genres of the seed games, most common genre first. Never returns a seed or an excluded game.
+ */
+export const getGamesRecommendations = (
+    params: GetGamesRecommendationsParams,
+ options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+) => {
+
+
+      return customInstance<GameObject[]>(
+      {url: `/games/recommendations`, method: 'GET',
+        params, signal
+    },
+      options);
+    }
+
+
+
+
+export const getGetGamesRecommendationsQueryKey = (params?: GetGamesRecommendationsParams,) => {
+    return [
+    `/games/recommendations`, ...(params ? [params] : [])
+    ] as const;
+    }
+
+
+export const getGetGamesRecommendationsQueryOptions = <TData = Awaited<ReturnType<typeof getGamesRecommendations>>, TError = ErrorType<ErrorMessage>>(params: GetGamesRecommendationsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getGamesRecommendations>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetGamesRecommendationsQueryKey(params);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getGamesRecommendations>>> = ({ signal }) => getGamesRecommendations(params, requestOptions, signal);
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getGamesRecommendations>>, TError, TData> & { queryKey: DataTag<QueryKey, TData> }
+}
+
+export type GetGamesRecommendationsQueryResult = NonNullable<Awaited<ReturnType<typeof getGamesRecommendations>>>
+export type GetGamesRecommendationsQueryError = ErrorType<ErrorMessage>
+
+
+export function useGetGamesRecommendations<TData = Awaited<ReturnType<typeof getGamesRecommendations>>, TError = ErrorType<ErrorMessage>>(
+ params: GetGamesRecommendationsParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getGamesRecommendations>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getGamesRecommendations>>,
+          TError,
+          Awaited<ReturnType<typeof getGamesRecommendations>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+export function useGetGamesRecommendations<TData = Awaited<ReturnType<typeof getGamesRecommendations>>, TError = ErrorType<ErrorMessage>>(
+ params: GetGamesRecommendationsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getGamesRecommendations>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getGamesRecommendations>>,
+          TError,
+          Awaited<ReturnType<typeof getGamesRecommendations>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+export function useGetGamesRecommendations<TData = Awaited<ReturnType<typeof getGamesRecommendations>>, TError = ErrorType<ErrorMessage>>(
+ params: GetGamesRecommendationsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getGamesRecommendations>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+/**
+ * @summary Games from the genres of the seed games, most common genre first. Never returns a seed or an excluded game.
+ */
+
+export function useGetGamesRecommendations<TData = Awaited<ReturnType<typeof getGamesRecommendations>>, TError = ErrorType<ErrorMessage>>(
+ params: GetGamesRecommendationsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getGamesRecommendations>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> } {
+
+  const queryOptions = getGetGamesRecommendationsQueryOptions(params,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+/**
  * @summary List up to 5 games with the highest discount, discount > 0, highest first
  */
 export const getGamesTopDeals = (
@@ -2838,6 +3161,139 @@ export const useSetShippingAddress = <TError = ErrorType<ErrorMessage>,
         TContext
       > => {
       return useMutation(getSetShippingAddressMutationOptions(options), queryClient);
+    }
+    /**
+ * @summary Apply a promo code to an unpaid PaymentIntent. Changes the amount Stripe charges.
+ */
+export const applyPromoCode = (
+    paymentIntentId: string,
+    promoCodeInput: BodyType<PromoCodeInput>,
+ options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+) => {
+
+
+      return customInstance<PromoApplied>(
+      {url: `/orders/payment-intent/${paymentIntentId}/promo`, method: 'PUT',
+      headers: {'Content-Type': 'application/json', },
+      data: promoCodeInput, signal
+    },
+      options);
+    }
+
+
+
+
+export const getApplyPromoCodeMutationKey = () => ['applyPromoCode'] as const;
+
+export const getApplyPromoCodeMutationOptions = <TError = ErrorType<ErrorMessage>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof applyPromoCode>>, TError,ApplyPromoCodeMutationVariables, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof applyPromoCode>>, TError,ApplyPromoCodeMutationVariables, TContext> => {
+
+const mutationKey = getApplyPromoCodeMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof applyPromoCode>>, ApplyPromoCodeMutationVariables> = (props) => {
+          const {paymentIntentId,data} = props ?? {};
+
+          return  applyPromoCode(paymentIntentId,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type ApplyPromoCodeMutationResult = NonNullable<Awaited<ReturnType<typeof applyPromoCode>>>
+    export type ApplyPromoCodeMutationBody = BodyType<PromoCodeInput>
+    export type ApplyPromoCodeMutationError = ErrorType<ErrorMessage>
+    export type ApplyPromoCodeMutationVariables = {paymentIntentId: string;data: BodyType<PromoCodeInput>}
+
+    /**
+ * @summary Apply a promo code to an unpaid PaymentIntent. Changes the amount Stripe charges.
+ */
+export const useApplyPromoCode = <TError = ErrorType<ErrorMessage>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof applyPromoCode>>, TError,ApplyPromoCodeMutationVariables, TContext>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof applyPromoCode>>,
+        TError,
+        ApplyPromoCodeMutationVariables,
+        TContext
+      > => {
+      return useMutation(getApplyPromoCodeMutationOptions(options), queryClient);
+    }
+    /**
+ * @summary Remove the promo code from an unpaid PaymentIntent and restore the full amount
+ */
+export const removePromoCode = (
+    paymentIntentId: string,
+ options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+) => {
+
+
+      return customInstance<PromoRemoved>(
+      {url: `/orders/payment-intent/${paymentIntentId}/promo`, method: 'DELETE', signal
+    },
+      options);
+    }
+
+
+
+
+export const getRemovePromoCodeMutationKey = () => ['removePromoCode'] as const;
+
+export const getRemovePromoCodeMutationOptions = <TError = ErrorType<ErrorMessage>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof removePromoCode>>, TError,RemovePromoCodeMutationVariables, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof removePromoCode>>, TError,RemovePromoCodeMutationVariables, TContext> => {
+
+const mutationKey = getRemovePromoCodeMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof removePromoCode>>, RemovePromoCodeMutationVariables> = (props) => {
+          const {paymentIntentId} = props ?? {};
+
+          return  removePromoCode(paymentIntentId,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type RemovePromoCodeMutationResult = NonNullable<Awaited<ReturnType<typeof removePromoCode>>>
+
+    export type RemovePromoCodeMutationError = ErrorType<ErrorMessage>
+    export type RemovePromoCodeMutationVariables = {paymentIntentId: string}
+
+    /**
+ * @summary Remove the promo code from an unpaid PaymentIntent and restore the full amount
+ */
+export const useRemovePromoCode = <TError = ErrorType<ErrorMessage>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof removePromoCode>>, TError,RemovePromoCodeMutationVariables, TContext>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof removePromoCode>>,
+        TError,
+        RemovePromoCodeMutationVariables,
+        TContext
+      > => {
+      return useMutation(getRemovePromoCodeMutationOptions(options), queryClient);
     }
     /**
  * @summary Fetch an order placed by the current user

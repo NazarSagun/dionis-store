@@ -26,6 +26,7 @@ model User {
   replies       ReviewReply[]
   notifications Notification[]
   stockAlerts  StockAlert[]
+  promoRedemptions PromoRedemption[]
 }
 
 model Game_pc {
@@ -92,9 +93,38 @@ model Order {
   // A digital-only order is DELIVERED when it is created. Nothing ships.
   status                OrderStatus @default(PENDING)
   trackingNumber        String?
+  // The code the buyer used and the discount it gave. A copy of the string, not a relation,
+  // so an admin can delete a code without touching old orders.
+  promoCode             String?
+  promoDiscountCents    Int?
+  promoRedemption       PromoRedemption?
   notifications         Notification[]
   createdAt             DateTime    @default(now())
   items                 OrderItem[]
+}
+
+model PromoCode {
+  id         Int       @id @default(autoincrement())
+  code       String    @unique
+  percentOff Int
+  expiresAt  DateTime?
+  maxUses    Int?
+  uses       Int       @default(0)
+  createdAt  DateTime  @default(now())
+}
+
+// One row per user and code, so a user can use each code once. Keeps the code text,
+// so deleting and recreating a code does not give a used code back.
+model PromoRedemption {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  code      String
+  orderId   Int      @unique
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, code])
 }
 
 enum OrderStatus {

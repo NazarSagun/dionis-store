@@ -1,12 +1,16 @@
 export {
   getGetAdminOrdersQueryKey,
+  getGetAdminPromoCodesQueryKey,
   getGetGameQueryKey,
   getGetGamesQueryKey,
+  useCreateAdminPromoCode,
   useCreateEdition,
   useCreateGame,
+  useDeleteAdminPromoCode,
   useDeleteEdition,
   useDeleteGame,
   useGetAdminOrders,
+  useGetAdminPromoCodes,
   useGetGame,
   useGetGames,
   usePatchAdminOrder,
@@ -19,4 +23,5 @@ export type {
   GameEditionObject,
   GameInput,
   GameObject,
+  PromoCodeObject,
 } from '@repo/dionis-api/src/model'

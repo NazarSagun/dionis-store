@@ -4,25 +4,25 @@ export class CreateEditionDto {
   @IsString()
   @IsNotEmpty()
   @MaxLength(100)
-  name: string
+  name!: string
 
   @IsInt()
   @Min(0)
-  price: number
+  price!: number
 
   @IsInt()
   @Min(0)
   @Max(100)
-  discount: number
+  discount!: number
 
   @IsInt()
   @Min(0)
-  stock: number
+  stock!: number
 
   @IsString()
   @IsNotEmpty()
   @MaxLength(500)
-  description: string
+  description!: string
 }
 
 export class UpdateEditionDto {

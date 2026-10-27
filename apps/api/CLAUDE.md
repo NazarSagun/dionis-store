@@ -36,7 +36,7 @@ Put a unit test next to its source file, named `*.spec.ts`. Do not put it in a `
 
 ## Known gaps
 
-`apps/api/tsconfig.json` sets `strictNullChecks` but leaves `noImplicitAny` off. This makes the API less strict than the web app. Do not assume a variable's type is validated as tightly here as it is in `apps/web`.
+The API runs TypeScript in `strict` mode through `packages/typescript-config/nestjs.json`, with `noImplicitAny` and `strictBindCallApply` switched off. So an untyped parameter is not an error here, as it is in `apps/web`. Do not assume a variable's type is validated as tightly here as it is in `apps/web`. A DTO field needs `!` (such as `code!: string`), because the validator fills it and not a constructor.
 
 The root CI workflow does not run `pnpm test --filter api`. Run it yourself before you call a change done.
 

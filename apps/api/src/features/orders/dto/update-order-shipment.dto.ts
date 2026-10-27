@@ -5,7 +5,7 @@ export const ORDER_STATUSES = Object.values(OrderStatus)
 
 export class UpdateOrderShipmentDto {
   @IsIn(ORDER_STATUSES)
-  status: OrderStatus
+  status!: OrderStatus
 
   // Trimmed by the service. An empty string clears the stored value.
   @IsOptional()

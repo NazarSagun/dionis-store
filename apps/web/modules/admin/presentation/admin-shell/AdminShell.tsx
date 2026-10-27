@@ -9,6 +9,7 @@ import { useIsAdmin, useIsAuthenticated } from '@/modules/auth/core/facade'
 const TABS = [
   { href: '/admin/games', label: 'Games', testId: 'admin-nav-games' },
   { href: '/admin/orders', label: 'Orders', testId: 'admin-nav-orders' },
+  { href: '/admin/promo-codes', label: 'Promo codes', testId: 'admin-nav-promo-codes' },
 ] as const
 
 interface AdminShellProps {

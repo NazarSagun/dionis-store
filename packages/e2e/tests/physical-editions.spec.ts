@@ -27,9 +27,7 @@ test.describe('Game detail page purchase options', () => {
     await signUpAndAddGamesToCart(page, 0)
   })
 
-  test('sizes the digital button the same as an edition button, neither reading as the default', async ({
-    page,
-  }) => {
+  test('sizes the digital button the same as an edition button, neither reading as the default', async ({ page }) => {
     await openFirstGameDetails(page)
 
     const digitalButton = page.getByRole('button', { name: /add digital copy/i })
@@ -81,7 +79,10 @@ test.describe('Cart support for editions', () => {
     await page.getByTestId('cart-trigger').click()
     const physicalRow = page.getByTestId('cart-item').filter({ has: page.getByTestId('cart-item-edition') })
 
-    await physicalRow.getByRole('button').filter({ has: page.locator('img[alt="delete item"]') }).click()
+    await physicalRow
+      .getByRole('button')
+      .filter({ has: page.locator('img[alt="delete item"]') })
+      .click()
 
     await expect(page.getByTestId('cart-item')).toHaveCount(1)
     await expect(page.getByTestId('cart-item-edition')).toHaveCount(0)

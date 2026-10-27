@@ -429,4 +429,75 @@ describe('GamesService', () => {
       expect(prisma.review.aggregate).not.toHaveBeenCalled()
     })
   })
+
+  describe('fetchRecommendations', () => {
+    const game = (id: number, genre: string, title: string) => ({ id, genre, title, _count: { editions: 0 } })
+
+    it('ranks the genres of the seeds by count, then lists a genre in the order it was read', async () => {
+      // Seeds: two Action games and one RPG game. The candidates come back sorted by title.
+      prisma.game_pc.findMany
+        .mockResolvedValueOnce([{ genre: 'RPG' }, { genre: 'Action' }, { genre: 'Action' }])
+        .mockResolvedValueOnce([
+          game(10, 'Action', 'A3'),
+          game(11, 'RPG', 'R2'),
+          game(12, 'Action', 'A4'),
+          game(13, 'RPG', 'R3'),
+        ])
+
+      const result = await service.fetchRecommendations({ seedGameIds: [1, 2, 3], excludeGameIds: [], limit: 6 })
+
+      expect(result.map((g) => g.id)).toEqual([10, 12, 11, 13])
+    })
+
+    it('breaks a tie between genres by genre name, so the order is stable', async () => {
+      prisma.game_pc.findMany
+        .mockResolvedValueOnce([{ genre: 'RPG' }, { genre: 'Action' }])
+        .mockResolvedValueOnce([game(1, 'RPG', 'R'), game(2, 'Action', 'A')])
+
+      const result = await service.fetchRecommendations({ seedGameIds: [8, 9], excludeGameIds: [], limit: 6 })
+
+      expect(result.map((g) => g.id)).toEqual([2, 1])
+    })
+
+    it('never asks for a seed or an excluded game, and reads the candidates by title', async () => {
+      prisma.game_pc.findMany.mockResolvedValueOnce([{ genre: 'Action' }]).mockResolvedValueOnce([])
+
+      await service.fetchRecommendations({ seedGameIds: [1, 2], excludeGameIds: [3, 4], limit: 6 })
+
+      expect(prisma.game_pc.findMany).toHaveBeenNthCalledWith(2, {
+        where: { genre: { in: ['Action'] }, id: { notIn: [1, 2, 3, 4] } },
+        orderBy: { title: 'asc' },
+        include: { _count: { select: { editions: true } } },
+      })
+    })
+
+    it('caps the result at the limit', async () => {
+      prisma.game_pc.findMany
+        .mockResolvedValueOnce([{ genre: 'Action' }])
+        .mockResolvedValueOnce([1, 2, 3, 4, 5].map((id) => game(id, 'Action', `G${id}`)))
+
+      const result = await service.fetchRecommendations({ seedGameIds: [9], excludeGameIds: [], limit: 3 })
+
+      expect(result.map((g) => g.id)).toEqual([1, 2, 3])
+    })
+
+    it('returns nothing, and reads no candidates, when no seed is a game', async () => {
+      prisma.game_pc.findMany.mockResolvedValueOnce([])
+
+      await expect(service.fetchRecommendations({ seedGameIds: [999], excludeGameIds: [], limit: 6 })).resolves.toEqual(
+        [],
+      )
+      expect(prisma.game_pc.findMany).toHaveBeenCalledTimes(1)
+    })
+
+    it('returns the card shape with the edition count and no _count', async () => {
+      prisma.game_pc.findMany
+        .mockResolvedValueOnce([{ genre: 'Action' }])
+        .mockResolvedValueOnce([{ id: 5, genre: 'Action', title: 'A', _count: { editions: 2 } }])
+
+      const [result] = await service.fetchRecommendations({ seedGameIds: [1], excludeGameIds: [], limit: 6 })
+
+      expect(result).toEqual({ id: 5, genre: 'Action', title: 'A', editionCount: 2 })
+    })
+  })
 })

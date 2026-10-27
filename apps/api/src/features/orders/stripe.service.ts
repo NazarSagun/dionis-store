@@ -39,6 +39,11 @@ export class StripeService {
     return this.client.paymentIntents.update(paymentIntentId, { metadata })
   }
 
+  // Stripe merges the metadata keys, so a key that is not passed keeps its value.
+  updatePaymentIntentAmount(paymentIntentId: string, amountCents: number, metadata: Record<string, string>) {
+    return this.client.paymentIntents.update(paymentIntentId, { amount: amountCents, metadata })
+  }
+
   /**
    * Verifies Stripe's signature over the raw request body and returns the
    * parsed event. Throws Stripe's own signature error for a forged or

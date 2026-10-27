@@ -25,8 +25,7 @@ export function assertE2eDatabaseUrl(url: string) {
   const name = new URL(url).pathname.slice(1)
   if (!name.endsWith('_e2e')) {
     throw new Error(
-      `Refusing to reset the database "${name}": an E2E database name must end in "_e2e". ` +
-        'Check E2E_DATABASE_URL.',
+      `Refusing to reset the database "${name}": an E2E database name must end in "_e2e". ` + 'Check E2E_DATABASE_URL.',
     )
   }
 }
