@@ -11,6 +11,7 @@ import { AuthModule } from './features/auth/auth.module'
 import { UsersModule } from './features/users/users.module'
 import { GamesModule } from './features/games/games.module'
 import { NotificationsModule } from './features/notifications/notifications.module'
+import { StockAlertsModule } from './features/stock-alerts/stock-alerts.module'
 import { OrdersModule } from './features/orders/orders.module'
 import { ReviewsModule } from './features/reviews/reviews.module'
 import { WishlistModule } from './features/wishlist/wishlist.module'
@@ -41,6 +42,7 @@ import { WishlistModule } from './features/wishlist/wishlist.module'
     WishlistModule,
     ReviewsModule,
     NotificationsModule,
+    StockAlertsModule,
   ],
   providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],
 })

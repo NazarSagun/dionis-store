@@ -8,6 +8,7 @@ import { CreateGameDto } from './dto/create-game.dto'
 import { CreateEditionDto, UpdateEditionDto } from './dto/edition.dto'
 import { UpdateGameDto } from './dto/update-game.dto'
 import { AllowedEdition, AllowedPlatform, AllowedSort } from './dto/games-query.dto'
+import { StockAlertsService } from '../stock-alerts/stock-alerts.service'
 import { gameDetailKey, gamesListKey, GENRES_KEY, TOP_DEALS_KEY } from './cache-keys'
 
 const SORT_TO_ORDER_BY: Record<AllowedSort, Prisma.Game_pcOrderByWithRelationInput> = {
@@ -40,6 +41,7 @@ export class GamesService {
   constructor(
     private readonly prisma: PrismaService,
     @Inject(CACHE_MANAGER) private readonly cache: Cache,
+    private readonly stockAlerts: StockAlertsService,
   ) {}
 
   // Serves the cached value, or runs the query and keeps its result. A query
@@ -258,9 +260,13 @@ export class GamesService {
   }
 
   async updateEdition(id: number, data: UpdateEditionDto) {
-    await this.getEdition(id)
+    const before = await this.getEdition(id)
     const edition = await this.prisma.gameEdition.update({ where: { id }, data })
     await this.clearCache()
+    // The one place that decides stock went from zero to above zero. Refunds (3.3) must come through here.
+    if (before.stock <= 0 && edition.stock > 0) {
+      await this.stockAlerts.fire(id)
+    }
     return edition
   }
 

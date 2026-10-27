@@ -46,11 +46,12 @@ test.describe('Game detail page purchase options', () => {
     expect(Math.abs((digitalBox?.height ?? 0) - (standardBox?.height ?? 0))).toBeLessThan(4)
   })
 
-  test('disables an out-of-stock edition and labels it Out of stock', async ({ page }) => {
+  test('shows an out-of-stock edition as a tile with no cart button, labeled Out of stock', async ({ page }) => {
     await openFirstGameDetails(page)
 
     const collectorsButton = page.getByTestId('edition-option').filter({ hasText: /collector/i })
-    await expect(collectorsButton).toBeDisabled()
+    // A sold-out edition is a tile, not a cart button, so nothing adds it to the cart.
+    await expect(page.getByRole('button', { name: /collector/i })).toHaveCount(0)
     await expect(collectorsButton.getByTestId('edition-stock')).toHaveText(/out of stock/i)
   })
 

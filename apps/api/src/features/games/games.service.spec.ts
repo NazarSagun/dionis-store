@@ -3,10 +3,12 @@ import { Test } from '@nestjs/testing'
 import { Prisma } from '@prisma/client'
 import { PrismaService } from '../../common/prisma/prisma.service'
 import { CustomError } from '../../common/errors/custom-error'
+import { StockAlertsService } from '../stock-alerts/stock-alerts.service'
 import { GamesService } from './games.service'
 
 describe('GamesService', () => {
   let service: GamesService
+  let stockAlerts: { fire: jest.Mock }
   let prisma: {
     game_pc: {
       findMany: jest.Mock
@@ -32,6 +34,7 @@ describe('GamesService', () => {
   }
 
   beforeEach(async () => {
+    stockAlerts = { fire: jest.fn().mockResolvedValue(undefined) }
     prisma = {
       game_pc: {
         findMany: jest.fn().mockResolvedValue([{ id: 1, title: 'Some Game', _count: { editions: 2 } }]),
@@ -61,7 +64,11 @@ describe('GamesService', () => {
 
     const module = await Test.createTestingModule({
       imports: [CacheModule.register()],
-      providers: [GamesService, { provide: PrismaService, useValue: prisma }],
+      providers: [
+        GamesService,
+        { provide: PrismaService, useValue: prisma },
+        { provide: StockAlertsService, useValue: stockAlerts },
+      ],
     }).compile()
 
     service = module.get(GamesService)
@@ -294,6 +301,40 @@ describe('GamesService', () => {
       prisma.gameEdition.findUnique.mockResolvedValue(null)
 
       await expect(service.updateEdition(404, { stock: 1 })).rejects.toMatchObject({ statusCode: 404 })
+    })
+
+    describe('restock alerts', () => {
+      const stockChange = async (from: number, to: number) => {
+        prisma.gameEdition.findUnique.mockResolvedValue({ id: 10, gameId: 1, stock: from })
+        prisma.gameEdition.update.mockResolvedValue({ id: 10, gameId: 1, stock: to })
+        await service.updateEdition(10, { stock: to })
+      }
+
+      it('fires the alerts when stock goes from 0 to above 0', async () => {
+        await stockChange(0, 5)
+
+        expect(stockAlerts.fire).toHaveBeenCalledWith(10)
+      })
+
+      it.each([
+        [5, 10],
+        [0, 0],
+        [5, 0],
+      ])('does not fire when stock goes from %i to %i', async (from, to) => {
+        await stockChange(from, to)
+
+        expect(stockAlerts.fire).not.toHaveBeenCalled()
+      })
+
+      it('clears the cache before it fires, so the next read shows the new stock', async () => {
+        await service.fetchGameDetail({ gameId: 1 })
+        prisma.game_pc.findUnique.mockClear()
+
+        await stockChange(0, 5)
+        await service.fetchGameDetail({ gameId: 1 })
+
+        expect(prisma.game_pc.findUnique).toHaveBeenCalledTimes(1)
+      })
     })
   })
 

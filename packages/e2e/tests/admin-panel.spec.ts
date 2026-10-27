@@ -255,8 +255,9 @@ test.describe('Feature 5: Editions', () => {
     await expect(editions.getByTestId('admin-edition-row')).toContainText('Out of stock')
 
     await page.goto(`/game/${game.id}`)
-    await expect(deluxe).toBeDisabled()
     await expect(deluxe.getByTestId('edition-stock')).toHaveText(/out of stock/i)
+    // A sold-out edition is a tile, so nothing adds it to the cart.
+    await expect(page.getByRole('button', { name: /Deluxe Edition/ })).toHaveCount(0)
 
     // Delete
     await openAdminGame(page, game.id)

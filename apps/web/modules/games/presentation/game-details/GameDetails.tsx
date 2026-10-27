@@ -15,6 +15,7 @@ import { useIsInWishlist, useToggleWishlistItem } from '@/modules/wishlist/core/
 import { isGameOwned } from '../../domain/ownership'
 import { calculateDiscountedPrice } from '../../domain/pricing'
 import { useGetGame, useGetOwnedItems } from '../../integration/repository'
+import { EditionNotify } from '../edition-notify/EditionNotify'
 
 const buttonStyles =
   'flex items-center gap-2 rounded-md border border-ink px-[30px] py-[15px] text-primary-foreground shadow-retro transition-transform duration-200 select-none touch-manipulation active:scale-95'
@@ -176,13 +177,33 @@ export const GameDetails = ({ gameId }: GameDetailsProps) => {
                 {editions.map((edition) => {
                   const outOfStock = edition.stock <= 0
                   const isOwned = isGameOwned(owned, data.id, edition.id)
+                  // A sold-out edition is a tile in the same slot as the buy buttons, with the alert inside it.
+                  if (outOfStock && !isOwned) {
+                    return (
+                      <div
+                        key={edition.id}
+                        data-testid='edition-option'
+                        role='group'
+                        aria-label={`${edition.name}, out of stock`}
+                        className='flex min-w-[140px] flex-1 flex-col items-center justify-between gap-3 rounded-md border border-ink bg-panel-alt px-4 py-3 text-foreground'
+                      >
+                        <div className='flex flex-col items-center gap-0'>
+                          <span className='font-display text-xs'>{edition.name}</span>
+                          <span data-testid='edition-stock' className='font-mono text-xs text-muted-foreground'>
+                            {editionStockLabel(false, true, '')}
+                          </span>
+                        </div>
+                        <EditionNotify gameId={data.id} editionId={edition.id} />
+                      </div>
+                    )
+                  }
                   return (
                     <button
                       type='button'
                       key={edition.id}
                       className={cn(
                         buttonStyles,
-                        'min-w-0 flex-1 flex-col justify-center gap-0 bg-neon-magenta disabled:opacity-50',
+                        'min-w-[140px] flex-1 flex-col justify-center gap-0 bg-neon-magenta disabled:opacity-50',
                       )}
                       data-testid='edition-option'
                       disabled={outOfStock || isOwned}

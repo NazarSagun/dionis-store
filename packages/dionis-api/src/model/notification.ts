@@ -8,11 +8,12 @@ import type { OrderStatus } from './orderStatus';
 import type { NotificationType } from './notificationType';
 
 /**
- * A review_reply row has the game, review and actor fields. A shipment row has orderId and orderStatus.
+ * A review_reply row has the game, review and actor fields. A shipment row has orderId and orderStatus. A restock row has the game fields and editionName.
  */
 export interface Notification {
   actorName?: string;
   createdAt: string;
+  editionName?: string;
   gameId?: number;
   gameTitle?: string;
   id: number;

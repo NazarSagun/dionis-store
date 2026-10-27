@@ -823,6 +823,102 @@ paths:
                 $ref: '#/components/schemas/errorMessage'
       security:
         - bearerHttpAuthentication: []
+  /editions/{id}/stock-alert:
+    put:
+      summary: Ask to be told when an out-of-stock edition is back. Safe to run twice.
+      operationId: putEditionStockAlert
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: The alert is set
+        '400':
+          description: Invalid edition id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+        '404':
+          description: No such edition
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+        '409':
+          description: The edition is in stock, or the user owns it
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+      security:
+        - bearerHttpAuthentication: []
+    delete:
+      summary: Cancel a restock alert. Safe to run twice.
+      operationId: deleteEditionStockAlert
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: The alert is gone
+        '400':
+          description: Invalid edition id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+      security:
+        - bearerHttpAuthentication: []
+  /games/{gameId}/stock-alerts:
+    get:
+      summary: The editions of a game on which the signed-in user has an open restock alert
+      operationId: getGameStockAlerts
+      parameters:
+        - name: gameId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: The edition ids with an alert
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/stockAlertsResponse'
+        '400':
+          description: Invalid game id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+      security:
+        - bearerHttpAuthentication: []
   /notifications:
     get:
       summary: List the unread notifications of the signed-in user, newest first, at most 20
@@ -1762,7 +1858,7 @@ components:
         - id
         - type
         - createdAt
-      description: A review_reply row has the game, review and actor fields. A shipment row has orderId and orderStatus.
+      description: A review_reply row has the game, review and actor fields. A shipment row has orderId and orderStatus. A restock row has the game fields and editionName.
       properties:
         id:
           type: integer
@@ -1771,6 +1867,7 @@ components:
           enum:
             - review_reply
             - shipment
+            - restock
         orderId:
           type: integer
         orderStatus:
@@ -1782,12 +1879,24 @@ components:
           example: Ironclad Siege
         reviewId:
           type: integer
+        editionName:
+          type: string
+          example: Collector's Edition
         actorName:
           type: string
           example: Vadym
         createdAt:
           type: string
           format: date-time
+    stockAlertsResponse:
+      type: object
+      required:
+        - editionIds
+      properties:
+        editionIds:
+          type: array
+          items:
+            type: integer
     notificationsResponse:
       type: object
       required:

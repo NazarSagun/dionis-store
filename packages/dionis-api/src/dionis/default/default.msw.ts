@@ -34,6 +34,7 @@ import type {
   RepliesPage,
   Reply,
   ReviewsPage,
+  StockAlertsResponse,
   SuccessMessage,
   UpdateNameResponse,
   UserObject,
@@ -79,7 +80,9 @@ export const getGetReviewRepliesResponseMock = (overrideResponse: Partial< Repli
 
 export const getPostReviewReplyResponseMock = (overrideResponse: Partial< Reply > = {}): Reply => ({authorName: faker.word.sample(), body: faker.word.sample(), createdAt: `${faker.date.past().toISOString().split('.')[0]}Z`, id: faker.number.int({min: undefined, max: undefined}), ...overrideResponse})
 
-export const getGetNotificationsResponseMock = (overrideResponse: Partial< NotificationsResponse > = {}): NotificationsResponse => ({notifications: Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({actorName: faker.helpers.arrayElement([faker.word.sample(), undefined]), createdAt: `${faker.date.past().toISOString().split('.')[0]}Z`, gameId: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), gameTitle: faker.helpers.arrayElement([faker.word.sample(), undefined]), id: faker.number.int({min: undefined, max: undefined}), orderId: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), orderStatus: faker.helpers.arrayElement([faker.helpers.arrayElement(Object.values(OrderStatus)), undefined]), reviewId: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), type: faker.helpers.arrayElement(['review_reply','shipment'] as const)})), unreadCount: faker.number.int({min: undefined, max: undefined}), ...overrideResponse})
+export const getGetGameStockAlertsResponseMock = (overrideResponse: Partial< StockAlertsResponse > = {}): StockAlertsResponse => ({editionIds: Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => (faker.number.int({min: undefined, max: undefined}))), ...overrideResponse})
+
+export const getGetNotificationsResponseMock = (overrideResponse: Partial< NotificationsResponse > = {}): NotificationsResponse => ({notifications: Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({actorName: faker.helpers.arrayElement([faker.word.sample(), undefined]), createdAt: `${faker.date.past().toISOString().split('.')[0]}Z`, editionName: faker.helpers.arrayElement([faker.word.sample(), undefined]), gameId: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), gameTitle: faker.helpers.arrayElement([faker.word.sample(), undefined]), id: faker.number.int({min: undefined, max: undefined}), orderId: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), orderStatus: faker.helpers.arrayElement([faker.helpers.arrayElement(Object.values(OrderStatus)), undefined]), reviewId: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), type: faker.helpers.arrayElement(['review_reply','shipment','restock'] as const)})), unreadCount: faker.number.int({min: undefined, max: undefined}), ...overrideResponse})
 
 export const getRegisterResponseMock = (overrideResponse: Partial< UserObject > = {}): UserObject => ({message: faker.helpers.arrayElement([faker.word.sample(), undefined]), user: faker.helpers.arrayElement([{accessToken: faker.helpers.arrayElement([faker.word.sample(), undefined]), email: faker.helpers.arrayElement([faker.word.sample(), undefined]), name: faker.helpers.arrayElement([faker.word.sample(), undefined]), role: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined])}, undefined]), ...overrideResponse})
 
@@ -423,6 +426,47 @@ export const getPostReviewReplyMockHandler = (overrideResponse?: Reply | ((info:
   })
 }
 
+export const getPutEditionStockAlertMockHandler = () => {
+  return http.put('*/editions/:id/stock-alert', async () => {await delay(1000);
+    return new HttpResponse(null,
+      {
+        status: 204,
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      }
+    )
+  })
+}
+
+export const getDeleteEditionStockAlertMockHandler = () => {
+  return http.delete('*/editions/:id/stock-alert', async () => {await delay(1000);
+    return new HttpResponse(null,
+      {
+        status: 204,
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      }
+    )
+  })
+}
+
+export const getGetGameStockAlertsMockHandler = (overrideResponse?: StockAlertsResponse | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<StockAlertsResponse> | StockAlertsResponse)) => {
+  return http.get('*/games/:gameId/stock-alerts', async (info) => {await delay(1000);
+    return new HttpResponse(JSON.stringify(overrideResponse !== undefined 
+            ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse) 
+            : getGetGameStockAlertsResponseMock()),
+      {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      }
+    )
+  })
+}
+
 export const getGetNotificationsMockHandler = (overrideResponse?: NotificationsResponse | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<NotificationsResponse> | NotificationsResponse)) => {
   return http.get('*/notifications', async (info) => {await delay(1000);
     return new HttpResponse(JSON.stringify(overrideResponse !== undefined 
@@ -723,6 +767,9 @@ export const getDefaultMock = () => [
   getGetReviewMockHandler(),
   getGetReviewRepliesMockHandler(),
   getPostReviewReplyMockHandler(),
+  getPutEditionStockAlertMockHandler(),
+  getDeleteEditionStockAlertMockHandler(),
+  getGetGameStockAlertsMockHandler(),
   getGetNotificationsMockHandler(),
   getPostNotificationReadMockHandler(),
   getPostNotificationsReadAllMockHandler(),
