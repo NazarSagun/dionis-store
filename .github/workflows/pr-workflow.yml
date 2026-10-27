@@ -155,8 +155,15 @@ jobs:
       - name: Seed games
         run: pnpm --filter api seed:api
 
+      # The apt mirrors on the runner sometimes stall for 10 minutes or more, so
+      # each try is cut off after 3 minutes and the step tries up to 3 times.
       - name: Install Playwright browser
-        run: pnpm --filter @repo/e2e exec playwright install --with-deps chromium
+        run: |
+          for i in 1 2 3; do
+            timeout 180 pnpm --filter @repo/e2e exec playwright install --with-deps chromium && exit 0
+            echo "Attempt $i failed or timed out"
+          done
+          exit 1
 
       - name: Run E2E tests
         run: pnpm --filter @repo/e2e test:e2e --shard=${{ matrix.shard }}/${{ strategy.job-total }}
