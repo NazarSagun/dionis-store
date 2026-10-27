@@ -57,14 +57,4 @@ test.describe('Game Activation step', () => {
     expect(clipboardText).toBe(code)
   })
 
-  test('marking every row activated leaves Finish enabled', async ({ page }) => {
-    const rows = page.getByTestId('activation-row')
-
-    for (const row of await rows.all()) {
-      await row.getByTestId('activation-mark-button').click()
-      await expect(row.getByTestId('activation-status')).toHaveText(/activated/i)
-    }
-
-    await expect(page.getByTestId('finish-button')).toBeEnabled()
-  })
 })

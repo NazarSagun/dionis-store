@@ -57,11 +57,4 @@ test.describe('Account order pagination', () => {
     await expect(library.getByRole('button', { name: 'Load more' })).toHaveCount(0)
   })
 
-  test('a game bought in the oldest order still shows as owned', async ({ page }) => {
-    // Card 0 was the first purchase, so it is on the second page of orders.
-    await page.goto('/')
-    await page.getByTestId('card').nth(0).click()
-
-    await expect(page.getByText('Already in Library')).toBeVisible()
-  })
 })

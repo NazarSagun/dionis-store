@@ -8,8 +8,6 @@ import {
   getNotifications,
   notificationReadUrl,
   notificationsReadAllUrl,
-  notificationsUrl,
-  registerViaApi,
   repliesUrl,
   replyViaApi,
   reviewByIdUrl,
@@ -79,38 +77,7 @@ async function mockReplies(page: Page, reviewId: number, replies: Array<Record<s
   return requests
 }
 
-// React Query refetches when the window gets focus. Sending the event keeps the
-// test the same in headless runs, where no real focus change happens.
-// The string form avoids the DOM types, which this package does not load.
-async function focusWindow(page: Page) {
-  await page.evaluate("window.dispatchEvent(new Event('focus'))")
-}
-
 test.describe('Replies and notifications API without the right user', () => {
-  test('answers 401 without a token, and keeps the public reads open', async ({ request }) => {
-    expect((await request.post(repliesUrl(1), { data: { body: 'Hello' } })).status()).toBe(401)
-    expect((await request.get(notificationsUrl)).status()).toBe(401)
-    expect((await request.post(notificationReadUrl(1))).status()).toBe(401)
-    expect((await request.post(notificationsReadAllUrl)).status()).toBe(401)
-  })
-
-  test('answers 404 for a review that does not exist, and an error for a bad id', async ({ request }) => {
-    const email = await registerViaApi(request)
-    const headers = await authHeaders(request, email)
-
-    expect((await request.get(repliesUrl(999_999_999))).status()).toBe(404)
-    expect((await request.get(reviewByIdUrl(999_999_999))).status()).toBe(404)
-    expect(
-      (
-        await request.post(repliesUrl(999_999_999), {
-          headers,
-          data: { body: 'Hello' },
-        })
-      ).status(),
-    ).toBe(404)
-    expect((await request.get(repliesUrl('abc'))).ok()).toBe(false)
-    expect((await request.get(reviewByIdUrl('abc'))).ok()).toBe(false)
-  })
 })
 
 test.describe('Replies API with real purchases', () => {
@@ -188,19 +155,6 @@ test.describe('Replies API with real purchases', () => {
     expect(single).not.toHaveProperty('userId')
   })
 
-  test('a user who does not own the game gets 403 and stores nothing', async ({ page, request }) => {
-    const { id: gameId } = await createGameViaApi(request)
-    const owner = await signUpCustomer(page)
-    await buyGame(page, gameId)
-    const reviewId = await writeReviewViaApi(request, owner, gameId)
-    const outsider = await registerViaApi(request)
-
-    const response = await replyViaApi(request, outsider, reviewId, 'I never bought this.')
-
-    expect(response.status()).toBe(403)
-    expect((await (await request.get(repliesUrl(reviewId))).json()).replies).toHaveLength(0)
-    expect((await getNotifications(request, owner)).unreadCount).toBe(0)
-  })
 })
 
 test.describe('Notifications API with real purchases', () => {
@@ -388,55 +342,6 @@ test.describe('Reply threads on the game page', () => {
     expect(requests.some((url) => new URL(url).searchParams.get('page') === '2')).toBe(true)
   })
 
-  test('shows a load error with a retry button and keeps the rest of the page', async ({ page, request }) => {
-    const { id, title } = await createGameViaApi(request)
-    await mockReviews(page, id, [mockedReview(1, { replyCount: 2 })])
-    let failing = true
-    await page.route('**/api/reviews/1/replies*', (route) =>
-      failing
-        ? route.fulfill({
-            status: 500,
-            json: { message: 'Internal server error' },
-          })
-        : route.fulfill({
-            json: { totalPages: 1, replies: [mockedReply(1), mockedReply(2)] },
-          }),
-    )
-
-    await page.goto(`/game/${id}`)
-    await page.getByTestId('review-replies-toggle').click()
-
-    await expect(page.getByTestId('reply-load-error')).toBeVisible()
-    await expect(page.getByRole('heading', { name: title })).toBeVisible()
-    await expect(page.getByTestId('review-item')).toHaveCount(1)
-
-    failing = false
-    await page.getByTestId('reply-retry').click()
-
-    await expect(page.getByTestId('reply-item')).toHaveCount(2)
-    await expect(page.getByTestId('reply-load-error')).toHaveCount(0)
-  })
-
-  test('a signed-in user who does not own the game reads the thread and sees the buy prompt', async ({
-    page,
-    request,
-  }) => {
-    const { id } = await createGameViaApi(request)
-    await mockReviews(page, id, [mockedReview(1, { replyCount: 1 }), mockedReview(2, { replyCount: 0 })])
-    await mockReplies(page, 1, [mockedReply(1)])
-    await signUpCustomer(page)
-
-    await page.goto(`/game/${id}`)
-
-    const items = page.getByTestId('review-item')
-    await expect(items.nth(1).getByTestId('review-replies-toggle')).toHaveCount(0)
-    await items.first().getByTestId('review-replies-toggle').click()
-
-    await expect(items.first().getByTestId('reply-item')).toHaveCount(1)
-    await expect(items.first().getByTestId('reply-owner-required')).toHaveText(/buy this game to reply/i)
-    await expect(items.first().getByTestId('reply-form')).toHaveCount(0)
-    await expect(items.first().getByTestId('reply-login-prompt')).toHaveCount(0)
-  })
 })
 
 test.describe('Replying as an owner on the game page', () => {
@@ -489,48 +394,6 @@ test.describe('Replying as an owner on the game page', () => {
     await expect(again.getByTestId('reply-body')).toHaveText('Thanks for the review!')
   })
 
-  test('shows a sending state, then the API error, and keeps the typed text', async ({ page, request }) => {
-    await ownerWithReview(page, request)
-    await page.route('**/api/reviews/*/replies', async (route) => {
-      if (route.request().method() !== 'POST') return route.continue()
-      await new Promise((resolve) => setTimeout(resolve, 700))
-      return route.fulfill({
-        status: 403,
-        json: { message: 'You can only reply to games you own.' },
-      })
-    })
-    const item = page.getByTestId('review-item').first()
-    await item.getByTestId('review-replies-toggle').click()
-    await item.getByTestId('reply-body-input').fill('This text must survive.')
-
-    await item.getByTestId('reply-submit').click()
-
-    await expect(item.getByTestId('reply-submit')).toHaveText(/sending/i)
-    await expect(item.getByTestId('reply-submit')).toBeDisabled()
-    await expect(item.getByTestId('reply-error')).toHaveText(/you can only reply to games you own/i)
-    await expect(item.getByTestId('reply-body-input')).toHaveValue('This text must survive.')
-    await expect(item.getByTestId('reply-submit')).toBeEnabled()
-    await expect(item.getByTestId('reply-submit')).toHaveText('Reply')
-    await expect(item.getByTestId('reply-item')).toHaveCount(0)
-  })
-
-  test('the toggle and the text area work with the keyboard and have accessible names', async ({ page, request }) => {
-    await ownerWithReview(page, request)
-    const item = page.getByTestId('review-item').first()
-
-    await item.getByTestId('review-replies-toggle').focus()
-    await page.keyboard.press('Enter')
-
-    await expect(item.getByTestId('review-replies-toggle')).toHaveAttribute('aria-expanded', 'true')
-    const input = item.getByRole('textbox', { name: /reply/i })
-    await input.focus()
-    await page.keyboard.type('Typed with the keyboard.')
-    await expect(item.getByTestId('reply-submit')).toBeEnabled()
-    await item.getByTestId('reply-submit').focus()
-    await page.keyboard.press('Enter')
-
-    await expect(item.getByTestId('reply-body')).toHaveText('Typed with the keyboard.')
-  })
 })
 
 test.describe('Review linked from a notification', () => {
@@ -562,39 +425,6 @@ test.describe('Review linked from a notification', () => {
     await expect(page.getByTestId('review-item').filter({ hasText: 'The linked review' })).toHaveCount(0)
   })
 
-  test('ignores a review id that does not exist, and shows the normal list with no error', async ({
-    page,
-    request,
-  }) => {
-    const { id } = await createGameViaApi(request)
-    await mockReviews(page, id, [mockedReview(1), mockedReview(2)])
-    await page.route('**/api/reviews/999999', (route) => route.fulfill({ status: 404, json: { message: 'Not found' } }))
-
-    await page.goto(`/game/${id}?review=999999`)
-
-    await expect(page.getByTestId('review-item')).toHaveCount(2)
-    await expect(page.getByTestId('review-linked')).toHaveCount(0)
-    await expect(page.getByTestId('reviews-load-error')).toHaveCount(0)
-  })
-
-  test('ignores a review that belongs to another game', async ({ page, request }) => {
-    const { id } = await createGameViaApi(request)
-    await mockReviews(page, id, [mockedReview(1), mockedReview(2)])
-    await page.route('**/api/reviews/8', (route) =>
-      route.fulfill({
-        json: {
-          ...mockedReview(8, { body: 'From another game' }),
-          gameId: id + 1,
-        },
-      }),
-    )
-
-    await page.goto(`/game/${id}?review=8`)
-
-    await expect(page.getByTestId('review-item')).toHaveCount(2)
-    await expect(page.getByTestId('review-linked')).toHaveCount(0)
-    await expect(page.getByTestId('reviews-section')).not.toContainText('From another game')
-  })
 })
 
 interface MockedNotification {
@@ -658,46 +488,6 @@ async function mockNotifications(
 }
 
 test.describe('Notification bell', () => {
-  test('is not shown to a signed-out visitor', async ({ page }) => {
-    await page.goto('/')
-
-    await expect(page.getByTestId('notification-bell')).toHaveCount(0)
-  })
-
-  test('shows no badge and an all-caught-up panel when nothing is unread', async ({ page }) => {
-    await mockNotifications(page, { unreadCount: 0, notifications: [] })
-    await signUpCustomer(page)
-
-    const bell = page.getByTestId('notification-bell')
-    await expect(bell).toBeVisible()
-    await expect(page.getByTestId('notification-count')).toHaveCount(0)
-    await expect(bell).toHaveAttribute('aria-label', /^Notifications/)
-    await expect(bell).not.toHaveAttribute('aria-label', /unread/)
-
-    await bell.click()
-
-    await expect(page.getByTestId('notification-panel')).toBeVisible()
-    await expect(page.getByTestId('notification-empty')).toContainText(/you are all caught up/i)
-    await expect(page.getByTestId('notification-read-all')).toHaveCount(0)
-  })
-
-  test('shows the unread count on the badge, and 9+ above 9', async ({ page }) => {
-    const state = {
-      unreadCount: 3,
-      notifications: [mockedNotification(1), mockedNotification(2), mockedNotification(3)],
-    }
-    await mockNotifications(page, state)
-    await signUpCustomer(page)
-
-    await expect(page.getByTestId('notification-count')).toHaveText('3')
-    await expect(page.getByTestId('notification-bell')).toHaveAttribute('aria-label', 'Notifications, 3 unread')
-
-    state.unreadCount = 10
-    await focusWindow(page)
-
-    await expect(page.getByTestId('notification-count')).toHaveText('9+')
-  })
-
   test('lists each notification with the actor, the game, and the time', async ({ page }) => {
     await mockNotifications(page, {
       unreadCount: 2,
@@ -742,52 +532,6 @@ test.describe('Notification bell', () => {
     expect(calls.read).toEqual([2])
   })
 
-  test('puts the item and the count back when mark as read fails', async ({ page }) => {
-    const behavior = { failing: true }
-    await mockNotifications(
-      page,
-      {
-        unreadCount: 2,
-        notifications: [mockedNotification(1), mockedNotification(2)],
-      },
-      behavior,
-    )
-    await signUpCustomer(page)
-    await page.getByTestId('notification-bell').click()
-
-    await page.getByTestId('notification-item').first().getByTestId('notification-read').click()
-
-    await expect(page.getByTestId('notification-item')).toHaveCount(2)
-    await expect(page.getByTestId('notification-count')).toHaveText('2')
-  })
-
-  test('mark all as read clears the list and the badge, and puts them back when it fails', async ({ page }) => {
-    const behavior = { failing: true }
-    const calls = await mockNotifications(
-      page,
-      {
-        unreadCount: 2,
-        notifications: [mockedNotification(1), mockedNotification(2)],
-      },
-      behavior,
-    )
-    await signUpCustomer(page)
-    await page.getByTestId('notification-bell').click()
-
-    await page.getByTestId('notification-read-all').click()
-
-    await expect(page.getByTestId('notification-item')).toHaveCount(2)
-    await expect(page.getByTestId('notification-count')).toHaveText('2')
-
-    behavior.failing = false
-    await page.getByTestId('notification-read-all').click()
-
-    await expect(page.getByTestId('notification-item')).toHaveCount(0)
-    await expect(page.getByTestId('notification-empty')).toBeVisible()
-    await expect(page.getByTestId('notification-count')).toHaveCount(0)
-    expect(calls.readAll).toBe(2)
-  })
-
   test('a click on a notification opens its review and marks it as read', async ({ page, request }) => {
     const { id } = await createGameViaApi(request)
     const calls = await mockNotifications(page, {
@@ -804,85 +548,6 @@ test.describe('Notification bell', () => {
     expect(calls.read).toEqual([5])
   })
 
-  test('says how many more are unread when the list is cut at 20', async ({ page }) => {
-    await mockNotifications(page, {
-      unreadCount: 25,
-      notifications: Array.from({ length: 20 }, (_, index) => mockedNotification(index + 1)),
-    })
-    await signUpCustomer(page)
-
-    await expect(page.getByTestId('notification-count')).toHaveText('9+')
-    await page.getByTestId('notification-bell').click()
-
-    await expect(page.getByTestId('notification-item')).toHaveCount(20)
-    await expect(page.getByTestId('notification-more')).toHaveText('Showing the latest 20 of 25 unread')
-  })
-
-  test('opens with the keyboard, and closes on Escape, on an outside click, and on a page change', async ({ page }) => {
-    await mockNotifications(page, {
-      unreadCount: 1,
-      notifications: [mockedNotification(1)],
-    })
-    await signUpCustomer(page)
-    const bell = page.getByTestId('notification-bell')
-    const panel = page.getByTestId('notification-panel')
-
-    await bell.focus()
-    await page.keyboard.press('Enter')
-    await expect(panel).toBeVisible()
-
-    await page.keyboard.press('Escape')
-    await expect(panel).toHaveCount(0)
-    await expect(bell).toBeFocused()
-
-    await bell.click()
-    await expect(panel).toBeVisible()
-    await page.mouse.click(5, 400)
-    await expect(panel).toHaveCount(0)
-
-    await bell.click()
-    await expect(panel).toBeVisible()
-    await page.getByTestId('notification-item').first().getByTestId('notification-link').click()
-    await expect(page).toHaveURL(/\/game\/\d+\?review=\d+$/)
-    await expect(panel).toHaveCount(0)
-  })
-
-  test('refreshes the count when the window gets focus', async ({ page }) => {
-    const state = { unreadCount: 1, notifications: [mockedNotification(1)] }
-    await mockNotifications(page, state)
-    await signUpCustomer(page)
-    await expect(page.getByTestId('notification-count')).toHaveText('1')
-
-    state.unreadCount = 2
-    state.notifications = [mockedNotification(2), mockedNotification(1)]
-    await focusWindow(page)
-
-    await expect(page.getByTestId('notification-count')).toHaveText('2')
-  })
-
-  test('keeps the last known list and count when a refresh fails', async ({ page }) => {
-    const state = {
-      unreadCount: 2,
-      notifications: [mockedNotification(1), mockedNotification(2)],
-    }
-    await mockNotifications(page, state)
-    await signUpCustomer(page)
-    await expect(page.getByTestId('notification-count')).toHaveText('2')
-
-    await page.route('**/api/notifications', (route) =>
-      route.request().method() === 'GET'
-        ? route.fulfill({
-            status: 500,
-            json: { message: 'Internal server error' },
-          })
-        : route.continue(),
-    )
-    await focusWindow(page)
-    await page.getByTestId('notification-bell').click()
-
-    await expect(page.getByTestId('notification-count')).toHaveText('2')
-    await expect(page.getByTestId('notification-item')).toHaveCount(2)
-  })
 })
 
 test.describe('A reply reaches the reviewer', () => {

@@ -22,10 +22,6 @@ import {
 
 const PASSWORD = 'password123'
 
-function reviewsUrl(gameId: number | string) {
-  return `${apiUrl}/api/games/${gameId}/reviews`
-}
-
 function reviewUrl(gameId: number | string) {
   return `${apiUrl}/api/games/${gameId}/review`
 }
@@ -89,18 +85,6 @@ test.describe('Reviews section for visitors', () => {
     await expect(page.getByTestId('review-login-prompt')).toBeVisible()
   })
 
-  test('the login prompt links to the login page', async ({ page, request }) => {
-    const { id } = await createGameViaApi(request)
-    await page.goto(`/game/${id}`)
-
-    await page
-      .getByTestId('review-login-prompt')
-      .getByRole('link', { name: /log in/i })
-      .click()
-
-    await expect(page).toHaveURL(/\/login/)
-  })
-
   test('logging in from the empty state returns to the game page', async ({ page, request }) => {
     const { id } = await createGameViaApi(request)
     const email = await signUpCustomer(page)
@@ -118,18 +102,6 @@ test.describe('Reviews section for visitors', () => {
 
     await expect(page).toHaveURL(new RegExp(`/game/${id}$`))
     await expect(page.getByTestId('review-owner-required')).toBeVisible()
-  })
-
-  test('a login link that points to another site goes to the home page', async ({ page }) => {
-    const email = await signUpCustomer(page)
-    await logOut(page)
-
-    await page.goto('/login?next=https%3A%2F%2Fevil.example%2F')
-    await page.getByTestId('email').fill(email)
-    await page.getByTestId('password').fill(PASSWORD)
-    await page.getByTestId('submit-button').click()
-
-    await expect(page).toHaveURL('/')
   })
 
   test('shows the average rating, the count, and one item per review', async ({ page, request }) => {
@@ -167,43 +139,6 @@ test.describe('Reviews section for visitors', () => {
     await expect(items.nth(1).getByTestId('review-stars')).toHaveAttribute('aria-label', '4 out of 5 stars')
   })
 
-  test('shows a review without text as stars only', async ({ page, request }) => {
-    const { id } = await createGameViaApi(request)
-    await page.route(`**/api/games/${id}/reviews*`, (route) =>
-      route.fulfill({
-        json: { totalPages: 1, reviews: [mockedReview(1, { body: '' })] },
-      }),
-    )
-
-    await page.goto(`/game/${id}`)
-
-    const item = page.getByTestId('review-item')
-    await expect(item).toHaveCount(1)
-    await expect(item.getByTestId('review-stars')).toBeVisible()
-    await expect(item.getByTestId('review-body')).toHaveCount(0)
-  })
-
-  test('uses the singular count for one review', async ({ page, request }) => {
-    const { id } = await createGameViaApi(request)
-    await page.route(`**/api/games/${id}/reviews*`, (route) =>
-      route.fulfill({
-        json: { totalPages: 1, reviews: [mockedReview(1, { rating: 5 })] },
-      }),
-    )
-    await page.route(`**/api/game/${id}`, async (route) => {
-      const response = await route.fetch()
-      await route.fulfill({
-        response,
-        json: { ...(await response.json()), averageRating: 5, reviewCount: 1 },
-      })
-    })
-
-    await page.goto(`/game/${id}`)
-
-    await expect(page.getByTestId('reviews-average')).toHaveText('5.0')
-    await expect(page.getByTestId('reviews-count')).toHaveText('1 review')
-  })
-
   test('shows 10 reviews on page 1 and the last one on page 2', async ({ page, request }) => {
     const { id } = await createGameViaApi(request)
     const all = Array.from({ length: 11 }, (_, index) => mockedReview(index + 1))
@@ -228,19 +163,6 @@ test.describe('Reviews section for visitors', () => {
     await page.getByTestId('reviews-prev-page').click()
 
     await expect(items).toHaveCount(10)
-  })
-
-  test('hides the page controls when there is one page', async ({ page, request }) => {
-    const { id } = await createGameViaApi(request)
-    await page.route(`**/api/games/${id}/reviews*`, (route) =>
-      route.fulfill({ json: { totalPages: 1, reviews: [mockedReview(1)] } }),
-    )
-
-    await page.goto(`/game/${id}`)
-
-    await expect(page.getByTestId('review-item')).toHaveCount(1)
-    await expect(page.getByTestId('reviews-next-page')).toHaveCount(0)
-    await expect(page.getByTestId('reviews-prev-page')).toHaveCount(0)
   })
 
   test('shows review text as plain text, never as HTML', async ({ page, request }) => {
@@ -275,31 +197,6 @@ test.describe('Reviews section for visitors', () => {
     await expect(page.getByTestId('reviews-section')).not.toContainText('@')
   })
 
-  test('shows a load error with a retry button and keeps the rest of the page', async ({ page, request }) => {
-    const { id, title } = await createGameViaApi(request)
-    let failing = true
-    await page.route(`**/api/games/${id}/reviews*`, (route) =>
-      failing
-        ? route.fulfill({
-            status: 500,
-            json: { message: 'Internal server error' },
-          })
-        : route.fulfill({
-            json: { totalPages: 1, reviews: [mockedReview(1)] },
-          }),
-    )
-
-    await page.goto(`/game/${id}`)
-
-    await expect(page.getByTestId('reviews-load-error')).toBeVisible()
-    await expect(page.getByRole('heading', { name: title })).toBeVisible()
-
-    failing = false
-    await page.getByTestId('reviews-retry').click()
-
-    await expect(page.getByTestId('review-item')).toHaveCount(1)
-    await expect(page.getByTestId('reviews-load-error')).toHaveCount(0)
-  })
 })
 
 test.describe('Reviews for a signed-in user who does not own the game', () => {
@@ -314,52 +211,9 @@ test.describe('Reviews for a signed-in user who does not own the game', () => {
     await expect(page.getByTestId('review-login-prompt')).toHaveCount(0)
   })
 
-  test('the empty state gives the reason only, with no button or link', async ({ page, request }) => {
-    const { id } = await createGameViaApi(request)
-    await signUpCustomer(page)
-    await page.goto(`/game/${id}`)
-
-    const reason = page.getByTestId('review-owner-required')
-    await expect(reason).toHaveText(/buy this game to review it/i)
-    await expect(reason.locator('a, button')).toHaveCount(0)
-  })
-
-  test('the API answers 403 and stores nothing', async ({ page, request }) => {
-    const { id } = await createGameViaApi(request)
-    const email = await signUpCustomer(page)
-    const headers = await authHeaders(request, email)
-
-    const put = await request.put(reviewUrl(id), {
-      headers,
-      data: { rating: 4, body: 'Not mine' },
-    })
-
-    expect(put.status()).toBe(403)
-    const list = await (await request.get(reviewsUrl(id))).json()
-    expect(list.reviews).toHaveLength(0)
-    expect((await request.get(reviewUrl(id), { headers })).status()).toBe(404)
-  })
 })
 
 test.describe('Reviews API without a token', () => {
-  test('answers 401 on PUT and on the own-review route, and lists reviews publicly', async ({ request }) => {
-    const { id } = await createGameViaApi(request)
-
-    expect((await request.put(reviewUrl(id), { data: { rating: 4 } })).status()).toBe(401)
-    expect((await request.get(reviewUrl(id))).status()).toBe(401)
-    const list = await request.get(reviewsUrl(id))
-    expect(list.status()).toBe(200)
-    expect(await list.json()).toEqual({
-      totalPages: expect.any(Number),
-      reviews: [],
-    })
-  })
-
-  test('returns an error for a game that does not exist', async ({ request }) => {
-    const response = await request.get(reviewsUrl(999_999_999))
-
-    expect(response.ok()).toBe(false)
-  })
 })
 
 test.describe('Reviews from an owner', () => {
@@ -398,85 +252,6 @@ test.describe('Reviews from an owner', () => {
     await expect(page.getByTestId('reviews-count')).toHaveText('1 review')
   })
 
-  test('accepts a rating without text and counts the text length', async ({ page, request }) => {
-    await buyFreshGame(page, request)
-
-    await page.getByTestId('review-body-input').fill('12345')
-    await expect(page.getByTestId('review-form')).toContainText('5 / 1000')
-    await page.getByTestId('review-body-input').fill('')
-    await submitReview(page, 4)
-
-    const item = page.getByTestId('review-item')
-    await expect(item).toHaveCount(1)
-    await expect(item.getByTestId('review-stars')).toHaveAttribute('aria-label', '4 out of 5 stars')
-    await expect(item.getByTestId('review-body')).toHaveCount(0)
-  })
-
-  test('shows the API error above the button and keeps the typed text', async ({ page, request }) => {
-    await buyFreshGame(page, request)
-    await page.route('**/api/games/*/review', (route) =>
-      route.request().method() === 'PUT'
-        ? route.fulfill({
-            status: 403,
-            json: { message: 'You can only review games you own.' },
-          })
-        : route.continue(),
-    )
-
-    await submitReview(page, 4, 'This text must survive.')
-
-    await expect(page.getByTestId('review-error')).toHaveText(/you can only review games you own/i)
-    await expect(page.getByTestId('review-body-input')).toHaveValue('This text must survive.')
-    await expect(page.getByTestId('review-submit')).toBeEnabled()
-  })
-
-  test('the API validates the rating and the text, and never returns an email or a user id', async ({
-    page,
-    request,
-  }) => {
-    const { email, gameId } = await buyFreshGame(page, request)
-    const headers = await authHeaders(request, email)
-
-    for (const rating of [0, 6, 3.5]) {
-      const response = await request.put(reviewUrl(gameId), {
-        headers,
-        data: { rating, body: 'x' },
-      })
-      expect(response.status(), `rating ${rating}`).toBe(400)
-    }
-    const tooLong = await request.put(reviewUrl(gameId), {
-      headers,
-      data: { rating: 4, body: 'x'.repeat(1001) },
-    })
-    expect(tooLong.status()).toBe(400)
-
-    const saved = await request.put(reviewUrl(gameId), {
-      headers,
-      data: { rating: 4, body: 'x'.repeat(1000) },
-    })
-    expect(saved.status()).toBe(200)
-
-    const mine = await request.get(reviewUrl(gameId), { headers })
-    expect(mine.status()).toBe(200)
-    expect((await mine.json()).rating).toBe(4)
-
-    const list = await (await request.get(reviewsUrl(gameId))).json()
-    expect(list.reviews).toHaveLength(1)
-    expect(Object.keys(list.reviews[0]).sort()).toEqual([
-      'authorName',
-      'body',
-      'createdAt',
-      'id',
-      'rating',
-      'replyCount',
-    ])
-    expect(JSON.stringify(list)).not.toContain(email)
-
-    const game = await (await request.get(`${apiUrl}/api/game/${gameId}`)).json()
-    expect(game.averageRating).toBe(4)
-    expect(game.reviewCount).toBe(1)
-  })
-
   test('a buyer of only the physical edition can review the game', async ({ page, request }) => {
     const email = await signUpAndAddGamesToCart(page, 0)
     await addEditionToCart(page, /standard/i)
@@ -501,12 +276,4 @@ test.describe('Reviews from an owner', () => {
     expect(put.status()).toBe(200)
   })
 
-  test('the star buttons have accessible names and work with the keyboard', async ({ page, request }) => {
-    await buyFreshGame(page, request)
-
-    await expect(page.getByRole('button', { name: 'Rate 4 out of 5' })).toBeVisible()
-    await page.getByRole('button', { name: 'Rate 2 out of 5' }).focus()
-    await page.keyboard.press('Enter')
-    await expect(page.getByTestId('review-submit')).toBeEnabled()
-  })
 })

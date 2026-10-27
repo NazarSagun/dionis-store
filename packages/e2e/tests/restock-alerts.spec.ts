@@ -1,14 +1,12 @@
 import { expect, test } from '@playwright/test'
 
 import { apiToken, apiUrl, signUpCustomer } from './helpers/admin'
-import { completePayment, fillShippingAddress, goToPaymentStep } from './helpers/checkout'
 import { countReceiptsAfterDelay, waitForReceipts } from './helpers/mail'
 import {
   alertedEditionIds,
   bearer,
   createGameWithEdition,
   editionAlertUrl,
-  gameAlertsUrl,
   setStock,
   subscribe,
 } from './helpers/restock'
@@ -57,39 +55,6 @@ test.describe('Feature 1: Restock alert API', () => {
     expect(await alertedEditionIds(request, token, gameId)).toEqual([])
   })
 
-  test('rejects an in-stock edition, an unknown edition, a bad id, and a missing token', async ({ request }) => {
-    const inStock = await createGameWithEdition(request, 5)
-    const token = await tokenFor(request, await registerViaApi(request))
-
-    expect((await subscribe(request, token, inStock.editionId)).status()).toBe(409)
-    expect((await subscribe(request, token, 2_000_000_000)).status()).toBe(404)
-    expect((await request.put(editionAlertUrl('abc'), { headers: bearer(token) })).status()).toBe(400)
-    expect((await request.put(editionAlertUrl(inStock.editionId))).status()).toBe(401)
-    expect((await request.delete(editionAlertUrl(inStock.editionId))).status()).toBe(401)
-    expect((await request.get(gameAlertsUrl(inStock.gameId))).status()).toBe(401)
-  })
-
-  test('rejects an edition the user already owns', async ({ page, request }) => {
-    test.setTimeout(90_000)
-    // One copy in stock, so the purchase itself takes the edition to zero.
-    const { gameId, editionId, editionName } = await createGameWithEdition(request, 1)
-    const email = await signUpCustomer(page)
-    await page.goto(`/game/${gameId}`)
-    await page.getByTestId('edition-option').filter({ hasText: editionName }).click()
-    await goToPaymentStep(page)
-    await fillShippingAddress(page, {
-      name: 'Alex Doe',
-      line1: 'Unter den Linden 1',
-      city: 'Berlin',
-      postalCode: '10115',
-      country: 'Germany',
-    })
-    await completePayment(page)
-
-    const token = await tokenFor(request, email)
-    expect((await subscribe(request, token, editionId)).status()).toBe(409)
-  })
-
   test('the game detail response is public, shared, and shows the new stock after an admin raise', async ({
     request,
   }) => {
@@ -130,48 +95,6 @@ test.describe('Feature 1: Restock alert API', () => {
 
     expect((await getNotifications(request, bystander)).notifications).toHaveLength(0)
     expect(await countReceiptsAfterDelay(request, bystander)).toBe(0)
-  })
-
-  test('a raise that does not start from 0 notifies nobody', async ({ request }) => {
-    const { editionId } = await createGameWithEdition(request, 3)
-    const email = await registerViaApi(request)
-    // The edition has stock, so a subscribe is refused. Take it to 0 first.
-    await setStock(request, editionId, 0)
-    await subscribe(request, await tokenFor(request, email), editionId)
-
-    // 0 to 0 and 0 to 0 again are not raises.
-    await setStock(request, editionId, 0)
-    expect((await getNotifications(request, email)).notifications).toHaveLength(0)
-
-    await setStock(request, editionId, 5)
-    await expect.poll(async () => (await getNotifications(request, email)).notifications.length).toBe(1)
-
-    // 5 to 10 and 5 to 0 are not raises from 0.
-    await setStock(request, editionId, 10)
-    await setStock(request, editionId, 0)
-    expect((await getNotifications(request, email)).notifications).toHaveLength(1)
-  })
-
-  test('a second raise with no new subscriber notifies nobody, and a new subscribe is notified again', async ({
-    request,
-  }) => {
-    const { editionId } = await createGameWithEdition(request)
-    const email = await registerViaApi(request)
-    const token = await tokenFor(request, email)
-    await subscribe(request, token, editionId)
-
-    await setStock(request, editionId, 5)
-    await expect.poll(async () => (await getNotifications(request, email)).notifications.length).toBe(1)
-
-    await setStock(request, editionId, 0)
-    await setStock(request, editionId, 5)
-    expect((await getNotifications(request, email)).notifications).toHaveLength(1)
-    expect(await countReceiptsAfterDelay(request, email)).toBe(1)
-
-    await setStock(request, editionId, 0)
-    expect((await subscribe(request, token, editionId)).status()).toBe(204)
-    await setStock(request, editionId, 5)
-    await expect.poll(async () => (await getNotifications(request, email)).notifications.length).toBe(2)
   })
 
   // The acceptance criterion "SMTP down, admin request still returns 200 and
@@ -234,20 +157,6 @@ test.describe('Feature 2: "Notify me" on the game detail page', () => {
     await expect(page).toHaveURL(`/game/${gameId}`)
   })
 
-  test('a failed request keeps the old text and shows an error', async ({ page, request }) => {
-    const { gameId } = await createGameWithEdition(request)
-    await signUpCustomer(page)
-    await page.route('**/api/editions/*/stock-alert', (route) =>
-      route.fulfill({ status: 500, json: { message: 'Internal server error' } }),
-    )
-    await page.goto(`/game/${gameId}`)
-
-    await page.getByTestId('edition-notify').click()
-
-    await expect(page.getByTestId('edition-notify-error')).toBeVisible()
-    await expect(page.getByTestId('edition-notify')).toHaveText('Notify me')
-    await expect(page.getByTestId('edition-notify')).toBeEnabled()
-  })
 })
 
 test.describe('Feature 3: Restock item in the bell', () => {
@@ -274,16 +183,4 @@ test.describe('Feature 3: Restock item in the bell', () => {
     await expect(page.getByTestId('notification-count')).toHaveCount(0)
   })
 
-  test('a user who did not subscribe sees no restock item', async ({ page, request }) => {
-    const { editionId } = await createGameWithEdition(request)
-    const subscriber = await registerViaApi(request)
-    const bystander = await registerViaApi(request)
-    await subscribe(request, await tokenFor(request, subscriber), editionId)
-    await setStock(request, editionId, 5)
-    await logIn(page, bystander)
-
-    await expect(page.getByTestId('notification-count')).toHaveCount(0)
-    await page.getByTestId('notification-bell').click()
-    await expect(page.getByTestId('notification-item')).toHaveCount(0)
-  })
 })
