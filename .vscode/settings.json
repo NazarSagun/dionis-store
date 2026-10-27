@@ -1,4 +1,12 @@
 {
   "css.lint.unknownAtRules": "ignore",
   "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  // A file with no Prettier config in its package is left alone, never formatted with Prettier's defaults.
+  "prettier.requireConfig": true,
+  "editor.codeActionsOnSave": { "source.fixAll.eslint": "explicit" },
+  // Each package has its own .eslintrc and tsconfig, so the editor must run from the package folder like the CLI does.
+  "eslint.workingDirectories": [{ "mode": "auto" }],
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true
 }

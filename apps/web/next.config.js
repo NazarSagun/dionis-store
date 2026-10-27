@@ -1,4 +1,4 @@
-const { withSentryConfig } = require('@sentry/nextjs/config');
+const { withSentryConfig } = require('@sentry/nextjs/config')
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -27,7 +27,7 @@ const nextConfig = {
       },
     ],
   },
-};
+}
 
 module.exports = withSentryConfig(nextConfig, {
   org: 'nazar-hz',
@@ -40,4 +40,4 @@ module.exports = withSentryConfig(nextConfig, {
   // blockers that block sentry.io do not drop them.
   tunnelRoute: '/monitoring',
   silent: !process.env.CI,
-});
+})

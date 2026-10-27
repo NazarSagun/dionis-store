@@ -8,12 +8,12 @@ export class ShippingAddressDto {
   @IsString()
   @MaxLength(MAX_FIELD_LENGTH)
   @IsNotEmpty()
-  shippingName: string
+  shippingName!: string
 
   @IsString()
   @MaxLength(MAX_FIELD_LENGTH)
   @IsNotEmpty()
-  shippingLine1: string
+  shippingLine1!: string
 
   @IsOptional()
   @IsString()
@@ -23,15 +23,15 @@ export class ShippingAddressDto {
   @IsString()
   @MaxLength(MAX_FIELD_LENGTH)
   @IsNotEmpty()
-  shippingCity: string
+  shippingCity!: string
 
   @IsString()
   @MaxLength(MAX_FIELD_LENGTH)
   @IsNotEmpty()
-  shippingPostalCode: string
+  shippingPostalCode!: string
 
   @IsString()
   @MaxLength(MAX_FIELD_LENGTH)
   @IsNotEmpty()
-  shippingCountry: string
+  shippingCountry!: string
 }

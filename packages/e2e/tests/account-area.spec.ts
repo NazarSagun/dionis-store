@@ -126,7 +126,9 @@ test.describe('Account area', () => {
       await expect(page.getByText('Hi, E2E Renamed Player').first()).toBeVisible()
     })
 
-    test('changing the password with the wrong current password shows an error and keeps it unchanged', async ({ page }) => {
+    test('changing the password with the wrong current password shows an error and keeps it unchanged', async ({
+      page,
+    }) => {
       await page.getByTestId('account-tab-settings').click()
       const settings = page.getByTestId('account-settings')
 
@@ -137,7 +139,9 @@ test.describe('Account area', () => {
       await expect(page.getByText(/current password/i)).toBeVisible()
     })
 
-    test('changing the password with the correct current password lets the next login succeed with it', async ({ page }) => {
+    test('changing the password with the correct current password lets the next login succeed with it', async ({
+      page,
+    }) => {
       await page.getByTestId('account-tab-settings').click()
       const settings = page.getByTestId('account-settings')
 

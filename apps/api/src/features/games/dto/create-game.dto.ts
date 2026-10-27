@@ -11,47 +11,47 @@ export class CreateGameDto {
   @IsString()
   @IsNotEmpty()
   @MaxLength(200)
-  title: string
+  title!: string
 
   @IsString()
   @IsNotEmpty()
-  thumbnail: string
+  thumbnail!: string
 
   @IsString()
   @IsNotEmpty()
-  short_description: string
+  short_description!: string
 
   @IsString()
   @IsNotEmpty()
   @MaxLength(50)
-  genre: string
+  genre!: string
 
   @IsString()
   @IsNotEmpty()
-  platform: string
+  platform!: string
 
   @IsString()
   @IsNotEmpty()
-  publisher: string
+  publisher!: string
 
   @IsString()
   @IsNotEmpty()
-  developer: string
+  developer!: string
 
   @IsString()
   @IsNotEmpty()
-  release_date: string
+  release_date!: string
 
   @IsInt()
   @Min(0)
-  price: number
+  price!: number
 
   @IsString()
   @IsNotEmpty()
-  rating: string
+  rating!: string
 
   @IsInt()
   @Min(0)
   @Max(100)
-  discount: number
+  discount!: number
 }

@@ -4,7 +4,7 @@ import Axios, { AxiosError, AxiosRequestConfig } from 'axios'
 
 export const AXIOS_INSTANCE = Axios.create({
   baseURL: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3500'}/api`,
-  withCredentials: true
+  withCredentials: true,
 })
 
 // add a second `options` argument here if you want to pass extra options to each generated query

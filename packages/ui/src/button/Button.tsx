@@ -27,7 +27,7 @@ export const buttonVariants = cva(
       variant: 'default',
       size: 'default',
     },
-  }
+  },
 )
 
 export interface ButtonProps
@@ -42,6 +42,6 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     return (
       <Comp data-testid='button' className={cn(buttonVariants({ variant, size, className }))} ref={ref} {...props} />
     )
-  }
+  },
 )
 Button.displayName = 'Button'

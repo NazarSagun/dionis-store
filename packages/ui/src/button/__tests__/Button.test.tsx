@@ -10,12 +10,7 @@ describe('<Button />', () => {
   })
   it('should handle click event', () => {
     const mockFn = vi.fn()
-    const { getByTestId } = render(
-      <Button
-        variant='default'
-        onClick={mockFn}
-      />
-    )
+    const { getByTestId } = render(<Button variant='default' onClick={mockFn} />)
 
     const button = getByTestId('button')
 
@@ -26,13 +21,7 @@ describe('<Button />', () => {
 
   it('should not handle click event when disabled', () => {
     const mockFn = vi.fn()
-    const { getByTestId } = render(
-      <Button
-        variant='default'
-        onClick={mockFn}
-        disabled
-      />
-    )
+    const { getByTestId } = render(<Button variant='default' onClick={mockFn} disabled />)
 
     const button = getByTestId('button')
 

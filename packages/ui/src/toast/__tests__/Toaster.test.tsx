@@ -32,7 +32,7 @@ it('Should render toast component after trigger', async () => {
     <>
       <ToastComponent />
       <Toaster />
-    </>
+    </>,
   )
 
   const button = getByTestId('open-toast')
