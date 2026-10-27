@@ -52,13 +52,6 @@ jobs:
   e2e:
     runs-on: ubuntu-latest
 
-    # Each shard is its own job with its own database and mail inbox, so the
-    # specs that cannot run in parallel in one database still run safely.
-    strategy:
-      fail-fast: false
-      matrix:
-        shard: [1, 2, 3]
-
     services:
       postgres:
         image: postgres:16
@@ -170,13 +163,13 @@ jobs:
           exit 1
 
       - name: Run E2E tests
-        run: pnpm --filter @repo/e2e test:e2e --shard=${{ matrix.shard }}/${{ strategy.job-total }}
+        run: pnpm --filter @repo/e2e test:e2e
 
       - name: Upload Playwright report
         if: failure()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: playwright-report-${{ matrix.shard }}
+          name: playwright-report
           path: |
             packages/e2e/playwright-report
             api.log
