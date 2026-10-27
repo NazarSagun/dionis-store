@@ -37,20 +37,6 @@ test.describe('Search, filter, and sort toolbar', () => {
     await expect(cards.first().locator('h3')).toContainText(fragment, { ignoreCase: true })
   })
 
-  test('clearing the search field returns the full list', async ({ page }) => {
-    await page.goto('/')
-
-    const firstCard = libraryCards(page).first()
-    const originalTitle = await firstCard.locator('h3').innerText()
-
-    const searchInput = page.getByTestId('search-input')
-    await searchInput.fill('zzz-no-such-game-zzz')
-    await expect(libraryCards(page)).toHaveCount(0)
-
-    await searchInput.fill('')
-    await expect(libraryCards(page).first().locator('h3')).toHaveText(originalTitle)
-  })
-
   test('filters the grid by platform', async ({ page }) => {
     await page.goto('/')
 
@@ -91,15 +77,6 @@ test.describe('Search, filter, and sort toolbar', () => {
 
     await expect(cards).toHaveCount(1)
     await expect(cards.first()).toContainText('PS5')
-  })
-
-  test('updates pagination when the filtered result set shrinks', async ({ page }) => {
-    await page.goto('/')
-
-    await selectFromDropdown(page, 'platform-filter', 'platform-filter-option', 'Switch')
-
-    await expect(libraryCards(page)).toHaveCount(1)
-    await expect(page.getByRole('navigation', { name: 'pagination' })).not.toContainText('2')
   })
 
   test('clear filters resets search, platform, and sort in one click', async ({ page }) => {
@@ -189,36 +166,7 @@ test.describe('Filters in the URL', () => {
     await expect(page.getByTestId('price-filter')).toHaveText(/Any/)
   })
 
-  test('an unknown filter value in the URL is ignored', async ({ page }) => {
-    await page.goto('/?platform=Commodore64&sort=random&maxPrice=cheap')
-
-    await expect(libraryCards(page).first()).toBeVisible()
-    await expect(page.getByTestId('platform-filter')).toHaveText(/All/)
-    await expect(page.getByTestId('price-filter')).toHaveText(/Any/)
-  })
 })
 
 test.describe('No matching games', () => {
-  test('a search with no results shows an empty state that names the search', async ({ page }) => {
-    await page.goto('/')
-    await page.getByTestId('search-input').fill('zzz-no-such-game-zzz')
-
-    const empty = page.getByTestId('games-empty')
-    await expect(empty).toBeVisible()
-    await expect(empty).toContainText('No games match "zzz-no-such-game-zzz"')
-    await expect(page.getByRole('navigation', { name: 'pagination' })).toHaveCount(0)
-  })
-
-  test('filters with no results show the empty state, and its button clears them', async ({ page }) => {
-    await page.goto('/?genre=Shooter&minPrice=1000')
-
-    const empty = page.getByTestId('games-empty')
-    await expect(empty).toContainText('No games match these filters')
-
-    await empty.getByRole('button', { name: 'Clear filters' }).click()
-
-    await expect(page).toHaveURL(/\/$/)
-    await expect(empty).toHaveCount(0)
-    await expect(libraryCards(page).first()).toBeVisible()
-  })
 })

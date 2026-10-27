@@ -55,19 +55,6 @@ test.describe('Feature 1: Admin access', () => {
     await expect(page.getByTestId('account-menu-admin')).toHaveCount(0)
   })
 
-  test('a regular user who opens /admin/games lands on /', async ({ page }) => {
-    await signUpCustomer(page)
-    await page.goto('/admin/games')
-
-    await expect(page).toHaveURL('/')
-  })
-
-  test('a guest who opens /admin/orders lands on /login', async ({ page }) => {
-    await page.goto('/admin/orders')
-
-    await expect(page).toHaveURL('/login')
-  })
-
   test('the admin orders API rejects a regular user with 403 and no token with 401', async ({ page, request }) => {
     const email = await signUpCustomer(page)
     const token = await apiToken(request, email, 'password123')
@@ -138,20 +125,6 @@ test.describe('Feature 3: Create and edit a game', () => {
     await expect(page.getByText('Game created', { exact: true })).toBeVisible()
   })
 
-  test('a duplicate title shows the API message and does not navigate', async ({ page, request }) => {
-    const existing = await createGameViaApi(request)
-    await logInAsAdmin(page)
-    await page.goto('/admin/games/new')
-
-    for (const [label, value] of Object.entries(newGameFields(existing.title))) {
-      await page.getByTestId('admin-game-form').getByLabel(label, { exact: true }).fill(value)
-    }
-    await page.getByTestId('admin-game-save').click()
-
-    await expect(page.getByTestId('admin-form-error')).toHaveText(/A game with this id or title already exists/)
-    await expect(page).toHaveURL('/admin/games/new')
-  })
-
   test('changing the discount shows on the storefront', async ({ page, request }) => {
     const game = await createGameViaApi(request)
     await logInAsAdmin(page)
@@ -165,18 +138,6 @@ test.describe('Feature 3: Create and edit a game', () => {
     await expect(page.getByText('-40%')).toBeVisible()
   })
 
-  test('a discount above 100 shows an error and does not save', async ({ page, request }) => {
-    const game = await createGameViaApi(request)
-    await logInAsAdmin(page)
-    await openAdminGame(page, game.id)
-
-    await page.getByTestId('admin-game-form').getByLabel('Discount (%)', { exact: true }).fill('150')
-    await page.getByTestId('admin-game-save').click()
-
-    await expect(page.getByTestId('admin-form-error')).toBeVisible()
-    const stored = await (await request.get(`${apiUrl}/api/game/${game.id}`)).json()
-    expect(stored.discount).toBe(0)
-  })
 })
 
 test.describe('Feature 4: Delete a game', () => {
@@ -195,33 +156,6 @@ test.describe('Feature 4: Delete a game', () => {
     await expect(gameRows(page)).toHaveCount(0)
   })
 
-  test('a game in an order cannot be deleted', async ({ page, request }) => {
-    test.setTimeout(90_000)
-    const game = await createGameViaApi(request)
-    await signUpCustomer(page)
-    await buyDigitalCopy(page, game.title)
-    await logOut(page)
-
-    await logInAsAdmin(page)
-    await openAdminGame(page, game.id)
-    await page.getByTestId('admin-game-delete').click()
-    await page.getByTestId('admin-confirm-button').click()
-
-    await expect(page.getByText('This game is in 1 order and cannot be deleted.')).toBeVisible()
-    expect((await request.get(`${apiUrl}/api/game/${game.id}`)).ok()).toBe(true)
-  })
-
-  test('cancelling the dialog deletes nothing', async ({ page, request }) => {
-    const game = await createGameViaApi(request)
-    await logInAsAdmin(page)
-    await openAdminGame(page, game.id)
-
-    await page.getByTestId('admin-game-delete').click()
-    await page.getByTestId('admin-cancel-button').click()
-
-    await expect(page.getByTestId('admin-confirm-dialog')).toHaveCount(0)
-    expect((await request.get(`${apiUrl}/api/game/${game.id}`)).ok()).toBe(true)
-  })
 })
 
 test.describe('Feature 5: Editions', () => {

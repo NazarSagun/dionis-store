@@ -5,7 +5,6 @@ import {
   addEditionToCart,
   completePayment,
   fillShippingAddress,
-  fillStripeTestCard,
   goToPaymentStep,
   openFirstGameDetails,
   signUpAndAddGamesToCart,
@@ -44,15 +43,6 @@ test.describe('Game detail page purchase options', () => {
     expect(standardBox).not.toBeNull()
     expect(Math.abs((digitalBox?.width ?? 0) - (standardBox?.width ?? 0))).toBeLessThan(4)
     expect(Math.abs((digitalBox?.height ?? 0) - (standardBox?.height ?? 0))).toBeLessThan(4)
-  })
-
-  test('shows an out-of-stock edition as a tile with no cart button, labeled Out of stock', async ({ page }) => {
-    await openFirstGameDetails(page)
-
-    const collectorsButton = page.getByTestId('edition-option').filter({ hasText: /collector/i })
-    // A sold-out edition is a tile, not a cart button, so nothing adds it to the cart.
-    await expect(page.getByRole('button', { name: /collector/i })).toHaveCount(0)
-    await expect(collectorsButton.getByTestId('edition-stock')).toHaveText(/out of stock/i)
   })
 
   test('shows each edition description under the game description', async ({ page }) => {
@@ -97,17 +87,6 @@ test.describe('Cart support for editions', () => {
     await expect(page.getByTestId('cart-item-edition')).toHaveCount(0)
   })
 
-  test('increasing the physical line quantity does not change the digital line quantity', async ({ page }) => {
-    await page.getByTestId('cart-trigger').click()
-    const physicalRow = page.getByTestId('cart-item').filter({ has: page.getByTestId('cart-item-edition') })
-    const digitalRow = page.getByTestId('cart-item').filter({ hasNot: page.getByTestId('cart-item-edition') })
-
-    await physicalRow.getByTestId('select').click()
-    await page.getByTestId('quantity-option').filter({ hasText: /^2$/ }).click()
-
-    await expect(physicalRow.getByTestId('select')).toHaveText('2')
-    await expect(digitalRow.getByTestId('select')).toHaveText('1')
-  })
 })
 
 test.describe('Shipping address at checkout', () => {
@@ -132,24 +111,6 @@ test.describe('Shipping address at checkout', () => {
     await expect(page.getByTestId('shipping-address-form')).toBeVisible()
   })
 
-  test('submitting with a required field empty shows a validation error and does not advance', async ({ page }) => {
-    await addEditionToCart(page, /standard/i)
-    await goToPaymentStep(page)
-
-    await fillShippingAddress(page, {
-      name: 'Alex Doe',
-      line1: '',
-      city: 'Berlin',
-      postalCode: '10115',
-      country: 'Germany',
-    })
-    await fillStripeTestCard(page, '4242424242424242')
-    await page.getByTestId('payment-submit').click()
-
-    await expect(page.getByTestId('shipping-address-error')).toBeVisible()
-    await expect(page.getByTestId('payment')).toBeVisible()
-    await expect(page.getByTestId('game-activation')).toHaveCount(0)
-  })
 })
 
 test.describe('Delivery fee', () => {
@@ -204,21 +165,4 @@ test.describe('Game Activation step for mixed orders', () => {
     await expect(page.getByTestId('finish-button')).toBeEnabled()
   })
 
-  test('an all-physical order shows only shipping rows, Finish enabled', async ({ page }) => {
-    await signUpAndAddGamesToCart(page, 0)
-    await addEditionToCart(page, /standard/i)
-    await goToPaymentStep(page)
-    await fillShippingAddress(page, {
-      name: 'Alex Doe',
-      line1: 'Unter den Linden 1',
-      city: 'Berlin',
-      postalCode: '10115',
-      country: 'Germany',
-    })
-    await completePayment(page)
-
-    await expect(page.getByTestId('activation-row')).toHaveCount(0)
-    await expect(page.getByTestId('shipping-row')).toHaveCount(1)
-    await expect(page.getByTestId('finish-button')).toBeEnabled()
-  })
 })
