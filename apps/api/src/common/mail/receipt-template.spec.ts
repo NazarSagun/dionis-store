@@ -89,3 +89,34 @@ describe('escapeHtml and formatEuros', () => {
     expect(formatEuros(1999)).toBe('€19.99')
   })
 })
+
+describe('renderReceipt promo code line', () => {
+  const withCode = { ...baseOrder, items: [digitalItem], promoCode: 'SAVE10', promoDiscountCents: 300 }
+
+  it('shows the code and the discount in the HTML and the text', () => {
+    const { html, text } = renderReceipt(withCode, 'https://dionis.test/account')
+
+    expect(html).toContain('Promo code SAVE10')
+    expect(html).toContain('€3.00')
+    expect(text).toContain('Promo code SAVE10: -€3.00')
+  })
+
+  it('escapes the code in the HTML', () => {
+    const { html } = renderReceipt({ ...withCode, promoCode: '<b>X</b>' }, 'https://dionis.test/account')
+
+    expect(html).not.toContain('<b>X</b>')
+    expect(html).toContain('&lt;b&gt;X&lt;/b&gt;')
+  })
+
+  it('has no promo line for an order without a code', () => {
+    for (const order of [
+      { ...baseOrder, items: [digitalItem] },
+      { ...withCode, promoCode: null },
+    ]) {
+      const { html, text } = renderReceipt(order, 'https://dionis.test/account')
+
+      expect(html).not.toContain('Promo code')
+      expect(text).not.toContain('Promo code')
+    }
+  })
+})

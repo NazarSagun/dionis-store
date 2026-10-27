@@ -8,6 +8,7 @@ import { MailService } from '../../common/mail/mail.service'
 import { PrismaService } from '../../common/prisma/prisma.service'
 import { CustomError } from '../../common/errors/custom-error'
 import { gameDetailKey } from '../games/cache-keys'
+import { PromoCodesService } from '../promo-codes/promo-codes.service'
 import { ShippingAddressDto } from './dto/shipping-address.dto'
 import { findOwnedItem } from './order-ownership.util'
 import { SHIPPING_FEE_CENTS } from './shipping-fee'
@@ -84,6 +85,7 @@ export class OrdersService {
     private readonly prisma: PrismaService,
     private readonly stripe: StripeService,
     private readonly mail: MailService,
+    private readonly promoCodes: PromoCodesService,
     @Inject(CACHE_MANAGER) private readonly cache: Cache,
   ) {}
 
@@ -161,6 +163,57 @@ export class OrdersService {
     )
   }
 
+  // The code travels in the PaymentIntent metadata, like the address, so /confirm and the
+  // webhook both build the order from the same value. The amount Stripe charges changes
+  // here, so the browser must refresh its Payment Element after this call.
+  async applyPromoCode(email: string, paymentIntentId: string, code: string) {
+    const { paymentIntent, user, items } = await this.loadOpenPaymentIntent(email, paymentIntentId)
+    const promo = await this.promoCodes.findApplicable(user.id, code)
+    const { totalPrice, promoDiscountCents } = await this.priceOrderItems(items, promo)
+
+    await this.stripe.updatePaymentIntentAmount(paymentIntent.id, totalPrice, { promoCode: promo.code })
+    return { amount: totalPrice, discountCents: promoDiscountCents, code: promo.code }
+  }
+
+  async removePromoCode(email: string, paymentIntentId: string) {
+    const { paymentIntent, items } = await this.loadOpenPaymentIntent(email, paymentIntentId)
+    const { totalPrice } = await this.priceOrderItems(items)
+
+    // Stripe removes a metadata key that is set to an empty string.
+    await this.stripe.updatePaymentIntentAmount(paymentIntent.id, totalPrice, { promoCode: '' })
+    return { amount: totalPrice }
+  }
+
+  private async loadOpenPaymentIntent(email: string, paymentIntentId: string) {
+    let paymentIntent: Stripe.PaymentIntent
+    try {
+      paymentIntent = await this.stripe.retrievePaymentIntent(paymentIntentId)
+    } catch {
+      throw new CustomError('Payment not found', 404)
+    }
+    if (paymentIntent.metadata.userEmail !== email) {
+      throw new CustomError('Payment not found', 404)
+    }
+    if (paymentIntent.status === 'succeeded') {
+      throw new CustomError('Payment is already completed', 409)
+    }
+
+    let items: unknown
+    try {
+      items = JSON.parse(paymentIntent.metadata.items ?? '[]')
+    } catch {
+      items = null
+    }
+    assertValidItems(items)
+
+    const user = await this.prisma.user.findUnique({ where: { email } })
+    if (!user) {
+      throw new CustomError('User does not exist', 400)
+    }
+
+    return { paymentIntent, user, items }
+  }
+
   private findOrderByPaymentIntent(paymentIntentId: string) {
     return this.prisma.order.findUnique({
       where: { stripePaymentIntentId: paymentIntentId },
@@ -191,7 +244,13 @@ export class OrdersService {
     // Re-priced only for the per-item prices. The order total is what Stripe
     // actually charged: a discount can change between the Payment step
     // opening (when the amount was fixed) and this call.
-    const { pricedItems } = await this.priceOrderItems(items)
+    const { pricedItems, totalPrice: fullPrice } = await this.priceOrderItems(items)
+
+    // The code is read from the metadata, not looked up again: an admin can delete it after
+    // the user applied it, and the order must still keep it. The discount is what the user
+    // was charged less than the full price.
+    const promoCode = paymentIntent.metadata.promoCode || null
+    const promoDiscountCents = promoCode ? Math.max(0, fullPrice - paymentIntent.amount) : null
 
     const orderItemsData = pricedItems.map((item) => ({
       gameId: item.gameId,
@@ -221,17 +280,32 @@ export class OrdersService {
           }
         }
 
-        return tx.order.create({
+        const created = await tx.order.create({
           data: {
             userId: user.id,
             totalPrice: paymentIntent.amount,
             stripePaymentIntentId: paymentIntent.id,
+            promoCode,
+            promoDiscountCents,
             ...(hasPhysicalItem && shippingAddress ? shippingAddress : {}),
             ...(hasPhysicalItem ? {} : { status: OrderStatus.DELIVERED }),
             items: { create: orderItemsData },
           },
           include: ORDER_ITEMS_INCLUDE,
         })
+
+        // A use is counted even when the limit was reached meanwhile: the user already paid
+        // the discounted amount. skipDuplicates keeps a second order of the same user with
+        // the same code from aborting this transaction.
+        if (promoCode) {
+          await tx.promoCode.updateMany({ where: { code: promoCode }, data: { uses: { increment: 1 } } })
+          await tx.promoRedemption.createMany({
+            data: [{ userId: user.id, code: promoCode, orderId: created.id }],
+            skipDuplicates: true,
+          })
+        }
+
+        return created
       })
     } catch (error) {
       // /confirm and the webhook raced, and the other one committed first.
@@ -392,7 +466,7 @@ export class OrdersService {
     }
   }
 
-  private async priceOrderItems(items: OrderItemInput[]) {
+  private async priceOrderItems(items: OrderItemInput[], promo?: { percentOff: number }) {
     const editionIds = items.filter((item) => item.editionId != null).map((item) => item.editionId as number)
 
     // `in: []` is a valid Prisma query that simply returns no rows, so this
@@ -425,6 +499,15 @@ export class OrdersService {
     const shippingFee = hasPhysicalItem ? SHIPPING_FEE_CENTS : 0
     const itemsTotal = pricedItems.reduce((total, item) => total + item.unitPriceCents * item.quantity, 0)
 
-    return { pricedItems, hasPhysicalItem, shippingFee, totalPrice: itemsTotal + shippingFee }
+    // The code takes a percent off the items only, never off the shipping fee.
+    const promoDiscountCents = promo ? Math.round((itemsTotal * promo.percentOff) / 100) : 0
+
+    return {
+      pricedItems,
+      hasPhysicalItem,
+      shippingFee,
+      promoDiscountCents,
+      totalPrice: itemsTotal - promoDiscountCents + shippingFee,
+    }
   }
 }

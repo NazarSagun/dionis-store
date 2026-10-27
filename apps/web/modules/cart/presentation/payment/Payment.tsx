@@ -6,6 +6,7 @@ import { Input, Label, Skeleton } from '@repo/ui'
 import { useCartItems } from '../../core/facade'
 import { calculateCartSummary } from '../../domain/pricing'
 import { useCreatePaymentIntent } from '../../integration/repository'
+import { AppliedPromo, PromoCodeField } from '../promo-code-field/PromoCodeField'
 
 import { PaymentForm, ShippingAddress } from './PaymentForm'
 import { Appearance, Elements, loadStripe } from './stripe-elements'
@@ -67,6 +68,7 @@ export const Payment = () => {
   const [paymentIntentId, setPaymentIntentId] = useState<string>()
   const [error, setError] = useState<string>()
   const [shippingAddress, setShippingAddress] = useState<ShippingAddress>(EMPTY_ADDRESS)
+  const [promo, setPromo] = useState<AppliedPromo | null>(null)
   const hasRequestedIntent = useRef(false)
 
   const hasPhysicalItem = items.some((item) => item.editionId !== null)
@@ -102,7 +104,8 @@ export const Payment = () => {
 
   const { initialPrice, totalDiscount, finalPrice } = calculateCartSummary(items)
   const shippingFee = hasPhysicalItem ? SHIPPING_FEE_EUR : 0
-  const total = finalPrice + shippingFee
+  // With a code, the amount comes from the API, so the page shows exactly what Stripe charges.
+  const total = promo ? promo.amountCents / 100 : finalPrice + shippingFee
 
   const setAddressField = (field: keyof ShippingAddress) => (value: string) =>
     setShippingAddress((address) => ({ ...address, [field]: value }))
@@ -132,7 +135,21 @@ export const Payment = () => {
                 <div>{shippingFee.toFixed(2)}€</div>
               </div>
             )}
+            {promo && (
+              <div data-testid='summary-promo-line' className='flex justify-between'>
+                <div>Promo code {promo.code}</div>
+                <div>-{(promo.discountCents / 100).toFixed(2)}€</div>
+              </div>
+            )}
           </div>
+          {paymentIntentId && (
+            <PromoCodeField
+              paymentIntentId={paymentIntentId}
+              applied={promo}
+              onApplied={setPromo}
+              onRemoved={() => setPromo(null)}
+            />
+          )}
           <div className='mb-4 mt-[0.8rem] flex justify-between border-t border-ink pt-4'>
             <div className='text-xl font-bold'>Subtotal</div>
             <div className='font-display text-lg text-neon-amber'>{total.toFixed(2)}€</div>
@@ -201,6 +218,7 @@ export const Payment = () => {
           <Elements stripe={stripePromise} options={{ clientSecret, appearance: stripeAppearance, fonts: stripeFonts }}>
             <PaymentForm
               finalPrice={total}
+              chargedAmountCents={Math.round(total * 100)}
               paymentIntentId={paymentIntentId as string}
               hasPhysicalItem={hasPhysicalItem}
               shippingAddress={shippingAddress}

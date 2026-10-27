@@ -1,11 +1,14 @@
-import { Body, Controller, Get, HttpCode, Param, Patch, Post, Query, Req, UseGuards } from '@nestjs/common'
+import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post, Put, Query, Req, UseGuards } from '@nestjs/common'
+import { Throttle } from '@nestjs/throttler'
 import { AuthenticatedRequest, JwtAuthGuard } from '../../common/guards/jwt-auth.guard'
 import { CustomError } from '../../common/errors/custom-error'
+import { AUTH_THROTTLE } from '../../common/throttle/auth-throttle'
 import { toHttpException } from '../../common/errors/to-http-exception'
 import { OrdersService } from './orders.service'
 import { CreatePaymentIntentDto } from './dto/create-payment-intent.dto'
 import { ConfirmOrderDto } from './dto/confirm-order.dto'
 import { ShippingAddressDto } from './dto/shipping-address.dto'
+import { ApplyPromoCodeDto } from './dto/apply-promo-code.dto'
 import { DEFAULT_ORDERS_PAGE_SIZE, OrdersPageQueryDto } from './dto/orders-page-query.dto'
 
 @Controller('orders')
@@ -40,6 +43,30 @@ export class OrdersController {
   ) {
     try {
       await this.ordersService.setShippingAddress(req.user.email, paymentIntentId, dto)
+    } catch (error) {
+      throw toHttpException(error)
+    }
+  }
+
+  // Counts per IP like the login routes, so a script cannot guess codes.
+  @Put('payment-intent/:paymentIntentId/promo')
+  @Throttle(AUTH_THROTTLE)
+  async applyPromoCode(
+    @Req() req: AuthenticatedRequest,
+    @Param('paymentIntentId') paymentIntentId: string,
+    @Body() dto: ApplyPromoCodeDto,
+  ) {
+    try {
+      return await this.ordersService.applyPromoCode(req.user.email, paymentIntentId, dto.code)
+    } catch (error) {
+      throw toHttpException(error)
+    }
+  }
+
+  @Delete('payment-intent/:paymentIntentId/promo')
+  async removePromoCode(@Req() req: AuthenticatedRequest, @Param('paymentIntentId') paymentIntentId: string) {
+    try {
+      return await this.ordersService.removePromoCode(req.user.email, paymentIntentId)
     } catch (error) {
       throw toHttpException(error)
     }

@@ -20,6 +20,7 @@ import type {
   ChangePasswordInput,
   ConfirmOrderBody,
   CreatePaymentIntentBody,
+  CreatePromoCodeInput,
   EditionInput,
   EditionUpdateInput,
   GameEditionObject,
@@ -39,6 +40,10 @@ import type {
   OwnReview,
   OwnedItem,
   PaymentIntentResponse,
+  PromoApplied,
+  PromoCodeInput,
+  PromoCodeObject,
+  PromoRemoved,
   RepliesPage,
   Reply,
   ReplyInput,
@@ -59,16 +64,20 @@ import {
   getAcknowledgeWishlistDiscountResponseMock,
   getActivateOrderItemResponseMock,
   getAddWishlistItemResponseMock,
+  getApplyPromoCodeResponseMock,
   getChangePasswordResponseMock,
   getConfirmOrderResponseMock,
+  getCreateAdminPromoCodeResponseMock,
   getCreateEditionResponseMock,
   getCreateGameResponseMock,
   getCreatePaymentIntentResponseMock,
   getGetAdminOrdersResponseMock,
+  getGetAdminPromoCodesResponseMock,
   getGetGameResponseMock,
   getGetGameReviewsResponseMock,
   getGetGameStockAlertsResponseMock,
   getGetGamesGenresResponseMock,
+  getGetGamesRecommendationsResponseMock,
   getGetGamesResponseMock,
   getGetGamesTopDealsResponseMock,
   getGetMyGameReviewResponseMock,
@@ -88,13 +97,14 @@ import {
   getPutGameReviewResponseMock,
   getRefreshResponseMock,
   getRegisterResponseMock,
+  getRemovePromoCodeResponseMock,
   getRemoveWishlistItemResponseMock,
   getUpdateEditionResponseMock,
   getUpdateGameResponseMock,
   getUpdateNameResponseMock
 } from './default.faker';
 
-export { getGetUsersResponseMock, getUpdateNameResponseMock, getChangePasswordResponseMock, getCreateGameResponseMock, getUpdateGameResponseMock, getCreateEditionResponseMock, getUpdateEditionResponseMock, getGetAdminOrdersResponseMock, getPatchAdminOrderResponseMock, getGetGamesTopDealsResponseMock, getGetGamesGenresResponseMock, getGetGamesResponseMock, getGetGameResponseMock, getGetGameReviewsResponseMock, getGetMyGameReviewResponseMock, getPutGameReviewResponseMock, getGetReviewResponseMock, getGetReviewRepliesResponseMock, getPostReviewReplyResponseMock, getGetGameStockAlertsResponseMock, getGetNotificationsResponseMock, getRegisterResponseMock, getLoginResponseMock, getLogoutResponseMock, getGetOrdersResponseMock, getGetOwnedItemsResponseMock, getCreatePaymentIntentResponseMock, getConfirmOrderResponseMock, getGetOrderResponseMock, getActivateOrderItemResponseMock, getGetWishlistResponseMock, getMergeWishlistResponseMock, getAddWishlistItemResponseMock, getRemoveWishlistItemResponseMock, getAcknowledgeWishlistDiscountResponseMock, getRefreshResponseMock } from './default.faker';
+export { getGetUsersResponseMock, getUpdateNameResponseMock, getChangePasswordResponseMock, getCreateGameResponseMock, getUpdateGameResponseMock, getCreateEditionResponseMock, getUpdateEditionResponseMock, getGetAdminOrdersResponseMock, getPatchAdminOrderResponseMock, getGetAdminPromoCodesResponseMock, getCreateAdminPromoCodeResponseMock, getGetGamesRecommendationsResponseMock, getGetGamesTopDealsResponseMock, getGetGamesGenresResponseMock, getGetGamesResponseMock, getGetGameResponseMock, getGetGameReviewsResponseMock, getGetMyGameReviewResponseMock, getPutGameReviewResponseMock, getGetReviewResponseMock, getGetReviewRepliesResponseMock, getPostReviewReplyResponseMock, getGetGameStockAlertsResponseMock, getGetNotificationsResponseMock, getRegisterResponseMock, getLoginResponseMock, getLogoutResponseMock, getGetOrdersResponseMock, getGetOwnedItemsResponseMock, getCreatePaymentIntentResponseMock, getConfirmOrderResponseMock, getApplyPromoCodeResponseMock, getRemovePromoCodeResponseMock, getGetOrderResponseMock, getActivateOrderItemResponseMock, getGetWishlistResponseMock, getMergeWishlistResponseMock, getAddWishlistItemResponseMock, getRemoveWishlistItemResponseMock, getAcknowledgeWishlistDiscountResponseMock, getRefreshResponseMock } from './default.faker';
 
 
 export const getGetUsersMockHandler = (overrideResponse?: UsersArray | ((info: Parameters<HttpResponseResolver>[0]) => Promise<UsersArray> | UsersArray), options?: RequestHandlerOptions) => {
@@ -220,6 +230,52 @@ export const getPatchAdminOrderMockHandler = (overrideResponse?: AdminOrderObjec
     return HttpResponse.json(overrideResponse !== undefined
     ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
     : getPatchAdminOrderResponseMock(),
+      { status: 200
+      })
+  }, options)
+}
+
+export const getGetAdminPromoCodesMockHandler = (overrideResponse?: PromoCodeObject[] | ((info: Parameters<HttpResponseResolver>[0]) => Promise<PromoCodeObject[]> | PromoCodeObject[]), options?: RequestHandlerOptions) => {
+  return http.get('*/admin/promo-codes', async (info: Parameters<HttpResponseResolver>[0]) => {
+
+
+    return HttpResponse.json(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getGetAdminPromoCodesResponseMock(),
+      { status: 200
+      })
+  }, options)
+}
+
+export const getCreateAdminPromoCodeMockHandler = (overrideResponse?: PromoCodeObject | ((info: Parameters<HttpResponseResolver<PathParams, CreatePromoCodeInput>>[0]) => Promise<PromoCodeObject> | PromoCodeObject), options?: RequestHandlerOptions) => {
+  return http.post<PathParams, CreatePromoCodeInput>('*/admin/promo-codes', async (info: Parameters<HttpResponseResolver<PathParams, CreatePromoCodeInput>>[0]) => {
+
+
+    return HttpResponse.json(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getCreateAdminPromoCodeResponseMock(),
+      { status: 201
+      })
+  }, options)
+}
+
+export const getDeleteAdminPromoCodeMockHandler = (overrideResponse?: void | ((info: Parameters<HttpResponseResolver<{ id: string }>>[0]) => Promise<void> | void), options?: RequestHandlerOptions) => {
+  return http.delete<{ id: string }>('*/admin/promo-codes/:id', async (info: Parameters<HttpResponseResolver<{ id: string }>>[0]) => {
+  if (typeof overrideResponse === 'function') {await overrideResponse(info); }
+
+    return new HttpResponse(null,
+      { status: 204
+      })
+  }, options)
+}
+
+export const getGetGamesRecommendationsMockHandler = (overrideResponse?: GameObject[] | ((info: Parameters<HttpResponseResolver>[0]) => Promise<GameObject[]> | GameObject[]), options?: RequestHandlerOptions) => {
+  return http.get('*/games/recommendations', async (info: Parameters<HttpResponseResolver>[0]) => {
+
+
+    return HttpResponse.json(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getGetGamesRecommendationsResponseMock(),
       { status: 200
       })
   }, options)
@@ -503,6 +559,30 @@ export const getSetShippingAddressMockHandler = (overrideResponse?: void | ((inf
   }, options)
 }
 
+export const getApplyPromoCodeMockHandler = (overrideResponse?: PromoApplied | ((info: Parameters<HttpResponseResolver<{ paymentIntentId: string }, PromoCodeInput>>[0]) => Promise<PromoApplied> | PromoApplied), options?: RequestHandlerOptions) => {
+  return http.put<{ paymentIntentId: string }, PromoCodeInput>('*/orders/payment-intent/:paymentIntentId/promo', async (info: Parameters<HttpResponseResolver<{ paymentIntentId: string }, PromoCodeInput>>[0]) => {
+
+
+    return HttpResponse.json(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getApplyPromoCodeResponseMock(),
+      { status: 200
+      })
+  }, options)
+}
+
+export const getRemovePromoCodeMockHandler = (overrideResponse?: PromoRemoved | ((info: Parameters<HttpResponseResolver<{ paymentIntentId: string }>>[0]) => Promise<PromoRemoved> | PromoRemoved), options?: RequestHandlerOptions) => {
+  return http.delete<{ paymentIntentId: string }>('*/orders/payment-intent/:paymentIntentId/promo', async (info: Parameters<HttpResponseResolver<{ paymentIntentId: string }>>[0]) => {
+
+
+    return HttpResponse.json(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getRemovePromoCodeResponseMock(),
+      { status: 200
+      })
+  }, options)
+}
+
 export const getGetOrderMockHandler = (overrideResponse?: OrderObject | ((info: Parameters<HttpResponseResolver<{ orderId: string }>>[0]) => Promise<OrderObject> | OrderObject), options?: RequestHandlerOptions) => {
   return http.get<{ orderId: string }>('*/orders/:orderId', async (info: Parameters<HttpResponseResolver<{ orderId: string }>>[0]) => {
 
@@ -610,6 +690,10 @@ export const getDefaultMock = () => [
   getDeleteEditionMockHandler(),
   getGetAdminOrdersMockHandler(),
   getPatchAdminOrderMockHandler(),
+  getGetAdminPromoCodesMockHandler(),
+  getCreateAdminPromoCodeMockHandler(),
+  getDeleteAdminPromoCodeMockHandler(),
+  getGetGamesRecommendationsMockHandler(),
   getGetGamesTopDealsMockHandler(),
   getGetGamesGenresMockHandler(),
   getGetGamesMockHandler(),
@@ -634,6 +718,8 @@ export const getDefaultMock = () => [
   getCreatePaymentIntentMockHandler(),
   getConfirmOrderMockHandler(),
   getSetShippingAddressMockHandler(),
+  getApplyPromoCodeMockHandler(),
+  getRemovePromoCodeMockHandler(),
   getGetOrderMockHandler(),
   getActivateOrderItemMockHandler(),
   getGetWishlistMockHandler(),

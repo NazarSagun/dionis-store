@@ -3,6 +3,7 @@ import { Test } from '@nestjs/testing'
 import { Prisma } from '@prisma/client'
 import { MailService } from '../../common/mail/mail.service'
 import { PrismaService } from '../../common/prisma/prisma.service'
+import { PromoCodesService } from '../promo-codes/promo-codes.service'
 import { OrdersService } from './orders.service'
 import { StripeService } from './stripe.service'
 
@@ -22,6 +23,8 @@ describe('OrdersService', () => {
       update: jest.Mock
     }
     orderItem: { update: jest.Mock; findFirst: jest.Mock; findMany: jest.Mock }
+    promoCode: { updateMany: jest.Mock }
+    promoRedemption: { createMany: jest.Mock }
     $transaction: jest.Mock
   }
   let mail: { sendOrderReceipt: jest.Mock }
@@ -29,7 +32,9 @@ describe('OrdersService', () => {
     createPaymentIntent: jest.Mock
     retrievePaymentIntent: jest.Mock
     updatePaymentIntentMetadata: jest.Mock
+    updatePaymentIntentAmount: jest.Mock
   }
+  let promoCodes: { findApplicable: jest.Mock }
 
   const user = { id: 1, email: 'player@dionis-store.test' }
 
@@ -48,6 +53,8 @@ describe('OrdersService', () => {
         update: jest.fn(),
       },
       orderItem: { update: jest.fn(), findFirst: jest.fn().mockResolvedValue(null), findMany: jest.fn() },
+      promoCode: { updateMany: jest.fn().mockResolvedValue({ count: 1 }) },
+      promoRedemption: { createMany: jest.fn().mockResolvedValue({ count: 1 }) },
       // A transparent pass-through: the callback runs against the same mock
       // `prisma`, so every other test can keep asserting on
       // `prisma.order.create` etc. without knowing a transaction wraps it.
@@ -57,7 +64,9 @@ describe('OrdersService', () => {
       createPaymentIntent: jest.fn(),
       retrievePaymentIntent: jest.fn(),
       updatePaymentIntentMetadata: jest.fn(),
+      updatePaymentIntentAmount: jest.fn(),
     }
+    promoCodes = { findApplicable: jest.fn() }
 
     mail = { sendOrderReceipt: jest.fn().mockResolvedValue(true) }
 
@@ -67,6 +76,7 @@ describe('OrdersService', () => {
         { provide: PrismaService, useValue: prisma },
         { provide: StripeService, useValue: stripe },
         { provide: MailService, useValue: mail },
+        { provide: PromoCodesService, useValue: promoCodes },
         { provide: CACHE_MANAGER, useValue: { del: jest.fn() } },
       ],
     }).compile()
@@ -513,6 +523,172 @@ describe('OrdersService', () => {
 
       await expect(service.updateOrderShipment(7, 'SHIPPED')).rejects.toMatchObject({ statusCode: 400 })
       expect(prisma.order.update).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('promo codes', () => {
+    const intent = (overrides: Parameters<typeof paymentIntent>[0] = {}) =>
+      paymentIntent({ status: 'requires_payment_method', amount: 5000, ...overrides })
+    const tenPercent = { id: 1, code: 'SAVE10', percentOff: 10 }
+
+    beforeEach(() => {
+      prisma.game_pc.findMany.mockResolvedValue([{ id: 1, price: 50, discount: 0 }])
+    })
+
+    describe('applyPromoCode', () => {
+      it('takes the percent off the items, updates the amount and metadata, and returns the amounts in cents', async () => {
+        stripe.retrievePaymentIntent.mockResolvedValue(intent())
+        promoCodes.findApplicable.mockResolvedValue(tenPercent)
+
+        const result = await service.applyPromoCode(user.email, 'pi_123', 'save10')
+
+        expect(promoCodes.findApplicable).toHaveBeenCalledWith(user.id, 'save10')
+        expect(stripe.updatePaymentIntentAmount).toHaveBeenCalledWith('pi_123', 4500, { promoCode: 'SAVE10' })
+        expect(result).toEqual({ amount: 4500, discountCents: 500, code: 'SAVE10' })
+      })
+
+      it('does not discount the shipping fee', async () => {
+        prisma.gameEdition.findMany.mockResolvedValue([{ id: 10, gameId: 1, price: 40, discount: 0 }])
+        stripe.retrievePaymentIntent.mockResolvedValue(
+          intent({ metadata: { items: JSON.stringify([{ gameId: 1, quantity: 1, editionId: 10 }]) } }),
+        )
+        promoCodes.findApplicable.mockResolvedValue({ ...tenPercent, percentOff: 25 })
+
+        const result = await service.applyPromoCode(user.email, 'pi_123', 'SAVE25')
+
+        // 40.00 edition less 25 percent (10.00) plus the 5.00 shipping fee
+        expect(result).toEqual({ amount: 3500, discountCents: 1000, code: 'SAVE10' })
+      })
+
+      it('rounds the discount to whole cents', async () => {
+        prisma.game_pc.findMany.mockResolvedValue([{ id: 1, price: 10.01, discount: 0 }])
+        stripe.retrievePaymentIntent.mockResolvedValue(intent())
+        promoCodes.findApplicable.mockResolvedValue({ ...tenPercent, percentOff: 15 })
+
+        const result = await service.applyPromoCode(user.email, 'pi_123', 'SAVE15')
+
+        // 1001 cents * 15 percent = 150.15, so 150
+        expect(result.discountCents).toBe(150)
+        expect(result.amount).toBe(851)
+      })
+
+      it('changes nothing when the code is refused', async () => {
+        stripe.retrievePaymentIntent.mockResolvedValue(intent())
+        promoCodes.findApplicable.mockRejectedValue(new Error('That code has expired.'))
+
+        await expect(service.applyPromoCode(user.email, 'pi_123', 'OLD')).rejects.toThrow('That code has expired.')
+        expect(stripe.updatePaymentIntentAmount).not.toHaveBeenCalled()
+      })
+
+      it('rejects a PaymentIntent of another user, an unknown one, and a paid one', async () => {
+        stripe.retrievePaymentIntent.mockResolvedValue(intent({ metadata: { userEmail: 'other@dionis-store.test' } }))
+        await expect(service.applyPromoCode(user.email, 'pi_123', 'SAVE10')).rejects.toThrow('Payment not found')
+
+        stripe.retrievePaymentIntent.mockRejectedValue(new Error('No such payment_intent'))
+        await expect(service.applyPromoCode(user.email, 'pi_nope', 'SAVE10')).rejects.toThrow('Payment not found')
+
+        stripe.retrievePaymentIntent.mockResolvedValue(paymentIntent())
+        await expect(service.applyPromoCode(user.email, 'pi_123', 'SAVE10')).rejects.toThrow(
+          'Payment is already completed',
+        )
+        expect(stripe.updatePaymentIntentAmount).not.toHaveBeenCalled()
+      })
+    })
+
+    describe('removePromoCode', () => {
+      it('restores the full amount and clears the code from the metadata', async () => {
+        stripe.retrievePaymentIntent.mockResolvedValue(intent({ amount: 4500, metadata: { promoCode: 'SAVE10' } }))
+
+        const result = await service.removePromoCode(user.email, 'pi_123')
+
+        expect(stripe.updatePaymentIntentAmount).toHaveBeenCalledWith('pi_123', 5000, { promoCode: '' })
+        expect(result).toEqual({ amount: 5000 })
+      })
+
+      it('rejects a PaymentIntent of another user', async () => {
+        stripe.retrievePaymentIntent.mockResolvedValue(intent({ metadata: { userEmail: 'other@dionis-store.test' } }))
+
+        await expect(service.removePromoCode(user.email, 'pi_123')).rejects.toThrow('Payment not found')
+        expect(stripe.updatePaymentIntentAmount).not.toHaveBeenCalled()
+      })
+    })
+
+    describe('an order paid with a code', () => {
+      beforeEach(() => {
+        prisma.order.findUnique.mockResolvedValue(null)
+        prisma.order.create.mockResolvedValue({ id: 7, items: [] })
+      })
+
+      it('stores the code and the discount, counts one use, and records the redemption in the same transaction', async () => {
+        stripe.retrievePaymentIntent.mockResolvedValue(
+          paymentIntent({ amount: 4500, metadata: { promoCode: 'SAVE10' } }),
+        )
+
+        await service.confirmOrder(user.email, 'pi_123')
+
+        expect(prisma.order.create).toHaveBeenCalledWith(
+          expect.objectContaining({
+            data: expect.objectContaining({ totalPrice: 4500, promoCode: 'SAVE10', promoDiscountCents: 500 }),
+          }),
+        )
+        expect(prisma.promoCode.updateMany).toHaveBeenCalledWith({
+          where: { code: 'SAVE10' },
+          data: { uses: { increment: 1 } },
+        })
+        expect(prisma.promoRedemption.createMany).toHaveBeenCalledWith({
+          data: [{ userId: user.id, code: 'SAVE10', orderId: 7 }],
+          skipDuplicates: true,
+        })
+        expect(prisma.$transaction).toHaveBeenCalledTimes(1)
+      })
+
+      it('the webhook path builds the same order, with one use', async () => {
+        await service.handlePaymentIntentSucceeded(
+          paymentIntent({ amount: 4500, metadata: { promoCode: 'SAVE10' } }) as never,
+        )
+
+        expect(prisma.order.create).toHaveBeenCalledWith(
+          expect.objectContaining({ data: expect.objectContaining({ promoCode: 'SAVE10', promoDiscountCents: 500 }) }),
+        )
+        expect(prisma.promoCode.updateMany).toHaveBeenCalledTimes(1)
+      })
+
+      it('still creates the order and counts the use when the code ran out or was deleted meanwhile', async () => {
+        // updateMany matches no row for a deleted code. The order must not fail.
+        prisma.promoCode.updateMany.mockResolvedValue({ count: 0 })
+        stripe.retrievePaymentIntent.mockResolvedValue(paymentIntent({ amount: 4500, metadata: { promoCode: 'GONE' } }))
+
+        const order = await service.confirmOrder(user.email, 'pi_123')
+
+        expect(order).toEqual({ id: 7, items: [] })
+        expect(prisma.order.create).toHaveBeenCalledWith(
+          expect.objectContaining({ data: expect.objectContaining({ promoCode: 'GONE', promoDiscountCents: 500 }) }),
+        )
+      })
+
+      it('skips a duplicate redemption of the same user instead of failing the order', async () => {
+        prisma.promoRedemption.createMany.mockResolvedValue({ count: 0 })
+        stripe.retrievePaymentIntent.mockResolvedValue(
+          paymentIntent({ amount: 4500, metadata: { promoCode: 'SAVE10' } }),
+        )
+
+        await expect(service.confirmOrder(user.email, 'pi_123')).resolves.toBeDefined()
+        expect(prisma.promoRedemption.createMany).toHaveBeenCalledWith(
+          expect.objectContaining({ skipDuplicates: true }),
+        )
+      })
+
+      it('an order without a code has no code, no discount, and no use counted', async () => {
+        stripe.retrievePaymentIntent.mockResolvedValue(paymentIntent())
+
+        await service.confirmOrder(user.email, 'pi_123')
+
+        expect(prisma.order.create).toHaveBeenCalledWith(
+          expect.objectContaining({ data: expect.objectContaining({ promoCode: null, promoDiscountCents: null }) }),
+        )
+        expect(prisma.promoCode.updateMany).not.toHaveBeenCalled()
+        expect(prisma.promoRedemption.createMany).not.toHaveBeenCalled()
+      })
     })
   })
 

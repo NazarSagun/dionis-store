@@ -9,6 +9,7 @@ import { WishlistSection } from '@/modules/wishlist/presentation/wishlist-sectio
 import { LibrarySection } from '../library-section/LibrarySection'
 import { OrderHistorySection } from '../order-history-section/OrderHistorySection'
 import { RecentlyViewedSection } from '../recently-viewed-section/RecentlyViewedSection'
+import { RecommendationsSection } from '../recommendations-section/RecommendationsSection'
 import { SettingsSection } from '../settings-section/SettingsSection'
 
 const tabStyles = 'whitespace-nowrap border-b-2 px-4 py-3 font-sans text-sm font-semibold'
@@ -74,6 +75,7 @@ export const AccountPage = () => {
 
       {/* Per the Account frames, Recently Viewed sits above the Library on My Games only. */}
       {activeTab === 'account-tab-library' && <RecentlyViewedSection />}
+      {activeTab === 'account-tab-library' && <RecommendationsSection />}
 
       <div className='w-full max-w-[900px]'>
         <ActiveContent />

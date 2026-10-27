@@ -1,7 +1,12 @@
 import { getGetOrdersQueryKey, getOrders } from '@repo/dionis-api/src/dionis/default/default'
 import { useInfiniteQuery } from '@tanstack/react-query'
 
-export { useChangePassword, useGetGame, useUpdateName } from '@repo/dionis-api/src/dionis/default/default'
+export {
+  useChangePassword,
+  useGetGame,
+  useGetOwnedItems,
+  useUpdateName,
+} from '@repo/dionis-api/src/dionis/default/default'
 export type { OrderObject } from '@repo/dionis-api/src/model'
 
 const ORDERS_PAGE_SIZE = 5

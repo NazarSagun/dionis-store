@@ -1,4 +1,4 @@
-import { FormEvent, useState } from 'react'
+import { FormEvent, useEffect, useRef, useState } from 'react'
 import { useToast } from '@repo/ui'
 
 import { useCartItems, useRemoveCartItem, useSetCartOrderId, useSetCartStep } from '../../core/facade'
@@ -28,12 +28,20 @@ const REQUIRED_ADDRESS_FIELDS = [
 
 interface PaymentFormProps {
   finalPrice: number
+  // What Stripe charges now. A change means the PaymentIntent amount changed, so the Payment Element must refresh.
+  chargedAmountCents: number
   paymentIntentId: string
   hasPhysicalItem: boolean
   shippingAddress: ShippingAddress
 }
 
-export const PaymentForm = ({ finalPrice, paymentIntentId, hasPhysicalItem, shippingAddress }: PaymentFormProps) => {
+export const PaymentForm = ({
+  finalPrice,
+  chargedAmountCents,
+  paymentIntentId,
+  hasPhysicalItem,
+  shippingAddress,
+}: PaymentFormProps) => {
   const stripe = useStripe()
   const elements = useElements()
   const items = useCartItems()
@@ -45,8 +53,18 @@ export const PaymentForm = ({ finalPrice, paymentIntentId, hasPhysicalItem, ship
   const { toast } = useToast()
 
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isRefreshing, setIsRefreshing] = useState(false)
+  const lastAmount = useRef(chargedAmountCents)
   const [error, setError] = useState<string>()
   const [addressError, setAddressError] = useState<string>()
+
+  // The submit button stays disabled until Stripe has the new amount, so no one pays an old one.
+  useEffect(() => {
+    if (!elements || lastAmount.current === chargedAmountCents) return
+    lastAmount.current = chargedAmountCents
+    setIsRefreshing(true)
+    void elements.fetchUpdates().finally(() => setIsRefreshing(false))
+  }, [chargedAmountCents, elements])
 
   const onSubmit = async (event: FormEvent) => {
     event.preventDefault()
@@ -118,7 +136,12 @@ export const PaymentForm = ({ finalPrice, paymentIntentId, hasPhysicalItem, ship
           {error}
         </p>
       )}
-      <button type='submit' disabled={!stripe || isSubmitting} data-testid='payment-submit' className={ctaButtonStyles}>
+      <button
+        type='submit'
+        disabled={!stripe || isSubmitting || isRefreshing}
+        data-testid='payment-submit'
+        className={ctaButtonStyles}
+      >
         {isSubmitting ? 'Processing...' : `Pay €${finalPrice.toFixed(2)}`}
       </button>
     </form>

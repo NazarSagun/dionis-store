@@ -109,6 +109,44 @@ export class GamesService {
     return { totalPages, games }
   }
 
+  // The genres of the seed games, most common first. A game from one of them ranks by that
+  // order, then by title. A seed and an excluded game never come back.
+  // ponytail: reads every game of those genres and sorts in memory. A store has hundreds of
+  // games, so a page of ranked ids in SQL can wait until the catalog is far bigger.
+  async fetchRecommendations({
+    seedGameIds,
+    excludeGameIds,
+    limit,
+  }: {
+    seedGameIds: number[]
+    excludeGameIds: number[]
+    limit: number
+  }) {
+    const seeds = await this.prisma.game_pc.findMany({
+      where: { id: { in: seedGameIds } },
+      select: { genre: true },
+    })
+    const genreCounts = new Map<string, number>()
+    for (const { genre } of seeds) genreCounts.set(genre, (genreCounts.get(genre) ?? 0) + 1)
+    if (genreCounts.size === 0) return []
+
+    const genreRank = new Map(
+      [...genreCounts.entries()]
+        .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+        .map(([genre], i) => [genre, i]),
+    )
+    const rows = await this.prisma.game_pc.findMany({
+      where: { genre: { in: [...genreRank.keys()] }, id: { notIn: [...seedGameIds, ...excludeGameIds] } },
+      orderBy: { title: 'asc' },
+      include: { _count: { select: { editions: true } } },
+    })
+
+    return rows
+      .sort((a, b) => (genreRank.get(a.genre) ?? 0) - (genreRank.get(b.genre) ?? 0))
+      .slice(0, limit)
+      .map(({ _count, ...game }) => ({ ...game, editionCount: _count.editions }))
+  }
+
   fetchGenres() {
     return this.remember(GENRES_KEY, () => this.loadGenres())
   }

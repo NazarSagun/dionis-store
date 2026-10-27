@@ -16,6 +16,7 @@ import { isGameOwned } from '../../domain/ownership'
 import { calculateDiscountedPrice } from '../../domain/pricing'
 import { useGetGame, useGetOwnedItems } from '../../integration/repository'
 import { EditionNotify } from '../edition-notify/EditionNotify'
+import { GameRecommendations } from '../recommendations/GameRecommendations'
 
 const buttonStyles =
   'flex items-center gap-2 rounded-md border border-ink px-[30px] py-[15px] text-primary-foreground shadow-retro transition-transform duration-200 select-none touch-manipulation active:scale-95'
@@ -236,6 +237,7 @@ export const GameDetails = ({ gameId }: GameDetailsProps) => {
             </div>
           ))}
         </div>
+        <GameRecommendations key={data.id} gameId={data.id} />
         <ReviewsSection gameId={data.id} averageRating={data.averageRating} reviewCount={data.reviewCount} />
       </div>
     )

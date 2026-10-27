@@ -23,6 +23,7 @@ import { GamesService } from './games.service'
 import { CreateGameDto } from './dto/create-game.dto'
 import { CreateEditionDto, UpdateEditionDto } from './dto/edition.dto'
 import { GamesQueryDto } from './dto/games-query.dto'
+import { DEFAULT_RECOMMENDATIONS_LIMIT, parseIdList, RecommendationsQueryDto } from './dto/recommendations-query.dto'
 import { UpdateGameDto } from './dto/update-game.dto'
 
 // Browsers revalidate each read with the ETag that Express adds, so an
@@ -50,6 +51,23 @@ export class GamesController {
     try {
       const result = await this.gamesService.fetchGenres()
       res.setHeader('Cache-Control', PUBLIC_CACHE)
+      return result
+    } catch (error) {
+      throw toHttpException(error)
+    }
+  }
+
+  // Declared before games/:page, so "recommendations" is not read as a page number. The result
+  // depends on the query, so it is never cached.
+  @Get('games/recommendations')
+  async getRecommendations(@Query() query: RecommendationsQueryDto, @Res({ passthrough: true }) res: Response) {
+    try {
+      const result = await this.gamesService.fetchRecommendations({
+        seedGameIds: parseIdList(query.seedGameIds),
+        excludeGameIds: parseIdList(query.excludeGameIds),
+        limit: query.limit === undefined ? DEFAULT_RECOMMENDATIONS_LIMIT : Number(query.limit),
+      })
+      res.setHeader('Cache-Control', 'no-store')
       return result
     } catch (error) {
       throw toHttpException(error)

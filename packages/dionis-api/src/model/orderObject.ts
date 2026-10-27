@@ -28,6 +28,13 @@ export interface OrderObject {
   status?: OrderStatus;
   /** @nullable */
   trackingNumber?: string | null;
+  /**
+     * The promo code the buyer used
+     * @nullable
+     */
+  promoCode?: string | null;
+  /** @nullable */
+  promoDiscountCents?: number | null;
   createdAt?: string;
   items?: OrderItemObject[];
 }

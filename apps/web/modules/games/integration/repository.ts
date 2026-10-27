@@ -5,6 +5,7 @@ export {
   useGetGameStockAlerts,
   useGetGames,
   useGetGamesGenres,
+  useGetGamesRecommendations,
   useGetGamesTopDeals,
   useGetOwnedItems,
   usePutEditionStockAlert,
