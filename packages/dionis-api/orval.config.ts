@@ -7,6 +7,8 @@ export default defineConfig({
       target: 'src/dionis',
       schemas: 'src/model',
       client: 'react-query',
+      httpClient: 'axios',
+      tsconfig: { compilerOptions: { moduleResolution: 'bundler' } },
       mock: true,
       clean: true,
       override: {
