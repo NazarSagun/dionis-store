@@ -393,6 +393,13 @@ describe('OrdersService', () => {
       )
     })
 
+    it('ignores a PaymentIntent from a user this database does not know', async () => {
+      prisma.user.findUnique.mockResolvedValue(null)
+
+      await expect(service.handlePaymentIntentSucceeded(paymentIntent() as never)).resolves.toBeNull()
+      expect(prisma.order.create).not.toHaveBeenCalled()
+    })
+
     it('creates no second order when /confirm already created one', async () => {
       const confirmedOrder = { id: 3, userId: user.id, items: [] }
       prisma.order.findUnique.mockResolvedValue(confirmedOrder)
