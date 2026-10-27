@@ -81,7 +81,9 @@ export default defineConfig({
   projects: [
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      // CI uses the Chrome that the runner image already has, so it needs no
+      // browser download and no apt packages.
+      use: { ...devices['Desktop Chrome'], ...(process.env.CI ? { channel: 'chrome' } : {}) },
     },
   ],
 })

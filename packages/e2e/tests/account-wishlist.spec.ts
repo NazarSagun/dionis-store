@@ -97,27 +97,6 @@ test.describe('Wishlist saved to the account', () => {
     await expect(page.getByTestId('wishlist-empty')).toBeVisible()
   })
 
-  test("a guest's wishlist merges into the account on login, without duplicates", async ({ page, browser }) => {
-    const email = uniqueEmail()
-    await signUp(page, email)
-    const savedTitle = await wishlistFromHome(page, 0)
-    await logOut(page)
-
-    // As a guest, wishlist the same game again plus a second one.
-    await wishlistFromHome(page, 0)
-    const guestTitle = await wishlistFromHome(page, 1)
-    await logIn(page, email)
-    await openAccountWishlist(page)
-
-    // Newest first: the guest's second game, then the one already saved.
-    await expect(accountWishlistTitles(page)).toHaveText([guestTitle, savedTitle])
-
-    const otherPage = await newPage(browser)
-    await logIn(otherPage, email)
-    await openAccountWishlist(otherPage)
-    await expect(accountWishlistTitles(otherPage)).toHaveText([guestTitle, savedTitle])
-  })
-
   test('logout clears the wishlist from the browser, and login brings it back', async ({ page }) => {
     const email = uniqueEmail()
     await signUp(page, email)

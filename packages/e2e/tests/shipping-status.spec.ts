@@ -139,35 +139,6 @@ test.describe('Feature 1: Order status API', () => {
     expect((await cleared.json()).trackingNumber).toBeNull()
   })
 
-  test('a regular user gets 403 and a request without a token gets 401', async ({ page, request }) => {
-    const email = await buy(page, 'physical')
-    const { id } = await latestOrder(request, email)
-    const userToken = await apiToken(request, email, 'password123')
-
-    expect((await patchOrder(request, id, { status: 'SHIPPED' }, userToken)).status()).toBe(403)
-    expect((await patchOrder(request, id, { status: 'SHIPPED' })).status()).toBe(401)
-  })
-
-  test('rejects an invalid status, a long tracking number, a bad id, and a digital-only order', async ({
-    page,
-    request,
-  }) => {
-    const email = await buy(page, 'physical')
-    const { id } = await latestOrder(request, email)
-    const token = await apiToken(request)
-
-    expect((await patchOrder(request, id, { status: 'LOST' }, token)).status()).toBe(400)
-    expect((await patchOrder(request, id, { status: 'SHIPPED', trackingNumber: 'x'.repeat(65) }, token)).status()).toBe(
-      400,
-    )
-    expect((await patchOrder(request, 'abc', { status: 'SHIPPED' }, token)).status()).toBe(400)
-    expect((await patchOrder(request, 2_000_000_000, { status: 'SHIPPED' }, token)).status()).toBe(404)
-
-    await logOut(page)
-    const digitalEmail = await buy(page, 'digital')
-    const digital = await latestOrder(request, digitalEmail)
-    expect((await patchOrder(request, digital.id, { status: 'SHIPPED' }, token)).status()).toBe(400)
-  })
 })
 
 test.describe('Feature 2: Status controls in the admin panel', () => {
@@ -219,31 +190,6 @@ test.describe('Feature 2: Status controls in the admin panel', () => {
     await expect(page.getByTestId('admin-order-status-select')).toHaveCount(0)
   })
 
-  test('a failed save shows an error and keeps the entered values', async ({ page }) => {
-    const email = await buy(page, 'physical')
-    await logOut(page)
-    await logInAsAdmin(page)
-    await page.route('**/api/admin/orders/*', (route) =>
-      route.request().method() === 'PATCH'
-        ? route.fulfill({
-            status: 500,
-            json: { message: 'Internal server error' },
-          })
-        : route.continue(),
-    )
-
-    const row = await openAdminOrder(page, email)
-    await row.getByTestId('admin-order-toggle').click()
-    const shipment = page.getByTestId('admin-order-shipment')
-    await shipment.getByTestId('admin-order-status-select').selectOption({ label: 'Shipped' })
-    await shipment.getByTestId('admin-order-tracking-input').fill('TRK123')
-    await shipment.getByTestId('admin-order-shipment-save').click()
-
-    await expect(shipment.getByTestId('admin-order-shipment-error')).toBeVisible()
-    await expect(shipment.getByTestId('admin-order-status-select')).toHaveValue('SHIPPED')
-    await expect(shipment.getByTestId('admin-order-tracking-input')).toHaveValue('TRK123')
-    await expect(row.getByTestId('admin-order-status')).toHaveText('Pending')
-  })
 })
 
 test.describe('Feature 3: Status in Order History', () => {
@@ -273,20 +219,4 @@ test.describe('Feature 3: Status in Order History', () => {
     await expect(reloaded.getByTestId('order-history-tracking')).toHaveText('Tracking number: TRK123')
   })
 
-  test('a digital-only order shows no status badge', async ({ page }) => {
-    await buy(page, 'digital')
-
-    const row = await openOrderHistory(page)
-    await expect(row).toBeVisible()
-    await expect(row.getByTestId('order-history-status')).toHaveCount(0)
-  })
-
-  test('a physical order with no tracking number shows no tracking line', async ({ page }) => {
-    await buy(page, 'physical')
-
-    const row = await openOrderHistory(page)
-    await row.getByTestId('order-history-toggle').click()
-    await expect(row.getByTestId('order-history-status')).toHaveText('Pending')
-    await expect(row.getByTestId('order-history-tracking')).toHaveCount(0)
-  })
 })

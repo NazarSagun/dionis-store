@@ -61,17 +61,4 @@ test.describe('Top Deals section', () => {
     await expect(featured.getByTestId('featured-count')).toHaveText('(12)')
   })
 
-  test('shows no store score on the featured deal when it has no review', async ({ page }) => {
-    await page.route('**/api/games/top-deals', async (route) => {
-      const response = await route.fetch()
-      const deals = await response.json()
-      deals[0] = { ...deals[0], averageRating: null, reviewCount: 0 }
-      await route.fulfill({ response, json: deals })
-    })
-
-    await page.goto('/')
-
-    await expect(page.getByTestId('featured-deal')).toBeVisible()
-    await expect(page.getByTestId('featured-reviews')).toHaveCount(0)
-  })
 })

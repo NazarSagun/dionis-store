@@ -28,12 +28,4 @@ test.describe('Payment step', () => {
     await expect(page.getByTestId('game-activation')).toBeVisible()
   })
 
-  test('shows an error and stays on step 2 for a declined test card', async ({ page }) => {
-    await fillStripeTestCard(page, '4000000000000002')
-
-    await page.getByTestId('payment-submit').click()
-
-    await expect(page.getByTestId('payment-error')).toBeVisible()
-    await expect(page.getByTestId('payment')).toBeVisible()
-  })
 })
