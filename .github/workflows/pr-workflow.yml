@@ -162,6 +162,10 @@ jobs:
           for i in 1 2 3; do
             timeout 180 pnpm --filter @repo/e2e exec playwright install --with-deps chromium && exit 0
             echo "Attempt $i failed or timed out"
+            # `timeout` stops pnpm but not the apt-get it started as root. That
+            # process keeps the dpkg lock, so the next try fails at once.
+            sudo pkill -9 -f 'apt-get|dpkg' || true
+            sudo dpkg --configure -a || true
           done
           exit 1
 
