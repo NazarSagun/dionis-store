@@ -31,7 +31,10 @@ export class StripeWebhookController {
 
     if (event.type === 'payment_intent.succeeded') {
       try {
-        await this.ordersService.handlePaymentIntentSucceeded(event.data.object)
+        const order = await this.ordersService.handlePaymentIntentSucceeded(event.data.object)
+        if (order === null) {
+          this.logger.warn(`Ignored PaymentIntent ${event.data.object.id}: its user doesn't exist`)
+        }
       } catch (error) {
         // A CustomError is permanent (out of stock, unknown user, bad
         // metadata), so a Stripe retry would fail the same way. Acknowledge

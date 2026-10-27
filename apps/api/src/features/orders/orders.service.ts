@@ -139,6 +139,14 @@ export class OrdersService {
       return existingOrder
     }
 
+    // A PaymentIntent from a user this database does not know was paid in another
+    // environment that shares the Stripe account (CI runs, for example). It is not
+    // ours, so no order is built. The caller logs it.
+    const user = await this.prisma.user.findUnique({ where: { email: paymentIntent.metadata.userEmail } })
+    if (!user) {
+      return null
+    }
+
     return this.createOrderFromPaymentIntent(paymentIntent)
   }
 
