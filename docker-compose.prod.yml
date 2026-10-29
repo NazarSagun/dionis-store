@@ -62,6 +62,8 @@ services:
     environment:
       DOMAIN: ${DOMAIN:?set DOMAIN}
       ACME_CA: ${ACME_CA:-https://acme-v02.api.letsencrypt.org/directory}
+      # The game image host, for the img-src of the Content-Security-Policy header.
+      MEDIA_BASE_URL: ${MEDIA_BASE_URL:?set MEDIA_BASE_URL}
     ports:
       - "80:80"
       - "443:443"
@@ -88,6 +90,7 @@ services:
         NEXT_PUBLIC_BASE_URL: ${NEXT_PUBLIC_BASE_URL:?set NEXT_PUBLIC_BASE_URL}
         NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: ${NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY:-}
         NEXT_PUBLIC_SENTRY_DSN: ${NEXT_PUBLIC_SENTRY_DSN:-}
+        MEDIA_BASE_URL: ${MEDIA_BASE_URL:?set MEDIA_BASE_URL}
       secrets:
         - sentry_auth_token
     security_opt:

@@ -23,5 +23,8 @@ export type {
   GameEditionObject,
   GameInput,
   GameObject,
+  GameSectionKind,
+  GameUpdateInput,
+  GameDetail,
   PromoCodeObject,
 } from '@repo/dionis-api/src/model'

@@ -4,6 +4,9 @@
  * Swagger Dionis
  * OpenAPI spec version: 1.0.0
  */
+import type { GameImage } from './gameImage';
+import type { GameLanguage } from './gameLanguage';
+import type { GameSection } from './gameSection';
 
 export interface GameInput {
   /** Only the seed script sends one */
@@ -24,4 +27,36 @@ export interface GameInput {
      * @maximum 100
      */
   discount: number;
+  /**
+     * The YouTube video id of the trailer
+     * @pattern ^[A-Za-z0-9_-]{11}$
+     */
+  trailerYoutubeId?: string;
+  /** @maxItems 20 */
+  images?: GameImage[];
+  /** @maxItems 3 */
+  sections?: GameSection[];
+  /** Portrait box art */
+  coverUrl?: string;
+  /**
+     * @maxItems 4
+     * @items.pattern ^(PEGI|ESRB) \S{1,10}$
+     */
+  ageRatings?: string[];
+  /**
+     * @minimum 0
+     * @maximum 100
+     */
+  criticRating?: number;
+  /** @minimum 0 */
+  criticRatingCount?: number;
+  /**
+     * @minimum 0
+     * @maximum 100
+     */
+  userRating?: number;
+  /** @minimum 0 */
+  userRatingCount?: number;
+  /** @maxItems 60 */
+  languages?: GameLanguage[];
 }

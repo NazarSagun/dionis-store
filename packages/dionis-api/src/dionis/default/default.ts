@@ -34,6 +34,7 @@ import type {
   EditionInput,
   EditionUpdateInput,
   ErrorMessage,
+  GameDetail,
   GameEditionObject,
   GameInput,
   GameObject,
@@ -1502,7 +1503,7 @@ export const getGame = (
 ) => {
 
 
-      return customInstance<GameWithReviewSummary>(
+      return customInstance<GameDetail>(
       {url: `/game/${gameId}`, method: 'GET', signal
     },
       options);

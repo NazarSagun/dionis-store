@@ -724,7 +724,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/gameWithReviewSummary'
+                $ref: '#/components/schemas/gameDetail'
         '400':
           description: Bad request
           content:
@@ -1993,6 +1993,62 @@ components:
           type: integer
         pageSize:
           type: integer
+    gameDetail:
+      description: A game with its review summary, gallery images, trailer, and description sections
+      allOf:
+        - $ref: '#/components/schemas/gameWithReviewSummary'
+        - type: object
+          required:
+            - images
+            - sections
+            - trailerYoutubeId
+            - coverUrl
+            - ageRatings
+            - criticRating
+            - criticRatingCount
+            - userRating
+            - userRatingCount
+            - languages
+          properties:
+            trailerYoutubeId:
+              type: string
+              nullable: true
+              description: The YouTube video id of the trailer, or null when the game has none
+            images:
+              type: array
+              items:
+                $ref: '#/components/schemas/gameImage'
+            sections:
+              type: array
+              items:
+                $ref: '#/components/schemas/gameSection'
+            coverUrl:
+              type: string
+              nullable: true
+              description: Portrait box art, or null when the game has none
+            ageRatings:
+              type: array
+              description: PEGI and ESRB labels, such as "PEGI 12" and "ESRB T"
+              items:
+                type: string
+            criticRating:
+              type: integer
+              nullable: true
+              description: The IGDB critic score from 0 to 100
+            criticRatingCount:
+              type: integer
+              nullable: true
+            userRating:
+              type: integer
+              nullable: true
+              description: The IGDB user score from 0 to 100
+            userRatingCount:
+              type: integer
+              nullable: true
+            languages:
+              type: array
+              items:
+                $ref: '#/components/schemas/gameLanguage'
     gameWithReviewSummary:
       description: A game with the average rating and the count of the store's own reviews
       allOf:
@@ -2463,6 +2519,58 @@ components:
           type: string
         count:
           type: integer
+    gameImage:
+      type: object
+      required:
+        - url
+        - alt
+        - position
+      properties:
+        url:
+          type: string
+          example: https://d11uuhy7o8wejt.cloudfront.net/games/1/1.jpg
+        alt:
+          type: string
+          example: Dauntless screenshot 1
+        position:
+          type: integer
+          minimum: 0
+    gameSection:
+      type: object
+      required:
+        - kind
+        - title
+        - body
+        - position
+      properties:
+        kind:
+          type: string
+          enum: [about, story, features]
+        title:
+          type: string
+        body:
+          type: string
+          description: Plain text. A blank line starts a paragraph, and a line that starts with "- " is a list item
+        position:
+          type: integer
+          minimum: 0
+    gameLanguage:
+      type: object
+      required:
+        - language
+        - audio
+        - subtitles
+        - interface
+      properties:
+        language:
+          type: string
+          example: French
+        audio:
+          type: boolean
+        subtitles:
+          type: boolean
+        interface:
+          type: boolean
     gameInput:
       type: object
       required:
@@ -2506,6 +2614,49 @@ components:
           type: integer
           minimum: 0
           maximum: 100
+        trailerYoutubeId:
+          type: string
+          pattern: '^[A-Za-z0-9_-]{11}$'
+          description: The YouTube video id of the trailer
+        images:
+          type: array
+          maxItems: 20
+          items:
+            $ref: '#/components/schemas/gameImage'
+        sections:
+          type: array
+          maxItems: 3
+          items:
+            $ref: '#/components/schemas/gameSection'
+        coverUrl:
+          type: string
+          description: Portrait box art
+        ageRatings:
+          type: array
+          maxItems: 4
+          items:
+            type: string
+            pattern: '^(PEGI|ESRB) \S{1,10}$'
+            example: PEGI 12
+        criticRating:
+          type: integer
+          minimum: 0
+          maximum: 100
+        criticRatingCount:
+          type: integer
+          minimum: 0
+        userRating:
+          type: integer
+          minimum: 0
+          maximum: 100
+        userRatingCount:
+          type: integer
+          minimum: 0
+        languages:
+          type: array
+          maxItems: 60
+          items:
+            $ref: '#/components/schemas/gameLanguage'
     gameUpdateInput:
       type: object
       properties:
@@ -2534,6 +2685,52 @@ components:
           type: integer
           minimum: 0
           maximum: 100
+        trailerYoutubeId:
+          type: string
+          nullable: true
+          pattern: '^[A-Za-z0-9_-]{11}$'
+          description: The YouTube video id of the trailer. Send null to remove it
+        images:
+          type: array
+          maxItems: 20
+          description: Replaces every image of the game
+          items:
+            $ref: '#/components/schemas/gameImage'
+        sections:
+          type: array
+          maxItems: 3
+          description: Replaces every section of the game
+          items:
+            $ref: '#/components/schemas/gameSection'
+        coverUrl:
+          type: string
+          description: Portrait box art
+        ageRatings:
+          type: array
+          maxItems: 4
+          items:
+            type: string
+            pattern: '^(PEGI|ESRB) \S{1,10}$'
+            example: PEGI 12
+        criticRating:
+          type: integer
+          minimum: 0
+          maximum: 100
+        criticRatingCount:
+          type: integer
+          minimum: 0
+        userRating:
+          type: integer
+          minimum: 0
+          maximum: 100
+        userRatingCount:
+          type: integer
+          minimum: 0
+        languages:
+          type: array
+          maxItems: 60
+          items:
+            $ref: '#/components/schemas/gameLanguage'
     editionInput:
       type: object
       required:

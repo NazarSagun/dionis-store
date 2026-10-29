@@ -23,6 +23,7 @@ import type {
   CreatePromoCodeInput,
   EditionInput,
   EditionUpdateInput,
+  GameDetail,
   GameEditionObject,
   GameInput,
   GameObject,
@@ -317,7 +318,7 @@ export const getGetGamesMockHandler = (overrideResponse?: GamesArray | ((info: P
   }, options)
 }
 
-export const getGetGameMockHandler = (overrideResponse?: GameWithReviewSummary | ((info: Parameters<HttpResponseResolver<{ gameId: string }>>[0]) => Promise<GameWithReviewSummary> | GameWithReviewSummary), options?: RequestHandlerOptions) => {
+export const getGetGameMockHandler = (overrideResponse?: GameDetail | ((info: Parameters<HttpResponseResolver<{ gameId: string }>>[0]) => Promise<GameDetail> | GameDetail), options?: RequestHandlerOptions) => {
   return http.get<{ gameId: string }>('*/game/:gameId', async (info: Parameters<HttpResponseResolver<{ gameId: string }>>[0]) => {
 
 

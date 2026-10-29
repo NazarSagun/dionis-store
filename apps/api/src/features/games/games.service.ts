@@ -226,22 +226,49 @@ export class GamesService {
 
   private async loadGameDetail(gameId: number) {
     const game = await this.fetchGameById({ gameId })
-    const { _avg, _count } = await this.prisma.review.aggregate({
-      where: { gameId },
-      _avg: { rating: true },
-      _count: { _all: true },
-    })
+    const [{ _avg, _count }, images, sections, languages] = await Promise.all([
+      this.prisma.review.aggregate({
+        where: { gameId },
+        _avg: { rating: true },
+        _count: { _all: true },
+      }),
+      this.prisma.gameImage.findMany({
+        where: { gameId },
+        orderBy: { position: 'asc' },
+        select: { url: true, alt: true, position: true },
+      }),
+      this.prisma.gameSection.findMany({
+        where: { gameId },
+        orderBy: { position: 'asc' },
+        select: { kind: true, title: true, body: true, position: true },
+      }),
+      this.prisma.gameLanguage.findMany({
+        where: { gameId },
+        orderBy: { language: 'asc' },
+        select: { language: true, audio: true, subtitles: true, interface: true },
+      }),
+    ])
 
     return {
       ...game,
+      images,
+      sections,
+      languages,
       averageRating: roundAverage(_avg.rating),
       reviewCount: _count._all,
     }
   }
 
-  async createGame(data: CreateGameDto) {
+  async createGame({ images, sections, languages, ...data }: CreateGameDto) {
     try {
-      const game = await this.prisma.game_pc.create({ data })
+      const game = await this.prisma.game_pc.create({
+        data: {
+          ...data,
+          ...(images && { images: { create: images } }),
+          ...(sections && { sections: { create: sections } }),
+          ...(languages && { languages: { create: languages } }),
+        },
+      })
       await this.clearCache()
       // Postgres does not advance a sequence for an explicit id. The seed
       // inserts FreeToGame ids after the migration created the sequence, so
@@ -260,10 +287,19 @@ export class GamesService {
     }
   }
 
-  async updateGame(id: number, data: UpdateGameDto) {
+  async updateGame(id: number, { images, sections, languages, ...data }: UpdateGameDto) {
     await this.fetchGameById({ gameId: id })
     try {
-      const game = await this.prisma.game_pc.update({ where: { id }, data })
+      // An images or sections array replaces the old rows in the same transaction.
+      const game = await this.prisma.game_pc.update({
+        where: { id },
+        data: {
+          ...data,
+          ...(images && { images: { deleteMany: {}, create: images } }),
+          ...(sections && { sections: { deleteMany: {}, create: sections } }),
+          ...(languages && { languages: { deleteMany: {}, create: languages } }),
+        },
+      })
       await this.clearCache()
       return game
     } catch (error) {

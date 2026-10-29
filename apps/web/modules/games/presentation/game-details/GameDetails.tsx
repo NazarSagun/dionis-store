@@ -16,10 +16,18 @@ import { isGameOwned } from '../../domain/ownership'
 import { calculateDiscountedPrice } from '../../domain/pricing'
 import { useGetGame, useGetOwnedItems } from '../../integration/repository'
 import { EditionNotify } from '../edition-notify/EditionNotify'
+import { ExternalScores } from '../external-scores/ExternalScores'
+import { GameGallery } from '../game-gallery/GameGallery'
+import { GameLanguages } from '../game-languages/GameLanguages'
+import { GameSections } from '../game-sections/GameSections'
 import { GameRecommendations } from '../recommendations/GameRecommendations'
 
-const buttonStyles =
-  'flex items-center gap-2 rounded-md border border-ink px-[30px] py-[15px] text-primary-foreground shadow-retro transition-transform duration-200 select-none touch-manipulation active:scale-95'
+// Sizes from the "format-picker" in the Figma frame "Game Details":
+// a label line and a price line, 12px by 16px padding, 15px semibold text.
+const optionStyles =
+  'flex flex-col items-start justify-center whitespace-nowrap rounded-md border px-4 py-3 text-left font-sans text-[15px] font-semibold leading-snug transition-transform duration-200 select-none touch-manipulation active:scale-95 disabled:active:scale-100'
+const buyStyles = 'border-transparent bg-neon-magenta text-primary-foreground hover:brightness-110'
+const ownedStyles = 'border-ink bg-panel-alt text-foreground'
 
 interface GameDetailsProps {
   gameId: number
@@ -74,7 +82,10 @@ export const GameDetails = ({ gameId }: GameDetailsProps) => {
     return (
       <div className='flex min-h-[75vh] flex-col gap-16 px-4 py-12 sm:px-8 lg:px-40'>
         <div className='flex flex-col gap-12 lg:flex-row lg:justify-between'>
-          <Skeleton className='h-[300px] w-full max-w-[500px] shrink-0' />
+          <div className='flex w-full max-w-[500px] shrink-0 flex-col gap-3'>
+            <Skeleton className='aspect-video w-full' />
+            <Skeleton className='h-[120px] w-full' />
+          </div>
           <div className='flex w-full flex-col justify-between gap-6 lg:w-[50vw]'>
             <div className='flex flex-col gap-4'>
               <Skeleton className='h-8 w-2/3' />
@@ -110,13 +121,43 @@ export const GameDetails = ({ gameId }: GameDetailsProps) => {
 
     return (
       <div className='flex min-h-[75vh] flex-col gap-16 px-4 py-12 sm:px-8 lg:px-40'>
-        <div className='flex flex-col gap-12 lg:flex-row lg:justify-between'>
-          <div className='w-full max-w-[500px] shrink-0'>
-            <Image className='h-auto w-full' alt={data.title} width={500} height={300} src={data.thumbnail} />
-          </div>
-          <div className='flex w-full flex-col justify-between text-foreground lg:w-[50vw]'>
+        <div className='flex flex-col gap-12 lg:flex-row'>
+          <GameGallery
+            title={data.title}
+            thumbnail={data.thumbnail}
+            images={data.images ?? []}
+            trailerYoutubeId={data.trailerYoutubeId}
+          />
+          <div className='flex w-full min-w-0 flex-1 flex-col justify-between text-foreground'>
             <div>
-              <h1 className='font-display text-2xl'>{data.title}</h1>
+              <div className='flex items-start gap-4'>
+                {data.coverUrl && (
+                  <Image
+                    data-testid='game-cover'
+                    src={data.coverUrl}
+                    alt={`${data.title} cover`}
+                    width={72}
+                    height={96}
+                    className='h-24 w-[72px] shrink-0 rounded border border-ink object-cover'
+                  />
+                )}
+                <div className='flex flex-col gap-2'>
+                  <h1 className='font-display text-2xl'>{data.title}</h1>
+                  {(data.ageRatings ?? []).length > 0 && (
+                    <ul className='flex flex-wrap gap-2'>
+                      {(data.ageRatings ?? []).map((label) => (
+                        <li
+                          key={label}
+                          data-testid='age-rating'
+                          className='rounded border border-ink px-2 py-0.5 font-mono text-xs text-muted-foreground'
+                        >
+                          {label}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              </div>
 
               <p className='m-0 mt-4 font-mono text-lg text-muted-foreground'>{data.short_description}</p>
 
@@ -127,22 +168,25 @@ export const GameDetails = ({ gameId }: GameDetailsProps) => {
                 </div>
               ))}
             </div>
-            <div className='flex flex-col'>
-              <div className='mb-4 mt-8 flex items-end justify-center gap-[0.6rem]'>
-                {data.discount > 0 && (
-                  <>
-                    <span className='font-mono text-xl text-muted-foreground line-through'>{data.price}€</span>
-                    <span className='font-mono text-xl text-neon-amber'>-{data.discount}%</span>
-                  </>
-                )}
-                <span className='font-display text-3xl leading-[1.4] text-neon-magenta'>
-                  {data.discount > 0 ? calculateDiscountedPrice(data.price, data.discount) : data.price}€
-                </span>
-              </div>
-              <div className='flex flex-wrap gap-4'>
+            <div className='mt-8 flex flex-col gap-4'>
+              <div className='flex items-center gap-6'>
+                <div className='flex items-end gap-[0.6rem]'>
+                  {data.discount > 0 && (
+                    <>
+                      <span className='font-mono text-xl text-muted-foreground line-through'>{data.price}€</span>
+                      <span className='font-mono text-xl text-neon-amber'>-{data.discount}%</span>
+                    </>
+                  )}
+                  <span className='font-display text-3xl leading-[1.4] text-neon-magenta'>
+                    {data.discount > 0 ? calculateDiscountedPrice(data.price, data.discount) : data.price}€
+                  </span>
+                </div>
                 <button
                   type='button'
-                  className={cn(buttonStyles, isWishlisted ? 'bg-neon-magenta' : 'bg-panel-alt')}
+                  className={cn(
+                    'flex h-11 w-11 shrink-0 items-center justify-center rounded-md border border-ink transition-colors',
+                    isWishlisted ? 'bg-neon-magenta' : 'bg-panel-alt hover:bg-background',
+                  )}
                   data-testid='wishlist-toggle'
                   aria-label={isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
                   onClick={() =>
@@ -157,23 +201,27 @@ export const GameDetails = ({ gameId }: GameDetailsProps) => {
                     })
                   }
                 >
-                  <Image width={24} height={24} alt='favorite' src='/icons/favorite.svg' />
+                  <Image width={22} height={22} alt='' src='/icons/favorite.svg' />
                 </button>
+              </div>
+              <span className='font-sans text-xs font-semibold uppercase tracking-widest text-muted-foreground'>
+                Choose a format
+              </span>
+              {/* Equal columns at least as wide as the longest label, so every label fits on one line. */}
+              <div className='grid grid-cols-[repeat(auto-fill,minmax(230px,1fr))] items-start gap-2.5'>
                 <button
                   type='button'
-                  className={cn(buttonStyles, 'min-w-0 flex-1 justify-center bg-neon-magenta disabled:opacity-50')}
+                  className={cn(optionStyles, isDigitalOwned ? ownedStyles : buyStyles)}
                   data-testid='edition-option'
                   disabled={isDigitalOwned}
                   onClick={() => addGameHandler(cartItem)}
                 >
-                  {isDigitalOwned ? (
-                    <span className='font-display text-xs'>Already in Library</span>
-                  ) : (
-                    <>
-                      <Image width={24} height={24} alt='shopping-cart' src='/icons/shopping-cart.svg' />{' '}
-                      <span className='font-display text-xs'>Add Digital Copy</span>
-                    </>
-                  )}
+                  <span>Add Digital Copy</span>
+                  <span>
+                    {isDigitalOwned
+                      ? 'Already in Library'
+                      : `${data.discount > 0 ? calculateDiscountedPrice(data.price, data.discount) : data.price}€`}
+                  </span>
                 </button>
                 {editions.map((edition) => {
                   const outOfStock = edition.stock <= 0
@@ -186,10 +234,10 @@ export const GameDetails = ({ gameId }: GameDetailsProps) => {
                         data-testid='edition-option'
                         role='group'
                         aria-label={`${edition.name}, out of stock`}
-                        className='flex min-w-[140px] flex-1 flex-col items-center justify-between gap-3 rounded-md border border-ink bg-panel-alt px-4 py-3 text-foreground'
+                        className='flex flex-col items-center justify-center gap-2 rounded-md border border-ink bg-panel-alt px-3 py-2.5 text-center text-foreground'
                       >
-                        <div className='flex flex-col items-center gap-0'>
-                          <span className='font-display text-xs'>{edition.name}</span>
+                        <div className='flex flex-col items-center'>
+                          <span className='whitespace-nowrap font-sans text-sm font-semibold'>{edition.name}</span>
                           <span data-testid='edition-stock' className='font-mono text-xs text-muted-foreground'>
                             {editionStockLabel(false, true, '')}
                           </span>
@@ -202,16 +250,13 @@ export const GameDetails = ({ gameId }: GameDetailsProps) => {
                     <button
                       type='button'
                       key={edition.id}
-                      className={cn(
-                        buttonStyles,
-                        'min-w-[140px] flex-1 flex-col justify-center gap-0 bg-neon-magenta disabled:opacity-50',
-                      )}
+                      className={cn(optionStyles, isOwned ? ownedStyles : buyStyles)}
                       data-testid='edition-option'
                       disabled={outOfStock || isOwned}
                       onClick={() => addGameHandler(buildEditionCartItem(data, edition))}
                     >
-                      <span className='font-display text-xs'>{edition.name}</span>
-                      <span data-testid='edition-stock' className='font-mono text-xs'>
+                      <span>{edition.name}</span>
+                      <span data-testid='edition-stock'>
                         {editionStockLabel(
                           isOwned,
                           outOfStock,
@@ -225,6 +270,8 @@ export const GameDetails = ({ gameId }: GameDetailsProps) => {
             </div>
           </div>
         </div>
+        <GameSections sections={data.sections ?? []} />
+        <GameLanguages languages={data.languages ?? []} />
         <div className='rounded-md border border-ink bg-panel-alt px-8 py-6'>
           {informationData.map((item) => (
             <div key={item.label} className='flex flex-wrap py-1'>
@@ -237,6 +284,12 @@ export const GameDetails = ({ gameId }: GameDetailsProps) => {
             </div>
           ))}
         </div>
+        <ExternalScores
+          criticRating={data.criticRating ?? null}
+          criticRatingCount={data.criticRatingCount ?? null}
+          userRating={data.userRating ?? null}
+          userRatingCount={data.userRatingCount ?? null}
+        />
         <GameRecommendations key={data.id} gameId={data.id} />
         <ReviewsSection gameId={data.id} averageRating={data.averageRating} reviewCount={data.reviewCount} />
       </div>

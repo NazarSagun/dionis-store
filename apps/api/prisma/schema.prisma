@@ -42,10 +42,57 @@ model Game_pc {
   price                  Int
   rating                 String
   discount               Int
+  trailerYoutubeId       String?
+  coverUrl               String?
+  // PEGI and ESRB labels, such as "PEGI 12" and "ESRB T".
+  ageRatings             String[]      @default([])
+  // IGDB scores from 0 to 100: critics, and IGDB users.
+  criticRating           Int?
+  criticRatingCount      Int?
+  userRating             Int?
+  userRatingCount        Int?
   orderItems             OrderItem[]
   editions               GameEdition[]
   wishlistItems          WishlistItem[]
   reviews                Review[]
+  images                 GameImage[]
+  sections               GameSection[]
+  languages              GameLanguage[]
+}
+
+model GameLanguage {
+  id        Int     @id @default(autoincrement())
+  gameId    Int
+  language  String
+  audio     Boolean
+  subtitles Boolean
+  interface Boolean
+  game      Game_pc @relation(fields: [gameId], references: [id], onDelete: Cascade)
+
+  @@unique([gameId, language])
+}
+
+model GameImage {
+  id       Int     @id @default(autoincrement())
+  gameId   Int
+  url      String
+  alt      String
+  position Int
+  game     Game_pc @relation(fields: [gameId], references: [id], onDelete: Cascade)
+
+  @@unique([gameId, position])
+}
+
+model GameSection {
+  id       Int     @id @default(autoincrement())
+  gameId   Int
+  kind     String
+  title    String
+  body     String
+  position Int
+  game     Game_pc @relation(fields: [gameId], references: [id], onDelete: Cascade)
+
+  @@unique([gameId, kind])
 }
 
 model GameEdition {
