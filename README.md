@@ -2,6 +2,8 @@
 
 Dionis Store is an online store for PC games. The project has two applications: a web storefront and an API. Both live in this pnpm and Turborepo monorepo.
 
+The live site is at [dioniss.com](https://dioniss.com).
+
 ## Apps and packages
 
 - `apps/web`: the storefront, built with Next.js. It shows the game catalog, cart, and wishlist.
