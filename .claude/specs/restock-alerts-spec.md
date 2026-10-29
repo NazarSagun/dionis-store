@@ -10,7 +10,7 @@ This spec adds a "Notify me" control on an out-of-stock edition. When an admin r
 
 The design lives in the Figma file "Dionis Store — Retro Redesign". Every page has its own section, and each state has a Desktop, Tablet, and Mobile frame.
 
-- Section "Game Details", the "Notify me" row, holds the code-based frames "Game Details — Notify me (code, 1440)", the tablet frame, and "Game Details — Notify me (code, mobile 390)". "Notify me — States" shows the tile states: default, notifying, saving, and error.
+- Section "Game Details", the "Game details" row, holds "Game Details", "Game Details — Tablet", and "Game Details — Mobile". Each shows a sold-out edition as a "Notify me" tile in the format picker. "Notify me — States" shows the tile states: default, notifying, saving, and error.
 - Section "Game Details", the notification rows, holds "Game Details — Notification panel (restock, 3 unread)" and the restock panel frames for tablet and mobile.
 - Section "Emails" holds "Email — Restock alert (600)" and its 375px mobile frame. The email has no tablet layout.
 

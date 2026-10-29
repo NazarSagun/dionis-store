@@ -19,12 +19,14 @@ const nextConfig = {
   },
   images: {
     remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'www.freetogame.com',
-        port: '',
-        pathname: '/**',
-      },
+      // Game images from the media bucket, read at build time.
+      ...(process.env.MEDIA_BASE_URL
+        ? [{ protocol: 'https', hostname: new URL(process.env.MEDIA_BASE_URL).hostname, pathname: '/games/**' }]
+        : []),
+      // Trailer posters.
+      { protocol: 'https', hostname: 'i.ytimg.com', pathname: '/vi/**' },
+      // Thumbnails of games that the IGDB import has not replaced yet.
+      { protocol: 'https', hostname: 'www.freetogame.com', pathname: '/**' },
     ],
   },
 }

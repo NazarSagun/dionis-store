@@ -28,6 +28,9 @@ describe('GamesService', () => {
     }
     order: { count: jest.Mock }
     review: { aggregate: jest.Mock; groupBy: jest.Mock }
+    gameImage: { findMany: jest.Mock }
+    gameSection: { findMany: jest.Mock }
+    gameLanguage: { findMany: jest.Mock }
     $queryRaw: jest.Mock
     $executeRaw: jest.Mock
     $transaction: jest.Mock
@@ -57,6 +60,9 @@ describe('GamesService', () => {
         aggregate: jest.fn().mockResolvedValue({ _avg: { rating: null }, _count: { _all: 0 } }),
         groupBy: jest.fn().mockResolvedValue([]),
       },
+      gameImage: { findMany: jest.fn().mockResolvedValue([]) },
+      gameSection: { findMany: jest.fn().mockResolvedValue([]) },
+      gameLanguage: { findMany: jest.fn().mockResolvedValue([]) },
       $transaction: jest.fn(),
       $executeRaw: jest.fn(),
       $queryRaw: jest.fn().mockResolvedValue([{ id: 4 }, { id: 9 }]),
@@ -263,6 +269,35 @@ describe('GamesService', () => {
       expect(prisma.$executeRaw).toHaveBeenCalledTimes(1)
     })
 
+    it('creates the images and sections of a new game in the same write', async () => {
+      prisma.game_pc.create.mockResolvedValue({ id: 2 })
+      const images = [{ url: 'https://media.test/games/2/1.jpg', alt: 'Game screenshot 1', position: 0 }]
+      const sections = [{ kind: 'about' as const, title: 'About', body: 'Text.', position: 0 }]
+
+      await service.createGame({ title: 'New', trailerYoutubeId: 'dQw4w9WgXcQ', images, sections } as never)
+
+      expect(prisma.game_pc.create).toHaveBeenCalledWith({
+        data: {
+          title: 'New',
+          trailerYoutubeId: 'dQw4w9WgXcQ',
+          images: { create: images },
+          sections: { create: sections },
+        },
+      })
+    })
+
+    it('replaces every section on update and leaves the images alone when none are sent', async () => {
+      prisma.game_pc.update.mockResolvedValue({ id: 1 })
+      const sections = [{ kind: 'story' as const, title: 'Story', body: 'Text.', position: 0 }]
+
+      await service.updateGame(1, { trailerYoutubeId: null, sections })
+
+      expect(prisma.game_pc.update).toHaveBeenCalledWith({
+        where: { id: 1 },
+        data: { trailerYoutubeId: null, sections: { deleteMany: {}, create: sections } },
+      })
+    })
+
     it('refuses to delete a game that is in an order, naming the count', async () => {
       prisma.order.count.mockResolvedValue(1)
 
@@ -414,6 +449,22 @@ describe('GamesService', () => {
 
       expect(prisma.review.aggregate).toHaveBeenCalledWith(expect.objectContaining({ where: { gameId: 1 } }))
       expect(game).toMatchObject({ id: 1, averageRating: 4.3, reviewCount: 3 })
+    })
+
+    it('adds the images and sections in position order, and the languages', async () => {
+      const images = [{ url: 'https://media.test/games/1/1.jpg', alt: 'A', position: 0 }]
+      const sections = [{ kind: 'about', title: 'About', body: 'Text.', position: 0 }]
+      prisma.gameImage.findMany.mockResolvedValue(images)
+      prisma.gameSection.findMany.mockResolvedValue(sections)
+      const languages = [{ language: 'English', audio: true, subtitles: true, interface: true }]
+      prisma.gameLanguage.findMany.mockResolvedValue(languages)
+
+      const game = await service.fetchGameDetail({ gameId: 1 })
+
+      expect(prisma.gameImage.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({ where: { gameId: 1 }, orderBy: { position: 'asc' } }),
+      )
+      expect(game).toMatchObject({ images, sections, languages })
     })
 
     it('returns a null average and a zero count for a game without reviews', async () => {

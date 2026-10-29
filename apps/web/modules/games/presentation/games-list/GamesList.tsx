@@ -17,9 +17,9 @@ interface GamesListProps {
 
 export const GamesList = ({ gamesList, onAddToCart, renderExtra }: GamesListProps) => {
   return (
-    <div className='grid w-full grid-cols-2 gap-6 pb-20 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5'>
+    <div className='grid w-full grid-cols-1 gap-6 pb-20 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4'>
       {gamesList.map((game) => (
-        <Link key={game.id} href={`/game/${game.id}`}>
+        <Link key={game.id} href={`/game/${game.id}`} className='block h-full'>
           <GameCard
             id={game.id}
             title={game.title}

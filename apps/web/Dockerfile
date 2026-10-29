@@ -18,6 +18,9 @@ ARG NEXT_PUBLIC_SENTRY_DSN
 ENV NEXT_PUBLIC_BASE_URL=$NEXT_PUBLIC_BASE_URL
 ENV NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=$NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
 ENV NEXT_PUBLIC_SENTRY_DSN=$NEXT_PUBLIC_SENTRY_DSN
+# next.config.js reads the game image host at build time.
+ARG MEDIA_BASE_URL
+ENV MEDIA_BASE_URL=$MEDIA_BASE_URL
 # Source map upload token. A secret mount keeps it out of the image layers.
 # The token is read from the secret file, because older BuildKit versions do
 # not support env= on a secret mount. Without the secret, the build skips the upload.

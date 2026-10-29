@@ -96,6 +96,8 @@ jobs:
       E2E_MAIL_API_URL: http://localhost:8025
       STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
       NEXT_PUBLIC_BASE_URL: http://localhost:3500
+      # The game image host that next.config.js allows. The seeded games point to it.
+      MEDIA_BASE_URL: https://d11uuhy7o8wejt.cloudfront.net
       NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY }}
       SEED_API_URL: http://localhost:3500/api
       E2E_BASE_URL: http://localhost:3000

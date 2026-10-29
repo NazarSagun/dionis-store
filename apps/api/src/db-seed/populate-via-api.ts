@@ -29,10 +29,17 @@ interface GameFixture {
   release_date: string
   price: number
   rating: string
-}
-
-function getRandomDiscount(min: number, max: number) {
-  return Math.floor(Math.random() * (max - min + 1)) + min
+  discount: number
+  trailerYoutubeId: string
+  images: Array<{ url: string; alt: string; position: number }>
+  sections: Array<{ kind: string; title: string; body: string; position: number }>
+  coverUrl?: string
+  ageRatings: string[]
+  criticRating?: number
+  criticRatingCount?: number
+  userRating?: number
+  userRatingCount?: number
+  languages: Array<{ language: string; audio: boolean; subtitles: boolean; interface: boolean }>
 }
 
 // The API has no self-serve way to become an Admin (register always assigns
@@ -75,15 +82,13 @@ async function login(): Promise<string> {
 }
 
 async function createGame(game: GameFixture, accessToken: string): Promise<'created' | 'skipped'> {
-  const payload = { ...game, discount: getRandomDiscount(5, 85) }
-
   const response = await fetch(`${API_URL}/games`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${accessToken}`,
     },
-    body: JSON.stringify(payload),
+    body: JSON.stringify(game),
   })
 
   if (response.status === 201) {

@@ -37,13 +37,14 @@ test.describe('Search, filter, and sort toolbar', () => {
     await expect(cards.first().locator('h3')).toContainText(fragment, { ignoreCase: true })
   })
 
-  test('filters the grid by platform', async ({ page }) => {
+  test('filters the grid by platform', async ({ page, request }) => {
+    const { games } = await (await request.get(`${apiUrl}/api/games/1?platform=PS5`)).json()
     await page.goto('/')
 
     await selectFromDropdown(page, 'platform-filter', 'platform-filter-option', 'PS5')
 
     const cards = libraryCards(page)
-    await expect(cards).toHaveCount(2)
+    await expect(cards).toHaveCount(games.length)
     await expect(cards.first()).toContainText('PS5')
     await expect(cards.last()).toContainText('PS5')
   })
@@ -70,12 +71,13 @@ test.describe('Search, filter, and sort toolbar', () => {
 
     await selectFromDropdown(page, 'platform-filter', 'platform-filter-option', 'PS5')
     const cards = libraryCards(page)
-    await expect(cards).toHaveCount(2)
+    await expect(cards.first()).toContainText('PS5')
     const ps5Title = await cards.first().locator('h3').innerText()
 
-    await page.getByTestId('search-input').fill(ps5Title.slice(0, 4))
+    await page.getByTestId('search-input').fill(ps5Title)
 
     await expect(cards).toHaveCount(1)
+    await expect(cards.first().locator('h3')).toHaveText(ps5Title)
     await expect(cards.first()).toContainText('PS5')
   })
 

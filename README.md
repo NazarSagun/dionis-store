@@ -86,6 +86,18 @@ pnpm seed:api
 
 This command reads `SEED_API_URL`, `SEED_ADMIN_NAME`, `SEED_ADMIN_EMAIL`, and `SEED_ADMIN_PASSWORD` from `apps/api/.env`. `SEED_ADMIN_PASSWORD` has no default, and the seed stops if it is not set. The seed creates the admin account directly in the database. If an account with `SEED_ADMIN_EMAIL` already exists without the admin role, the seed stops and does not promote it. On a public deployment, set a long random password.
 
+The seed reads the 50 curated games from `apps/api/src/db-seed/games/games.json`. The IGDB import script writes that file. Run it only to change the game list.
+
+The import needs a Twitch application for the IGDB API and AWS credentials for the media bucket. Set `TWITCH_CLIENT_ID`, `TWITCH_CLIENT_SECRET`, `MEDIA_BUCKET`, and `MEDIA_BASE_URL` in `apps/api/.env`. Edit `apps/api/src/db-seed/games/curated-games.json`. Then run the following command from `apps/api`.
+
+```sh
+pnpm import:igdb
+```
+
+The script uploads the images to the media bucket and rewrites `games.json`. If a game has too few images, no trailer, or no store platform, the script writes nothing. If the catalog breaks the mix rule in `.claude/specs/rich-game-details-spec.md`, the script also writes nothing.
+
+To replace the games in a database that already has games, run `pnpm reset:catalog`. Set `RESET_CATALOG_CONFIRM` to the database name first. Then restart the API and run the seed again. The reset deletes every game and every order. Users and promo codes stay.
+
 ## Testing
 
 Run the following command from the repository root to run unit tests across all apps.

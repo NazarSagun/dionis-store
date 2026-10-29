@@ -2,90 +2,126 @@
 
 ## Purpose
 
-This spec lists the features that Dionis Store does not have yet, with an implementation plan for each one. It is a roadmap, not a single feature spec. Before you build a feature, write its own spec from its section here through the `feature-pipeline` skill. That spec adds the Figma design, the `data-testid` names, and the E2E tests.
+This spec lists the next features for Dionis Store, with a short plan for each one. It is a roadmap, not a single feature spec. Before you build a feature, write its own spec from its section here through the `feature-pipeline` skill. That spec adds the Figma design, the `data-testid` names, and the E2E tests.
 
-Phase 0, Phase 1, and Features 2.1, 2.2, 2.3, and 2.5 are built, so this spec no longer lists them. The remaining features keep their old numbers, because other specs refer to them by number.
+This roadmap replaces an older one. The older roadmap used the numbers 1.1 to 3.5, and some specs and E2E tests still refer to those numbers. Git history holds that file. All of its features are built, except 3.2 Gifting and 3.3 Refunds, which are dropped. The features here start at 4.1, so that no number has two meanings.
 
 ## Current state
 
-This section records the facts that the plans below depend on. It was checked against `main` at `5ca685b` on 2026-10-07.
+This section records the facts that the plans below depend on. It was checked against `main` at `9d959b2` on 2026-10-29.
 
-### Checkout and orders
+- `User` has one `refreshToken` and one `previousRefreshToken`. A login in a second browser ends the session in the first browser.
+- A user can change the password while signed in (`PATCH /api/users/me/password`). No route resets a forgotten password.
+- `MailService` sends the order receipt. The bell (`Notification`) shows review replies, shipping changes, and restock alerts.
+- `Roles` has `User = 101`, `Editor = 233`, and `Admin = 500`. Nothing uses `Editor`.
+- The admin panel at `/admin` manages games, editions, orders, shipments, and promo codes. It shows no sales totals.
+- The seed reads 332 games from `apps/api/src/db-seed/games/games.json`. Each game has one `thumbnail` hotlinked from `www.freetogame.com` and one `short_description`. The store calls no game API at run time.
+- Owners can rate and review a game, and any signed-in user can reply. No route deletes a review or a reply.
+- The Shipping step asks for the full address on every order. Nothing stores it on the account.
+- Production is one EC2 instance with Caddy, at `https://dioniss.com`. The `Content-Security-Policy` header is still in report-only mode.
 
-- The PaymentIntent is created when the Payment step mounts, before the shipping form is filled. `POST /api/orders/payment-intent/:id/shipping` stores the address as six metadata keys on the PaymentIntent. It writes no other key.
-- The web app calls `POST /api/orders/confirm` after `stripe.confirmPayment` succeeds. The Stripe webhook (`POST /api/orders/webhook`) also creates the order, so a closed tab does not lose a paid order. Production does not have the webhook endpoint in the Stripe dashboard yet.
-- Both routes call `createOrderFromPaymentIntent`. It is idempotent (safe to run twice) on `stripePaymentIntentId`, because that column is `@unique`. `/confirm` returns an existing order only to the user who placed it.
-- `priceOrderItems` is the only place that calculates prices. It rejects an edition that does not belong to the cart line's game.
-- `GameEdition.stock` goes down inside the order transaction, through a conditional `updateMany`.
-- `Order` has a `status` (`PENDING`, `SHIPPED`, or `DELIVERED`) and a nullable `trackingNumber`. A digital-only order is `DELIVERED` when it is created. An admin sets both through `PATCH /api/admin/orders/:id`. Nothing tracks refunds.
-- After an order commits, `MailService` sends one receipt email. `Order.receiptSentAt` records the send, and a failed send leaves it empty.
-- `GET /api/orders` returns one page of orders. `GET /api/orders/owned` answers the ownership check. `findOwnedItem` in `apps/api/src/features/orders/order-ownership.util.ts` checks whether a user owns a `(gameId, editionId)` pair.
+## Phase 4: Game content
 
-### Catalog and admin
+### 4.1 Rich game details
 
-- `Roles` has `User = 101`, `Editor = 233`, and `Admin = 500`. `RolesGuard` reads the role from `@RequireRole(...)`. `Editor` is unused.
-- The admin panel at `/admin` creates, edits, and deletes games and their physical editions, and lists every order with search by email. The API routes are `POST /api/games`, `PATCH` and `DELETE /api/games/:id`, `POST /api/games/:id/editions`, `PATCH` and `DELETE /api/editions/:id`, and `GET /api/admin/orders`.
-- `Game_pc.rating` is a string from the seed source. Owners can also rate and review a game (`Review`, with replies), and `GET /api/game/:gameId` returns `averageRating` and `reviewCount`.
-- The catalog search, filters, and sort live in the URL. `GET /api/games/genres` lists the genres.
+The game detail page shows an image gallery, a YouTube trailer, and a long description with several sections. The catalog shrinks to 50 games with full content, across several genres and platforms, because the current 332 games have one thumbnail and one sentence each.
 
-### Accounts
+1. Keep the seed in a local file, as today. Replace `games/games.json` with a curated file of 50 games.
+2. Add the model `GameImage { gameId, url, alt, position }`. The first image is the cover, and `thumbnail` stays for the card.
+3. Add `trailerYoutubeId String?` to `Game_pc`. The web app builds the embed URL from the ID, with `youtube-nocookie.com`, so the API never stores a full URL.
+4. Add `GameSection { gameId, kind, title, body, position }` for the long description. `kind` is one of `about`, `story`, and `features`. `body` is plain text with paragraphs and `- ` list items, so the web app renders it without raw HTML. `.claude/specs/rich-game-details-spec.md` holds the full plan.
+5. `GET /api/game/:gameId` returns the images, the trailer ID, and the sections, ordered by `position`.
+6. The admin game form can edit the trailer ID, the image list, and the sections.
+7. Update the Caddy `Content-Security-Policy` with `frame-src https://www.youtube-nocookie.com` and the image host in `img-src`. Update `remotePatterns` in `apps/web/next.config.js` the same way.
 
-- A signed-in user's wishlist is stored on the account (`WishlistItem`). The recently-viewed list lives only in `localStorage`, through zustand `persist`.
-- `User.refreshToken` is one column, so a login ends the user's session in any other browser on its next page load. A password change replaces the token.
-- Passwords must be 8 to 72 characters. Login, register, and password change are rate-limited per IP address.
+The content comes from IGDB (the Twitch game database API), through a one-time import script. The script downloads the images into an S3 bucket that CloudFront serves, so the store does not hotlink IGDB at run time. IGDB is free only for non-commercial use.
 
-### Engineering
+Dependency: the reviews, orders, and E2E helpers that use game IDs from the old seed need new IDs.
 
-- CI runs lint, typecheck, build, and the web and API unit tests on every pull request. A second job runs the Playwright suite against Postgres, the built API, and the built web app.
-- Production is one EC2 instance in `eu-north-1` with Caddy, at `https://dioniss.com`. A deploy is a manual `git pull` and `docker compose` build on the server.
+## Phase 5: Accounts
 
-## Phase 2: Store operations
+### 5.1 Password reset
 
-### 2.4 Restock alerts
+A user who forgets the password asks for a reset link on the login page. The link arrives by email and works once.
 
-#### Description
+1. Add the model `PasswordResetToken { userId, tokenHash, expiresAt, usedAt }`. Store only a hash of the token.
+2. `POST /api/auth/forgot-password` takes an email address. It always returns `204`, so the response does not tell whether the account exists. It sends the link through `MailService`.
+3. `POST /api/auth/reset-password` takes the token and the new password. It sets `usedAt`, replaces the password, and clears the refresh tokens, so every old session ends.
+4. Rate-limit both routes per IP address, as login is.
+5. Add the "Forgot password" link on `/login` and a new page that sets the password.
 
-On an edition that is out of stock, a user can click "Notify me". When stock goes above zero, the user sees an in-app alert and gets an email through `MailService`.
+### 5.2 Sessions on more than one device
 
-#### Implementation plan
+A login in a second browser no longer ends the first session. The settings section lists the active sessions and can end each one.
 
-1. Add the model `StockAlert { userId, editionId, createdAt, notifiedAt }`.
-2. When an admin raises stock from 0 in the admin panel (`PATCH /api/editions/:id`), mark the alerts for that edition as ready.
-3. Send one email per ready alert through `MailService`, and set `notifiedAt`.
-4. Show ready alerts on the account page, next to the price-drop alerts.
+1. Add the model `Session { id, userId, refreshTokenHash, previousRefreshTokenHash, userAgent, createdAt, lastUsedAt }`. Move the token columns from `User` to this model.
+2. Login creates a session. Refresh rotates the token of that session only. Logout deletes that session only.
+3. A password change and a password reset (5.1) delete every session of the user.
+4. Add `GET /api/users/me/sessions` and `DELETE /api/users/me/sessions/:id`.
 
-#### Dependencies
+Dependency: 5.1 is easier to build first, because 5.2 changes where it clears the tokens.
 
-Feature 2.1 and Feature 2.2. Both are built.
+### 5.3 Saved addresses
 
-## Phase 3: Growth
+A signed-in user can save shipping addresses and pick one on the Shipping step.
+
+1. Add the model `Address { userId, name, line1, line2, city, postalCode, country, isDefault }`.
+2. Add create, list, update, and delete routes under `/api/users/me/addresses`.
+3. The Shipping step fills the form from the default address. A check box saves a new address.
+4. The order keeps its own copy of the address in the PaymentIntent metadata, as today. A later edit of a saved address does not change an old order.
+
+## Phase 6: Admin
+
+### 6.1 Review moderation
+
+An admin can remove a review or a reply that breaks the rules.
+
+1. Add `DELETE /api/admin/reviews/:id` and `DELETE /api/admin/replies/:id`, with `@RequireRole(Roles.Admin)`.
+2. A deleted review no longer counts in `averageRating` and `reviewCount`.
+3. Add a reviews table to the admin panel, with a search by game title.
+4. Send the author a bell notification when an admin removes their text.
+
+### 6.2 Sales overview
+
+The admin panel opens on a page with sales totals.
+
+1. Add `GET /api/admin/stats?from=&to=`. It returns revenue, the order count, the top ten games by revenue, and the promo code discount total for the period.
+2. Calculate the numbers in SQL from `Order` and `OrderItem`. Add no new table.
+3. Show the numbers as stat tiles and one table. Add a chart only if the tiles are not enough.
+
+### 6.3 Editor role
+
+A user with the `Editor` role manages the catalog but cannot see orders, customers, or promo codes.
+
+1. Allow `Roles.Editor` on the game and edition routes.
+2. Keep `Roles.Admin` only on orders, shipments, promo codes, stats, and moderation.
+3. The admin shell hides the sections that the role cannot open.
+4. An admin sets the role of a user. Add `PATCH /api/admin/users/:id/role`.
+
+## Phase 7: Growth
 
 Each item here needs its own spec before work starts. The plans are short on purpose.
 
-### 3.1 Promo codes
+### 7.1 Bundles
 
-Add the model `PromoCode { code, percentOff, expiresAt, maxUses, uses }`. The Payment step has a code field. `createPaymentIntent` applies the code on the server, and `priceOrderItems` stays the only place that calculates prices. An admin manages codes through Feature 2.1.
+An admin groups two or more games into a bundle with one price. The cart treats the bundle as one line, and the order creates one `OrderItem` per game. `priceOrderItems` stays the only place that calculates prices.
 
-### 3.2 Gifting
+### 7.2 Deal countdowns
 
-At checkout, a user can mark a digital item as a gift and enter an email address. The activation code goes to that address through Feature 2.2 and does not show in the buyer's Library. The recipient's ownership needs a decision. The simplest option is that the recipient owns nothing in the store until they register with that email address.
+A discount gets an optional end date. The game card and the detail page show the time left. When the date passes, the price goes back without an admin action, because the API reads the end date at price time.
 
-### 3.3 Refunds and cancellations
+### 7.3 Deferred
 
-An admin refunds an order through Feature 2.1. The API calls `stripe.refunds.create`, handles the `charge.refunded` event in the existing Stripe webhook, restores edition stock, and sets a `REFUNDED` status. An activated digital item cannot be refunded.
-
-### 3.4 Recommendations
-
-Add a "Because you viewed" strip on the account page and the game detail page. The first version uses the genres of recently viewed and owned games and needs no new table. Do not add a machine-learning service until this simple version shows a result.
-
-### 3.5 Deferred
-
-Leave these items out until there is a clear need: deal countdowns, bundles, multiple currencies, saved addresses, and address validation.
+Leave these items out until there is a clear need: multiple currencies, address validation, a machine-learning recommendation service, gifting, and refunds.
 
 ## Recommended order
 
-1. 2.4 Restock alerts.
-2. Phase 3, one spec at a time. Feature 3.3 adds a `REFUNDED` value to the existing order status.
+1. 4.1 Rich game details.
+2. 5.1 Password reset, because a user who forgets the password has no way back today.
+3. 6.1 Review moderation, because buyer text shows publicly with no way to remove it.
+4. 5.2 Sessions, then 5.3 Saved addresses.
+5. 6.2 Sales overview, then 6.3 Editor role.
+6. Phase 7, one spec at a time.
 
 ## Cross-feature requirements
 

@@ -3,6 +3,7 @@ import Image from 'next/image'
 
 import { useIsInWishlist, useToggleWishlistItem } from '@/modules/wishlist/core/facade'
 
+import { platformLabels } from '../../domain/platforms'
 import { calculateDiscountedPrice } from '../../domain/pricing'
 import { GameObject } from '../../integration/repository'
 
@@ -58,20 +59,20 @@ export const GameCard = ({
 
   return (
     <div
-      className='flex w-full cursor-pointer flex-col overflow-hidden rounded-md border border-ink bg-panel-alt text-foreground transition-transform duration-500 hover:-translate-y-[5px]'
+      className='group flex h-full w-full cursor-pointer flex-col overflow-hidden rounded-md border border-ink bg-panel-alt text-foreground transition-transform duration-300 hover:-translate-y-[5px]'
       role='link'
       tabIndex={0}
       onClick={onClickHandler}
       onKeyDown={onKeyDownHandler}
       data-testid='card'
     >
-      <div className='relative aspect-[4/3] w-full shrink-0'>
+      <div className='relative aspect-video w-full shrink-0 overflow-hidden'>
         <Image
           onLoad={() => setIsImageLoaded(true)}
           priority
           fill
-          sizes='(min-width: 1280px) 20vw, (min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw'
-          style={{ objectFit: 'cover' }}
+          sizes='(min-width: 1536px) 25vw, (min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw'
+          className='object-cover transition-transform duration-500 group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100'
           alt={`${title} thumbnail`}
           src={imageSrc}
           data-testid='image'
@@ -101,18 +102,28 @@ export const GameCard = ({
           </button>
         )}
       </div>
-      <div className='flex min-w-0 flex-col gap-2 p-4'>
-        <h3 className='w-full truncate font-display text-base font-medium'>{title}</h3>
-        <span className='text-sm text-muted-foreground'>{platform}</span>
+      <div className='flex min-w-0 flex-1 flex-col gap-3 p-5'>
+        <h3 className='w-full truncate font-display text-lg font-medium'>{title}</h3>
+        <ul aria-label={platform} className='flex flex-wrap gap-1.5'>
+          {platformLabels(platform).map((label) => (
+            <li
+              key={label}
+              aria-hidden='true'
+              className='rounded border border-ink px-2 py-0.5 font-mono text-xs text-muted-foreground'
+            >
+              {label}
+            </li>
+          ))}
+        </ul>
         {extraBadge}
-        <div className='flex items-center gap-1.5 pt-1'>
+        <div className='mt-auto flex items-center gap-2 pt-1'>
           {discount ? (
             <>
-              <span className='font-mono text-xs text-muted-foreground line-through'>€{price}</span>
-              <span className='font-mono text-base text-foreground'>€{calculateDiscountedPrice(price, discount)}</span>
+              <span className='font-mono text-sm text-muted-foreground line-through'>€{price}</span>
+              <span className='font-mono text-lg text-foreground'>€{calculateDiscountedPrice(price, discount)}</span>
             </>
           ) : (
-            <span className='font-mono text-base text-foreground'>€{price}</span>
+            <span className='font-mono text-lg text-foreground'>€{price}</span>
           )}
         </div>
         {onAddToCart && (

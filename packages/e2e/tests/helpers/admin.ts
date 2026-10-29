@@ -53,7 +53,11 @@ export const newGameFields = (title: string) => ({
 
 // Creates a game through the admin API, so tests that are not about the
 // create form start from a known game. Returns its id and title.
-export async function createGameViaApi(request: APIRequestContext, title = `E2E Game ${uniqueSuffix()}`) {
+export async function createGameViaApi(
+  request: APIRequestContext,
+  title = `E2E Game ${uniqueSuffix()}`,
+  extra: Record<string, unknown> = {},
+) {
   const token = await apiToken(request)
   const response = await request.post(`${apiUrl}/api/games`, {
     headers: { Authorization: `Bearer ${token}` },
@@ -69,6 +73,7 @@ export async function createGameViaApi(request: APIRequestContext, title = `E2E 
       price: 30,
       rating: '4.10',
       discount: 0,
+      ...extra,
     },
   })
   expect(response.status()).toBe(201)

@@ -13,6 +13,8 @@
     "insert:mock": "node ./src/db-seed/insertAllData.js",
     "seed:api": "ts-node src/db-seed/populate-via-api.ts",
     "seed:reviews": "ts-node src/db-seed/seed-reviews.ts",
+    "import:igdb": "ts-node src/db-seed/import-igdb.ts",
+    "reset:catalog": "ts-node src/db-seed/reset-catalog.ts",
     "lint": "eslint src --ext .ts --max-warnings 0",
     "typecheck": "tsc --noEmit",
     "migrate:deploy": "prisma migrate deploy"
