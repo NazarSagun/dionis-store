@@ -26,7 +26,7 @@ Each item has a default that this spec already uses. Change the default before p
 
 1. How does the API rank games? Default: count the genres of the seed games. A game from the most common genre ranks first. Games in the same genre sort by title, so the order is stable. A rating-based tie-break is a follow-up, because `rating` is a string from the seed source.
 2. What does the detail page use as seeds? Default: the game on the page plus the recently viewed ids. The game on the page is never in the result.
-3. What does the account page show when the user has no recent views? Default: a strip titled "Based on your library" that seeds from the owned games only. With no views and no owned games, the strip does not render.
+3. Does the account page show a strip? Decision: no. The account page shows only Recently Viewed, below the active tab content on "My Games".
 4. Does the result cache? Default: no. One indexed lookup of seed genres and one query for candidates is cheap, and the inputs differ for each user.
 5. How many games show? Default: 6, and the API allows at most 12.
 
@@ -65,29 +65,26 @@ The API returns games from the genres of the seed games, without the games the c
 
 ### Description
 
-A strip of game cards, shown on the account page and on the game detail page.
+A strip of game cards, shown on the game detail page.
 
 ### Requirements
 
 1. Add a presentation component in the `games` module. It takes the seed ids and the excluded ids as props, calls the generated client for the API of Feature 1, and renders up to 6 `GameCard` components. Each card links to `/game/<id>`, like `RecentlyViewedSection` does.
 2. On the game detail page, render the strip below the game information. The seeds are the game on the page plus the recently viewed ids. The excluded ids are the game on the page, and the owned games when the user is signed in. The heading is "Because you viewed".
-3. On the account page, render the strip on the "My Games" tab below Recently Viewed. The seeds are the recently viewed ids. When there are none, the seeds are the owned game ids and the heading is "Based on your library". The excluded ids are the seeds and the owned games.
-4. The strip renders nothing when the result is empty, when there are no seeds, or when the request fails. A failed request does not show an error, because the strip is optional content.
-5. While the request runs, the strip shows a skeleton row, so the page does not jump.
-6. A view that the user records while on the page does not change the strip until the next visit.
+3. The strip renders nothing when the result is empty, when there are no seeds, or when the request fails. A failed request does not show an error, because the strip is optional content.
+4. While the request runs, the strip shows a skeleton row, so the page does not jump.
+5. A view that the user records while on the page does not change the strip until the next visit.
 
 ### Acceptance criteria
 
 - A guest views two games of one genre, then opens a third game page. The strip shows other games of that genre and not the game on the page.
-- A signed-in user who owns a game does not see that game in either strip.
-- A user with no recent views and no owned games sees no strip on the account page.
-- A user with owned games and no recent views sees "Based on your library" on the account page.
+- A signed-in user who owns a game does not see that game in the strip.
 - Clicking a card opens that game's page.
 - The strip shows at most 6 cards.
 
 ### Out of scope
 
-- A strip on the home page, the cart, or the order page.
+- A strip on the home page, the account page, the cart, or the order page.
 - A "dismiss" control and a user setting that turns the strip off.
 - Syncing the recently-viewed list to the account on the server.
 

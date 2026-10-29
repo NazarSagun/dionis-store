@@ -13,16 +13,3 @@ export function detailPageSeeds(gameId: number, recentlyViewed: number[]): numbe
 export function excludedIds(...groups: number[][]): number[] {
   return unique(groups.flat()).slice(0, MAX_EXCLUDE_IDS)
 }
-
-export interface AccountRecommendationSeeds {
-  seeds: number[]
-  title: 'Because you viewed' | 'Based on your library'
-}
-
-// Recently viewed games seed the strip. Without any, the owned games do.
-export function accountSeeds(recentlyViewed: number[], ownedGameIds: number[]): AccountRecommendationSeeds {
-  if (recentlyViewed.length > 0) {
-    return { seeds: unique(recentlyViewed).slice(0, MAX_SEED_IDS), title: 'Because you viewed' }
-  }
-  return { seeds: unique(ownedGameIds).slice(0, MAX_SEED_IDS), title: 'Based on your library' }
-}
