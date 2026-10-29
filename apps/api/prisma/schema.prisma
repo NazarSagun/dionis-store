@@ -27,6 +27,7 @@ model User {
   notifications Notification[]
   stockAlerts  StockAlert[]
   promoRedemptions PromoRedemption[]
+  passwordResetTokens PasswordResetToken[]
 }
 
 model Game_pc {
@@ -261,4 +262,17 @@ model Notification {
 
   @@unique([userId, replyId])
   @@index([userId, readAt])
+}
+
+// A reset link that works once. Only the SHA-256 hash of the token is stored.
+model PasswordResetToken {
+  id        Int       @id @default(autoincrement())
+  userId    Int
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([userId])
 }

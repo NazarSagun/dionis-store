@@ -23,6 +23,7 @@ import type {
   CreatePromoCodeInput,
   EditionInput,
   EditionUpdateInput,
+  ForgotPasswordInput,
   GameDetail,
   GameEditionObject,
   GameInput,
@@ -48,6 +49,7 @@ import type {
   RepliesPage,
   Reply,
   ReplyInput,
+  ResetPasswordInput,
   ReviewInput,
   ReviewsPage,
   ShippingAddressInput,
@@ -490,6 +492,26 @@ export const getLoginMockHandler = (overrideResponse?: UserObject | ((info: Para
   }, options)
 }
 
+export const getForgotPasswordMockHandler = (overrideResponse?: void | ((info: Parameters<HttpResponseResolver<PathParams, ForgotPasswordInput>>[0]) => Promise<void> | void), options?: RequestHandlerOptions) => {
+  return http.post<PathParams, ForgotPasswordInput>('*/forgot-password', async (info: Parameters<HttpResponseResolver<PathParams, ForgotPasswordInput>>[0]) => {
+  if (typeof overrideResponse === 'function') {await overrideResponse(info); }
+
+    return new HttpResponse(null,
+      { status: 204
+      })
+  }, options)
+}
+
+export const getResetPasswordMockHandler = (overrideResponse?: void | ((info: Parameters<HttpResponseResolver<PathParams, ResetPasswordInput>>[0]) => Promise<void> | void), options?: RequestHandlerOptions) => {
+  return http.post<PathParams, ResetPasswordInput>('*/reset-password', async (info: Parameters<HttpResponseResolver<PathParams, ResetPasswordInput>>[0]) => {
+  if (typeof overrideResponse === 'function') {await overrideResponse(info); }
+
+    return new HttpResponse(null,
+      { status: 204
+      })
+  }, options)
+}
+
 export const getLogoutMockHandler = (overrideResponse?: SuccessMessage | ((info: Parameters<HttpResponseResolver>[0]) => Promise<SuccessMessage> | SuccessMessage), options?: RequestHandlerOptions) => {
   return http.get('*/logout', async (info: Parameters<HttpResponseResolver>[0]) => {
 
@@ -713,6 +735,8 @@ export const getDefaultMock = () => [
   getPostNotificationsReadAllMockHandler(),
   getRegisterMockHandler(),
   getLoginMockHandler(),
+  getForgotPasswordMockHandler(),
+  getResetPasswordMockHandler(),
   getLogoutMockHandler(),
   getGetOrdersMockHandler(),
   getGetOwnedItemsMockHandler(),

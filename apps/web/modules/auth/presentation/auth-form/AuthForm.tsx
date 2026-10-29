@@ -88,6 +88,15 @@ export const AuthForm = ({ onSubmitForm, variant, isLoading, onVariantChange, sw
         name='password'
         data-testid='password'
       />
+      {formVariant === FormVariant.LOGIN && (
+        <Link
+          href='/forgot-password'
+          data-testid='forgot-password-link'
+          className='-mt-4 mb-4 self-end text-xs font-semibold text-foreground underline hover:text-neon-cyan'
+        >
+          Forgot password?
+        </Link>
+      )}
       <Button data-testid='submit-button' variant='default' disabled={isLoading}>
         {formVariant === FormVariant.LOGIN ? 'Login' : 'Register'}
       </Button>

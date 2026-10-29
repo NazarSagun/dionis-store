@@ -5,13 +5,19 @@ import { Request, Response } from 'express'
 import { AuthService } from './auth.service'
 import { RegisterDto } from './dto/register.dto'
 import { LoginDto } from './dto/login.dto'
+import { ForgotPasswordDto } from './dto/forgot-password.dto'
+import { ResetPasswordDto } from './dto/reset-password.dto'
+import { PasswordResetService } from './password-reset.service'
 import { setRefreshTokenCookie } from './auth-token.util'
 import { CustomError } from '../../common/errors/custom-error'
 import { toHttpException } from '../../common/errors/to-http-exception'
 
 @Controller()
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly passwordResetService: PasswordResetService,
+  ) {}
 
   @Post('register')
   @Throttle(AUTH_THROTTLE)
@@ -44,6 +50,29 @@ export class AuthController {
       }
     } catch (error) {
       throw toHttpException(error, { user: null })
+    }
+  }
+
+  // Always 204, so the response does not tell whether the account exists.
+  @Post('forgot-password')
+  @Throttle(AUTH_THROTTLE)
+  @HttpCode(204)
+  async forgotPassword(@Body() dto: ForgotPasswordDto) {
+    try {
+      await this.passwordResetService.requestReset(dto.email)
+    } catch (error) {
+      throw toHttpException(error)
+    }
+  }
+
+  @Post('reset-password')
+  @Throttle(AUTH_THROTTLE)
+  @HttpCode(204)
+  async resetPassword(@Body() dto: ResetPasswordDto) {
+    try {
+      await this.passwordResetService.resetPassword(dto.token, dto.password)
+    } catch (error) {
+      throw toHttpException(error)
     }
   }
 

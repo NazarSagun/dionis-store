@@ -1233,6 +1233,48 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/errorMessage'
+  /forgot-password:
+    post:
+      summary: Email a password reset link. Always 204, so the response does not tell whether the account exists.
+      operationId: forgotPassword
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/forgotPasswordInput'
+      responses:
+        '204':
+          description: The request was accepted
+        '400':
+          description: Invalid email
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+        '429':
+          description: Too many requests
+  /reset-password:
+    post:
+      summary: Set a new password with a reset token. Ends every session of the user.
+      operationId: resetPassword
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/resetPasswordInput'
+      responses:
+        '204':
+          description: The password was replaced
+        '400':
+          description: The reset link is invalid or expired, or the password is not 8 to 72 characters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+        '429':
+          description: Too many requests
   /logout:
     get:
       summary: Logout the current user
@@ -2271,6 +2313,23 @@ components:
       properties:
         name:
           type: string
+    forgotPasswordInput:
+      type: object
+      required: [email]
+      properties:
+        email:
+          type: string
+          format: email
+    resetPasswordInput:
+      type: object
+      required: [token, password]
+      properties:
+        token:
+          type: string
+        password:
+          type: string
+          minLength: 8
+          maxLength: 72
     changePasswordInput:
       type: object
       required:

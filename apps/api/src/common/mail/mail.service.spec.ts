@@ -88,6 +88,20 @@ describe('MailService', () => {
     )
   })
 
+  it('sends a password reset with the reset page link of the first CLIENT_URL origin', async () => {
+    process.env.SMTP_HOST = 'localhost'
+
+    await expect(new MailService().sendPasswordReset('a@b.test', 'tok_en-1')).resolves.toBe(true)
+
+    expect(sendMail).toHaveBeenCalledWith(
+      expect.objectContaining({
+        to: 'a@b.test',
+        subject: 'Reset your Dionis Store password',
+        text: expect.stringContaining('http://localhost:3000/reset-password?token=tok_en-1'),
+      }),
+    )
+  })
+
   it('sends no restock alert when mail is off or the address is a test domain on a real server', async () => {
     const alert = { gameId: 3, gameTitle: 'Nebula Runner', editionName: 'Collector' }
     await expect(new MailService().sendRestockAlert('a@b.test', alert)).resolves.toBe(false)

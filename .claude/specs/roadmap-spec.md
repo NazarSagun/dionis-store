@@ -45,10 +45,10 @@ Dependency: the reviews, orders, and E2E helpers that use game IDs from the old 
 A user who forgets the password asks for a reset link on the login page. The link arrives by email and works once.
 
 1. Add the model `PasswordResetToken { userId, tokenHash, expiresAt, usedAt }`. Store only a hash of the token.
-2. `POST /api/auth/forgot-password` takes an email address. It always returns `204`, so the response does not tell whether the account exists. It sends the link through `MailService`.
-3. `POST /api/auth/reset-password` takes the token and the new password. It sets `usedAt`, replaces the password, and clears the refresh tokens, so every old session ends.
+2. `POST /api/forgot-password` takes an email address. It always returns `204`, so the response does not tell whether the account exists. It sends the link through `MailService`.
+3. `POST /api/reset-password` takes the token and the new password. It sets `usedAt`, replaces the password, and clears the refresh tokens, so every old session ends.
 4. Rate-limit both routes per IP address, as login is.
-5. Add the "Forgot password" link on `/login` and a new page that sets the password.
+5. Add the "Forgot password" link on `/login` and a new page that sets the password. `.claude/specs/password-reset-spec.md` holds the full plan.
 
 ### 5.2 Sessions on more than one device
 

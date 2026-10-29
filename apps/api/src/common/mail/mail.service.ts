@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common'
 import { createTransport, Transporter } from 'nodemailer'
 import { hasReservedTld } from '../../features/auth/email-domain.util'
 import { ReceiptOrder, renderReceipt } from './receipt-template'
+import { renderPasswordReset } from './password-reset-template'
 import { renderRestockAlert, RestockAlert } from './restock-template'
 
 // Mailpit and any local catcher never deliver outside the machine.
@@ -44,6 +45,11 @@ export class MailService {
       renderRestockAlert({ ...rest, gameUrl: `${this.getClientOrigin()}/game/${gameId}` }),
       'Restock alert',
     )
+  }
+
+  async sendPasswordReset(to: string, token: string): Promise<boolean> {
+    const url = `${this.getClientOrigin()}/reset-password?token=${encodeURIComponent(token)}`
+    return this.send(to, renderPasswordReset(url), 'Password reset')
   }
 
   private async send(to: string, message: { subject: string; html: string; text: string }, label: string) {
