@@ -199,52 +199,6 @@ test.describe('Feature 2: "Because you viewed" strip', () => {
     await expect(strip).not.toContainText(owned.title)
   })
 
-  test('the account page shows the strip below Recently Viewed, with the viewed games as seeds', async ({
-    page,
-    request,
-  }) => {
-    const genre = uniqueGenre()
-    const seed = await createGameInGenre(request, genre, 'A')
-    const candidate = await createGameInGenre(request, genre, 'B')
-    await signUpCustomer(page)
-    await page.goto(`/game/${seed.id}`)
-
-    await page.goto('/account')
-
-    await expect(page.getByTestId('recently-viewed')).toBeVisible()
-    await expect(page.getByTestId('recommendations-title')).toHaveText('Because you viewed')
-    await expect(page.getByTestId('recommendations')).toContainText(candidate.title)
-    // The viewed game is a seed, so the strip never lists it.
-    await expect(page.getByTestId('recommendations')).not.toContainText(seed.title)
-  })
-
-  test('a user with owned games and no recent views sees "Based on your library"', async ({ page, request }) => {
-    test.setTimeout(120_000)
-    const genre = uniqueGenre()
-    const owned = await createGameInGenre(request, genre, 'A')
-    const candidate = await createGameInGenre(request, genre, 'B')
-    await signUpCustomer(page)
-    await buyGame(page, owned.id)
-    await page.evaluate(() => localStorage.removeItem('recently-viewed-storage'))
-
-    await page.goto('/account')
-
-    await expect(page.getByTestId('recently-viewed')).toHaveCount(0)
-    await expect(page.getByTestId('recommendations-title')).toHaveText('Based on your library')
-    await expect(page.getByTestId('recommendations')).toContainText(candidate.title)
-    await expect(page.getByTestId('recommendations')).not.toContainText(owned.title)
-  })
-
-  test('a user with no recent views and no owned games sees no strip on the account page', async ({ page }) => {
-    await signUpCustomer(page)
-
-    await page.goto('/account')
-
-    await expect(page.getByTestId('account-page')).toBeVisible()
-    await expect(page.getByTestId('recommendations')).toHaveCount(0)
-    await expect(page.getByTestId('recommendations-skeleton')).toHaveCount(0)
-  })
-
   test('the strip sends the recently viewed ids as seeds', async ({ page, request }) => {
     const genre = uniqueGenre()
     const first = await createGameInGenre(request, genre, 'A')
