@@ -52,6 +52,13 @@ const LoginPage = () => {
     }
   }, [searchParams, router, toast])
 
+  useEffect(() => {
+    if (searchParams.get('passwordReset') === '1') {
+      toast({ title: 'Password changed', description: 'Log in with your new password.' })
+      router.replace(loginHref(searchParams.get('next')))
+    }
+  }, [searchParams, router, toast])
+
   return (
     <div className='min-h-[75vh]'>
       <AuthPage

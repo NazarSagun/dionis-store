@@ -60,7 +60,7 @@ The command prints a signing secret that starts with `whsec_`. Put it in `apps/a
 
 ## Receipt emails
 
-After an order is created, the API emails a receipt with the activation codes. It sends the email through SMTP. Set `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, and `MAIL_FROM` in `apps/api/.env`. If `SMTP_HOST` is empty, the API starts and sends no email.
+After an order is created, the API emails a receipt with the activation codes. It sends the email through SMTP. Set `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, and `MAIL_FROM` in `apps/api/.env`. The API also sends the password reset link through the same server. If `SMTP_HOST` is empty, the API starts and sends no email.
 
 For local development, run Mailpit, a mail catcher. It accepts SMTP on port 1025 and shows every email at `http://localhost:8025`. No email leaves your machine.
 
@@ -74,7 +74,7 @@ A user with the Admin role (`500`) can open `/admin` from the account menu. Ther
 
 ## Rate limiting
 
-The API allows 300 requests a minute per client IP, and 10 a minute on login, register, and password change. It answers `429` after that. Behind a reverse proxy, set `TRUST_PROXY` to the number of proxies (the production compose file sets it to 1), or all users share one limit. Set `RATE_LIMIT=off` only for tests, because they sign up many users from one address. For a load test, set `RATE_LIMIT_BYPASS_TOKEN` to a random value of 32 or more characters, and send it in the `X-Load-Test-Token` header. A request with the right value has no limit on any route, login included. Keep the value secret, because anyone who has it can bypass the limit.
+The API allows 300 requests a minute per client IP, and 10 a minute on login, register, password change, and password reset. It answers `429` after that. Behind a reverse proxy, set `TRUST_PROXY` to the number of proxies (the production compose file sets it to 1), or all users share one limit. Set `RATE_LIMIT=off` only for tests, because they sign up many users from one address. For a load test, set `RATE_LIMIT_BYPASS_TOKEN` to a random value of 32 or more characters, and send it in the `X-Load-Test-Token` header. A request with the right value has no limit on any route, login included. Keep the value secret, because anyone who has it can bypass the limit.
 
 ## Seed data
 
