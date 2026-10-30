@@ -159,6 +159,8 @@ export const AiSearchPalette = () => {
                   aria-label='Describe the game you want'
                   onChange={(event) => {
                     setQuery(event.target.value)
+                    // Enter sends the typed text unless an arrow key picks an example after it.
+                    setActiveExample(-1)
                     if (state.kind === 'rejected' || state.kind === 'error') setState({ kind: 'idle' })
                   }}
                   onKeyDown={onInputKeyDown}
@@ -206,12 +208,14 @@ export const AiSearchPalette = () => {
                       type='button'
                       data-testid='ai-search-example'
                       disabled={pending}
-                      onMouseEnter={() => setActiveExample(index)}
                       onClick={() => fillExample(example.text)}
-                      className={cn(rowStyles, index === activeExample && 'bg-secondary')}
+                      className={cn(rowStyles, 'group hover:bg-secondary', index === activeExample && 'bg-secondary')}
                     >
                       <span
-                        className={cn('font-mono', index === activeExample ? 'text-primary' : 'text-muted-foreground')}
+                        className={cn(
+                          'font-mono',
+                          index === activeExample ? 'text-primary' : 'text-muted-foreground group-hover:text-primary',
+                        )}
                       >
                         ↳
                       </span>

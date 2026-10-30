@@ -67,6 +67,19 @@ describe('AiSearchPalette', () => {
     expect(push).not.toHaveBeenCalled()
   })
 
+  it('sends the typed text on Enter, even with the pointer over an example', async () => {
+    answer({ status: 'ok', filters: { genre: 'Strategy' } })
+    render(<AiSearchPalette />)
+    fireEvent.click(screen.getByTestId('ai-search-open'))
+    fireEvent.mouseEnter(screen.getAllByTestId('ai-search-example')[0])
+    const input = screen.getByTestId('ai-search-input')
+    fireEvent.change(input, { target: { value: 'I want a game like starcraft' } })
+    fireEvent.keyDown(input, { key: 'Enter' })
+
+    expect(input).toHaveValue('I want a game like starcraft')
+    expect(await screen.findByText('Genre: Strategy')).toBeInTheDocument()
+  })
+
   it('fills the input from an example without sending it, and disables search while empty', () => {
     render(<AiSearchPalette />)
     fireEvent.click(screen.getByTestId('ai-search-open'))
