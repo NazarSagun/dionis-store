@@ -348,5 +348,1755 @@
     "genre": "Horror",
     "price": 60,
     "discount": 0
+  },
+  {
+    "id": 51,
+    "igdbSlug": "grand-theft-auto-v",
+    "genre": "Open World",
+    "price": 20,
+    "discount": 0
+  },
+  {
+    "id": 52,
+    "igdbSlug": "the-elder-scrolls-v-skyrim",
+    "genre": "RPG",
+    "price": 5,
+    "discount": 0
+  },
+  {
+    "id": 53,
+    "igdbSlug": "grand-theft-auto-san-andreas",
+    "genre": "Open World",
+    "price": 10,
+    "discount": 25
+  },
+  {
+    "id": 54,
+    "igdbSlug": "portal",
+    "genre": "Puzzle",
+    "price": 5,
+    "discount": 0
+  },
+  {
+    "id": 55,
+    "igdbSlug": "half-life-2",
+    "genre": "Shooter",
+    "price": 10,
+    "discount": 50
+  },
+  {
+    "id": 56,
+    "igdbSlug": "bioshock",
+    "genre": "Shooter",
+    "price": 5,
+    "discount": 0
+  },
+  {
+    "id": 57,
+    "igdbSlug": "assassin-s-creed-ii",
+    "genre": "Action",
+    "price": 10,
+    "discount": 10
+  },
+  {
+    "id": 58,
+    "igdbSlug": "grand-theft-auto-vice-city",
+    "genre": "Open World",
+    "price": 5,
+    "discount": 0
+  },
+  {
+    "id": 59,
+    "igdbSlug": "half-life",
+    "genre": "Shooter",
+    "price": 10,
+    "discount": 0
+  },
+  {
+    "id": 60,
+    "igdbSlug": "mass-effect-2",
+    "genre": "RPG",
+    "price": 5,
+    "discount": 25
+  },
+  {
+    "id": 61,
+    "igdbSlug": "batman-arkham-city",
+    "genre": "Action",
+    "price": 10,
+    "discount": 0
+  },
+  {
+    "id": 62,
+    "igdbSlug": "bioshock-infinite",
+    "genre": "Shooter",
+    "price": 10,
+    "discount": 50
+  },
+  {
+    "id": 63,
+    "igdbSlug": "batman-arkham-asylum",
+    "genre": "Action",
+    "price": 10,
+    "discount": 0
+  },
+  {
+    "id": 64,
+    "igdbSlug": "red-dead-redemption",
+    "genre": "Open World",
+    "price": 5,
+    "discount": 10
+  },
+  {
+    "id": 65,
+    "igdbSlug": "mass-effect",
+    "genre": "RPG",
+    "price": 10,
+    "discount": 0
+  },
+  {
+    "id": 66,
+    "igdbSlug": "horizon-zero-dawn",
+    "genre": "RPG",
+    "price": 20,
+    "discount": 0
+  },
+  {
+    "id": 67,
+    "igdbSlug": "fallout-new-vegas",
+    "genre": "RPG",
+    "price": 10,
+    "discount": 25
+  },
+  {
+    "id": 68,
+    "igdbSlug": "tomb-raider--2",
+    "genre": "Action",
+    "price": 15,
+    "discount": 0
+  },
+  {
+    "id": 69,
+    "igdbSlug": "far-cry-3",
+    "genre": "Shooter",
+    "price": 20,
+    "discount": 50
+  },
+  {
+    "id": 70,
+    "igdbSlug": "minecraft-java-edition",
+    "genre": "Sandbox",
+    "price": 5,
+    "discount": 0
+  },
+  {
+    "id": 71,
+    "igdbSlug": "dark-souls-iii",
+    "genre": "RPG",
+    "price": 30,
+    "discount": 10
+  },
+  {
+    "id": 72,
+    "igdbSlug": "doom--2",
+    "genre": "Shooter",
+    "price": 25,
+    "discount": 0
+  },
+  {
+    "id": 73,
+    "igdbSlug": "dishonored",
+    "genre": "Stealth",
+    "price": 20,
+    "discount": 0
+  },
+  {
+    "id": 74,
+    "igdbSlug": "grand-theft-auto-iv",
+    "genre": "Open World",
+    "price": 5,
+    "discount": 25
+  },
+  {
+    "id": 75,
+    "igdbSlug": "undertale",
+    "genre": "RPG",
+    "price": 20,
+    "discount": 0
+  },
+  {
+    "id": 76,
+    "igdbSlug": "life-is-strange",
+    "genre": "Adventure",
+    "price": 15,
+    "discount": 50
+  },
+  {
+    "id": 77,
+    "igdbSlug": "borderlands-2",
+    "genre": "Shooter",
+    "price": 20,
+    "discount": 0
+  },
+  {
+    "id": 78,
+    "igdbSlug": "mass-effect-3",
+    "genre": "RPG",
+    "price": 10,
+    "discount": 10
+  },
+  {
+    "id": 79,
+    "igdbSlug": "call-of-duty-4-modern-warfare",
+    "genre": "Shooter",
+    "price": 10,
+    "discount": 0
+  },
+  {
+    "id": 80,
+    "igdbSlug": "the-last-of-us-part-ii",
+    "genre": "Action",
+    "price": 45,
+    "discount": 0
+  },
+  {
+    "id": 81,
+    "igdbSlug": "assassins-creed-iv-black-flag",
+    "genre": "Action",
+    "price": 20,
+    "discount": 25
+  },
+  {
+    "id": 82,
+    "igdbSlug": "max-payne",
+    "genre": "Shooter",
+    "price": 5,
+    "discount": 0
+  },
+  {
+    "id": 83,
+    "igdbSlug": "fallout-3",
+    "genre": "RPG",
+    "price": 10,
+    "discount": 50
+  },
+  {
+    "id": 84,
+    "igdbSlug": "assassins-creed-brotherhood",
+    "genre": "Action",
+    "price": 5,
+    "discount": 0
+  },
+  {
+    "id": 85,
+    "igdbSlug": "fallout-4",
+    "genre": "RPG",
+    "price": 20,
+    "discount": 10
+  },
+  {
+    "id": 86,
+    "igdbSlug": "the-walking-dead",
+    "genre": "Adventure",
+    "price": 10,
+    "discount": 0
+  },
+  {
+    "id": 87,
+    "igdbSlug": "dragon-age-origins",
+    "genre": "RPG",
+    "price": 10,
+    "discount": 0
+  },
+  {
+    "id": 88,
+    "igdbSlug": "dark-souls",
+    "genre": "RPG",
+    "price": 5,
+    "discount": 25
+  },
+  {
+    "id": 89,
+    "igdbSlug": "warcraft-iii-reign-of-chaos",
+    "genre": "Strategy",
+    "price": 10,
+    "discount": 0
+  },
+  {
+    "id": 90,
+    "igdbSlug": "inside",
+    "genre": "Puzzle",
+    "price": 20,
+    "discount": 50
+  },
+  {
+    "id": 91,
+    "igdbSlug": "limbo",
+    "genre": "Puzzle",
+    "price": 10,
+    "discount": 0
+  },
+  {
+    "id": 92,
+    "igdbSlug": "grand-theft-auto-iii",
+    "genre": "Open World",
+    "price": 5,
+    "discount": 10
+  },
+  {
+    "id": 93,
+    "igdbSlug": "call-of-duty-modern-warfare-2",
+    "genre": "Shooter",
+    "price": 10,
+    "discount": 0
+  },
+  {
+    "id": 94,
+    "igdbSlug": "ori-and-the-blind-forest",
+    "genre": "Metroidvania",
+    "price": 10,
+    "discount": 0
+  },
+  {
+    "id": 95,
+    "igdbSlug": "batman-arkham-knight",
+    "genre": "Action",
+    "price": 20,
+    "discount": 25
+  },
+  {
+    "id": 96,
+    "igdbSlug": "assassin-s-creed-iii",
+    "genre": "Open World",
+    "price": 15,
+    "discount": 0
+  },
+  {
+    "id": 97,
+    "igdbSlug": "resident-evil-2--1",
+    "genre": "Horror",
+    "price": 30,
+    "discount": 50
+  },
+  {
+    "id": 98,
+    "igdbSlug": "middle-earth-shadow-of-mordor",
+    "genre": "Open World",
+    "price": 10,
+    "discount": 0
+  },
+  {
+    "id": 99,
+    "igdbSlug": "rise-of-the-tomb-raider",
+    "genre": "Action",
+    "price": 20,
+    "discount": 10
+  },
+  {
+    "id": 100,
+    "igdbSlug": "call-of-duty-black-ops",
+    "genre": "Shooter",
+    "price": 5,
+    "discount": 0
+  },
+  {
+    "id": 101,
+    "igdbSlug": "counter-strike-global-offensive",
+    "genre": "Shooter",
+    "price": 20,
+    "discount": 0
+  },
+  {
+    "id": 102,
+    "igdbSlug": "wolfenstein-the-new-order",
+    "genre": "Shooter",
+    "price": 10,
+    "discount": 25
+  },
+  {
+    "id": 103,
+    "igdbSlug": "detroit-become-human--1",
+    "genre": "Adventure",
+    "price": 30,
+    "discount": 0
+  },
+  {
+    "id": 104,
+    "igdbSlug": "starcraft",
+    "genre": "Strategy",
+    "price": 5,
+    "discount": 50
+  },
+  {
+    "id": 105,
+    "igdbSlug": "mafia-ii",
+    "genre": "Open World",
+    "price": 10,
+    "discount": 0
+  },
+  {
+    "id": 106,
+    "igdbSlug": "the-evil-within",
+    "genre": "Horror",
+    "price": 5,
+    "discount": 10
+  },
+  {
+    "id": 107,
+    "igdbSlug": "assassins-creed-revelations",
+    "genre": "Open World",
+    "price": 10,
+    "discount": 0
+  },
+  {
+    "id": 108,
+    "igdbSlug": "the-wolf-among-us",
+    "genre": "Adventure",
+    "price": 15,
+    "discount": 0
+  },
+  {
+    "id": 109,
+    "igdbSlug": "firewatch",
+    "genre": "Adventure",
+    "price": 30,
+    "discount": 25
+  },
+  {
+    "id": 110,
+    "igdbSlug": "metal-gear-solid-v-the-phantom-pain",
+    "genre": "Stealth",
+    "price": 10,
+    "discount": 0
+  },
+  {
+    "id": 111,
+    "igdbSlug": "journey",
+    "genre": "Adventure",
+    "price": 20,
+    "discount": 50
+  },
+  {
+    "id": 112,
+    "igdbSlug": "god-of-war-ragnarok",
+    "genre": "Action",
+    "price": 45,
+    "discount": 0
+  },
+  {
+    "id": 113,
+    "igdbSlug": "far-cry-4",
+    "genre": "Open World",
+    "price": 20,
+    "discount": 10
+  },
+  {
+    "id": 114,
+    "igdbSlug": "watch-dogs",
+    "genre": "Open World",
+    "price": 10,
+    "discount": 0
+  },
+  {
+    "id": 115,
+    "igdbSlug": "sid-meier-s-civilization-v",
+    "genre": "Strategy",
+    "price": 10,
+    "discount": 0
+  },
+  {
+    "id": 116,
+    "igdbSlug": "ghost-of-tsushima",
+    "genre": "Open World",
+    "price": 45,
+    "discount": 25
+  },
+  {
+    "id": 117,
+    "igdbSlug": "starcraft-ii-wings-of-liberty",
+    "genre": "Strategy",
+    "price": 10,
+    "discount": 0
+  },
+  {
+    "id": 118,
+    "igdbSlug": "heavy-rain",
+    "genre": "Adventure",
+    "price": 5,
+    "discount": 50
+  },
+  {
+    "id": 119,
+    "igdbSlug": "resident-evil-7-biohazard",
+    "genre": "Horror",
+    "price": 30,
+    "discount": 0
+  },
+  {
+    "id": 120,
+    "igdbSlug": "assassins-creed-origins",
+    "genre": "Open World",
+    "price": 25,
+    "discount": 10
+  },
+  {
+    "id": 121,
+    "igdbSlug": "hellblade-senuas-sacrifice",
+    "genre": "Action",
+    "price": 30,
+    "discount": 0
+  },
+  {
+    "id": 122,
+    "igdbSlug": "dead-space-2",
+    "genre": "Horror",
+    "price": 5,
+    "discount": 0
+  },
+  {
+    "id": 123,
+    "igdbSlug": "dying-light",
+    "genre": "Survival",
+    "price": 20,
+    "discount": 25
+  },
+  {
+    "id": 124,
+    "igdbSlug": "terraria",
+    "genre": "Sandbox",
+    "price": 5,
+    "discount": 0
+  },
+  {
+    "id": 125,
+    "igdbSlug": "l-a-noire",
+    "genre": "Adventure",
+    "price": 10,
+    "discount": 50
+  },
+  {
+    "id": 126,
+    "igdbSlug": "star-wars-jedi-fallen-order",
+    "genre": "Metroidvania",
+    "price": 20,
+    "discount": 0
+  },
+  {
+    "id": 127,
+    "igdbSlug": "alan-wake",
+    "genre": "Horror",
+    "price": 10,
+    "discount": 10
+  },
+  {
+    "id": 128,
+    "igdbSlug": "age-of-empires-ii-the-age-of-kings",
+    "genre": "Strategy",
+    "price": 5,
+    "discount": 0
+  },
+  {
+    "id": 129,
+    "igdbSlug": "need-for-speed-most-wanted",
+    "genre": "Racing",
+    "price": 10,
+    "discount": 0
+  },
+  {
+    "id": 130,
+    "igdbSlug": "league-of-legends",
+    "genre": "Strategy",
+    "price": 5,
+    "discount": 25
+  },
+  {
+    "id": 131,
+    "igdbSlug": "what-remains-of-edith-finch",
+    "genre": "Adventure",
+    "price": 30,
+    "discount": 0
+  },
+  {
+    "id": 132,
+    "igdbSlug": "assassins-creed-odyssey",
+    "genre": "Open World",
+    "price": 25,
+    "discount": 50
+  },
+  {
+    "id": 133,
+    "igdbSlug": "assassins-creed-unity",
+    "genre": "Open World",
+    "price": 20,
+    "discount": 0
+  },
+  {
+    "id": 134,
+    "igdbSlug": "control",
+    "genre": "Metroidvania",
+    "price": 20,
+    "discount": 10
+  },
+  {
+    "id": 135,
+    "igdbSlug": "mirror-s-edge",
+    "genre": "Platformer",
+    "price": 10,
+    "discount": 0
+  },
+  {
+    "id": 136,
+    "igdbSlug": "cuphead",
+    "genre": "Platformer",
+    "price": 25,
+    "discount": 0
+  },
+  {
+    "id": 137,
+    "igdbSlug": "the-legend-of-zelda-tears-of-the-kingdom",
+    "genre": "Open World",
+    "price": 70,
+    "discount": 25
+  },
+  {
+    "id": 138,
+    "igdbSlug": "death-stranding",
+    "genre": "Action",
+    "price": 20,
+    "discount": 0
+  },
+  {
+    "id": 139,
+    "igdbSlug": "need-for-speed-underground-2",
+    "genre": "Racing",
+    "price": 10,
+    "discount": 50
+  },
+  {
+    "id": 140,
+    "igdbSlug": "far-cry-5",
+    "genre": "Open World",
+    "price": 25,
+    "discount": 0
+  },
+  {
+    "id": 141,
+    "igdbSlug": "the-walking-dead-season-two",
+    "genre": "Adventure",
+    "price": 20,
+    "discount": 10
+  },
+  {
+    "id": 142,
+    "igdbSlug": "super-meat-boy",
+    "genre": "Platformer",
+    "price": 5,
+    "discount": 0
+  },
+  {
+    "id": 143,
+    "igdbSlug": "need-for-speed-underground",
+    "genre": "Racing",
+    "price": 10,
+    "discount": 0
+  },
+  {
+    "id": 144,
+    "igdbSlug": "resident-evil-5",
+    "genre": "Horror",
+    "price": 5,
+    "discount": 25
+  },
+  {
+    "id": 145,
+    "igdbSlug": "a-plague-tale-innocence",
+    "genre": "Adventure",
+    "price": 30,
+    "discount": 0
+  },
+  {
+    "id": 146,
+    "igdbSlug": "the-last-of-us-part-i",
+    "genre": "Action",
+    "price": 40,
+    "discount": 50
+  },
+  {
+    "id": 147,
+    "igdbSlug": "dishonored-2",
+    "genre": "Stealth",
+    "price": 30,
+    "discount": 0
+  },
+  {
+    "id": 148,
+    "igdbSlug": "brothers-a-tale-of-two-sons",
+    "genre": "Adventure",
+    "price": 15,
+    "discount": 10
+  },
+  {
+    "id": 149,
+    "igdbSlug": "beyond-two-souls",
+    "genre": "Adventure",
+    "price": 20,
+    "discount": 0
+  },
+  {
+    "id": 150,
+    "igdbSlug": "prince-of-persia-the-sands-of-time",
+    "genre": "Platformer",
+    "price": 5,
+    "discount": 0
+  },
+  {
+    "id": 151,
+    "igdbSlug": "dota-2",
+    "genre": "Strategy",
+    "price": 20,
+    "discount": 25
+  },
+  {
+    "id": 152,
+    "igdbSlug": "little-nightmares",
+    "genre": "Horror",
+    "price": 25,
+    "discount": 0
+  },
+  {
+    "id": 153,
+    "igdbSlug": "papers-please",
+    "genre": "Puzzle",
+    "price": 20,
+    "discount": 50
+  },
+  {
+    "id": 154,
+    "igdbSlug": "hearthstone",
+    "genre": "Card Game",
+    "price": 10,
+    "discount": 0
+  },
+  {
+    "id": 155,
+    "igdbSlug": "heroes-of-might-and-magic-iii-the-restoration-of-erathia",
+    "genre": "Strategy",
+    "price": 10,
+    "discount": 10
+  },
+  {
+    "id": 156,
+    "igdbSlug": "outlast",
+    "genre": "Horror",
+    "price": 15,
+    "discount": 0
+  },
+  {
+    "id": 157,
+    "igdbSlug": "hitman-absolution",
+    "genre": "Stealth",
+    "price": 20,
+    "discount": 0
+  },
+  {
+    "id": 158,
+    "igdbSlug": "soma",
+    "genre": "Horror",
+    "price": 10,
+    "discount": 25
+  },
+  {
+    "id": 159,
+    "igdbSlug": "age-of-empires",
+    "genre": "Strategy",
+    "price": 10,
+    "discount": 0
+  },
+  {
+    "id": 160,
+    "igdbSlug": "plants-vs-zombies",
+    "genre": "Strategy",
+    "price": 5,
+    "discount": 50
+  },
+  {
+    "id": 161,
+    "igdbSlug": "no-man-s-sky",
+    "genre": "Survival",
+    "price": 30,
+    "discount": 0
+  },
+  {
+    "id": 162,
+    "igdbSlug": "the-sims-4",
+    "genre": "Simulation",
+    "price": 10,
+    "discount": 10
+  },
+  {
+    "id": 163,
+    "igdbSlug": "dead-cells",
+    "genre": "Roguelike",
+    "price": 30,
+    "discount": 0
+  },
+  {
+    "id": 164,
+    "igdbSlug": "the-sims-3",
+    "genre": "Simulation",
+    "price": 5,
+    "discount": 0
+  },
+  {
+    "id": 165,
+    "igdbSlug": "sonic-the-hedgehog",
+    "genre": "Platformer",
+    "price": 10,
+    "discount": 25
+  },
+  {
+    "id": 166,
+    "igdbSlug": "resident-evil-3",
+    "genre": "Horror",
+    "price": 40,
+    "discount": 0
+  },
+  {
+    "id": 167,
+    "igdbSlug": "subnautica",
+    "genre": "Survival",
+    "price": 30,
+    "discount": 50
+  },
+  {
+    "id": 168,
+    "igdbSlug": "sonic-the-hedgehog-2",
+    "genre": "Platformer",
+    "price": 5,
+    "discount": 0
+  },
+  {
+    "id": 169,
+    "igdbSlug": "resident-evil-village",
+    "genre": "Horror",
+    "price": 50,
+    "discount": 10
+  },
+  {
+    "id": 170,
+    "igdbSlug": "braid",
+    "genre": "Puzzle",
+    "price": 5,
+    "discount": 0
+  },
+  {
+    "id": 171,
+    "igdbSlug": "hitman",
+    "genre": "Stealth",
+    "price": 30,
+    "discount": 0
+  },
+  {
+    "id": 172,
+    "igdbSlug": "among-us",
+    "genre": "Party",
+    "price": 25,
+    "discount": 25
+  },
+  {
+    "id": 173,
+    "igdbSlug": "fall-guys",
+    "genre": "Party",
+    "price": 50,
+    "discount": 0
+  },
+  {
+    "id": 174,
+    "igdbSlug": "gris",
+    "genre": "Platformer",
+    "price": 20,
+    "discount": 50
+  },
+  {
+    "id": 175,
+    "igdbSlug": "resident-evil-6",
+    "genre": "Horror",
+    "price": 20,
+    "discount": 0
+  },
+  {
+    "id": 176,
+    "igdbSlug": "need-for-speed-carbon",
+    "genre": "Racing",
+    "price": 5,
+    "discount": 10
+  },
+  {
+    "id": 177,
+    "igdbSlug": "hitman-blood-money",
+    "genre": "Stealth",
+    "price": 10,
+    "discount": 0
+  },
+  {
+    "id": 178,
+    "igdbSlug": "the-binding-of-isaac-rebirth",
+    "genre": "Roguelike",
+    "price": 10,
+    "discount": 0
+  },
+  {
+    "id": 179,
+    "igdbSlug": "the-sims-2",
+    "genre": "Simulation",
+    "price": 10,
+    "discount": 25
+  },
+  {
+    "id": 180,
+    "igdbSlug": "slay-the-spire",
+    "genre": "Card Game",
+    "price": 25,
+    "discount": 0
+  },
+  {
+    "id": 181,
+    "igdbSlug": "shovel-knight",
+    "genre": "Platformer",
+    "price": 20,
+    "discount": 50
+  },
+  {
+    "id": 182,
+    "igdbSlug": "amnesia-the-dark-descent",
+    "genre": "Horror",
+    "price": 5,
+    "discount": 0
+  },
+  {
+    "id": 183,
+    "igdbSlug": "prince-of-persia-warrior-within",
+    "genre": "Platformer",
+    "price": 10,
+    "discount": 10
+  },
+  {
+    "id": 184,
+    "igdbSlug": "doki-doki-literature-club",
+    "genre": "Horror",
+    "price": 25,
+    "discount": 0
+  },
+  {
+    "id": 185,
+    "igdbSlug": "the-witness",
+    "genre": "Puzzle",
+    "price": 30,
+    "discount": 0
+  },
+  {
+    "id": 186,
+    "igdbSlug": "the-sims",
+    "genre": "Simulation",
+    "price": 5,
+    "discount": 25
+  },
+  {
+    "id": 187,
+    "igdbSlug": "hollow-knight-silksong",
+    "genre": "Metroidvania",
+    "price": 70,
+    "discount": 0
+  },
+  {
+    "id": 188,
+    "igdbSlug": "burnout-paradise",
+    "genre": "Racing",
+    "price": 5,
+    "discount": 50
+  },
+  {
+    "id": 189,
+    "igdbSlug": "return-of-the-obra-dinn",
+    "genre": "Puzzle",
+    "price": 30,
+    "discount": 0
+  },
+  {
+    "id": 190,
+    "igdbSlug": "animal-crossing-new-horizons",
+    "genre": "Simulation",
+    "price": 40,
+    "discount": 10
+  },
+  {
+    "id": 191,
+    "igdbSlug": "mortal-kombat-x",
+    "genre": "Fighting",
+    "price": 20,
+    "discount": 0
+  },
+  {
+    "id": 192,
+    "igdbSlug": "resident-evil--3",
+    "genre": "Horror",
+    "price": 15,
+    "discount": 0
+  },
+  {
+    "id": 193,
+    "igdbSlug": "the-talos-principle",
+    "genre": "Puzzle",
+    "price": 20,
+    "discount": 25
+  },
+  {
+    "id": 194,
+    "igdbSlug": "ratchet-and-clank",
+    "genre": "Platformer",
+    "price": 20,
+    "discount": 0
+  },
+  {
+    "id": 195,
+    "igdbSlug": "s-t-a-l-k-e-r-shadow-of-chernobyl",
+    "genre": "Survival",
+    "price": 10,
+    "discount": 50
+  },
+  {
+    "id": 196,
+    "igdbSlug": "garry-s-mod",
+    "genre": "Sandbox",
+    "price": 5,
+    "discount": 0
+  },
+  {
+    "id": 197,
+    "igdbSlug": "prince-of-persia-the-two-thrones",
+    "genre": "Platformer",
+    "price": 10,
+    "discount": 10
+  },
+  {
+    "id": 198,
+    "igdbSlug": "age-of-mythology",
+    "genre": "Strategy",
+    "price": 5,
+    "discount": 0
+  },
+  {
+    "id": 199,
+    "igdbSlug": "darkest-dungeon",
+    "genre": "Roguelike",
+    "price": 30,
+    "discount": 0
+  },
+  {
+    "id": 200,
+    "igdbSlug": "fez",
+    "genre": "Puzzle",
+    "price": 15,
+    "discount": 25
+  },
+  {
+    "id": 201,
+    "igdbSlug": "mortal-kombat",
+    "genre": "Fighting",
+    "price": 10,
+    "discount": 0
+  },
+  {
+    "id": 202,
+    "igdbSlug": "age-of-empires-iii",
+    "genre": "Strategy",
+    "price": 5,
+    "discount": 50
+  },
+  {
+    "id": 203,
+    "igdbSlug": "roblox",
+    "genre": "Sandbox",
+    "price": 10,
+    "discount": 0
+  },
+  {
+    "id": 204,
+    "igdbSlug": "xcom-2",
+    "genre": "Strategy",
+    "price": 25,
+    "discount": 10
+  },
+  {
+    "id": 205,
+    "igdbSlug": "forza-horizon-4",
+    "genre": "Racing",
+    "price": 30,
+    "discount": 0
+  },
+  {
+    "id": 206,
+    "igdbSlug": "hitman-2-silent-assassin",
+    "genre": "Stealth",
+    "price": 5,
+    "discount": 0
+  },
+  {
+    "id": 207,
+    "igdbSlug": "frostpunk",
+    "genre": "Survival",
+    "price": 30,
+    "discount": 25
+  },
+  {
+    "id": 208,
+    "igdbSlug": "the-binding-of-isaac",
+    "genre": "Roguelike",
+    "price": 5,
+    "discount": 0
+  },
+  {
+    "id": 209,
+    "igdbSlug": "command-conquer-red-alert-2",
+    "genre": "Strategy",
+    "price": 10,
+    "discount": 50
+  },
+  {
+    "id": 210,
+    "igdbSlug": "ftl-faster-than-light",
+    "genre": "Roguelike",
+    "price": 10,
+    "discount": 0
+  },
+  {
+    "id": 211,
+    "igdbSlug": "tom-clancy-s-splinter-cell",
+    "genre": "Stealth",
+    "price": 10,
+    "discount": 10
+  },
+  {
+    "id": 212,
+    "igdbSlug": "psychonauts",
+    "genre": "Platformer",
+    "price": 5,
+    "discount": 0
+  },
+  {
+    "id": 213,
+    "igdbSlug": "euro-truck-simulator-2",
+    "genre": "Simulation",
+    "price": 20,
+    "discount": 0
+  },
+  {
+    "id": 214,
+    "igdbSlug": "spore",
+    "genre": "Simulation",
+    "price": 5,
+    "discount": 25
+  },
+  {
+    "id": 215,
+    "igdbSlug": "fallout-shelter",
+    "genre": "Simulation",
+    "price": 20,
+    "discount": 0
+  },
+  {
+    "id": 216,
+    "igdbSlug": "lego-star-wars-the-complete-saga",
+    "genre": "Platformer",
+    "price": 5,
+    "discount": 50
+  },
+  {
+    "id": 217,
+    "igdbSlug": "balatro",
+    "genre": "Card Game",
+    "price": 70,
+    "discount": 0
+  },
+  {
+    "id": 218,
+    "igdbSlug": "need-for-speed-hot-pursuit",
+    "genre": "Racing",
+    "price": 5,
+    "discount": 10
+  },
+  {
+    "id": 219,
+    "igdbSlug": "this-war-of-mine",
+    "genre": "Survival",
+    "price": 20,
+    "discount": 0
+  },
+  {
+    "id": 220,
+    "igdbSlug": "inscryption",
+    "genre": "Card Game",
+    "price": 45,
+    "discount": 0
+  },
+  {
+    "id": 221,
+    "igdbSlug": "the-forest",
+    "genre": "Survival",
+    "price": 30,
+    "discount": 25
+  },
+  {
+    "id": 222,
+    "igdbSlug": "guitar-hero-iii-legends-of-rock",
+    "genre": "Party",
+    "price": 5,
+    "discount": 0
+  },
+  {
+    "id": 223,
+    "igdbSlug": "vampire-survivors",
+    "genre": "Roguelike",
+    "price": 50,
+    "discount": 50
+  },
+  {
+    "id": 224,
+    "igdbSlug": "don-t-starve",
+    "genre": "Survival",
+    "price": 15,
+    "discount": 0
+  },
+  {
+    "id": 225,
+    "igdbSlug": "overcooked",
+    "genre": "Party",
+    "price": 30,
+    "discount": 10
+  },
+  {
+    "id": 226,
+    "igdbSlug": "thief",
+    "genre": "Stealth",
+    "price": 10,
+    "discount": 0
+  },
+  {
+    "id": 227,
+    "igdbSlug": "tom-clancy-s-splinter-cell-chaos-theory",
+    "genre": "Stealth",
+    "price": 10,
+    "discount": 0
+  },
+  {
+    "id": 228,
+    "igdbSlug": "rogue-legacy",
+    "genre": "Roguelike",
+    "price": 15,
+    "discount": 25
+  },
+  {
+    "id": 229,
+    "igdbSlug": "tom-clancy-s-splinter-cell-blacklist",
+    "genre": "Stealth",
+    "price": 20,
+    "discount": 0
+  },
+  {
+    "id": 230,
+    "igdbSlug": "enter-the-gungeon",
+    "genre": "Roguelike",
+    "price": 20,
+    "discount": 50
+  },
+  {
+    "id": 231,
+    "igdbSlug": "world-of-goo",
+    "genre": "Puzzle",
+    "price": 10,
+    "discount": 0
+  },
+  {
+    "id": 232,
+    "igdbSlug": "game-dev-tycoon",
+    "genre": "Simulation",
+    "price": 15,
+    "discount": 10
+  },
+  {
+    "id": 233,
+    "igdbSlug": "tom-clancy-s-splinter-cell-conviction",
+    "genre": "Stealth",
+    "price": 10,
+    "discount": 0
+  },
+  {
+    "id": 234,
+    "igdbSlug": "hitman-2",
+    "genre": "Stealth",
+    "price": 20,
+    "discount": 0
+  },
+  {
+    "id": 235,
+    "igdbSlug": "blasphemous",
+    "genre": "Metroidvania",
+    "price": 30,
+    "discount": 25
+  },
+  {
+    "id": 236,
+    "igdbSlug": "hitman-contracts",
+    "genre": "Stealth",
+    "price": 5,
+    "discount": 0
+  },
+  {
+    "id": 237,
+    "igdbSlug": "mark-of-the-ninja",
+    "genre": "Stealth",
+    "price": 20,
+    "discount": 50
+  },
+  {
+    "id": 238,
+    "igdbSlug": "goat-simulator",
+    "genre": "Sandbox",
+    "price": 10,
+    "discount": 0
+  },
+  {
+    "id": 239,
+    "igdbSlug": "overcooked-2",
+    "genre": "Party",
+    "price": 30,
+    "discount": 10
+  },
+  {
+    "id": 240,
+    "igdbSlug": "hitman-codename-47",
+    "genre": "Stealth",
+    "price": 5,
+    "discount": 0
+  },
+  {
+    "id": 241,
+    "igdbSlug": "valheim",
+    "genre": "Survival",
+    "price": 70,
+    "discount": 0
+  },
+  {
+    "id": 242,
+    "igdbSlug": "factorio",
+    "genre": "Simulation",
+    "price": 40,
+    "discount": 25
+  },
+  {
+    "id": 243,
+    "igdbSlug": "flatout-2",
+    "genre": "Racing",
+    "price": 10,
+    "discount": 0
+  },
+  {
+    "id": 244,
+    "igdbSlug": "dispatch--3",
+    "genre": "Simulation",
+    "price": 65,
+    "discount": 50
+  },
+  {
+    "id": 245,
+    "igdbSlug": "need-for-speed-undercover",
+    "genre": "Racing",
+    "price": 10,
+    "discount": 0
+  },
+  {
+    "id": 246,
+    "igdbSlug": "rimworld",
+    "genre": "Simulation",
+    "price": 20,
+    "discount": 10
+  },
+  {
+    "id": 247,
+    "igdbSlug": "palworld",
+    "genre": "Survival",
+    "price": 70,
+    "discount": 0
+  },
+  {
+    "id": 248,
+    "igdbSlug": "superliminal",
+    "genre": "Puzzle",
+    "price": 25,
+    "discount": 0
+  },
+  {
+    "id": 249,
+    "igdbSlug": "a-plague-tale-requiem",
+    "genre": "Stealth",
+    "price": 50,
+    "discount": 25
+  },
+  {
+    "id": 250,
+    "igdbSlug": "for-honor",
+    "genre": "Fighting",
+    "price": 20,
+    "discount": 0
+  },
+  {
+    "id": 251,
+    "igdbSlug": "brawlhalla",
+    "genre": "Fighting",
+    "price": 30,
+    "discount": 50
+  },
+  {
+    "id": 252,
+    "igdbSlug": "fifa-18",
+    "genre": "Sports",
+    "price": 25,
+    "discount": 0
+  },
+  {
+    "id": 253,
+    "igdbSlug": "need-for-speed-hot-pursuit-2",
+    "genre": "Racing",
+    "price": 10,
+    "discount": 10
+  },
+  {
+    "id": 254,
+    "igdbSlug": "untitled-goose-game",
+    "genre": "Puzzle",
+    "price": 20,
+    "discount": 0
+  },
+  {
+    "id": 255,
+    "igdbSlug": "rust",
+    "genre": "Survival",
+    "price": 30,
+    "discount": 0
+  },
+  {
+    "id": 256,
+    "igdbSlug": "fifa-17",
+    "genre": "Sports",
+    "price": 25,
+    "discount": 25
+  },
+  {
+    "id": 257,
+    "igdbSlug": "fifa-14",
+    "genre": "Sports",
+    "price": 20,
+    "discount": 0
+  },
+  {
+    "id": 258,
+    "igdbSlug": "risk-of-rain-2",
+    "genre": "Roguelike",
+    "price": 40,
+    "discount": 50
+  },
+  {
+    "id": 259,
+    "igdbSlug": "human-fall-flat",
+    "genre": "Puzzle",
+    "price": 30,
+    "discount": 0
+  },
+  {
+    "id": 260,
+    "igdbSlug": "need-for-speed-the-run",
+    "genre": "Racing",
+    "price": 5,
+    "discount": 10
+  },
+  {
+    "id": 261,
+    "igdbSlug": "ark-survival-evolved",
+    "genre": "Survival",
+    "price": 30,
+    "discount": 0
+  },
+  {
+    "id": 262,
+    "igdbSlug": "need-for-speed-rivals",
+    "genre": "Racing",
+    "price": 10,
+    "discount": 0
+  },
+  {
+    "id": 263,
+    "igdbSlug": "injustice-2",
+    "genre": "Fighting",
+    "price": 30,
+    "discount": 25
+  },
+  {
+    "id": 264,
+    "igdbSlug": "need-for-speed-prostreet",
+    "genre": "Racing",
+    "price": 5,
+    "discount": 0
+  },
+  {
+    "id": 265,
+    "igdbSlug": "need-for-speed",
+    "genre": "Racing",
+    "price": 20,
+    "discount": 50
+  },
+  {
+    "id": 266,
+    "igdbSlug": "slime-rancher",
+    "genre": "Simulation",
+    "price": 20,
+    "discount": 0
+  },
+  {
+    "id": 267,
+    "igdbSlug": "cult-of-the-lamb",
+    "genre": "Roguelike",
+    "price": 50,
+    "discount": 10
+  },
+  {
+    "id": 268,
+    "igdbSlug": "dragon-ball-fighterz",
+    "genre": "Fighting",
+    "price": 25,
+    "discount": 0
+  },
+  {
+    "id": 269,
+    "igdbSlug": "tom-clancy-s-splinter-cell-pandora-tomorrow",
+    "genre": "Stealth",
+    "price": 10,
+    "discount": 0
+  },
+  {
+    "id": 270,
+    "igdbSlug": "unpacking",
+    "genre": "Puzzle",
+    "price": 40,
+    "discount": 25
+  },
+  {
+    "id": 271,
+    "igdbSlug": "war-thunder",
+    "genre": "Simulation",
+    "price": 20,
+    "discount": 0
+  },
+  {
+    "id": 272,
+    "igdbSlug": "s-dot-t-a-dot-l-k-dot-e-r-dot-clear-sky",
+    "genre": "Survival",
+    "price": 5,
+    "discount": 50
+  },
+  {
+    "id": 273,
+    "igdbSlug": "steamworld-dig",
+    "genre": "Metroidvania",
+    "price": 20,
+    "discount": 0
+  },
+  {
+    "id": 274,
+    "igdbSlug": "the-room--1",
+    "genre": "Puzzle",
+    "price": 10,
+    "discount": 10
+  },
+  {
+    "id": 275,
+    "igdbSlug": "starbound",
+    "genre": "Sandbox",
+    "price": 30,
+    "discount": 0
+  },
+  {
+    "id": 276,
+    "igdbSlug": "fifa-16",
+    "genre": "Sports",
+    "price": 15,
+    "discount": 0
+  },
+  {
+    "id": 277,
+    "igdbSlug": "mortal-kombat-3",
+    "genre": "Fighting",
+    "price": 10,
+    "discount": 25
+  },
+  {
+    "id": 278,
+    "igdbSlug": "fifa-19",
+    "genre": "Sports",
+    "price": 20,
+    "discount": 0
+  },
+  {
+    "id": 279,
+    "igdbSlug": "osu",
+    "genre": "Party",
+    "price": 10,
+    "discount": 50
+  },
+  {
+    "id": 280,
+    "igdbSlug": "rollercoaster-tycoon",
+    "genre": "Simulation",
+    "price": 5,
+    "discount": 0
+  },
+  {
+    "id": 281,
+    "igdbSlug": "fifa-soccer-13",
+    "genre": "Sports",
+    "price": 20,
+    "discount": 10
+  },
+  {
+    "id": 282,
+    "igdbSlug": "metroid-dread",
+    "genre": "Metroidvania",
+    "price": 40,
+    "discount": 0
+  },
+  {
+    "id": 283,
+    "igdbSlug": "bloodstained-ritual-of-the-night",
+    "genre": "Metroidvania",
+    "price": 30,
+    "discount": 0
+  },
+  {
+    "id": 284,
+    "igdbSlug": "7-days-to-die",
+    "genre": "Survival",
+    "price": 65,
+    "discount": 25
+  },
+  {
+    "id": 285,
+    "igdbSlug": "project-zomboid",
+    "genre": "Survival",
+    "price": 20,
+    "discount": 0
+  },
+  {
+    "id": 286,
+    "igdbSlug": "mortal-kombat-4",
+    "genre": "Fighting",
+    "price": 5,
+    "discount": 50
+  },
+  {
+    "id": 287,
+    "igdbSlug": "returnal",
+    "genre": "Roguelike",
+    "price": 50,
+    "discount": 0
+  },
+  {
+    "id": 288,
+    "igdbSlug": "naruto-shippuden-ultimate-ninja-storm-4",
+    "genre": "Fighting",
+    "price": 25,
+    "discount": 10
+  },
+  {
+    "id": 289,
+    "igdbSlug": "steamworld-dig-2",
+    "genre": "Metroidvania",
+    "price": 30,
+    "discount": 0
+  },
+  {
+    "id": 290,
+    "igdbSlug": "carrion",
+    "genre": "Metroidvania",
+    "price": 40,
+    "discount": 0
+  },
+  {
+    "id": 291,
+    "igdbSlug": "the-long-dark",
+    "genre": "Survival",
+    "price": 30,
+    "discount": 25
+  },
+  {
+    "id": 292,
+    "igdbSlug": "guacamelee",
+    "genre": "Metroidvania",
+    "price": 15,
+    "discount": 0
+  },
+  {
+    "id": 293,
+    "igdbSlug": "spelunky",
+    "genre": "Roguelike",
+    "price": 20,
+    "discount": 50
+  },
+  {
+    "id": 294,
+    "igdbSlug": "street-fighter-iv",
+    "genre": "Fighting",
+    "price": 5,
+    "discount": 0
+  },
+  {
+    "id": 295,
+    "igdbSlug": "gwent-the-witcher-card-game",
+    "genre": "Card Game",
+    "price": 30,
+    "discount": 10
+  },
+  {
+    "id": 296,
+    "igdbSlug": "street-fighter-v",
+    "genre": "Fighting",
+    "price": 25,
+    "discount": 0
+  },
+  {
+    "id": 297,
+    "igdbSlug": "tony-hawk-s-underground",
+    "genre": "Sports",
+    "price": 10,
+    "discount": 0
+  },
+  {
+    "id": 298,
+    "igdbSlug": "dayz",
+    "genre": "Survival",
+    "price": 20,
+    "discount": 25
+  },
+  {
+    "id": 299,
+    "igdbSlug": "unturned--1",
+    "genre": "Survival",
+    "price": 30,
+    "discount": 0
+  },
+  {
+    "id": 300,
+    "igdbSlug": "dust-an-elysian-tail",
+    "genre": "Metroidvania",
+    "price": 15,
+    "discount": 50
   }
 ]

@@ -66,3 +66,113 @@
     text-decoration: none;
   }
 }
+
+/* AI search (.claude/specs/ai-search-spec.md). The palette sets data-ai-landing
+   and data-ai-glow on <html>; see modules/games/presentation/ai-search-palette/landing.ts. */
+@keyframes ai-scan {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(300%);
+  }
+}
+
+@keyframes ai-rise {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes ai-land {
+  0% {
+    transform: scale(1.04);
+    border-color: var(--primary);
+    box-shadow: 0 0 22px color-mix(in srgb, var(--primary) 70%, transparent);
+  }
+  10% {
+    transform: scale(1);
+  }
+  100% {
+    box-shadow: 0 0 0 transparent;
+  }
+}
+
+html[data-ai-landing] [data-ai-target='search'] {
+  view-transition-name: ai-filter-search;
+}
+html[data-ai-landing] [data-ai-target='platform'] {
+  view-transition-name: ai-filter-platform;
+}
+html[data-ai-landing] [data-ai-target='genre'] {
+  view-transition-name: ai-filter-genre;
+}
+html[data-ai-landing] [data-ai-target='price'] {
+  view-transition-name: ai-filter-price;
+}
+html[data-ai-landing] [data-ai-target='sort'] {
+  view-transition-name: ai-filter-sort;
+}
+html[data-ai-landing] [data-ai-target='edition'] {
+  view-transition-name: ai-filter-edition;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 600ms;
+  animation-timing-function: ease-in-out;
+}
+
+::view-transition-group(ai-filter-search),
+::view-transition-group(ai-filter-platform),
+::view-transition-group(ai-filter-genre),
+::view-transition-group(ai-filter-price),
+::view-transition-group(ai-filter-sort),
+::view-transition-group(ai-filter-edition) {
+  animation-duration: 650ms;
+  animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* 70 ms apart, in toolbar order. */
+::view-transition-group(ai-filter-platform) {
+  animation-delay: 70ms;
+}
+::view-transition-group(ai-filter-genre) {
+  animation-delay: 140ms;
+}
+::view-transition-group(ai-filter-price) {
+  animation-delay: 210ms;
+}
+::view-transition-group(ai-filter-sort) {
+  animation-delay: 280ms;
+}
+::view-transition-group(ai-filter-edition) {
+  animation-delay: 350ms;
+}
+
+html[data-ai-glow~='search'] [data-ai-target='search'],
+html[data-ai-glow~='platform'] [data-ai-target='platform'],
+html[data-ai-glow~='genre'] [data-ai-target='genre'],
+html[data-ai-glow~='price'] [data-ai-target='price'],
+html[data-ai-glow~='sort'] [data-ai-target='sort'],
+html[data-ai-glow~='edition'] [data-ai-target='edition'] {
+  animation: ai-land 2.2s ease-out both;
+}
+
+/* ponytail: the grid rises as one block. Per-card 30 ms stagger needs an index
+   on each card; add it if the block looks flat. */
+html[data-ai-glow] [data-testid='game-library'] {
+  animation: ai-rise 600ms ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-ai-glow] [data-ai-target],
+  html[data-ai-glow] [data-testid='game-library'] {
+    transform: none !important;
+  }
+}

@@ -63,7 +63,7 @@ A developer runs one script on their own machine. It reads the curated game list
 10. The script maps the IGDB platforms to the store names `PC (Windows)`, `PS5`, `Xbox Series X`, and `Nintendo Switch`, and joins them with `, `. It ignores other platforms. `rating` is the IGDB `total_rating` divided by 20, with two decimals, as the current seed strings are.
 11. The script checks the catalog mix rule before it writes anything:
     - Each platform filter (`PC`, `PS5`, `Xbox`, `Switch`) matches at least 8 games.
-    - At least 8 genres have 3 or more games each. No genre has more than 10 games.
+    - At least 8 genres have 3 or more games each. No genre has more than 30 games.
     - At least two `Shooter` games cost 20 or less, because `games-toolbar.spec.ts` filters on that.
     - Prices spread from 10 or less to 70, and at least 10 games have a discount above zero. No game costs 0, because Stripe cannot take a payment of 0.
     - The games come from at least 20 publishers, and the release years cover at least 15 different years.

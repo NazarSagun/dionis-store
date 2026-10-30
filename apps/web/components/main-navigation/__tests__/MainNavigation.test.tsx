@@ -1,10 +1,13 @@
 import userEvent from '@testing-library/user-event'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 import { useAuthStore } from '@/modules/auth/core/store'
 import { render } from '@/test-utils/utils'
 
 import { MainNavigation } from '../MainNavigation'
+
+// The header holds the AI search palette, which navigates with the router.
+vi.mock('next/navigation', () => ({ useRouter: () => ({ push: vi.fn() }) }))
 
 describe('<MainNavigation />', () => {
   it('Should render component', () => {

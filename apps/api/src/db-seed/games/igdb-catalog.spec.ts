@@ -1,4 +1,4 @@
-import { CuratedGame, IgdbGame, mixRuleErrors, SeedGame, storePlatforms, toSeedGame } from './igdb-catalog'
+import { CuratedGame, fitSection, IgdbGame, mixRuleErrors, SeedGame, storePlatforms, toSeedGame } from './igdb-catalog'
 
 const curated: CuratedGame = { id: 7, igdbSlug: 'hades', genre: 'Action', price: 25, discount: 0 }
 const image = (id: string, width = 1920, height = 1080) => ({ image_id: id, width, height })
@@ -112,9 +112,19 @@ describe('mixRuleErrors', () => {
     )
   })
 
-  it('names a genre with more than 10 games', () => {
-    const games = catalog().map((game, i) => (i < 11 ? { ...game, genre: 'Puzzle' } : game))
+  it('names a genre with more than 30 games', () => {
+    const games = catalog().map((game, i) => (i < 31 ? { ...game, genre: 'Puzzle' } : game))
 
-    expect(mixRuleErrors(games)).toContain('Puzzle has 15 games, at most 10')
+    expect(mixRuleErrors(games)).toContain('Puzzle has 33 games, at most 30')
+  })
+})
+
+describe('fitSection', () => {
+  it('ends a text over 5000 characters at its last full sentence', () => {
+    const text = 'One sentence here. '.repeat(300)
+    const fitted = fitSection(text)
+    expect(fitted.length).toBeLessThanOrEqual(5000)
+    expect(fitted.endsWith('here.')).toBe(true)
+    expect(fitSection('Short.')).toBe('Short.')
   })
 })

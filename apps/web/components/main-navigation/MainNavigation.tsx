@@ -7,6 +7,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { useAuthLogout, useAuthUser, useIsAdmin, useIsAuthenticated } from '@/modules/auth/core/facade'
 import { useLogout } from '@/modules/auth/integration/repository'
 import { useCartItems, useOpenCartDrawer } from '@/modules/cart/core/facade'
+import { AiSearchPalette } from '@/modules/games/presentation/ai-search-palette/AiSearchPalette'
 import { NotificationBell } from '@/modules/notifications/presentation/notification-bell/NotificationBell'
 
 const menuItemStyles =
@@ -30,6 +31,7 @@ export const MainNavigation = () => {
       </Link>
       <div className='flex items-center gap-3 sm:gap-6'>
         {user && <span className='hidden font-mono text-sm text-muted-foreground sm:inline'>Hi, {user.name}</span>}
+        <AiSearchPalette />
         <button type='button' data-testid='cart-trigger' onClick={openCartDrawer} className={navLinkStyles}>
           Cart ({cartItems.length})
         </button>

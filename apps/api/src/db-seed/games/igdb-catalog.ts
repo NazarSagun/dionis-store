@@ -138,6 +138,16 @@ export function firstSentence(text: string) {
   return sentence.length > 200 ? `${sentence.slice(0, 197).trimEnd()}...` : sentence
 }
 
+// A section body holds at most 5000 characters (game-section.dto.ts). A longer
+// text ends at its last full sentence before that limit.
+export const SECTION_MAX = 5000
+export function fitSection(text: string) {
+  if (text.length <= SECTION_MAX) return text
+  const cut = text.slice(0, SECTION_MAX)
+  const end = Math.max(cut.lastIndexOf('. '), cut.lastIndexOf('! '), cut.lastIndexOf('? '))
+  return end > 0 ? cut.slice(0, end + 1) : cut
+}
+
 function pickTrailer(videos: IgdbGame['videos'] = []) {
   return (videos.find((video) => /trailer/i.test(video.name ?? '')) ?? videos[0])?.video_id
 }
@@ -182,8 +192,12 @@ export function toSeedGame(
     position,
   }))
 
-  const sections: SeedGame['sections'] = [{ kind: 'about', title: 'About', body: game.summary, position: 0 }]
-  if (game.storyline) sections.push({ kind: 'story', title: 'Story', body: game.storyline, position: sections.length })
+  const sections: SeedGame['sections'] = [
+    { kind: 'about', title: 'About', body: fitSection(game.summary), position: 0 },
+  ]
+  if (game.storyline) {
+    sections.push({ kind: 'story', title: 'Story', body: fitSection(game.storyline), position: sections.length })
+  }
   const features = featureItems(game)
   if (features) sections.push({ kind: 'features', title: 'Features', body: features, position: sections.length })
 
@@ -241,7 +255,7 @@ export function mixRuleErrors(games: SeedGame[]) {
   for (const game of games) genres.set(game.genre, (genres.get(game.genre) ?? 0) + 1)
   const fullGenres = [...genres.values()].filter((count) => count >= 3).length
   if (fullGenres < 8) errors.push(`${fullGenres} genres have 3 or more games, needs 8`)
-  for (const [genre, count] of genres) if (count > 10) errors.push(`${genre} has ${count} games, at most 10`)
+  for (const [genre, count] of genres) if (count > 30) errors.push(`${genre} has ${count} games, at most 30`)
 
   const cheapShooters = games.filter((game) => game.genre === 'Shooter' && game.price <= 20).length
   if (cheapShooters < 2) errors.push(`${cheapShooters} Shooter games cost 20 or less, needs 2`)

@@ -58,6 +58,9 @@ export default defineConfig({
             PORT: String(LOCAL.apiPort),
             CLIENT_URL: webUrl,
             RATE_LIMIT: 'off',
+            // Empty wins over apps/api/.env, so AI search always takes the fallback path.
+            OPENROUTER_API_KEY: '',
+            GEMINI_API_KEY: '',
             SMTP_HOST: '127.0.0.1',
             SMTP_PORT: String(LOCAL.smtpPort),
           },

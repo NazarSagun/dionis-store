@@ -8,5 +8,7 @@ import type { GameObject } from './gameObject';
 
 export interface GamesArray {
   totalPages?: number;
+  /** Number of games that match the filters, on all pages */
+  totalGames?: number;
   games?: GameObject[];
 }

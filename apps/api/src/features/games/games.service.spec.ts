@@ -183,7 +183,7 @@ describe('GamesService', () => {
 
       const result = await service.fetchGames({ page: 1, search: 'no-such-game' })
 
-      expect(result).toEqual({ totalPages: 0, games: [] })
+      expect(result).toEqual({ totalPages: 0, totalGames: 0, games: [] })
     })
 
     it('still throws when the requested page is past the end of a non-empty result set', async () => {
@@ -386,7 +386,7 @@ describe('GamesService', () => {
           where: expect.objectContaining({ title: { contains: payload, mode: 'insensitive' } }),
         }),
       )
-      expect(result).toEqual({ totalPages: 0, games: [] })
+      expect(result).toEqual({ totalPages: 0, totalGames: 0, games: [] })
     })
 
     it('never widens the query when search contains SQL wildcard characters', async () => {
