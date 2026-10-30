@@ -106,7 +106,7 @@ export class GamesService {
       throw new CustomError('There is no more games available', 400)
     }
 
-    return { totalPages, games }
+    return { totalPages, totalGames, games }
   }
 
   // The genres of the seed games, most common first. A game from one of them ranks by that

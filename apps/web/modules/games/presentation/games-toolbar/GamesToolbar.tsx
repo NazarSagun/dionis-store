@@ -14,7 +14,14 @@ import { Check, ChevronDown, SlidersHorizontal } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
 
-import { findPriceRange, PRICE_RANGES, PriceRange, priceRangeLabel } from '../../domain/filters'
+import {
+  EDITION_OPTIONS,
+  findPriceRange,
+  PRICE_RANGES,
+  PriceRange,
+  priceRangeLabel,
+  SORT_OPTIONS,
+} from '../../domain/filters'
 import { GetGamesEdition, GetGamesPlatform, GetGamesSort } from '../../integration/repository'
 
 interface GamesToolbarProps {
@@ -36,18 +43,6 @@ interface GamesToolbarProps {
 }
 
 const PLATFORM_OPTIONS = Object.values(GetGamesPlatform)
-
-const SORT_OPTIONS: Array<{ value: GetGamesSort; label: string }> = [
-  { value: GetGamesSort.price_asc, label: 'Price (low to high)' },
-  { value: GetGamesSort.price_desc, label: 'Price (high to low)' },
-  { value: GetGamesSort.rating_desc, label: 'Rating (high to low)' },
-]
-
-const EDITION_OPTIONS: Array<{ value: GetGamesEdition; label: string }> = [
-  { value: GetGamesEdition.digital, label: 'Digital' },
-  { value: GetGamesEdition.standard, label: 'Standard' },
-  { value: GetGamesEdition.collector, label: 'Collector' },
-]
 
 const SEARCH_DEBOUNCE_MS = 300
 const ALL_VALUE = 'all'
@@ -238,6 +233,7 @@ export const GamesToolbar = ({
         defaultValue={search}
         placeholder='Search by title...'
         data-testid='search-input'
+        data-ai-target='search'
         onInputChange={handleSearchInput}
         className='mb-0 mt-0 h-10 w-full bg-secondary px-4 sm:w-72'
       />
@@ -276,7 +272,7 @@ export const GamesToolbar = ({
       <div className='hidden flex-wrap items-center gap-3 sm:flex'>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <button type='button' data-testid='platform-filter' className={triggerStyles}>
+            <button type='button' data-testid='platform-filter' data-ai-target='platform' className={triggerStyles}>
               Platform: {platform ?? 'All'}
               <ChevronDown className='h-4 w-4' />
             </button>
@@ -288,7 +284,7 @@ export const GamesToolbar = ({
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <button type='button' data-testid='genre-filter' className={triggerStyles}>
+            <button type='button' data-testid='genre-filter' data-ai-target='genre' className={triggerStyles}>
               Genre: {genre ?? 'All'}
               <ChevronDown className='h-4 w-4' />
             </button>
@@ -300,7 +296,7 @@ export const GamesToolbar = ({
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <button type='button' data-testid='price-filter' className={triggerStyles}>
+            <button type='button' data-testid='price-filter' data-ai-target='price' className={triggerStyles}>
               Price: {priceRangeLabel(minPrice, maxPrice)}
               <ChevronDown className='h-4 w-4' />
             </button>
@@ -312,7 +308,7 @@ export const GamesToolbar = ({
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <button type='button' data-testid='sort-select' className={triggerStyles}>
+            <button type='button' data-testid='sort-select' data-ai-target='sort' className={triggerStyles}>
               Sort: {selectedSortLabel ?? 'Default'}
               <ChevronDown className='h-4 w-4' />
             </button>
@@ -324,7 +320,7 @@ export const GamesToolbar = ({
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <button type='button' data-testid='edition-filter' className={triggerStyles}>
+            <button type='button' data-testid='edition-filter' data-ai-target='edition' className={triggerStyles}>
               Edition: {selectedEditionLabel ?? 'All'}
               <ChevronDown className='h-4 w-4' />
             </button>

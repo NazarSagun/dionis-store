@@ -2,10 +2,23 @@
   "extends": "@repo/typescript-config/nextjs.json",
   "compilerOptions": {
     "paths": {
-      "@/*": ["./*"],
-      "@/test-utils": ["./test-utils"]
+      "@/*": [
+        "./*"
+      ],
+      "@/test-utils": [
+        "./test-utils"
+      ]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", ".next-e2e/types/**/*.ts"],
-  "exclude": ["node_modules"]
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    ".next-e2e/types/**/*.ts",
+    ".next/types/**/*.ts",
+    "next-env.d.ts",
+    ".next-check/types/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }

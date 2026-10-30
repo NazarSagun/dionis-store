@@ -17,6 +17,8 @@ import type {
 import type {
   AdminOrderObject,
   AdminOrdersPage,
+  AiSearchInput,
+  AiSearchResult,
   ChangePasswordInput,
   ConfirmOrderBody,
   CreatePaymentIntentBody,
@@ -96,6 +98,7 @@ import {
   getLogoutResponseMock,
   getMergeWishlistResponseMock,
   getPatchAdminOrderResponseMock,
+  getPostGamesAiSearchResponseMock,
   getPostReviewReplyResponseMock,
   getPutGameReviewResponseMock,
   getRefreshResponseMock,
@@ -107,7 +110,7 @@ import {
   getUpdateNameResponseMock
 } from './default.faker';
 
-export { getGetUsersResponseMock, getUpdateNameResponseMock, getChangePasswordResponseMock, getCreateGameResponseMock, getUpdateGameResponseMock, getCreateEditionResponseMock, getUpdateEditionResponseMock, getGetAdminOrdersResponseMock, getPatchAdminOrderResponseMock, getGetAdminPromoCodesResponseMock, getCreateAdminPromoCodeResponseMock, getGetGamesRecommendationsResponseMock, getGetGamesTopDealsResponseMock, getGetGamesGenresResponseMock, getGetGamesResponseMock, getGetGameResponseMock, getGetGameReviewsResponseMock, getGetMyGameReviewResponseMock, getPutGameReviewResponseMock, getGetReviewResponseMock, getGetReviewRepliesResponseMock, getPostReviewReplyResponseMock, getGetGameStockAlertsResponseMock, getGetNotificationsResponseMock, getRegisterResponseMock, getLoginResponseMock, getLogoutResponseMock, getGetOrdersResponseMock, getGetOwnedItemsResponseMock, getCreatePaymentIntentResponseMock, getConfirmOrderResponseMock, getApplyPromoCodeResponseMock, getRemovePromoCodeResponseMock, getGetOrderResponseMock, getActivateOrderItemResponseMock, getGetWishlistResponseMock, getMergeWishlistResponseMock, getAddWishlistItemResponseMock, getRemoveWishlistItemResponseMock, getAcknowledgeWishlistDiscountResponseMock, getRefreshResponseMock } from './default.faker';
+export { getGetUsersResponseMock, getUpdateNameResponseMock, getChangePasswordResponseMock, getCreateGameResponseMock, getUpdateGameResponseMock, getCreateEditionResponseMock, getUpdateEditionResponseMock, getGetAdminOrdersResponseMock, getPatchAdminOrderResponseMock, getGetAdminPromoCodesResponseMock, getCreateAdminPromoCodeResponseMock, getGetGamesRecommendationsResponseMock, getGetGamesTopDealsResponseMock, getGetGamesGenresResponseMock, getPostGamesAiSearchResponseMock, getGetGamesResponseMock, getGetGameResponseMock, getGetGameReviewsResponseMock, getGetMyGameReviewResponseMock, getPutGameReviewResponseMock, getGetReviewResponseMock, getGetReviewRepliesResponseMock, getPostReviewReplyResponseMock, getGetGameStockAlertsResponseMock, getGetNotificationsResponseMock, getRegisterResponseMock, getLoginResponseMock, getLogoutResponseMock, getGetOrdersResponseMock, getGetOwnedItemsResponseMock, getCreatePaymentIntentResponseMock, getConfirmOrderResponseMock, getApplyPromoCodeResponseMock, getRemovePromoCodeResponseMock, getGetOrderResponseMock, getActivateOrderItemResponseMock, getGetWishlistResponseMock, getMergeWishlistResponseMock, getAddWishlistItemResponseMock, getRemoveWishlistItemResponseMock, getAcknowledgeWishlistDiscountResponseMock, getRefreshResponseMock } from './default.faker';
 
 
 export const getGetUsersMockHandler = (overrideResponse?: UsersArray | ((info: Parameters<HttpResponseResolver>[0]) => Promise<UsersArray> | UsersArray), options?: RequestHandlerOptions) => {
@@ -303,6 +306,18 @@ export const getGetGamesGenresMockHandler = (overrideResponse?: GenreCount[] | (
     return HttpResponse.json(overrideResponse !== undefined
     ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
     : getGetGamesGenresResponseMock(),
+      { status: 200
+      })
+  }, options)
+}
+
+export const getPostGamesAiSearchMockHandler = (overrideResponse?: AiSearchResult | ((info: Parameters<HttpResponseResolver<PathParams, AiSearchInput>>[0]) => Promise<AiSearchResult> | AiSearchResult), options?: RequestHandlerOptions) => {
+  return http.post<PathParams, AiSearchInput>('*/games/ai-search', async (info: Parameters<HttpResponseResolver<PathParams, AiSearchInput>>[0]) => {
+
+
+    return HttpResponse.json(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getPostGamesAiSearchResponseMock(),
       { status: 200
       })
   }, options)
@@ -719,6 +734,7 @@ export const getDefaultMock = () => [
   getGetGamesRecommendationsMockHandler(),
   getGetGamesTopDealsMockHandler(),
   getGetGamesGenresMockHandler(),
+  getPostGamesAiSearchMockHandler(),
   getGetGamesMockHandler(),
   getGetGameMockHandler(),
   getGetGameReviewsMockHandler(),

@@ -29,6 +29,18 @@ export const PRICE_RANGES: PriceRange[] = [
   { key: '50-plus', label: '€50 and up', minPrice: 50 },
 ]
 
+export const SORT_OPTIONS: Array<{ value: GetGamesSort; label: string }> = [
+  { value: GetGamesSort.price_asc, label: 'Price (low to high)' },
+  { value: GetGamesSort.price_desc, label: 'Price (high to low)' },
+  { value: GetGamesSort.rating_desc, label: 'Rating (high to low)' },
+]
+
+export const EDITION_OPTIONS: Array<{ value: GetGamesEdition; label: string }> = [
+  { value: GetGamesEdition.digital, label: 'Digital' },
+  { value: GetGamesEdition.standard, label: 'Standard' },
+  { value: GetGamesEdition.collector, label: 'Collector' },
+]
+
 const oneOf = <T extends string>(allowed: Record<string, T>, value: string | null) =>
   Object.values(allowed).find((option) => option === value)
 

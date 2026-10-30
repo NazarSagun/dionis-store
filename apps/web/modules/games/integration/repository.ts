@@ -1,4 +1,5 @@
 export {
+  getGetGamesQueryOptions,
   useGetGame,
   getGetGameStockAlertsQueryKey,
   useDeleteEditionStockAlert,
@@ -8,9 +9,12 @@ export {
   useGetGamesRecommendations,
   useGetGamesTopDeals,
   useGetOwnedItems,
+  usePostGamesAiSearch,
   usePutEditionStockAlert,
 } from '@repo/dionis-api/src/dionis/default/default'
 export type {
+  AiSearchFilters,
+  AiSearchResult,
   GameImage,
   GameLanguage,
   GameObject,

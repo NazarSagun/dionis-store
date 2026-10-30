@@ -26,6 +26,8 @@ import type {
 import type {
   AdminOrderObject,
   AdminOrdersPage,
+  AiSearchInput,
+  AiSearchResult,
   AuthErrorMessage,
   ChangePasswordInput,
   ConfirmOrderBody,
@@ -1397,6 +1399,73 @@ export function useGetGamesGenres<TData = Awaited<ReturnType<typeof getGamesGenr
 
 
 /**
+ * @summary Turn a plain-words request into games list filters with a language model, or reject a request that is not a game search
+ */
+export const postGamesAiSearch = (
+    aiSearchInput: BodyType<AiSearchInput>,
+ options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+) => {
+
+
+      return customInstance<AiSearchResult>(
+      {url: `/games/ai-search`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: aiSearchInput, signal
+    },
+      options);
+    }
+
+
+
+
+export const getPostGamesAiSearchMutationKey = () => ['postGamesAiSearch'] as const;
+
+export const getPostGamesAiSearchMutationOptions = <TError = ErrorType<ErrorMessage | void>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postGamesAiSearch>>, TError,PostGamesAiSearchMutationVariables, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof postGamesAiSearch>>, TError,PostGamesAiSearchMutationVariables, TContext> => {
+
+const mutationKey = getPostGamesAiSearchMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postGamesAiSearch>>, PostGamesAiSearchMutationVariables> = (props) => {
+          const {data} = props ?? {};
+
+          return  postGamesAiSearch(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PostGamesAiSearchMutationResult = NonNullable<Awaited<ReturnType<typeof postGamesAiSearch>>>
+    export type PostGamesAiSearchMutationBody = BodyType<AiSearchInput>
+    export type PostGamesAiSearchMutationError = ErrorType<ErrorMessage | void>
+    export type PostGamesAiSearchMutationVariables = {data: BodyType<AiSearchInput>}
+
+    /**
+ * @summary Turn a plain-words request into games list filters with a language model, or reject a request that is not a game search
+ */
+export const usePostGamesAiSearch = <TError = ErrorType<ErrorMessage | void>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postGamesAiSearch>>, TError,PostGamesAiSearchMutationVariables, TContext>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof postGamesAiSearch>>,
+        TError,
+        PostGamesAiSearchMutationVariables,
+        TContext
+      > => {
+      return useMutation(getPostGamesAiSearchMutationOptions(options), queryClient);
+    }
+    /**
  * @summary List games in paged format from db
  */
 export const getGames = (

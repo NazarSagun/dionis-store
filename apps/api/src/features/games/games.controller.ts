@@ -12,14 +12,18 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common'
+import { Throttle } from '@nestjs/throttler'
 import { Response } from 'express'
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard'
 import { RolesGuard } from '../../common/guards/roles.guard'
 import { RequireRole } from '../../common/decorators/roles.decorator'
 import { Roles } from '../../common/types/roles'
 import { CustomError } from '../../common/errors/custom-error'
+import { AI_SEARCH_THROTTLE } from '../../common/throttle/ai-search-throttle'
 import { toHttpException } from '../../common/errors/to-http-exception'
+import { AiSearchService } from './ai-search.service'
 import { GamesService } from './games.service'
+import { AiSearchDto } from './dto/ai-search.dto'
 import { CreateGameDto } from './dto/create-game.dto'
 import { CreateEditionDto, UpdateEditionDto } from './dto/edition.dto'
 import { GamesQueryDto } from './dto/games-query.dto'
@@ -32,7 +36,25 @@ const PUBLIC_CACHE = 'public, no-cache'
 
 @Controller()
 export class GamesController {
-  constructor(private readonly gamesService: GamesService) {}
+  constructor(
+    private readonly gamesService: GamesService,
+    private readonly aiSearchService: AiSearchService,
+  ) {}
+
+  // Public, like the games list. With AI off, the service answers with a plain
+  // title search. A failed model call is a 503.
+  @Post('games/ai-search')
+  @Throttle(AI_SEARCH_THROTTLE)
+  @HttpCode(200)
+  async aiSearch(@Body() dto: AiSearchDto, @Res({ passthrough: true }) res: Response) {
+    try {
+      const result = await this.aiSearchService.search(dto.query)
+      res.setHeader('Cache-Control', 'no-store')
+      return result
+    } catch (error) {
+      throw toHttpException(error)
+    }
+  }
 
   @Get('games/top-deals')
   async getTopDeals(@Res({ passthrough: true }) res: Response) {

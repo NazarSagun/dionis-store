@@ -70,6 +70,10 @@ For local development, run Mailpit, a mail catcher. It accepts SMTP on port 1025
 docker compose -f apps/api/docker-compose.yml up -d mailpit
 ```
 
+## AI search
+
+The "Ask AI" button in the header turns a request in plain words into the home page filters. The API sends the request to a free language model through OpenRouter. Set `OPENROUTER_API_KEY` and `OPENROUTER_BASE_URL` in `apps/api/.env`. The API asks the `openrouter/free` router, which picks an available free model. Give the key a credit limit of 0, so nothing is ever charged. A free account allows about 50 requests a day for the whole store, for all free models together. When OpenRouter fails, the API asks Google Gemini instead, if you set `GEMINI_API_KEY`, `GEMINI_MODEL`, and `GEMINI_BASE_URL`. Create a free Gemini key in Google AI Studio. The API caches each answer for 24 hours and allows 5 AI searches a minute per client IP. If both keys are empty, the request runs as a plain title search. If every provider fails, for example when the daily quota is used up, the palette says that the AI feature is temporarily unavailable. The end-to-end tests run with an empty key.
+
 ## Admin panel
 
 A user with the Admin role (`500`) can open `/admin` from the account menu. There, the user manages games and their physical editions and sees every customer's order. `pnpm seed:api` creates an admin with `SEED_ADMIN_EMAIL` and `SEED_ADMIN_PASSWORD`, so after seeding you can log in with those values. The admin panel E2E tests log in with `E2E_ADMIN_EMAIL` and `E2E_ADMIN_PASSWORD`, which default to the same account.
@@ -88,7 +92,7 @@ pnpm seed:api
 
 This command reads `SEED_API_URL`, `SEED_ADMIN_NAME`, `SEED_ADMIN_EMAIL`, and `SEED_ADMIN_PASSWORD` from `apps/api/.env`. `SEED_ADMIN_PASSWORD` has no default, and the seed stops if it is not set. The seed creates the admin account directly in the database. If an account with `SEED_ADMIN_EMAIL` already exists without the admin role, the seed stops and does not promote it. On a public deployment, set a long random password.
 
-The seed reads the 50 curated games from `apps/api/src/db-seed/games/games.json`. The IGDB import script writes that file. Run it only to change the game list.
+The seed reads the 300 curated games from `apps/api/src/db-seed/games/games.json`. The IGDB import script writes that file. Run it only to change the game list.
 
 The import needs a Twitch application for the IGDB API and AWS credentials for the media bucket. Set `TWITCH_CLIENT_ID`, `TWITCH_CLIENT_SECRET`, `MEDIA_BUCKET`, and `MEDIA_BASE_URL` in `apps/api/.env`. Edit `apps/api/src/db-seed/games/curated-games.json`. Then run the following command from `apps/api`.
 

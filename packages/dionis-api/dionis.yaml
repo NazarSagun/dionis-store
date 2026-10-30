@@ -626,6 +626,33 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/genreCount'
+  /games/ai-search:
+    post:
+      summary: Turn a plain-words request into games list filters with a language model, or reject a request that is not a game search
+      operationId: postGamesAiSearch
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/aiSearchInput'
+      responses:
+        '200':
+          description: >-
+            ok holds the filters the model set. rejected means the request is not a game search.
+            fallback means the model was not used, and the filters hold the request as a title search.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/aiSearchResult'
+        '400':
+          description: Invalid query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+        '429':
+          description: Too many requests from this address
   /games/{page}:
     get:
       summary: List games in paged format from db
@@ -1890,6 +1917,9 @@ components:
       properties:
         totalPages:
           type: integer
+        totalGames:
+          type: integer
+          description: Number of games that match the filters, on all pages
         games:
           type: array
           items:
@@ -2568,6 +2598,48 @@ components:
         addedAt:
           type: integer
           description: Milliseconds since the epoch
+    aiSearchInput:
+      type: object
+      required:
+        - query
+      properties:
+        query:
+          type: string
+          minLength: 1
+          maxLength: 200
+    aiSearchFilters:
+      type: object
+      properties:
+        search:
+          type: string
+          maxLength: 100
+        platform:
+          type: string
+          enum: [PC, PS5, Xbox, Switch]
+        genre:
+          type: string
+        minPrice:
+          type: integer
+          minimum: 0
+        maxPrice:
+          type: integer
+          minimum: 0
+        sort:
+          type: string
+          enum: [price_asc, price_desc, rating_desc]
+        edition:
+          type: string
+          enum: [digital, standard, collector]
+    aiSearchResult:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum: [ok, rejected, fallback]
+        filters:
+          $ref: '#/components/schemas/aiSearchFilters'
     genreCount:
       type: object
       required:

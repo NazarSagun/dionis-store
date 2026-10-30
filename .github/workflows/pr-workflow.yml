@@ -90,6 +90,9 @@ jobs:
       CLIENT_URL: http://localhost:3000
       # The tests sign up many users from one address, so the rate limit is off.
       RATE_LIMIT: off
+      # Empty: AI search takes the fallback path, so no test calls the real model.
+      OPENROUTER_API_KEY: ''
+      GEMINI_API_KEY: ''
       SMTP_HOST: 127.0.0.1
       SMTP_PORT: 1025
       MAIL_FROM: Dionis Store <no-reply@dionis-store.local>

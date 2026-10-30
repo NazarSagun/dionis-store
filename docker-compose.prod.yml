@@ -46,6 +46,13 @@ services:
       # Empty SENTRY_DSN turns error reporting off.
       SENTRY_DSN: ${SENTRY_DSN:-}
       SENTRY_ENVIRONMENT: ${SENTRY_ENVIRONMENT:-production}
+      # Empty OPENROUTER_API_KEY and GEMINI_API_KEY turn AI search into a plain title search.
+      OPENROUTER_API_KEY: ${OPENROUTER_API_KEY:-}
+      OPENROUTER_BASE_URL: ${OPENROUTER_BASE_URL:-https://openrouter.ai/api/v1}
+      # The backup provider. An empty key turns it off.
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      GEMINI_MODEL: ${GEMINI_MODEL:-gemini-flash-lite-latest}
+      GEMINI_BASE_URL: ${GEMINI_BASE_URL:-https://generativelanguage.googleapis.com/v1beta/openai}
     depends_on:
       db:
         condition: service_healthy
