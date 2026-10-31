@@ -84,6 +84,7 @@ import {
   getGetGamesGenresResponseMock,
   getGetGamesRecommendationsResponseMock,
   getGetGamesResponseMock,
+  getGetGamesShowdownResponseMock,
   getGetGamesTopDealsResponseMock,
   getGetMyGameReviewResponseMock,
   getGetNotificationsResponseMock,
@@ -110,7 +111,7 @@ import {
   getUpdateNameResponseMock
 } from './default.faker';
 
-export { getGetUsersResponseMock, getUpdateNameResponseMock, getChangePasswordResponseMock, getCreateGameResponseMock, getUpdateGameResponseMock, getCreateEditionResponseMock, getUpdateEditionResponseMock, getGetAdminOrdersResponseMock, getPatchAdminOrderResponseMock, getGetAdminPromoCodesResponseMock, getCreateAdminPromoCodeResponseMock, getGetGamesRecommendationsResponseMock, getGetGamesTopDealsResponseMock, getGetGamesGenresResponseMock, getPostGamesAiSearchResponseMock, getGetGamesResponseMock, getGetGameResponseMock, getGetGameReviewsResponseMock, getGetMyGameReviewResponseMock, getPutGameReviewResponseMock, getGetReviewResponseMock, getGetReviewRepliesResponseMock, getPostReviewReplyResponseMock, getGetGameStockAlertsResponseMock, getGetNotificationsResponseMock, getRegisterResponseMock, getLoginResponseMock, getLogoutResponseMock, getGetOrdersResponseMock, getGetOwnedItemsResponseMock, getCreatePaymentIntentResponseMock, getConfirmOrderResponseMock, getApplyPromoCodeResponseMock, getRemovePromoCodeResponseMock, getGetOrderResponseMock, getActivateOrderItemResponseMock, getGetWishlistResponseMock, getMergeWishlistResponseMock, getAddWishlistItemResponseMock, getRemoveWishlistItemResponseMock, getAcknowledgeWishlistDiscountResponseMock, getRefreshResponseMock } from './default.faker';
+export { getGetUsersResponseMock, getUpdateNameResponseMock, getChangePasswordResponseMock, getCreateGameResponseMock, getUpdateGameResponseMock, getCreateEditionResponseMock, getUpdateEditionResponseMock, getGetAdminOrdersResponseMock, getPatchAdminOrderResponseMock, getGetAdminPromoCodesResponseMock, getCreateAdminPromoCodeResponseMock, getGetGamesRecommendationsResponseMock, getGetGamesShowdownResponseMock, getGetGamesTopDealsResponseMock, getGetGamesGenresResponseMock, getPostGamesAiSearchResponseMock, getGetGamesResponseMock, getGetGameResponseMock, getGetGameReviewsResponseMock, getGetMyGameReviewResponseMock, getPutGameReviewResponseMock, getGetReviewResponseMock, getGetReviewRepliesResponseMock, getPostReviewReplyResponseMock, getGetGameStockAlertsResponseMock, getGetNotificationsResponseMock, getRegisterResponseMock, getLoginResponseMock, getLogoutResponseMock, getGetOrdersResponseMock, getGetOwnedItemsResponseMock, getCreatePaymentIntentResponseMock, getConfirmOrderResponseMock, getApplyPromoCodeResponseMock, getRemovePromoCodeResponseMock, getGetOrderResponseMock, getActivateOrderItemResponseMock, getGetWishlistResponseMock, getMergeWishlistResponseMock, getAddWishlistItemResponseMock, getRemoveWishlistItemResponseMock, getAcknowledgeWishlistDiscountResponseMock, getRefreshResponseMock } from './default.faker';
 
 
 export const getGetUsersMockHandler = (overrideResponse?: UsersArray | ((info: Parameters<HttpResponseResolver>[0]) => Promise<UsersArray> | UsersArray), options?: RequestHandlerOptions) => {
@@ -282,6 +283,18 @@ export const getGetGamesRecommendationsMockHandler = (overrideResponse?: GameObj
     return HttpResponse.json(overrideResponse !== undefined
     ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
     : getGetGamesRecommendationsResponseMock(),
+      { status: 200
+      })
+  }, options)
+}
+
+export const getGetGamesShowdownMockHandler = (overrideResponse?: GameObject[] | ((info: Parameters<HttpResponseResolver>[0]) => Promise<GameObject[]> | GameObject[]), options?: RequestHandlerOptions) => {
+  return http.get('*/games/showdown', async (info: Parameters<HttpResponseResolver>[0]) => {
+
+
+    return HttpResponse.json(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getGetGamesShowdownResponseMock(),
       { status: 200
       })
   }, options)
@@ -732,6 +745,7 @@ export const getDefaultMock = () => [
   getCreateAdminPromoCodeMockHandler(),
   getDeleteAdminPromoCodeMockHandler(),
   getGetGamesRecommendationsMockHandler(),
+  getGetGamesShowdownMockHandler(),
   getGetGamesTopDealsMockHandler(),
   getGetGamesGenresMockHandler(),
   getPostGamesAiSearchMockHandler(),

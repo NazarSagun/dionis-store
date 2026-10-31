@@ -10,8 +10,14 @@ export const recommendationsUrl = `${apiUrl}/api/games/recommendations`
 export const uniqueGenre = () => `E2E Genre ${uniqueSuffix()}`
 
 // Creates a game in the given genre through the admin API. The title starts
-// with `prefix`, so a test can order its games by title.
-export async function createGameInGenre(request: APIRequestContext, genre: string, prefix: string) {
+// with `prefix`, so a test can order its games by title. `extra` overrides
+// any other field, such as `rating`.
+export async function createGameInGenre(
+  request: APIRequestContext,
+  genre: string,
+  prefix: string,
+  extra: Record<string, unknown> = {},
+) {
   const title = `${prefix} ${uniqueSuffix()}`
   const response = await request.post(`${apiUrl}/api/games`, {
     headers: { Authorization: `Bearer ${await apiToken(request)}` },
@@ -27,6 +33,7 @@ export async function createGameInGenre(request: APIRequestContext, genre: strin
       price: 30,
       rating: '4.10',
       discount: 0,
+      ...extra,
     },
   })
   expect(response.status()).toBe(201)

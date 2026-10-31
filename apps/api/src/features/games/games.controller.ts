@@ -28,6 +28,7 @@ import { CreateGameDto } from './dto/create-game.dto'
 import { CreateEditionDto, UpdateEditionDto } from './dto/edition.dto'
 import { GamesQueryDto } from './dto/games-query.dto'
 import { DEFAULT_RECOMMENDATIONS_LIMIT, parseIdList, RecommendationsQueryDto } from './dto/recommendations-query.dto'
+import { AllowedShowdownSize, ShowdownQueryDto, toStringList } from './dto/showdown-query.dto'
 import { UpdateGameDto } from './dto/update-game.dto'
 
 // Browsers revalidate each read with the ETag that Express adds, so an
@@ -90,6 +91,21 @@ export class GamesController {
         limit: query.limit === undefined ? DEFAULT_RECOMMENDATIONS_LIMIT : Number(query.limit),
       })
       res.setHeader('Cache-Control', 'no-store')
+      return result
+    } catch (error) {
+      throw toHttpException(error)
+    }
+  }
+
+  // Declared before games/:page, so "showdown" is not read as a page number.
+  @Get('games/showdown')
+  async getShowdownGames(@Query() query: ShowdownQueryDto, @Res({ passthrough: true }) res: Response) {
+    try {
+      const result = await this.gamesService.fetchShowdownGames({
+        genres: toStringList(query.genres),
+        size: Number(query.size) as AllowedShowdownSize,
+      })
+      res.setHeader('Cache-Control', PUBLIC_CACHE)
       return result
     } catch (error) {
       throw toHttpException(error)

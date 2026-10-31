@@ -594,6 +594,46 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/errorMessage'
+  /games/showdown:
+    get:
+      summary: The top-rated games of 1 to 3 genres, for a Showdown bracket. Rating ties go to the lower id.
+      operationId: getGamesShowdown
+      parameters:
+        - name: genres
+          in: query
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: array
+            minItems: 1
+            maxItems: 3
+            items:
+              type: string
+              maxLength: 50
+          description: A game is in the pool if its genre is one of these
+        - name: size
+          in: query
+          required: true
+          schema:
+            type: integer
+            enum: [8, 16, 32]
+          description: The number of games in the bracket
+      responses:
+        '200':
+          description: Exactly `size` games, best rated first
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/gameObject'
+        '400':
+          description: Invalid query, or fewer games in these genres than the bracket size
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
   /games/top-deals:
     get:
       summary: List up to 5 games with the highest discount, discount > 0, highest first

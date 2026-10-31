@@ -44,6 +44,8 @@ export * from './getGamesEdition';
 export * from './getGamesParams';
 export * from './getGamesPlatform';
 export * from './getGamesRecommendationsParams';
+export * from './getGamesShowdownParams';
+export * from './getGamesShowdownSize';
 export * from './getGamesSort';
 export * from './getOrdersParams';
 export * from './getReviewRepliesParams';
