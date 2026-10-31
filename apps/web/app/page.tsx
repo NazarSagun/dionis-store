@@ -14,6 +14,8 @@ import { GamesPagination } from '@/modules/games/presentation/games-pagination/G
 import { GamesToolbar } from '@/modules/games/presentation/games-toolbar/GamesToolbar'
 import { TopDeals } from '@/modules/games/presentation/top-deals/TopDeals'
 import { TopDealsSkeleton } from '@/modules/games/presentation/top-deals/TopDealsSkeleton'
+import { ShowdownEntry } from '@/modules/showdown/presentation/showdown-entry/ShowdownEntry'
+import { ShowdownPrompt } from '@/modules/showdown/presentation/showdown-prompt/ShowdownPrompt'
 
 const containerStyles =
   'flex flex-1 min-h-screen flex-col items-center justify-start px-4 sm:px-8 lg:px-[35px] pb-20 bg-[image:var(--light-background-color)]'
@@ -63,6 +65,7 @@ function HomeContent() {
             onSortChange={(sort) => setFilters({ sort })}
             onEditionChange={(edition) => setFilters({ edition })}
             onClearFilters={clearFilters}
+            extraAction={<ShowdownEntry />}
           />
           {isTopDealsLoading ? <TopDealsSkeleton /> : <TopDeals games={topDeals ?? []} />}
           {isLoading && (
@@ -95,6 +98,7 @@ function HomeContent() {
       </main>
       <Footer />
       <CartDrawer />
+      <ShowdownPrompt />
     </>
   )
 }

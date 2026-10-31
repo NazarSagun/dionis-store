@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { ReactNode, useEffect, useRef, useState } from 'react'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -40,6 +40,8 @@ interface GamesToolbarProps {
   onSortChange: (sort?: GetGamesSort) => void
   onEditionChange: (edition?: GetGamesEdition) => void
   onClearFilters: () => void
+  // An extra control after the filters, such as the Showdown entry on the home page.
+  extraAction?: ReactNode
 }
 
 const PLATFORM_OPTIONS = Object.values(GetGamesPlatform)
@@ -69,6 +71,7 @@ export const GamesToolbar = ({
   onSortChange,
   onEditionChange,
   onClearFilters,
+  extraAction,
 }: GamesToolbarProps) => {
   const debounceTimer = useRef<ReturnType<typeof setTimeout>>(undefined)
   const [searchResetKey, setSearchResetKey] = useState(0)
@@ -335,6 +338,7 @@ export const GamesToolbar = ({
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
+      {extraAction}
       <button
         type='button'
         data-testid='clear-filters'

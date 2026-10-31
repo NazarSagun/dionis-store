@@ -8,6 +8,7 @@ import { CreateGameDto } from './dto/create-game.dto'
 import { CreateEditionDto, UpdateEditionDto } from './dto/edition.dto'
 import { UpdateGameDto } from './dto/update-game.dto'
 import { AllowedEdition, AllowedPlatform, AllowedSort } from './dto/games-query.dto'
+import { AllowedShowdownSize } from './dto/showdown-query.dto'
 import { StockAlertsService } from '../stock-alerts/stock-alerts.service'
 import { gameDetailKey, gamesListKey, GENRES_KEY, TOP_DEALS_KEY } from './cache-keys'
 
@@ -145,6 +146,21 @@ export class GamesService {
       .sort((a, b) => (genreRank.get(a.genre) ?? 0) - (genreRank.get(b.genre) ?? 0))
       .slice(0, limit)
       .map(({ _count, ...game }) => ({ ...game, editionCount: _count.editions }))
+  }
+
+  // The top-rated `size` games whose genre is one of `genres`, for a Showdown bracket.
+  // Rating ties go to the lower id. Too few games for the bracket is a 400.
+  async fetchShowdownGames({ genres, size }: { genres: string[]; size: AllowedShowdownSize }) {
+    const rows = await this.prisma.game_pc.findMany({
+      where: { genre: { in: genres } },
+      orderBy: [SORT_TO_ORDER_BY.rating_desc, { id: 'asc' }],
+      take: size,
+      include: { _count: { select: { editions: true } } },
+    })
+    if (rows.length < size) {
+      throw new CustomError('Not enough games for this bracket size', 400)
+    }
+    return rows.map(({ _count, ...game }) => ({ ...game, editionCount: _count.editions }))
   }
 
   fetchGenres() {

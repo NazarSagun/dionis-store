@@ -49,6 +49,7 @@ import type {
   GetGameReviewsParams,
   GetGamesParams,
   GetGamesRecommendationsParams,
+  GetGamesShowdownParams,
   GetOrdersParams,
   GetReviewRepliesParams,
   LinkedReview,
@@ -1203,6 +1204,99 @@ export function useGetGamesRecommendations<TData = Awaited<ReturnType<typeof get
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> } {
 
   const queryOptions = getGetGamesRecommendationsQueryOptions(params,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+/**
+ * @summary The top-rated games of 1 to 3 genres, for a Showdown bracket. Rating ties go to the lower id.
+ */
+export const getGamesShowdown = (
+    params: GetGamesShowdownParams,
+ options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+) => {
+
+
+      return customInstance<GameObject[]>(
+      {url: `/games/showdown`, method: 'GET',
+        params, signal
+    },
+      options);
+    }
+
+
+
+
+export const getGetGamesShowdownQueryKey = (params?: GetGamesShowdownParams,) => {
+    return [
+    `/games/showdown`, ...(params ? [params] : [])
+    ] as const;
+    }
+
+
+export const getGetGamesShowdownQueryOptions = <TData = Awaited<ReturnType<typeof getGamesShowdown>>, TError = ErrorType<ErrorMessage>>(params: GetGamesShowdownParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getGamesShowdown>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetGamesShowdownQueryKey(params);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getGamesShowdown>>> = ({ signal }) => getGamesShowdown(params, requestOptions, signal);
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getGamesShowdown>>, TError, TData> & { queryKey: DataTag<QueryKey, TData> }
+}
+
+export type GetGamesShowdownQueryResult = NonNullable<Awaited<ReturnType<typeof getGamesShowdown>>>
+export type GetGamesShowdownQueryError = ErrorType<ErrorMessage>
+
+
+export function useGetGamesShowdown<TData = Awaited<ReturnType<typeof getGamesShowdown>>, TError = ErrorType<ErrorMessage>>(
+ params: GetGamesShowdownParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getGamesShowdown>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getGamesShowdown>>,
+          TError,
+          Awaited<ReturnType<typeof getGamesShowdown>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+export function useGetGamesShowdown<TData = Awaited<ReturnType<typeof getGamesShowdown>>, TError = ErrorType<ErrorMessage>>(
+ params: GetGamesShowdownParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getGamesShowdown>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getGamesShowdown>>,
+          TError,
+          Awaited<ReturnType<typeof getGamesShowdown>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+export function useGetGamesShowdown<TData = Awaited<ReturnType<typeof getGamesShowdown>>, TError = ErrorType<ErrorMessage>>(
+ params: GetGamesShowdownParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getGamesShowdown>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
+/**
+ * @summary The top-rated games of 1 to 3 genres, for a Showdown bracket. Rating ties go to the lower id.
+ */
+
+export function useGetGamesShowdown<TData = Awaited<ReturnType<typeof getGamesShowdown>>, TError = ErrorType<ErrorMessage>>(
+ params: GetGamesShowdownParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getGamesShowdown>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> } {
+
+  const queryOptions = getGetGamesShowdownQueryOptions(params,options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> };
 

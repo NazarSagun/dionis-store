@@ -7,6 +7,7 @@ import { afterAll, afterEach, beforeAll, expect } from 'vitest'
 import { useRecentlyViewedStore } from '@/modules/account/core/store'
 import { useAuthStore } from '@/modules/auth/core/store'
 import { useCartStore } from '@/modules/cart/core/store'
+import { initialShowdownState, useShowdownPromptStore, useShowdownStore } from '@/modules/showdown/core/store'
 
 import { serviceWorker } from './mock-server'
 
@@ -18,6 +19,8 @@ afterEach(() => {
   useAuthStore.setState({ isAuthenticated: false, accessToken: null, user: null, role: null })
   useCartStore.setState({ items: [], currentStep: 1, orderId: null, isDrawerOpen: false })
   useRecentlyViewedStore.setState({ gameIds: [] })
+  useShowdownPromptStore.setState({ seen: false })
+  useShowdownStore.setState(initialShowdownState)
 })
 
 // Start worker before all tests

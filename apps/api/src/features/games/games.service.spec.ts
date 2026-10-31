@@ -243,6 +243,35 @@ describe('GamesService', () => {
     })
   })
 
+  describe('showdown', () => {
+    const row = (id: number) => ({ id, title: `Game ${id}`, _count: { editions: 0 } })
+
+    it('reads the top-rated games of the chosen genres, ties by id, up to the bracket size', async () => {
+      prisma.game_pc.findMany.mockResolvedValue([1, 2, 3, 4, 5, 6, 7, 8].map(row))
+
+      const games = await service.fetchShowdownGames({ genres: ['Shooter', 'RPG'], size: 8 })
+
+      expect(games).toHaveLength(8)
+      expect(games[0]).toEqual({ id: 1, title: 'Game 1', editionCount: 0 })
+      expect(prisma.game_pc.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { genre: { in: ['Shooter', 'RPG'] } },
+          orderBy: [{ rating: 'desc' }, { id: 'asc' }],
+          take: 8,
+        }),
+      )
+    })
+
+    it('throws a 400 when the genres have fewer games than the bracket size', async () => {
+      prisma.game_pc.findMany.mockResolvedValue([1, 2, 3].map(row))
+
+      await expect(service.fetchShowdownGames({ genres: ['MOBA'], size: 8 })).rejects.toMatchObject({
+        message: 'Not enough games for this bracket size',
+        statusCode: 400,
+      })
+    })
+  })
+
   describe('admin catalog changes', () => {
     it('adds each game\u2019s edition count to the list', async () => {
       const { games } = await service.fetchGames({ page: 1 })

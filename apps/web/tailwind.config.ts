@@ -91,11 +91,28 @@ const config = {
           '0%': { backgroundPosition: '-100% 0' },
           '100%': { backgroundPosition: '100% 0' },
         },
+        // The Showdown pick animation (.claude/specs/showdown-spec.md, Feature 4).
+        'showdown-shake': {
+          '0%, 100%': { transform: 'translateX(0)' },
+          '25%, 75%': { transform: 'translateX(-4px)' },
+          '50%': { transform: 'translateX(4px)' },
+        },
+        'showdown-enter': {
+          from: { opacity: '0', transform: 'translateY(24px)' },
+          to: { opacity: '1', transform: 'translateY(0)' },
+        },
+        'showdown-pulse': {
+          from: { boxShadow: '0 0 0 0 var(--primary)' },
+          to: { boxShadow: '0 0 0 8px transparent' },
+        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
         shimmer: 'shimmer 1.5s infinite linear',
+        'showdown-shake': 'showdown-shake 100ms ease-in-out 2',
+        'showdown-enter': 'showdown-enter 250ms ease-out both',
+        'showdown-pulse': 'showdown-pulse 250ms ease-out',
       },
     },
   },
