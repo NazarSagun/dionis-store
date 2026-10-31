@@ -9,6 +9,8 @@ import { useIsInWishlist, useToggleWishlistItem } from '@/modules/wishlist/core/
 
 import { useBackToShowdownSetup, useShowdownProgress, useShowdownSetup } from '../../core/facade'
 import { picksFor } from '../../domain/bracket'
+import { DwarfStage } from '../dwarf/DwarfStage'
+import { useIsDesktop } from '../dwarf/useIsDesktop'
 
 const STAGES = ['Final', 'Semifinal', 'Semifinal']
 
@@ -23,6 +25,7 @@ export const ShowdownWinner = () => {
   const openCartDrawer = useOpenCartDrawer()
   const isWishlisted = useIsInWishlist(winner?.id)
   const toggleWishlistItem = useToggleWishlistItem()
+  const isDesktop = useIsDesktop()
 
   if (!winner) return null
 
@@ -55,7 +58,8 @@ export const ShowdownWinner = () => {
 
   return (
     <div className='flex w-full flex-col gap-10'>
-      <div className='flex flex-col gap-2'>
+      <div className='relative flex flex-col gap-2'>
+        {!isDesktop && <DwarfStage screen='celebrate' className='absolute -top-2 right-0 h-[100px] w-[90px]' />}
         <p className='font-mono text-xs uppercase tracking-wide text-primary'>
           Showdown · {genres.join(' + ')} · {picksFor(size)} picks done
         </p>
@@ -64,8 +68,12 @@ export const ShowdownWinner = () => {
 
       <section
         data-testid='showdown-winner'
-        className='flex flex-col gap-6 rounded-xl border-2 border-primary bg-panel-alt p-4 shadow-[0_0_40px_color-mix(in_srgb,var(--primary)_20%,transparent)] sm:p-8 lg:flex-row lg:items-center lg:gap-14'
+        className='relative flex flex-col gap-6 rounded-xl border-2 border-primary bg-panel-alt p-4 shadow-[0_0_40px_color-mix(in_srgb,var(--primary)_20%,transparent)] sm:p-8 lg:flex-row lg:items-center lg:gap-14'
       >
+        {/* On desktop, Grumli jumps on the top-right edge of the winner panel. */}
+        {isDesktop && (
+          <DwarfStage screen='celebrate' className='absolute bottom-[calc(100%-8px)] right-10 h-[170px] w-[150px]' />
+        )}
         <div className='relative aspect-video w-full shrink-0 overflow-hidden rounded-lg bg-secondary lg:w-[45%]'>
           <Image
             fill

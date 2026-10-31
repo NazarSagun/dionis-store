@@ -2,7 +2,7 @@
 
 import { CSSProperties, useEffect, useMemo, useRef, useState } from 'react'
 
-import { PICK_TIMELINE, REDUCED_MOTION_PICK_MS } from '../../configuration/constraints'
+import { PICK_TIMELINE, REDUCED_MOTION_PICK_MS, THROW_TIMELINE } from '../../configuration/constraints'
 import {
   useBackToShowdownSetup,
   usePickShowdownGame,
@@ -12,8 +12,10 @@ import {
   useUndoShowdownPick,
 } from '../../core/facade'
 import { progressLabel } from '../../domain/bracket'
-import { Point, ShowdownGame } from '../../domain/models'
+import { Point, ShowdownGame, ThrowAction } from '../../domain/models'
+import { nextPhraseIndex, phraseFor } from '../../domain/phrases'
 import { crackPath, seededRandom } from '../../domain/shatter'
+import { DwarfStage } from '../dwarf/DwarfStage'
 import { MatchCard } from '../match-card/MatchCard'
 
 import { Cracks, Shards } from './Shards'
@@ -50,6 +52,10 @@ export const ShowdownBracket = () => {
 
   const [animation, setAnimation] = useState<PickAnimation | null>(null)
   const [isBusy, setIsBusy] = useState(false)
+  // Grumli throws a rock once the character has loaded. Until then, a pick runs the timeline without him.
+  const [hasCharacter, setHasCharacter] = useState(false)
+  const [throwAction, setThrowAction] = useState<ThrowAction | null>(null)
+  const lastPhrase = useRef<number | null>(null)
   const timers = useRef<number[]>([])
   const cardRefs = useRef<Array<HTMLDivElement | null>>([])
   const segmentRefs = useRef<Array<HTMLDivElement | null>>([])
@@ -86,9 +92,24 @@ export const ShowdownBracket = () => {
       return
     }
 
+    const timeline = hasCharacter ? THROW_TIMELINE : PICK_TIMELINE
+    if (hasCharacter) {
+      const loserSlot = slot === 0 ? 1 : 0
+      const card = cardRefs.current[loserSlot]?.getBoundingClientRect()
+      lastPhrase.current = nextPhraseIndex(lastPhrase.current)
+      setThrowAction({
+        phrase: phraseFor(keep.title, lastPhrase.current),
+        startedAt: performance.now(),
+        facing: loserSlot === 1 ? 1 : -1,
+        target: card
+          ? { x: card.left + (impact.x / 100) * card.width, y: card.top + (impact.y / 100) * card.height }
+          : { x: 0, y: 0 },
+      })
+    }
+
     setAnimation({ keep, lose, impact, phase: 'pick' })
-    later(PICK_TIMELINE.crack, () => setAnimation((current) => current && { ...current, phase: 'crack' }))
-    later(PICK_TIMELINE.shatter, () => {
+    later(timeline.crack, () => setAnimation((current) => current && { ...current, phase: 'crack' }))
+    later(timeline.shatter, () => {
       const card = cardRefs.current[slot]?.getBoundingClientRect()
       const segment = segmentRefs.current[picks.length]?.getBoundingClientRect()
       const fly =
@@ -100,11 +121,14 @@ export const ShowdownBracket = () => {
           : { x: 0, y: -200 }
       setAnimation((current) => current && { ...current, phase: 'shatter', fly })
     })
-    later(PICK_TIMELINE.next, () => {
+    later(timeline.next, () => {
       pick(keep.id)
       setAnimation(null)
     })
-    later(PICK_TIMELINE.done, () => setIsBusy(false))
+    later(timeline.done, () => {
+      setIsBusy(false)
+      setThrowAction(null)
+    })
   }
 
   const cardClass = (game: ShowdownGame, slot: number) => {
@@ -212,18 +236,28 @@ export const ShowdownBracket = () => {
         </div>
       </div>
 
-      <div
-        key={`${progress.roundIndex}-${progress.matchIndex}`}
-        className='flex flex-col items-stretch gap-2 md:flex-row md:items-center md:gap-6'
-      >
-        {renderCard(0)}
+      {/* Grumli's canvas covers the match and the stage, so the rock can fly to either card. */}
+      <div className='relative flex flex-col gap-2 md:gap-4'>
         <div
-          aria-hidden='true'
-          className='flex items-center justify-center gap-3 font-display text-sm font-bold text-muted-foreground md:h-16 md:w-16 md:shrink-0 md:rounded-full md:border-2 md:border-ink md:text-lg md:text-foreground'
+          key={`${progress.roundIndex}-${progress.matchIndex}`}
+          className='flex flex-col items-stretch gap-2 md:flex-row md:items-center md:gap-6'
         >
-          VS
+          {renderCard(0)}
+          <div
+            aria-hidden='true'
+            className='flex items-center justify-center gap-3 font-display text-sm font-bold text-muted-foreground md:h-16 md:w-16 md:shrink-0 md:rounded-full md:border-2 md:border-ink md:text-lg md:text-foreground'
+          >
+            VS
+          </div>
+          {renderCard(1)}
         </div>
-        {renderCard(1)}
+        <DwarfStage
+          screen='idle'
+          overlay
+          className='h-[120px] w-full md:h-[180px]'
+          throwAction={throwAction}
+          onReady={() => setHasCharacter(true)}
+        />
       </div>
       <p className='text-center text-sm text-muted-foreground'>
         <span className='md:hidden'>Tap a card to keep it.</span>

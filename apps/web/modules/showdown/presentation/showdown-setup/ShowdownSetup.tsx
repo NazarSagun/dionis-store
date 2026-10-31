@@ -14,6 +14,8 @@ import {
 } from '../../core/facade'
 import { fitSize, picksFor, sizeOptions } from '../../domain/bracket'
 import { useGetGamesGenres } from '../../integration/repository'
+import { DwarfStage } from '../dwarf/DwarfStage'
+import { useIsDesktop } from '../dwarf/useIsDesktop'
 
 const stepStyles = 'flex items-baseline gap-3'
 const stepNumberStyles = 'font-mono text-sm text-primary'
@@ -26,6 +28,7 @@ export const ShowdownSetup = () => {
   const toggleGenre = useToggleShowdownGenre()
   const setSize = useSetShowdownSize()
   const start = useStartShowdown()
+  const isDesktop = useIsDesktop()
 
   // A game has one genre, so the "any of" pool is the sum of the chosen genres' counts.
   const poolSize = (genreCounts ?? [])
@@ -53,6 +56,7 @@ export const ShowdownSetup = () => {
 
       <div className='flex flex-col gap-12 lg:flex-row lg:items-start lg:gap-16'>
         <div className='flex flex-1 flex-col gap-12'>
+          {!isDesktop && <DwarfStage screen='greet' className='relative -mb-6 h-[120px] w-full' />}
           <section className='flex flex-col gap-4'>
             <div className={stepStyles}>
               <span className={stepNumberStyles}>01</span>
@@ -136,7 +140,11 @@ export const ShowdownSetup = () => {
           </section>
         </div>
 
-        <aside className='sticky bottom-0 -mx-4 flex flex-col gap-4 border-t border-ink bg-panel-alt p-4 sm:mx-0 sm:rounded-lg sm:border lg:static lg:w-96 lg:p-7'>
+        <aside className='sticky bottom-0 -mx-4 flex flex-col gap-4 border-t border-ink bg-panel-alt p-4 sm:mx-0 sm:rounded-lg sm:border lg:relative lg:w-96 lg:p-7'>
+          {/* On desktop, Grumli stands on the top edge of the summary card. */}
+          {isDesktop && (
+            <DwarfStage screen='greet' className='absolute bottom-[calc(100%-6px)] right-6 h-[190px] w-[160px]' />
+          )}
           <p className='hidden font-mono text-xs uppercase tracking-wide text-primary lg:block'>Your bracket</p>
           <p className='font-display text-lg font-bold text-foreground lg:text-2xl'>
             {genres.length ? genres.join(' + ') : 'No genres yet'}
