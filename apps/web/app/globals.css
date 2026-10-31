@@ -51,6 +51,21 @@
 
     --light-background-color: none;
     --success-color: var(--neon-green);
+
+    /* Grumli, the Showdown dwarf (.claude/specs/showdown-character-spec.md).
+       Same names and values as the Figma "Dwarf" variables. The 3D model reads
+       them with getComputedStyle. */
+    --dwarf-armor: #383c44;
+    --dwarf-armor-shade: #22242a;
+    --dwarf-trim: #a8aeba;
+    --dwarf-trim-shade: #686e7a;
+    --dwarf-sash: #b92626;
+    --dwarf-leather: #6e4628;
+    --dwarf-glow: #ffc400;
+    --dwarf-beard: #d66a28;
+    --dwarf-beard-shade: #a84a16;
+    --dwarf-rock: #847e78;
+    --dwarf-rock-shade: #5c5854;
   }
 }
 

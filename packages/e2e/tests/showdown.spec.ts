@@ -8,10 +8,24 @@ import { createGameInGenre, uniqueGenre } from './helpers/recommendations'
 // phase 4.
 // Design: Figma page "Showdown", sections 1 to 4.
 //
+// The checks on `showdown-character` are the TDD spec for
+// .claude/specs/showdown-character-spec.md (Figma sections 5 to 6b). They ride
+// on the runs below instead of a second bracket run, to keep the e2e job short.
+//
 // Every bracket test makes its own games in a genre no seeded game has, so the
 // whole pool is under the test's control. Reduced motion skips the pick
-// animation, per the spec's cross-feature requirements.
+// animation, per the spec's cross-feature requirements. It also skips the rock
+// throw and the speech bubble, so the character holds one pose per screen.
 test.use({ reducedMotion: 'reduce' })
+
+async function expectCharacterPose(page: Page, pose: 'greet' | 'idle' | 'celebrate') {
+  const character = page.getByTestId('showdown-character')
+  await expect(character).toBeVisible()
+  await expect(character).toHaveAttribute('data-pose', pose)
+}
+
+// three.js sets `window.__THREE__` when it loads.
+const isThreeLoaded = (page: Page) => page.evaluate(() => '__THREE__' in globalThis)
 
 // Ratings are strings, sorted as strings by the API. One digit before the
 // point keeps that order numeric.
@@ -42,9 +56,12 @@ test.describe('Feature 1: Entry points', () => {
     const prompt = page.getByTestId('showdown-prompt')
     await expect(prompt).toBeVisible({ timeout: 10_000 })
     await expect(prompt).toContainText("Don't know what to play? Start a Showdown and figure it out.")
+    // The character code loads on /showdown only.
+    expect(await isThreeLoaded(page)).toBe(false)
     await page.getByTestId('showdown-prompt-try').click()
     await expect(page).toHaveURL('/showdown')
     await expect(page.getByTestId('showdown-setup')).toBeVisible()
+    await expectCharacterPose(page, 'greet')
 
     await page.goto('/')
     await page.getByTestId('showdown-entry').click()
@@ -84,6 +101,7 @@ test.describe('Features 2, 4, and 5: Setup, bracket, and winner', () => {
     await expect(progress).toContainText('Round 1 of 3 · Match 1 of 4')
     await expect(cards).toHaveCount(2)
     await expect(cards.nth(0)).not.toHaveText(await cards.nth(1).innerText())
+    await expectCharacterPose(page, 'idle')
 
     // Undo puts the first match back.
     await cards.nth(0).click()
@@ -102,6 +120,7 @@ test.describe('Features 2, 4, and 5: Setup, bracket, and winner', () => {
 
     const winner = page.getByTestId('showdown-winner')
     await expect(winner).toBeVisible()
+    await expectCharacterPose(page, 'celebrate')
     const winnerText = await winner.innerText()
     const winnerTitle = titles.find((title) => winnerText.includes(title))
     expect(winnerTitle).toBeDefined()

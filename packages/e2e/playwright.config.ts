@@ -86,7 +86,13 @@ export default defineConfig({
       name: 'chromium',
       // CI uses the Chrome that the runner image already has, so it needs no
       // browser download and no apt packages.
-      use: { ...devices['Desktop Chrome'], ...(process.env.CI ? { channel: 'chrome' } : {}) },
+      // The flag keeps software WebGL (SwiftShader) on in Chrome, which drops it
+      // by default on a machine with no GPU. The Showdown character needs WebGL.
+      use: {
+        ...devices['Desktop Chrome'],
+        ...(process.env.CI ? { channel: 'chrome' } : {}),
+        launchOptions: { args: ['--enable-unsafe-swiftshader'] },
+      },
     },
   ],
 })

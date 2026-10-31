@@ -105,6 +105,11 @@ const config = {
           from: { boxShadow: '0 0 0 0 var(--primary)' },
           to: { boxShadow: '0 0 0 8px transparent' },
         },
+        // Grumli's speech bubble (.claude/specs/showdown-character-spec.md, Feature 3).
+        'showdown-bubble': {
+          from: { opacity: '0', transform: 'scale(0.8)' },
+          to: { opacity: '1', transform: 'scale(1)' },
+        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
@@ -113,6 +118,7 @@ const config = {
         'showdown-shake': 'showdown-shake 100ms ease-in-out 2',
         'showdown-enter': 'showdown-enter 250ms ease-out both',
         'showdown-pulse': 'showdown-pulse 250ms ease-out',
+        'showdown-bubble': 'showdown-bubble 120ms ease-out both',
       },
     },
   },
