@@ -17,7 +17,8 @@ import { ShipmentForm } from '../shipment-form/ShipmentForm'
 
 const PAGE_SIZE = 20
 const SEARCH_DEBOUNCE_MS = 300
-const headerCell = 'px-6 py-3 text-left font-sans text-xs font-semibold uppercase tracking-wide text-muted-foreground'
+const headerCell =
+  'px-3 lg:px-6 py-3 text-left font-sans text-xs font-semibold uppercase tracking-wide text-muted-foreground'
 
 const OrderDetails = ({ order }: { order: AdminOrderObject }) => (
   <tr className='bg-panel-alt'>
@@ -105,7 +106,7 @@ export const OrdersTable = () => {
       </label>
 
       <div className={`${adminPanel} w-full overflow-x-auto`}>
-        <table data-testid='admin-orders-table' className='w-full min-w-[840px] border-collapse'>
+        <table data-testid='admin-orders-table' className='w-full min-w-[680px] border-collapse'>
           <thead className='bg-panel-alt'>
             <tr>
               <th className={`${headerCell} w-12`}>
@@ -128,7 +129,7 @@ export const OrdersTable = () => {
                     data-testid='admin-order-row'
                     className={`border-t border-border ${isOpen ? 'bg-panel-alt' : ''}`}
                   >
-                    <td className='px-6 py-4'>
+                    <td className='px-3 lg:px-6 py-4'>
                       <button
                         type='button'
                         data-testid='admin-order-toggle'
@@ -140,22 +141,22 @@ export const OrdersTable = () => {
                         {isOpen ? '−' : '+'}
                       </button>
                     </td>
-                    <td className='px-6 py-4 font-mono text-sm text-foreground'>#{order.id}</td>
-                    <td className='px-6 py-4 font-sans text-sm text-muted-foreground'>
+                    <td className='px-3 lg:px-6 py-4 font-mono text-sm text-foreground'>#{order.id}</td>
+                    <td className='px-3 lg:px-6 py-4 font-sans text-sm text-muted-foreground'>
                       {formatOrderDate(order.createdAt as string)}
                     </td>
-                    <td className='px-6 py-4 font-sans text-sm text-foreground'>{order.user.email}</td>
-                    <td className='px-6 py-4'>
+                    <td className='px-3 lg:px-6 py-4 font-sans text-sm text-foreground'>{order.user.email}</td>
+                    <td className='px-3 lg:px-6 py-4'>
                       {order.status && (
                         <span data-testid='admin-order-status' className={orderStatusBadgeClass(order.status)}>
                           {ORDER_STATUS_LABELS[order.status]}
                         </span>
                       )}
                     </td>
-                    <td className='px-6 py-4 text-right font-mono text-sm tabular-nums text-foreground'>
+                    <td className='px-3 lg:px-6 py-4 text-right font-mono text-sm tabular-nums text-foreground'>
                       {order.items?.length ?? 0}
                     </td>
-                    <td className='px-6 py-4 text-right font-mono text-sm tabular-nums text-foreground'>
+                    <td className='px-3 lg:px-6 py-4 text-right font-mono text-sm tabular-nums text-foreground'>
                       €{formatCentsToEuros(order.totalPrice as number)}
                     </td>
                   </tr>

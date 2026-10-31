@@ -151,17 +151,20 @@ The chips leave the palette and turn into the home page toolbar menus, and the h
 ### Requirements
 
 1. The transition runs inside `document.startViewTransition`. Each chip and the toolbar menu it fills share one `view-transition-name`, for example `ai-filter-platform`. The search chip pairs with the search input. The browser animates each pair from the chip to the menu.
-2. Inside the transition update, the app closes the palette, goes to `/` with the new filters through `toQueryString` (one history entry), and scrolls the window so the toolbar is visible. The update finishes only when the home page has rendered the new filters. This works the same from any page and any scroll position. The old page crossfades out under the flying chips.
+2. Inside the transition update, the app closes the palette, goes to `/` with the new filters through `toQueryString` (one history entry), and scrolls the window to the top so the toolbar is visible. The update finishes only when the home page has rendered the new filters. This works the same from any page and any scroll position. The old page crossfades out under the flying chips.
 3. Timings (longer than the "Timeline" frame, after a review in the browser): the old page and the palette crossfade into the new page in 600 ms. The chips fly in 650 ms each, 70 ms apart, with `cubic-bezier(0.2, 0.8, 0.2, 1)`, so the last one lands at about 1000 ms. Each menu pops from scale 1.04 to 1 when its chip lands, and its red glow fades out over 2.2 seconds. The game grid rises in over 600 ms.
 4. Only the menus whose value the result set get the glow.
 5. When `document.startViewTransition` does not exist, or the user has `prefers-reduced-motion: reduce`, the app closes the palette, goes to the new URL, and shows the glow, with no flight.
 6. The transition never blocks input for more than 500 ms. A click during the transition is not lost.
+7. Below the `sm` breakpoint, the toolbar folds the menus into one Filters button. The chips of the folded menus fly into that button instead, 70 ms apart, and the button gets the glow. The search chip still lands on the search input.
+8. 600 ms after the chips land, the page scrolls to the games list. The scroll is smooth, or instant with `prefers-reduced-motion: reduce`.
 
 ### Acceptance criteria
 
 - After a result, the toolbar menus show the returned values, for example "Platform: PS5", and `<html data-ai-glow>` lists only those menus for 2.4 seconds, which gives them the glow (web unit test with fake timers).
 - With `prefers-reduced-motion: reduce` (web unit test), the app navigates without calling `document.startViewTransition`.
-- A user who scrolled down the home page asks AI. After the result, the toolbar is in view (E2E, fallback path).
+- A user who scrolled down the home page asks AI. After the result, the games list is in view (E2E, fallback path).
+- Below `sm`, a result that sets folded menus lists `filters` in `<html data-ai-glow>`, and the page then scrolls to the games list (web unit test).
 
 ### Out of scope
 

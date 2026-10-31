@@ -92,7 +92,7 @@ export const AuthForm = ({ onSubmitForm, variant, isLoading, onVariantChange, sw
         <Link
           href='/forgot-password'
           data-testid='forgot-password-link'
-          className='-mt-4 mb-4 self-end text-xs font-semibold text-foreground underline hover:text-neon-cyan'
+          className='-mt-2 mb-2 self-end py-2 text-xs font-semibold text-foreground underline hover:text-neon-cyan'
         >
           Forgot password?
         </Link>

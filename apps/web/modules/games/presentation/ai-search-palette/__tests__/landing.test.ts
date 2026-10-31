@@ -6,7 +6,7 @@ const reducedMotion = (matches: boolean) =>
   vi.spyOn(window, 'matchMedia').mockReturnValue({ matches } as MediaQueryList)
 
 describe('landFilters', () => {
-  const startViewTransition = vi.fn((update: () => Promise<void>) => ({ finished: update() }))
+  const startViewTransition = vi.fn((update: () => Promise<void>) => ({ ready: Promise.resolve(), finished: update() }))
   const navigate = () => window.history.pushState({}, '', '/?platform=PC')
 
   beforeEach(() => {
@@ -45,5 +45,28 @@ describe('landFilters', () => {
     expect(startViewTransition).not.toHaveBeenCalled()
     expect(window.location.search).toBe('?platform=PC')
     expect(document.documentElement.getAttribute('data-ai-glow')).toBe('platform')
+  })
+
+  it('lands the folded menus on the Filters button below sm, then scrolls to the games', async () => {
+    reducedMotion(true)
+    vi.useFakeTimers({ toFake: ['setTimeout'] })
+    document.body.innerHTML = `
+      <button data-ai-target="filters">Filters</button>
+      <button data-ai-target="platform" hidden>Platform</button>
+      <div data-testid="game-library"></div>`
+    const filters = document.querySelector<HTMLElement>("[data-ai-target='filters']")!
+    vi.spyOn(filters, 'getClientRects').mockReturnValue([{}] as unknown as DOMRectList)
+    const library = document.querySelector<HTMLElement>("[data-testid='game-library']")!
+    const scrollIntoView = vi.fn()
+    library.scrollIntoView = scrollIntoView
+
+    await landFilters({ url: '/?platform=PC', keys: ['search', 'platform'], navigate })
+
+    expect(document.documentElement.getAttribute('data-ai-glow')).toBe('search platform filters')
+    expect(filters.style.viewTransitionName).toBe('')
+    expect(scrollIntoView).not.toHaveBeenCalled()
+    vi.advanceTimersByTime(600)
+    expect(scrollIntoView).toHaveBeenCalledWith({ behavior: 'auto', block: 'start' })
+    document.body.innerHTML = ''
   })
 })

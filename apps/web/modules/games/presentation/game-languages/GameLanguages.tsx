@@ -16,7 +16,7 @@ export const GameLanguages = ({ languages }: GameLanguagesProps) => {
   return (
     <section data-testid='game-languages' className='flex max-w-[720px] flex-col gap-3'>
       <h2 className='border-l-4 border-primary pl-3 font-display text-xl leading-tight text-foreground'>Languages</h2>
-      <div className='overflow-x-auto rounded-md border border-ink'>
+      <div className='relative overflow-x-auto rounded-md border border-ink'>
         <table className='w-full font-mono text-sm'>
           <thead className='bg-panel-alt text-left text-muted-foreground'>
             <tr>

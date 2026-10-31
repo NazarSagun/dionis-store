@@ -24,17 +24,17 @@ export const CartItemRow = ({
   const removeItem = useRemoveCartItem()
   const updateItemQuantity = useUpdateCartItemQuantity()
   return (
-    <div data-testid='cart-item' className='flex flex-col gap-4 sm:flex-row'>
+    <div data-testid='cart-item' className='flex flex-wrap gap-4 sm:flex-nowrap'>
       <Image
-        className='h-auto w-full rounded-md border border-ink object-cover sm:h-[108px] sm:w-[190px]'
+        className='h-[54px] w-[96px] shrink-0 rounded-md border border-ink object-cover sm:h-[108px] sm:w-[190px]'
         width={190}
         height={108}
         alt={title}
         src={thumbnailUrl}
       />
-      <div className='flex flex-col justify-between py-[0.1rem]'>
+      <div className='flex min-w-0 flex-1 flex-col justify-between gap-2 py-[0.1rem]'>
         <div>
-          <h3 className='font-mono text-xl font-bold text-foreground'>{title}</h3>
+          <h3 className='font-mono text-base font-bold text-foreground sm:text-xl'>{title}</h3>
           <span className='font-mono text-[0.8rem] text-muted-foreground'>{platform}</span>
           {editionId !== null && (
             <span data-testid='cart-item-edition' className='block font-mono text-[0.8rem] text-neon-cyan'>
@@ -55,7 +55,7 @@ export const CartItemRow = ({
           </button>
         </div>
       </div>
-      <div className='flex items-center justify-between sm:ml-auto sm:justify-normal'>
+      <div className='flex w-full items-center justify-between sm:ml-auto sm:w-auto sm:justify-normal'>
         <span className='mr-4 font-display text-sm text-neon-amber'>{calculateDiscountedPrice(price, discount)}€</span>
 
         <QuantitySelect onChange={(number) => updateItemQuantity(id, editionId, number)} selectedOption={quantity} />

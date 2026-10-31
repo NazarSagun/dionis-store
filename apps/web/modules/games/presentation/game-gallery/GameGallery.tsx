@@ -89,7 +89,7 @@ export const GameGallery = ({ title, thumbnail, images, trailerYoutubeId }: Game
               <span aria-hidden='true'>▶</span>
               Play trailer
             </button>
-            <span className='absolute bottom-2 left-3 font-mono text-[11px] text-muted-foreground'>
+            <span className='absolute bottom-2 left-3 font-mono text-xs text-muted-foreground'>
               Plays from youtube-nocookie.com
             </span>
           </>

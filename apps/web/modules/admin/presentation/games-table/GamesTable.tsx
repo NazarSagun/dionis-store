@@ -8,9 +8,10 @@ import { adminButtonText, adminInput, adminLabel, adminPanel } from '../../domai
 import { useGetGames } from '../../integration/repository'
 
 const SEARCH_DEBOUNCE_MS = 300
-const headerCell = 'px-6 py-3 text-left font-sans text-xs font-semibold uppercase tracking-wide text-muted-foreground'
-const cell = 'px-6 py-4 font-sans text-sm text-foreground'
-const numberCell = 'px-6 py-4 text-right font-mono text-sm tabular-nums text-foreground'
+const headerCell =
+  'px-3 lg:px-6 py-3 text-left font-sans text-xs font-semibold uppercase tracking-wide text-muted-foreground'
+const cell = 'px-3 lg:px-6 py-4 font-sans text-sm text-foreground'
+const numberCell = 'px-3 lg:px-6 py-4 text-right font-mono text-sm tabular-nums text-foreground'
 
 export const GamesTable = () => {
   const router = useRouter()
@@ -45,7 +46,7 @@ export const GamesTable = () => {
       </label>
 
       <div className={`${adminPanel} w-full overflow-x-auto`}>
-        <table data-testid='admin-games-table' className='w-full min-w-[760px] border-collapse'>
+        <table data-testid='admin-games-table' className='w-full min-w-[640px] border-collapse'>
           <thead className='bg-panel-alt'>
             <tr>
               <th className={headerCell}>ID</th>
@@ -65,7 +66,7 @@ export const GamesTable = () => {
                 onClick={() => router.push(`/admin/games/${game.id}`)}
                 className='cursor-pointer border-t border-border hover:bg-panel-alt'
               >
-                <td className='px-6 py-4 font-mono text-sm text-muted-foreground'>{game.id}</td>
+                <td className='px-3 lg:px-6 py-4 font-mono text-sm text-muted-foreground'>{game.id}</td>
                 <td className={cell}>{game.title}</td>
                 <td className={cell}>{game.platform}</td>
                 <td className={cell}>{game.genre}</td>

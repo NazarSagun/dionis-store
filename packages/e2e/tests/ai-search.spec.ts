@@ -57,7 +57,7 @@ test.describe('AI search palette', () => {
     await expect(page).toHaveURL(`/game/${game.id}`)
   })
 
-  test('from the bottom of the home page, the result brings the toolbar into view', async ({ page, request }) => {
+  test('from the bottom of the home page, the result lands on the toolbar, then brings the games list into view', async ({ page, request }) => {
     const title = `Zephyr Depths ${uniqueSuffix()}`
     await createGameViaApi(request, title)
     await page.goto('/')
@@ -68,8 +68,8 @@ test.describe('AI search palette', () => {
     await askAi(page, title)
 
     await expect(page.getByTestId('ai-search-dialog')).toBeHidden()
-    await expect(page.getByTestId('search-input')).toBeInViewport()
     await expect(page.getByTestId('search-input')).toHaveValue(title)
+    await expect(page.getByRole('heading', { name: 'All Games' })).toBeInViewport()
     await expect(libraryCards(page)).toHaveCount(1)
   })
 })

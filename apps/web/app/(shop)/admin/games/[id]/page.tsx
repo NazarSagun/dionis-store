@@ -19,7 +19,7 @@ export default function AdminEditGamePage() {
     <AdminShell title='Edit game'>
       <Link
         href='/admin/games'
-        className='w-fit font-sans text-sm font-semibold text-muted-foreground hover:text-foreground'
+        className='w-fit py-2 font-sans text-sm font-semibold text-muted-foreground hover:text-foreground'
       >
         ← All games
       </Link>

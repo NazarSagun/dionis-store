@@ -15,9 +15,10 @@ import {
 } from '../../integration/repository'
 import { ConfirmDialog } from '../confirm-dialog/ConfirmDialog'
 
-const headerCell = 'px-6 py-3 text-left font-sans text-xs font-semibold uppercase tracking-wide text-muted-foreground'
-const cell = 'px-6 py-4 font-sans text-sm text-foreground'
-const numberCell = 'px-6 py-4 font-mono text-sm tabular-nums text-foreground'
+const headerCell =
+  'px-3 lg:px-6 py-3 text-left font-sans text-xs font-semibold uppercase tracking-wide text-muted-foreground'
+const cell = 'px-3 lg:px-6 py-4 font-sans text-sm text-foreground'
+const numberCell = 'px-3 lg:px-6 py-4 font-mono text-sm tabular-nums text-foreground'
 const statusStyles: Record<PromoStatus, string> = {
   Active: 'text-neon-green',
   Expired: 'text-muted-foreground',
@@ -134,7 +135,7 @@ export const PromoCodesTable = () => {
       </form>
 
       <div className={`${adminPanel} w-full overflow-x-auto`}>
-        <table data-testid='promo-codes-table' className='w-full min-w-[760px] border-collapse'>
+        <table data-testid='promo-codes-table' className='w-full min-w-[640px] border-collapse'>
           <thead className='bg-panel-alt'>
             <tr>
               <th className={headerCell}>Code</th>
@@ -150,7 +151,7 @@ export const PromoCodesTable = () => {
               const status = promoStatus(promo)
               return (
                 <tr key={promo.id} data-testid='promo-code-row' className='border-t border-border'>
-                  <td className='px-6 py-4 font-mono text-sm text-foreground'>{promo.code}</td>
+                  <td className='px-3 lg:px-6 py-4 font-mono text-sm text-foreground'>{promo.code}</td>
                   <td className={numberCell}>{promo.percentOff}%</td>
                   <td className={cell}>{formatDate(promo.expiresAt)}</td>
                   <td className={numberCell}>
@@ -164,7 +165,7 @@ export const PromoCodesTable = () => {
                       type='button'
                       data-testid='promo-code-delete'
                       onClick={() => setToDelete(promo)}
-                      className='font-sans text-sm font-semibold text-destructive hover:underline'
+                      className='py-2 font-sans text-sm font-semibold text-destructive hover:underline'
                     >
                       Delete
                     </button>

@@ -148,7 +148,7 @@ export const AiSearchPalette = () => {
               className='fixed left-1/2 top-4 z-50 w-[calc(100%-32px)] max-w-[680px] -translate-x-1/2 overflow-hidden rounded-xl border border-border bg-popover shadow-2xl outline-none data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:slide-in-from-top-2 sm:top-[120px]'
             >
               <DialogTitle className='sr-only'>Ask AI to find a game</DialogTitle>
-              <div className='flex items-center gap-3 border-b border-border px-5 py-4'>
+              <div className='flex items-center gap-2 border-b border-border px-4 py-4 sm:gap-3 sm:px-5'>
                 <span className='text-lg text-primary'>✦</span>
                 <input
                   data-testid='ai-search-input'
@@ -164,7 +164,7 @@ export const AiSearchPalette = () => {
                     if (state.kind === 'rejected' || state.kind === 'error') setState({ kind: 'idle' })
                   }}
                   onKeyDown={onInputKeyDown}
-                  className='min-w-0 flex-1 bg-transparent text-lg text-foreground outline-none placeholder:text-muted-foreground'
+                  className='min-w-0 flex-1 bg-transparent text-base text-foreground sm:text-lg outline-none placeholder:text-muted-foreground'
                 />
                 <SubmitButton state={state} disabled={!canSubmit} onClick={() => void submit()} />
               </div>
@@ -267,7 +267,7 @@ const SubmitButton = ({
 
   let label = (
     <>
-      Find games <span className='font-mono'>↵</span>
+      Find games <span className='hidden font-mono sm:inline'>↵</span>
     </>
   )
   if (searching) {

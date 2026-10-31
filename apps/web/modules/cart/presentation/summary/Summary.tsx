@@ -31,7 +31,7 @@ export const Summary = () => {
   }, [items])
 
   return (
-    <div className='rounded-md border border-ink bg-panel-alt p-8 font-mono text-foreground'>
+    <div className='rounded-md border border-ink bg-panel-alt p-4 font-mono text-foreground lg:p-8'>
       <div className='flex flex-col gap-1 text-muted-foreground'>
         <div className='flex justify-between'>
           <div>Official price</div>

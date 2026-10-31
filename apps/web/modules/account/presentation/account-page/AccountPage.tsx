@@ -11,7 +11,7 @@ import { OrderHistorySection } from '../order-history-section/OrderHistorySectio
 import { RecentlyViewedSection } from '../recently-viewed-section/RecentlyViewedSection'
 import { SettingsSection } from '../settings-section/SettingsSection'
 
-const tabStyles = 'whitespace-nowrap border-b-2 px-4 py-3 font-sans text-sm font-semibold'
+const tabStyles = 'whitespace-nowrap border-b-2 px-2 py-3 sm:px-4 font-sans text-sm font-semibold'
 const activeTabStyles = 'border-primary text-foreground'
 const inactiveTabStyles = 'border-transparent text-muted-foreground hover:text-foreground'
 
@@ -58,7 +58,7 @@ export const AccountPage = () => {
     >
       {user && <h1 className='font-display text-[32px] font-bold leading-tight text-foreground'>Hi, {user.name}</h1>}
 
-      <div className='flex max-w-full flex-nowrap gap-2 overflow-x-auto shadow-[inset_0_-1px_0_var(--border)]'>
+      <div className='flex max-w-full flex-nowrap gap-0 overflow-x-auto sm:gap-2 shadow-[inset_0_-1px_0_var(--border)]'>
         {TABS.map((tab) => (
           <button
             key={tab.testId}
