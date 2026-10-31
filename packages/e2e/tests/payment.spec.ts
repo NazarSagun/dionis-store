@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test'
 
-import { fillStripeTestCard, goToPaymentStep, signUpAndAddGamesToCart, stripeFrame } from './helpers/checkout'
+import { fillStripeTestCard, goToPaymentStep, signUpAndAddGamesToCart, stripeCardOption } from './helpers/checkout'
 
 // TDD spec for checkout-payment-activation-spec.md, Feature 1 (Payment step).
 // `Payment.tsx` is a static stub today and mounts no Stripe element, so every
@@ -17,7 +17,7 @@ test.describe('Payment step', () => {
   test('shows an order summary and mounts the Stripe payment element', async ({ page }) => {
     await expect(page.getByTestId('payment')).toBeVisible()
     await expect(page.getByTestId('payment-summary')).toBeVisible()
-    await expect(stripeFrame(page).getByText('Card', { exact: true })).toBeVisible()
+    await expect(stripeCardOption(page)).toBeVisible()
   })
 
   test('advances to the Game Activation step on a successful test payment', async ({ page }) => {

@@ -39,12 +39,17 @@ export function stripeFrame(page: Page) {
   return page.frameLocator('iframe[name^="__privateStripeFrame"]').first()
 }
 
+// Stripe's picker can render the "Card" label more than once (a hidden copy beside the visible button), so take
+// the first visible one.
+export const stripeCardOption = (page: Page) =>
+  stripeFrame(page).getByText('Card', { exact: true }).filter({ visible: true }).first()
+
 export async function fillStripeTestCard(page: Page, number: string, expiry = '12/34', cvc = '123') {
   // The Payment Element's payment-method picker (Card, Bancontact, EPS, ...)
   // renders inside the same Stripe iframe as the card fields, and Card needs
   // an explicit click before the card fields exist at all.
   const frame = stripeFrame(page)
-  await frame.getByText('Card', { exact: true }).click()
+  await stripeCardOption(page).click()
   await frame.locator('[name="number"]').fill(number)
   await frame.locator('[name="expiry"]').fill(expiry)
   await frame.locator('[name="cvc"]').fill(cvc)
