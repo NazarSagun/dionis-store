@@ -239,7 +239,12 @@ export const GamesToolbar = ({
       />
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <button type='button' data-testid='filters-trigger' className={cn(triggerStyles, 'sm:hidden')}>
+          <button
+            type='button'
+            data-testid='filters-trigger'
+            data-ai-target='filters'
+            className={cn(triggerStyles, 'sm:hidden')}
+          >
             <SlidersHorizontal className='h-4 w-4' />
             Filters
           </button>

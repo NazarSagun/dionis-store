@@ -160,7 +160,8 @@ html[data-ai-glow~='platform'] [data-ai-target='platform'],
 html[data-ai-glow~='genre'] [data-ai-target='genre'],
 html[data-ai-glow~='price'] [data-ai-target='price'],
 html[data-ai-glow~='sort'] [data-ai-target='sort'],
-html[data-ai-glow~='edition'] [data-ai-target='edition'] {
+html[data-ai-glow~='edition'] [data-ai-target='edition'],
+html[data-ai-glow~='filters'] [data-ai-target='filters'] {
   animation: ai-land 2.2s ease-out both;
 }
 
