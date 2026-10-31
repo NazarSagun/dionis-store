@@ -24,8 +24,11 @@ ENV MEDIA_BASE_URL=$MEDIA_BASE_URL
 # Source map upload token. A secret mount keeps it out of the image layers.
 # The token is read from the secret file, because older BuildKit versions do
 # not support env= on a secret mount. Without the secret, the build skips the upload.
+# The production instance has 2 GB of RAM, so Node's default heap limit stops `next build` with an out-of-memory
+# error now that the Showdown bundles three.js. The higher limit leans on the 2 GB swap file during the build.
 RUN --mount=type=secret,id=sentry_auth_token \
-    SENTRY_AUTH_TOKEN="$(cat /run/secrets/sentry_auth_token 2>/dev/null)" pnpm --filter web build
+    SENTRY_AUTH_TOKEN="$(cat /run/secrets/sentry_auth_token 2>/dev/null)" \
+    NODE_OPTIONS=--max-old-space-size=1536 pnpm --filter web build
 
 ENV NODE_ENV=production HOSTNAME=0.0.0.0
 WORKDIR /app/apps/web
