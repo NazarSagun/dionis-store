@@ -12,7 +12,7 @@ import { NotificationBell } from '@/modules/notifications/presentation/notificat
 
 const menuItemStyles =
   'cursor-pointer rounded-sm px-3 py-2 font-mono text-sm text-foreground focus:bg-neon-cyan focus:text-primary-foreground'
-const navLinkStyles = 'font-mono text-sm text-muted-foreground hover:text-foreground'
+const navLinkStyles = 'py-2 font-mono text-sm text-muted-foreground hover:text-foreground'
 
 export const MainNavigation = () => {
   const isUserAuth = useIsAuthenticated()

@@ -334,7 +334,7 @@ export const GamesToolbar = ({
         type='button'
         data-testid='clear-filters'
         onClick={handleClearFilters}
-        className='hidden font-mono text-sm text-primary hover:underline sm:inline'
+        className='hidden py-2 font-mono text-sm text-primary hover:underline sm:inline'
       >
         Clear filters
       </button>

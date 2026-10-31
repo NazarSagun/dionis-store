@@ -14,7 +14,7 @@ export const ShoppingCart = () => {
         {items.length > 0 && <CartItemsList cartItems={items} />}
       </section>
       <section className='sticky bottom-0 z-10 w-full bg-background pt-2 lg:static lg:w-[30vw] lg:bg-transparent lg:pt-0'>
-        <h2 className='mb-4 font-display text-3xl text-white'>Summary</h2>
+        <h2 className='sr-only font-display text-3xl text-white lg:not-sr-only lg:mb-4 lg:block'>Summary</h2>
         <Summary />
       </section>
     </div>

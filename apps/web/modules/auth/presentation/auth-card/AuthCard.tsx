@@ -25,4 +25,4 @@ export const AuthCard = ({ eyebrow, title, description, children, testId }: Auth
   </section>
 )
 
-export const authLinkStyles = 'font-sans text-sm font-semibold text-foreground underline hover:text-neon-cyan'
+export const authLinkStyles = 'py-2 font-sans text-sm font-semibold text-foreground underline hover:text-neon-cyan'
